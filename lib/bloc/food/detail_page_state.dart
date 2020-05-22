@@ -57,3 +57,4 @@ class CategoryState extends DetailPageState {
   @override
   List<Object> get props => [id];
 }
+

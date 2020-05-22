@@ -144,7 +144,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         borderRadius: BorderRadius.only(
                             topRight: Radius.circular(32),
                             topLeft: Radius.circular(32))),
-                    padding: EdgeInsets.only(top: 15, bottom: 32),
+                    padding: EdgeInsets.only(top: 10, bottom: 32),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[

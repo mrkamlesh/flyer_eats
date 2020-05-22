@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/restaurant.dart';
@@ -38,9 +40,12 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
   Animation<double> _scaleAnimation;
   Animation<double> _fadeAnimation;
 
+  DetailPageBloc _bloc;
+
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
       vsync: this,
       duration: itemClickedDuration,
@@ -50,6 +55,8 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
     _fadeAnimation = Tween<double>(begin: 0.0, end: widget.fade).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
+    _bloc = BlocProvider.of<DetailPageBloc>(context);
   }
 
   @override
@@ -165,9 +172,13 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
   }
 
   void _navigateToRestaurantDetailPage(Restaurant restaurant) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return RestaurantDetailPage(
-        restaurant: restaurant,
+    Navigator.push(context,
+        MaterialPageRoute<RestaurantDetailPage>(builder: (context) {
+      return BlocProvider.value(
+        value: _bloc,
+        child: RestaurantDetailPage(
+          restaurant: restaurant,
+        ),
       );
     }));
   }

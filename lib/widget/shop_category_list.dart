@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/shop_category.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
@@ -20,10 +22,12 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
   AnimationController _animationController;
   Animation<double> _scaleAnimation;
   int _selectedShop = -1;
+  DetailPageBloc _bloc;
 
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
       vsync: this,
       duration: itemClickedDuration,
@@ -31,6 +35,8 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
+    _bloc = BlocProvider.of<DetailPageBloc>(context);
   }
 
   @override
@@ -77,7 +83,7 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
 
   void _navigateToRestaurantListPage() {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return RestaurantListPage();
+      return BlocProvider.value(value: _bloc, child: RestaurantListPage());
     }));
   }
 }

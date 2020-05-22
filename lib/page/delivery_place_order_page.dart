@@ -1,14 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/model/pickup.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/widget/delivery_information_widget.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
 
 class DeliveryPlaceOderPage extends StatefulWidget {
+  final PickUp pickUp;
+
+  const DeliveryPlaceOderPage({Key key, this.pickUp}) : super(key: key);
+
   @override
   _DeliveryPlaceOderPageState createState() => _DeliveryPlaceOderPageState();
 }
@@ -29,6 +36,10 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
             begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
         .animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
+    widget.pickUp.items.removeWhere((item) {
+      return item == "" || item == null;
+    });
   }
 
   @override
@@ -132,11 +143,11 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                   Container(
                                       margin: EdgeInsets.only(bottom: 10),
                                       child: Text(
-                                        "SHOP NAME",
+                                        widget.pickUp.shop.name,
                                         style: TextStyle(fontSize: 16),
                                       )),
                                   Text(
-                                    "No 217, c block, Vascon Venus, Hosaroad Junction, Elec City, Bangalore 560100",
+                                    widget.pickUp.shop.address,
                                     style: TextStyle(fontSize: 12),
                                   )
                                 ],
@@ -172,19 +183,17 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                         "ADD ITEMS",
                                         style: TextStyle(fontSize: 16),
                                       )),
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 15),
-                                    child: Text(
-                                      "Item 1",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 15),
-                                    child: Text(
-                                      "Item 2",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
+                                  Column(
+                                    children: List.generate(
+                                        widget.pickUp.items.length, (index) {
+                                      return Container(
+                                        margin: EdgeInsets.only(bottom: 15),
+                                        child: Text(
+                                          widget.pickUp.items[index],
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                      );
+                                    }),
                                   )
                                 ],
                               ),
@@ -219,16 +228,34 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                     style: TextStyle(fontSize: 16),
                                   ),
                                 ),
-                                Container(
-                                  width: AppUtil.getScreenWidth(context) - 80,
-                                  height: 60,
-                                  child: ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    children: <Widget>[
-                                      ImageThumbnail(0, "assets/pickup.png")
-                                    ],
-                                  ),
-                                )
+                                widget.pickUp.attachment.length != 0
+                                    ? Column(
+                                        children: List.generate(
+                                            widget.pickUp.attachment.length,
+                                            (index) {
+                                          return Container(
+                                            width: AppUtil.getScreenWidth(
+                                                    context) -
+                                                80,
+                                            height: 60,
+                                            child: ListView(
+                                              scrollDirection: Axis.horizontal,
+                                              children: <Widget>[
+                                                ImageThumbnail(
+                                                    0,
+                                                    widget.pickUp
+                                                        .attachment[index])
+                                              ],
+                                            ),
+                                          );
+                                        }),
+                                      )
+                                    : Container(
+                                        child: Text(
+                                          "No Attachment",
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                      ),
                               ],
                             )
                           ],
@@ -263,18 +290,23 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                 ),
                                 Container(
                                   width: AppUtil.getScreenWidth(context) - 80,
-                                  height: 60,
                                   child: Text(
                                     "7 Kilometers",
-                                    style: TextStyle(fontSize: 12),
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                )
+                                ),
+                                //PickupInformationWidget()
                               ],
                             )
                           ],
                         ),
                       ),
                     ),
+                    SliverToBoxAdapter(
+                      child: PickupInformationWidget(),
+                    )
                   ],
                 ),
               );
@@ -293,13 +325,12 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                   allAddresses: ExampleModel.getAddresses(),
                 ),
                 OrderBottomNavBar(
+                  isValid: true,
                   description: "Delivery Amount",
                   amount: 110,
                   showRupee: true,
                   buttonText: "PLACE ORDER",
-                  onButtonTap: (){
-
-                  },
+                  onButtonTap: () {},
                 ),
               ],
             ),
@@ -326,26 +357,6 @@ class PickupInformationWidget extends StatelessWidget {
             style: TextStyle(fontSize: 13),
           ),
         ),
-        Container(
-          padding: EdgeInsets.all(8),
-          margin: EdgeInsets.only(bottom: 10),
-          decoration: BoxDecoration(
-              color: Colors.grey[300], borderRadius: BorderRadius.circular(4)),
-          child: Text(
-            "Item's amount will be collected as COD while delivering",
-            style: TextStyle(fontSize: 13),
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.all(8),
-          margin: EdgeInsets.only(bottom: 10),
-          decoration: BoxDecoration(
-              color: Colors.grey[300], borderRadius: BorderRadius.circular(4)),
-          child: Text(
-            "Starts Rs. 40 for first 2 Km, evert additional Km Rs. 15 added",
-            style: TextStyle(fontSize: 13),
-          ),
-        )
       ],
     );
   }
@@ -427,7 +438,7 @@ class PlaceOrderBar extends StatelessWidget {
 
 class ImageThumbnail extends StatelessWidget {
   final int index;
-  final String file;
+  final File file;
 
   ImageThumbnail(this.index, this.file);
 
@@ -442,7 +453,7 @@ class ImageThumbnail extends StatelessWidget {
           border: Border.all(color: Colors.black12)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Image.asset(
+        child: Image.file(
           file,
           fit: BoxFit.cover,
           alignment: Alignment.center,

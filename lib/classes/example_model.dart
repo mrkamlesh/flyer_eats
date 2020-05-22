@@ -154,37 +154,37 @@ class ExampleModel {
     _listFoods.add(Food(
         "Idly",
         "Loremp ipsum dos amet color Loremp ipsum dos amet color Loremp ipsum dos amet color",
-        "30",
+        10,
         "https://www.kannammacooks.com/wp-content/uploads/soft-idli-batter-recipe-using-idli-rava-mixie-blender-method.jpg",
         true));
     _listFoods.add(Food(
         "Masala Dosa",
         "Loremp ",
-        "80",
+        80,
         "https://cdn.theculturetrip.com/wp-content/uploads/2017/08/13040792475_51fdc1f447_k.jpg",
         false));
     _listFoods.add(Food(
         "Rogan Josh",
         "Loremp ipsum dos amet color",
-        "10",
+        10,
         "https://img.theculturetrip.com/1024x/smart/wp-content/uploads/2017/08/1024px-rogan_josh.jpg",
         false));
     _listFoods.add(Food(
         "Hyderabadi Biriyani",
         "Loremp ipsum dos amet color",
-        "70",
+        70,
         "https://www.kannammacooks.com/wp-content/uploads/soft-idli-batter-recipe-using-idli-rava-mixie-blender-method.jpg",
         true));
     _listFoods.add(Food(
         "Indian chaats",
         "Loremp ipsum dos amet color",
-        "90",
+        90,
         "https://img.theculturetrip.com/1024x/smart/wp-content/uploads/2017/08/6456856581_b68cf171fd_b.jpg",
         true));
     _listFoods.add(Food(
         "Vada Pav",
         "Loremp ipsum dos amet color",
-        "10",
+        10,
         "https://img.theculturetrip.com/1024x/smart/wp-content/uploads/2017/08/3437240332_48cea3c8ca_o.jpg",
         true));
 

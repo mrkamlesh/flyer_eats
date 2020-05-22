@@ -8,6 +8,7 @@ class OrderBottomNavBar extends StatelessWidget {
   final String buttonText;
   final bool showRupee;
   final Function onButtonTap;
+  final bool isValid;
 
   const OrderBottomNavBar(
       {Key key,
@@ -15,7 +16,8 @@ class OrderBottomNavBar extends StatelessWidget {
       this.description,
       this.buttonText,
       this.showRupee,
-      this.onButtonTap})
+      this.onButtonTap,
+      this.isValid})
       : super(key: key);
 
   @override
@@ -64,7 +66,7 @@ class OrderBottomNavBar extends StatelessWidget {
           ),
           Expanded(
               child: GestureDetector(
-            onTap: amount > 0 ? onButtonTap : () {},
+            onTap: isValid ? onButtonTap : () {},
             child: SizedBox.expand(
               child: Stack(
                 children: <Widget>[
@@ -81,11 +83,12 @@ class OrderBottomNavBar extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Opacity(
-                    opacity: amount > 0 ? 0.0 : 0.65,
+                  AnimatedOpacity(
+                    opacity: isValid ? 0.0 : 0.65,
                     child: Container(
                       color: Colors.white,
                     ),
+                    duration: Duration(milliseconds: 300),
                   )
                 ],
               ),

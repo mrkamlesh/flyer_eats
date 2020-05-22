@@ -1,7 +1,6 @@
 import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
-import 'package:http/http.dart' as http;
 import 'dart:async';
 
 class FoodProvider {

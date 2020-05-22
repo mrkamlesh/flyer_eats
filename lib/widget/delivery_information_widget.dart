@@ -15,7 +15,7 @@ class DeliveryInformationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 100,
+        height: 90,
         width: AppUtil.getScreenWidth(context),
         padding: EdgeInsets.symmetric(
             vertical: horizontalPaddingDraggable - 5,

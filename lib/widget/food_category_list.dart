@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/food_category.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
@@ -25,6 +27,7 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
   int _selectedFoodCategory = -1;
   AnimationController _animationController;
   Animation<double> _scaleAnimation;
+  DetailPageBloc _bloc;
 
   @override
   void initState() {
@@ -36,6 +39,8 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
+    _bloc = BlocProvider.of<DetailPageBloc>(context);
   }
 
   @override
@@ -52,38 +57,38 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
         itemBuilder: (context, i) {
           return i == 0
               ? SizedBox(
-            width: horizontalPaddingDraggable,
-          )
+                  width: horizontalPaddingDraggable,
+                )
               : FoodCategoryWidget(
-            foodCategory: widget.foodCategoryList[i - 1],
-            onTap: () {
-              setState(() {
-                _selectedFoodCategory = i - 1;
-                _animationController
-                    .forward()
-                    .orCancel
-                    .whenComplete(() {
-                  _animationController
-                      .reverse()
-                      .orCancel
-                      .whenComplete(() {
-                    _navigateToRestaurantList(
-                        widget.foodCategoryList[i - 1]);
-                  });
-                });
-              });
-            },
-            selectedIndex: _selectedFoodCategory,
-            index: i - 1,
-            scale: _scaleAnimation,
-          );
+                  foodCategory: widget.foodCategoryList[i - 1],
+                  onTap: () {
+                    setState(() {
+                      _selectedFoodCategory = i - 1;
+                      _animationController.forward().orCancel.whenComplete(() {
+                        _animationController
+                            .reverse()
+                            .orCancel
+                            .whenComplete(() {
+                          _navigateToRestaurantList(
+                              widget.foodCategoryList[i - 1]);
+                        });
+                      });
+                    });
+                  },
+                  selectedIndex: _selectedFoodCategory,
+                  index: i - 1,
+                  scale: _scaleAnimation,
+                );
         });
   }
 
   void _navigateToRestaurantList(FoodCategory foodCategory) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return RestaurantListPage(
-        foodCategory: foodCategory,
+      return BlocProvider.value(
+        value: _bloc,
+        child: RestaurantListPage(
+          foodCategory: foodCategory,
+        ),
       );
     }));
   }
@@ -96,12 +101,13 @@ class FoodCategoryWidget extends StatelessWidget {
   final Animation<double> scale;
   final Function onTap;
 
-  const FoodCategoryWidget({Key key,
-    this.foodCategory,
-    this.index,
-    this.selectedIndex,
-    this.scale,
-    this.onTap})
+  const FoodCategoryWidget(
+      {Key key,
+      this.foodCategory,
+      this.index,
+      this.selectedIndex,
+      this.scale,
+      this.onTap})
       : super(key: key);
 
   @override
@@ -117,23 +123,23 @@ class FoodCategoryWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: foodCategory.image,
-                  height: 80,
-                  width: 80,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.center,
-                  placeholder: (context, url) {
-                    return Shimmer.fromColors(
-                        child: Container(
-                          height: 80,
-                          width: 80,
-                          color: Colors.black,
-                        ),
-                        baseColor: Colors.grey[300],
-                        highlightColor: Colors.grey[100]);
-                  },
-                ),
+              child: CachedNetworkImage(
+                imageUrl: foodCategory.image,
+                height: 80,
+                width: 80,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                placeholder: (context, url) {
+                  return Shimmer.fromColors(
+                      child: Container(
+                        height: 80,
+                        width: 80,
+                        color: Colors.black,
+                      ),
+                      baseColor: Colors.grey[300],
+                      highlightColor: Colors.grey[100]);
+                },
+              ),
             ),
             SizedBox(
               height: 5,
@@ -150,15 +156,15 @@ class FoodCategoryWidget extends StatelessWidget {
     );
     return selectedIndex == index
         ? AnimatedBuilder(
-      animation: scale,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: scale.value,
-          child: child,
-        );
-      },
-      child: categoryWidget,
-    )
+            animation: scale,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: scale.value,
+                child: child,
+              );
+            },
+            child: categoryWidget,
+          )
         : categoryWidget;
   }
 }

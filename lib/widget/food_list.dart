@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/detail_page_bloc.dart';
-import 'package:flyereats/bloc/detail_page_event.dart';
-import 'package:flyereats/bloc/detail_page_state.dart';
+import 'package:flyereats/bloc/food/detail_page_bloc.dart';
+import 'package:flyereats/bloc/food/detail_page_event.dart';
+import 'package:flyereats/bloc/food/detail_page_state.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/food.dart';
@@ -60,30 +60,42 @@ class _FoodListWidgetState extends State<FoodListWidget>
 
   @override
   Widget build(BuildContext context) {
-
     Widget list = widget.type == FoodListViewType.list
         ? SliverList(
             delegate: SliverChildBuilderDelegate(
             (context, i) {
               return BlocBuilder<DetailPageBloc, DetailPageState>(
                 builder: (context, state) {
-                  if (state is CartState) {
-                    return FoodList(
-                      type: widget.type,
-                      index: i,
-                      scale: _scaleAnimation,
-                      selectedIndex: _selectedFood,
-                      food: widget.listFood[i],
-                      quantity: widget.cart.getQuantity(i),
-                      onTapRemove: () {
-                        _onTapRemove(i);
-                      },
-                      onTapAdd: () {
-                        _onTapAdd(i);
-                      },
-                    );
+                  if (state is OnDataLoading) {
+                    return Shimmer.fromColors(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          margin: EdgeInsets.only(
+                              top: 2, bottom: 18, left: 5, right: 5),
+                          height: 100,
+                          child: SizedBox.expand(),
+                        ),
+                        baseColor: Colors.grey[300],
+                        highlightColor: Colors.grey[100]);
                   }
-                  return Container();
+
+                  return FoodList(
+                    type: widget.type,
+                    index: i,
+                    scale: _scaleAnimation,
+                    selectedIndex: _selectedFood,
+                    food: widget.listFood[i],
+                    quantity: widget.cart.getQuantity(i),
+                    onTapRemove: () {
+                      _onTapRemove(i);
+                    },
+                    onTapAdd: () {
+                      _onTapAdd(i);
+                    },
+                  );
                 },
               );
             },
@@ -94,7 +106,19 @@ class _FoodListWidgetState extends State<FoodListWidget>
               (context, i) {
                 return BlocBuilder<DetailPageBloc, DetailPageState>(
                   builder: (context, state) {
-                    if (state is CartState) {
+                    if (state is OnDataLoading) {
+                      return Shimmer.fromColors(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            margin: EdgeInsets.only(
+                                top: 2, bottom: 18, left: 5, right: 5),
+                          ),
+                          baseColor: Colors.grey[300],
+                          highlightColor: Colors.grey[100]);
+                    } else {
                       return FoodList(
                         type: widget.type,
                         index: i,
@@ -109,8 +133,6 @@ class _FoodListWidgetState extends State<FoodListWidget>
                           _onTapAdd(i);
                         },
                       );
-                    } else {
-                      return Container();
                     }
                   },
                 );
@@ -127,7 +149,9 @@ class _FoodListWidgetState extends State<FoodListWidget>
   }
 
   void _onTapAdd(int i) {
-    _selectedFood = i;
+    setState(() {
+      _selectedFood = i;
+    });
     _animationController.forward().orCancel.whenComplete(() {
       _animationController.reverse().orCancel.whenComplete(() {
         BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(
@@ -139,7 +163,9 @@ class _FoodListWidgetState extends State<FoodListWidget>
   }
 
   void _onTapRemove(int i) {
-    _selectedFood = i;
+    setState(() {
+      _selectedFood = i;
+    });
     _animationController.forward().orCancel.whenComplete(() {
       _animationController.reverse().orCancel.whenComplete(() {
         BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(
@@ -177,22 +203,49 @@ class FoodList extends StatelessWidget {
   Widget build(BuildContext context) {
     //bool hasQuantity = !quantity.containsKey(index) ? add : quantity[index] == 0 ? add : quantityadd;
 
-    Widget addButton = GestureDetector(
-        onTap: onTapAdd,
-        child: Container(
-          height: 40,
-          width: 110,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              color: Colors.yellow[600],
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(18),
-                  bottomRight: Radius.circular(18))),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[Icon(Icons.add), Text("Add")],
-          ),
-        ));
+    Widget addButton = index == selectedIndex
+        ? AnimatedBuilder(
+            animation: scale,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: scale.value,
+                child: child,
+                alignment: Alignment.bottomRight,
+              );
+            },
+            child: GestureDetector(
+                onTap: onTapAdd,
+                child: Container(
+                  height: 40,
+                  width: 110,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: Colors.yellow[600],
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(18),
+                          bottomRight: Radius.circular(18))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[Icon(Icons.add), Text("Add")],
+                  ),
+                )),
+          )
+        : GestureDetector(
+            onTap: onTapAdd,
+            child: Container(
+              height: 40,
+              width: 110,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  color: Colors.yellow[600],
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(18),
+                      bottomRight: Radius.circular(18))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[Icon(Icons.add), Text("Add")],
+              ),
+            ));
 
     Widget changeQuantityButton = Container(
       height: 40,
@@ -251,13 +304,13 @@ class FoodList extends StatelessWidget {
               Column(
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(left: 10, top: 10, right: 10),
+                    //margin: EdgeInsets.only(left: 10, top: 10, right: 10),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: CachedNetworkImage(
                         imageUrl: food.image,
-                        width: (AppUtil.getScreenWidth(context) - 50) / 2,
-                        height: 80,
+                        width: (AppUtil.getScreenWidth(context) - 30) / 2,
+                        height: 90,
                         fit: BoxFit.cover,
                         alignment: Alignment.center,
                         placeholder: (context, url) {
@@ -300,7 +353,6 @@ class FoodList extends StatelessWidget {
                                 TextStyle(color: Colors.black54, fontSize: 10),
                           ),
                         ),
-
                       ],
                     ),
                   )
@@ -328,9 +380,11 @@ class FoodList extends StatelessWidget {
                                   width: 11,
                                   color: Colors.black,
                                 ),
-                                SizedBox(width: 3,),
+                                SizedBox(
+                                  width: 3,
+                                ),
                                 Text(
-                                  food.price,
+                                  "${food.price}",
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -344,8 +398,7 @@ class FoodList extends StatelessWidget {
                       ),
                       quantity == 0
                           ? Expanded(flex: 6, child: addButton)
-                          : Expanded(
-                          flex: 6, child: changeQuantityButton),
+                          : Expanded(flex: 6, child: changeQuantityButton),
                     ],
                   ),
                 ),
@@ -455,9 +508,11 @@ class FoodList extends StatelessWidget {
                                       width: 11,
                                       color: Colors.black,
                                     ),
-                                    SizedBox(width: 3,),
+                                    SizedBox(
+                                      width: 3,
+                                    ),
                                     Text(
-                                      food.price,
+                                      "${food.price}",
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -468,11 +523,6 @@ class FoodList extends StatelessWidget {
                                 ),
                               ),
                               quantity == 0 ? addButton : changeQuantityButton,
-                              /*!quantity.containsKey(index)
-                              ? addButton
-                              : quantity[index] == 0
-                                  ? addButton
-                                  : changeQuantityButton,*/
                             ],
                           ),
                         ),

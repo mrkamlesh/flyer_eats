@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/bloc/food_repository.dart';
+import 'package:flyereats/bloc/food/food_repository.dart';
 import 'package:flyereats/model/food.dart';
-import './bloc.dart';
+import 'package:flyereats/model/food_cart.dart';
+import 'bloc.dart';
 
 class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
   final FoodRepository foodRepository;
 
-  final FoodCartRepository cartRepository;
+  FoodCartRepository foodCartRepository;
 
-  DetailPageBloc(this.foodRepository, this.cartRepository);
+  DetailPageBloc(this.foodRepository);
 
   @override
   DetailPageState get initialState => Uninitialized();
@@ -19,7 +20,7 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
     DetailPageEvent event,
   ) async* {
     print(event);
-    if (event is PageOpen) {
+    if (event is PageDetailRestaurantOpen) {
       yield* mapPageOpenToState();
     } else if (event is SwitchVegOnly) {
       yield* mapSwitchVegOnlyToState(event.isVegOnly);
@@ -32,11 +33,12 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
 
   Stream<DetailPageState> mapPageOpenToState() async* {
     yield OnDataLoading();
-    //await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 2));
     try {
       List<Food> list = await foodRepository.getFoodData(true);
       yield OnDataLoaded(list);
-      yield CartState(cartRepository.foodCart);
+      foodCartRepository = FoodCartRepository();
+      yield CartState(foodCartRepository.foodCart);
     } catch (e) {
       yield OnDataError(e.toString());
     }
@@ -44,6 +46,7 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
 
   Stream<DetailPageState> mapSwitchVegOnlyToState(bool isVegOnly) async* {
     yield OnDataLoading();
+    await Future.delayed(Duration(seconds: 2));
     try {
       List<Food> list = await foodRepository.getFoodData(isVegOnly);
       yield OnDataLoaded(list);
@@ -64,9 +67,10 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
 
   Stream<DetailPageState> mapChangeQuantityToState(
       int id, Food food, int quantity) async* {
-    yield OnDataLoading();
-    cartRepository.changeQuantity(id, food, quantity);
+    //yield OnDataLoading();
+    foodCartRepository.foodCart.changeQuantity(id, food, quantity);
+    FoodCart cart = FoodCart(Map.from((foodCartRepository.foodCart).cart));
 
-    yield CartState(cartRepository.foodCart);
+    yield CartState(cart);
   }
 }

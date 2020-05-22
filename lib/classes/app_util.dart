@@ -10,7 +10,7 @@ class AppUtil {
   }
 
   static double getDraggableHeight(context) {
-    return getScreenHeight(context) * 0.7;
+    return getScreenHeight(context) * 0.65;
   }
 
   static double getBannerOffset() {
@@ -18,7 +18,7 @@ class AppUtil {
   }
 
   static double getBannerHeight(context) {
-    return getScreenHeight(context) * 0.3 + getBannerOffset();
+    return getScreenHeight(context) * 0.35 + getBannerOffset();
   }
 
 

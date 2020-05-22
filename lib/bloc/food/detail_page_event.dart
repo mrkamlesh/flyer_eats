@@ -7,8 +7,8 @@ abstract class DetailPageEvent extends Equatable {
   const DetailPageEvent();
 }
 
-class PageOpen extends DetailPageEvent {
-  const PageOpen();
+class PageDetailRestaurantOpen extends DetailPageEvent {
+  const PageDetailRestaurantOpen();
 
   @override
   List<Object> get props => [];

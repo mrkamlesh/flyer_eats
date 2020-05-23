@@ -329,8 +329,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
               children: <Widget>[
                 DeliveryInformationWidget(
                   address: Address(
+                    1,
                     "Home",
                     "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
+                    AddressType.other,
                   ),
                   distance: "30 Min",
                   allAddresses: ExampleModel.getAddresses(),

@@ -20,16 +20,13 @@ class DeliveryInformationWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(
             vertical: horizontalPaddingDraggable - 5,
             horizontal: horizontalPaddingDraggable),
-        decoration: BoxDecoration(
-          color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.orange[100],
-                  blurRadius: 5,
-                  spreadRadius: 0,
-                  offset: Offset(0, -1)),
-            ]
-        ),
+        decoration: BoxDecoration(color: Colors.white, boxShadow: [
+          BoxShadow(
+              color: Colors.orange[100],
+              blurRadius: 5,
+              spreadRadius: 0,
+              offset: Offset(0, -1)),
+        ]),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -65,7 +62,7 @@ class DeliveryInformationWidget extends StatelessWidget {
                                     Container(
                                       margin: EdgeInsets.only(right: 16),
                                       child: Icon(
-                                        list[i].iconData,
+                                        Icons.home,
                                         size: 25,
                                       ),
                                     ),

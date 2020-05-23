@@ -1,7 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/address/address_bloc.dart';
+import 'package:flyereats/bloc/address/address_event.dart';
+import 'package:flyereats/bloc/address/address_repository.dart';
+import 'package:flyereats/bloc/address/address_state.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
@@ -24,6 +29,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
+  AddressBloc _bloc;
 
   @override
   void initState() {
@@ -40,6 +46,14 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
     widget.pickUp.items.removeWhere((item) {
       return item == "" || item == null;
     });
+
+    _bloc = AddressBloc(AddressRepository())..add(InitDefaultAddress());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
   }
 
   @override
@@ -314,26 +328,36 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
           ),
           Positioned(
             bottom: 0,
-            child: Column(
-              children: <Widget>[
-                DeliveryInformationWidget(
-                  address: Address(
-                    "Home",
-                    "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
-                  ),
-                  distance: "30 Min",
-                  allAddresses: ExampleModel.getAddresses(),
-                ),
-                OrderBottomNavBar(
-                  isValid: true,
-                  description: "Delivery Amount",
-                  amount: 110,
-                  showRupee: true,
-                  buttonText: "PLACE ORDER",
-                  onButtonTap: () {},
-                ),
-              ],
-            ),
+            child: BlocProvider<AddressBloc>(
+                create: (context) {
+                  return _bloc;
+                },
+                child: Column(
+                  children: <Widget>[
+                    BlocBuilder<AddressBloc, AddressState>(
+                      builder: (context, state) {
+                        if (state is Loading) {
+                          return Container();
+                        } else if (state is AddressLoaded) {
+                          return DeliveryInformationWidget(
+                            address: state.address,
+                            distance: "30 Min",
+                            allAddresses: ExampleModel.getAddresses(),
+                          );
+                        }
+                        return Text("Fail");
+                      },
+                    ),
+                    OrderBottomNavBar(
+                      isValid: true,
+                      description: "Delivery Amount",
+                      amount: 110,
+                      showRupee: true,
+                      buttonText: "PLACE ORDER",
+                      onButtonTap: () {},
+                    ),
+                  ],
+                )),
           )
         ],
       ),

@@ -8,16 +8,31 @@ import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/shop.dart';
 
 class PickShopLocationPage extends StatefulWidget {
+  final Shop shop;
+
+  const PickShopLocationPage({Key key, this.shop}) : super(key: key);
+
   @override
   _PickShopLocationPageState createState() => _PickShopLocationPageState();
 }
 
 class _PickShopLocationPageState extends State<PickShopLocationPage> {
   ChooseShopBloc _bloc = ChooseShopBloc();
+  TextEditingController nameController;
+  TextEditingController addressController;
 
   @override
   void initState() {
     super.initState();
+    _bloc.add(PageOpen(widget.shop));
+    nameController = TextEditingController(
+        text: widget.shop != null
+            ? widget.shop.name != null ? widget.shop.name : ""
+            : "");
+    addressController = TextEditingController(
+        text: widget.shop != null
+            ? widget.shop.address != null ? widget.shop.address : ""
+            : "");
   }
 
   @override
@@ -74,58 +89,64 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                 padding: EdgeInsets.symmetric(
                     horizontal: horizontalPaddingDraggable,
                     vertical: distanceBetweenSection),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    CustomTextField(
-                      hint: "ENTER SHOP",
-                      onChange: (text) {
-                        _bloc.add(EntryShopName(text));
-                      },
-                    ),
-                    CustomTextField(
-                      hint: "Enter Shop Number, Building Name",
-                      onChange: (text) {
-                        _bloc.add(EntryAddress(text));
-                      },
-                    ),
-                    CustomTextField(lines: 3, hint: "Address"),
-                    BlocBuilder<ChooseShopBloc, Shop>(
-                      builder: (context, state) {
-                        return GestureDetector(
-                          onTap: state.isValid()
-                              ? () {
-                                  Navigator.pop(context, state);
-                                }
-                              : () {},
-                          child: Stack(
-                            children: <Widget>[
-                              Container(
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.yellow[600],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Done",
-                                  style: TextStyle(fontSize: 20),
-                                ),
+                child: BlocBuilder<ChooseShopBloc, Shop>(
+                  builder: (context, state) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        CustomTextField(
+                          controller: nameController,
+                          hint: "ENTER SHOP",
+                          onChange: (text) {
+                            _bloc.add(EntryShopName(text));
+                          },
+                        ),
+                        CustomTextField(
+                          controller: addressController,
+                          hint: "Enter Shop Number, Building Name",
+                          onChange: (text) {
+                            _bloc.add(EntryAddress(text));
+                          },
+                        ),
+                        CustomTextField(lines: 3, hint: "Address"),
+                        BlocBuilder<ChooseShopBloc, Shop>(
+                          builder: (context, state) {
+                            return GestureDetector(
+                              onTap: state.isValid()
+                                  ? () {
+                                      Navigator.pop(context, state);
+                                    }
+                                  : () {},
+                              child: Stack(
+                                children: <Widget>[
+                                  Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFFFB531),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Done",
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  ),
+                                  AnimatedOpacity(
+                                    opacity: state.isValid() ? 0.0 : 0.5,
+                                    child: Container(
+                                      height: 50,
+                                      color: Colors.white,
+                                    ),
+                                    duration: Duration(milliseconds: 300),
+                                  )
+                                ],
                               ),
-                              AnimatedOpacity(
-                                opacity: state.isValid() ? 0.0 : 0.65,
-                                child: Container(
-                                  height: 50,
-                                  color: Colors.white,
-                                ),
-                                duration: Duration(milliseconds: 300),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    )
-                  ],
+                            );
+                          },
+                        )
+                      ],
+                    );
+                  },
                 ),
               ),
             )

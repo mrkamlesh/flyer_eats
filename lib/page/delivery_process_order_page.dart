@@ -48,6 +48,12 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _bloc.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider<DeliveryOrderBloc>(
       create: (context) {
@@ -158,53 +164,61 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage>
                         ),
                       ),
                       SliverToBoxAdapter(
-                        child: GestureDetector(
-                          onTap: () async {
-                            Shop shop = await Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return PickShopLocationPage();
-                            }));
+                        child: BlocBuilder<DeliveryOrderBloc, PickUp>(
+                          builder: (context, state) {
+                            return GestureDetector(
+                              onTap: () async {
+                                Shop shop = await Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return PickShopLocationPage(
+                                    shop: state.shop,
+                                  );
+                                }));
 
-                            _bloc.add(ChooseShop(shop));
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            margin: EdgeInsets.only(bottom: 30),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.black12)),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: BlocBuilder<DeliveryOrderBloc, PickUp>(
-                                    builder: (context, state) {
-                                      return TextField(
-                                        enabled: false,
-                                        controller: TextEditingController(
-                                            text: state.shop == null
-                                                ? null
-                                                : state.shop.name),
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 15),
-                                          border: InputBorder.none,
-                                          hintText: "SELECT SHOP",
-                                          hintStyle: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black38),
-                                        ),
-                                      );
-                                    },
-                                  ),
+                                _bloc.add(ChooseShop(shop));
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                margin: EdgeInsets.only(bottom: 30),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.black12)),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: BlocBuilder<DeliveryOrderBloc,
+                                          PickUp>(
+                                        builder: (context, state) {
+                                          return TextField(
+                                            enabled: false,
+                                            controller: TextEditingController(
+                                                text: state.shop == null
+                                                    ? null
+                                                    : state.shop.name),
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 15),
+                                              border: InputBorder.none,
+                                              hintText: "SELECT SHOP",
+                                              hintStyle: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.black38),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    SvgPicture.asset(
+                                      "assets/locationpick.svg",
+                                      width: 22,
+                                      height: 22,
+                                    )
+                                  ],
                                 ),
-                                SvgPicture.asset(
-                                  "assets/locationpick.svg",
-                                  width: 22,
-                                  height: 22,
-                                )
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       SliverToBoxAdapter(

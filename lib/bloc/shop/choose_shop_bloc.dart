@@ -17,6 +17,13 @@ class ChooseShopBloc extends Bloc<ChooseShopEvent, Shop> {
     } else if (event is EntryAddress) {
       Shop shop = state.copyWith(address: event.address);
       yield shop;
+    } else if (event is PageOpen) {
+      Shop shop = state.copyWith(
+          name: event.shop.name,
+          address: event.shop.address,
+          lat: event.shop.lat,
+          long: event.shop.long);
+      yield shop;
     }
   }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flyereats/model/banner.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
@@ -203,31 +202,32 @@ class ExampleModel {
     List<Address> list = [];
 
     list.add(Address(
-      "Home",
-      "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
-      iconData: Icons.home,
-    ));
-
+        1, "Maumere", "It is somewhere in Indonesia", AddressType.other,
+        latitude: "", longitude: ""));
 
     list.add(Address(
-      "Home",
-      "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
-      iconData: Icons.location_on,
-    ));
-
-
-    list.add(Address(
-      "Others",
-      "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
-      iconData: Icons.location_on,
-    ));
-
+        2,
+        "Home",
+        "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
+        AddressType.other,
+        latitude: "",
+        longitude: ""));
 
     list.add(Address(
-      "Office",
-      "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
-      iconData: Icons.location_on,
-    ));
+        3,
+        "Others",
+        "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
+        AddressType.other,
+        latitude: "",
+        longitude: ""));
+
+    list.add(Address(
+        4,
+        "Office",
+        "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
+        AddressType.other,
+        latitude: "",
+        longitude: ""));
 
     return list;
   }

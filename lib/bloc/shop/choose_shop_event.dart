@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flyereats/model/shop.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -22,4 +23,13 @@ class EntryAddress extends ChooseShopEvent {
 
   @override
   List<Object> get props => [address];
+}
+
+class PageOpen extends ChooseShopEvent {
+  final Shop shop;
+
+  const PageOpen(this.shop);
+
+  @override
+  List<Object> get props => [shop];
 }

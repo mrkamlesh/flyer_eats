@@ -416,7 +416,7 @@ class FoodList extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black26,
+                  color: shadow,
                   blurRadius: 6,
                   spreadRadius: 0,
                   offset: Offset(2, 3))

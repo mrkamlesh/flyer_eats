@@ -12,7 +12,6 @@ import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/pickup.dart';
 import 'package:flyereats/widget/app_bar.dart';
-import 'package:flyereats/model/address.dart';
 import 'package:flyereats/widget/delivery_information_widget.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
 

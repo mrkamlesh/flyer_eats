@@ -83,7 +83,13 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
 
   void _navigateToRestaurantListPage() {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return BlocProvider.value(value: _bloc, child: RestaurantListPage());
+      return BlocProvider.value(
+          value: _bloc,
+          child: RestaurantListPage(
+            image: "assets/allrestaurant.png",
+            isExternalImage: false,
+            title: "All Restaurants",
+          ));
     }));
   }
 }
@@ -132,10 +138,7 @@ class ShopCategoryWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                        offset: Offset(9, 10),
-                        color: Colors.black26,
-                        spreadRadius: -10,
-                        blurRadius: 30)
+                        color: Colors.black26, spreadRadius: -3, blurRadius: 8)
                   ]),
               child: SizedBox(
                 child: SvgPicture.asset(

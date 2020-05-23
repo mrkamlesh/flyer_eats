@@ -32,7 +32,7 @@ class ExampleModel {
   static List<Restaurant> getRestaurants() {
     List<Restaurant> _topRestaurants = [];
     _topRestaurants.add(Restaurant(
-        "Amuthasurabhi",
+        "Amuthasurabhi Amuthasurabhi dasdasdasd",
         "25m",
         "4.5",
         "https://media-cdn.tripadvisor.com/media/photo-s/12/c1/c3/f5/restaurant-araz.jpg",

@@ -6,17 +6,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/food_category.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/custom_bottom_navigation_bar.dart';
-import 'package:flyereats/widget/promo_list.dart';
 import 'package:flyereats/widget/restaurant_list.dart';
 
 class RestaurantListPage extends StatefulWidget {
   @required
-  final FoodCategory foodCategory;
+  final String title;
+  final String image;
+  final bool isExternalImage;
 
-  const RestaurantListPage({Key key, this.foodCategory}) : super(key: key);
+  const RestaurantListPage(
+      {Key key, this.title, this.image, this.isExternalImage = false})
+      : super(key: key);
 
   @override
   _RestaurantListPageState createState() => _RestaurantListPageState();
@@ -105,14 +107,14 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                 height: AppUtil.getBannerHeight(context),
                 child: FittedBox(
                     fit: BoxFit.cover,
-                    child: widget.foodCategory != null
+                    child: widget.isExternalImage
                         ? CachedNetworkImage(
-                            imageUrl: widget.foodCategory.image,
+                            imageUrl: widget.image,
                             fit: BoxFit.cover,
                             alignment: Alignment.center,
                           )
                         : Image.asset(
-                            "assets/allrestaurant.png",
+                            widget.image,
                             fit: BoxFit.cover,
                             alignment: Alignment.center,
                           )),
@@ -124,37 +126,25 @@ class _RestaurantListPageState extends State<RestaurantListPage>
             width: AppUtil.getScreenWidth(context),
             height: AppUtil.getBannerHeight(context),
           ),
-          Column(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topCenter,
-                child: CustomAppBar(
-                  leading: "assets/back.svg",
-                  drawer: "assets/drawer.svg",
-                  title: "Vascon Venus",
-                  onTapLeading: () {
-                    Navigator.pop(context);
-                  },
-                  onTapDrawer: () {},
-                  backgroundColor: Colors.transparent,
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 10, bottom: 10),
-                width: AppUtil.getScreenWidth(context),
-                height: (AppUtil.getBannerHeight(context) -
-                    AppUtil.getToolbarHeight(context) -
-                    AppUtil.getBannerOffset()),
-                child: PromoListWidget(
-                  promoList: ExampleModel.getPromos(),
-                ),
-              ),
-            ],
+          Align(
+            alignment: Alignment.topCenter,
+            child: CustomAppBar(
+              leading: "assets/back.svg",
+              drawer: "assets/drawer.svg",
+              title: "Vascon Venus",
+              onTapLeading: () {
+                Navigator.pop(context);
+              },
+              onTapDrawer: () {},
+              backgroundColor: Colors.transparent,
+            ),
           ),
           DraggableScrollableSheet(
-            initialChildSize: AppUtil.getDraggableHeight(context) /
+            initialChildSize: (AppUtil.getScreenHeight(context) -
+                    AppUtil.getToolbarHeight(context)) /
                 AppUtil.getScreenHeight(context),
-            minChildSize: AppUtil.getDraggableHeight(context) /
+            minChildSize: (AppUtil.getScreenHeight(context) -
+                    AppUtil.getToolbarHeight(context)) /
                 AppUtil.getScreenHeight(context),
             maxChildSize: 1.0,
             builder: (context, controller) {
@@ -194,6 +184,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                     SliverPersistentHeader(
                       pinned: true,
                       delegate: ListRestaurantFilterWidget(
+                        title: widget.title,
                         isListSelected: _isListMode,
                         onListButtonTap: () {
                           setState(
@@ -240,8 +231,10 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
   final Function onGridButtonTap;
   final bool isListSelected;
   final double size;
+  final String title;
 
   ListRestaurantFilterWidget({
+    this.title,
     this.onListButtonTap,
     this.onGridButtonTap,
     this.isListSelected,
@@ -264,7 +257,7 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
         child: Row(
           children: <Widget>[
             Text(
-              "All Restaurants",
+              title,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(

@@ -87,7 +87,9 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
       return BlocProvider.value(
         value: _bloc,
         child: RestaurantListPage(
-          foodCategory: foodCategory,
+          title: foodCategory.name,
+          image: foodCategory.image,
+          isExternalImage: true,
         ),
       );
     }));

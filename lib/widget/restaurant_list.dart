@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
@@ -162,7 +163,7 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
               crossAxisCount: 2,
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
-              childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 220,
+              childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 230,
             ),
           ),
         );
@@ -208,27 +209,29 @@ class RestaurantDetailGridWidget extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                  color: Colors.orange[100],
-                  blurRadius: 5,
-                  spreadRadius: 0,
-                  offset: Offset(2, 3))
+                color: shadow,
+                blurRadius: 7,
+                spreadRadius: -3,
+              )
             ]),
         child: Stack(
+          overflow: Overflow.visible,
           children: <Widget>[
             Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 ClipRRect(
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(18),
-                      topRight: Radius.circular(18)),
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
                   child: CachedNetworkImage(
                     imageUrl: restaurant.image,
                     height: 100,
-                    width: (AppUtil.getScreenWidth(context) - 50) / 2,
+                    width: gridWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                     placeholder: (context, url) {
@@ -243,72 +246,115 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                     },
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(right: 10, left: 10),
-                  child: Text(
-                    restaurant.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 10, left: 10),
-                  child: Text(
-                    restaurant.description,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10, right: 10, left: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      Text(
-                        restaurant.location,
-                        style: TextStyle(fontSize: 11, color: Colors.black),
+                      Container(
+                        margin: EdgeInsets.only(
+                            right: 10, left: 10, top: 7, bottom: 7),
+                        child: Text(
+                          restaurant.name + "\n",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Colors.orange,
+                      Container(
+                        margin: EdgeInsets.only(right: 10, left: 10, bottom: 5),
+                        child: Text(
+                          restaurant.description,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 10, color: Colors.black45),
+                        ),
+                      ),
+                      /*Divider(
+                        height: 0.1,
+                        color: Colors.black26,
+                      ),*/
+                      Expanded(
+                        child: Container(
+                          margin:
+                              EdgeInsets.only(bottom: 10, right: 10, left: 10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.access_time,
+                                    size: 12,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    restaurant.location,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.star,
+                                    size: 12,
+                                    color: primary3,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    restaurant.review,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          Text(
-                            restaurant.review,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
-                ),
+                )
               ],
             ),
             restaurant.discountTitle != null
                 ? Positioned(
-                    top: 10,
-                    left: -22,
-                    child: Transform.rotate(
-                      angle: -pi / 4,
-                      child: Container(
-                        decoration: BoxDecoration(color: Colors.yellow),
-                        width: 90,
-                        height: 25,
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "30 % OFF",
-                              style: TextStyle(fontSize: 12),
-                            )),
-                      ),
+                    top: 7,
+                    left: -5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: 80,
+                          height: 25,
+                          decoration: BoxDecoration(
+                              color: primary1,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(2),
+                                  topRight: Radius.circular(2),
+                                  bottomRight: Radius.circular(2))),
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(4),
+                          child: Text(
+                            restaurant.discountTitle,
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        CustomPaint(
+                          size: Size(5, 5),
+                          painter: TrianglePainter(),
+                        )
+                      ],
                     ),
                   )
                 : Container(),
@@ -352,36 +398,44 @@ class RestaurantDetailListWidget extends StatelessWidget {
     Widget restaurantWidget = GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(bottom: 10),
+        margin: EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.orange[100],
-                  blurRadius: 5,
-                  spreadRadius: 0,
-                  offset: Offset(2, 3))
-            ]),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: shadow,
+              blurRadius: 30,
+              spreadRadius: -20,
+            ),
+            BoxShadow(
+              color: shadow,
+              blurRadius: 8,
+              spreadRadius: -4,
+            )
+          ],
+        ),
         child: Stack(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: <Widget>[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(right: 12),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        bottomLeft: Radius.circular(10)),
                     child: CachedNetworkImage(
                       imageUrl: restaurant.image,
-                      height: 80,
-                      width: 80,
+                      height: 115,
+                      width: 95,
                       fit: BoxFit.cover,
                       alignment: Alignment.center,
                       placeholder: (context, url) {
                         return Shimmer.fromColors(
                             child: Container(
-                              height: 80,
-                              width: 80,
+                              height: 115,
+                              width: 95,
                               color: Colors.black,
                             ),
                             baseColor: Colors.grey[300],
@@ -389,101 +443,122 @@ class RestaurantDetailListWidget extends StatelessWidget {
                       },
                     ),
                   ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 80,
-                      padding: EdgeInsets.all(5),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+                Expanded(
+                  child: Container(
+                    height: 115,
+                    padding: EdgeInsets.only(top: 12, bottom: 12, right: 12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(bottom: 5),
+                          child: Text(
+                            restaurant.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 7),
+                                  child: Text(
+                                    restaurant.description,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.black45),
+                                  ),
+                                ),
+                                restaurant.discountDescription != null
+                                    ? Row(
+                                        children: <Widget>[
+                                          SvgPicture.asset(
+                                            "assets/discount2.svg",
+                                            width: 12,
+                                            height: 12,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            restaurant.discountDescription,
+                                            style: TextStyle(
+                                              color: primary3,
+                                              fontSize: 12,
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                          ),
+                        ),
+                        /*Divider(
+                          height: 0.1,
+                          color: Colors.black26,
+                        ),*/
+                        Container(
+                          margin: EdgeInsets.only(top: 7),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                restaurant.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 16),
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.access_time,
+                                    size: 12,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    restaurant.location,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                width: 15,
                               ),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Icon(
                                     Icons.star,
-                                    size: 8,
-                                    color: Colors.orange,
+                                    size: 12,
+                                    color: primary3,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
                                   ),
                                   Text(
                                     restaurant.review,
                                     style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.orange,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                          Text(
-                            restaurant.description,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.black54),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                restaurant.location,
-                                style: TextStyle(
-                                    fontSize: 11, color: Colors.black),
-                              ),
-                              restaurant.discountDescription != null
-                                  ? Expanded(
-                                      child: Text(
-                                        restaurant.discountDescription,
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    )
-                                  : Container()
-                            ],
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            restaurant.discountTitle != null
-                ? Positioned(
-                    top: 10,
-                    left: -22,
-                    child: Transform.rotate(
-                      angle: -pi / 4,
-                      child: Container(
-                        decoration: BoxDecoration(color: Colors.yellow),
-                        width: 90,
-                        height: 25,
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "30 % OFF",
-                              style: TextStyle(fontSize: 12),
-                            )),
-                      ),
-                    ),
-                  )
-                : Container(),
           ],
         ),
       ),
@@ -525,29 +600,45 @@ class RestaurantHomeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double gridWidth = 150;
+
     Widget restaurantWidget = GestureDetector(
       onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Stack(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.center,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: gridWidth,
+        height: 160,
+        margin: EdgeInsets.only(right: 20, bottom: 5),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: shadow,
+                blurRadius: 7,
+                spreadRadius: -3,
+              )
+            ]),
+        child: Stack(
+          overflow: Overflow.visible,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
                   child: CachedNetworkImage(
                     imageUrl: restaurant.image,
-                    height: isExpand ? 160 : 80,
-                    width: isExpand ? 160 : 80,
+                    height: 100,
+                    width: gridWidth,
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                     placeholder: (context, url) {
                       return Shimmer.fromColors(
                           child: Container(
-                            height: isExpand ? 160 : 80,
-                            width: isExpand ? 160 : 80,
+                            height: 100,
+                            width: gridWidth,
                             color: Colors.black,
                           ),
                           baseColor: Colors.grey[300],
@@ -555,75 +646,55 @@ class RestaurantHomeWidget extends StatelessWidget {
                     },
                   ),
                 ),
-              ),
-              selectedIndex == index
-                  ? Align(
-                      alignment: Alignment.center,
-                      child: AnimatedBuilder(
-                        animation: fade,
-                        builder: (context, child) {
-                          return Opacity(
-                            opacity: fade.value,
-                            child: child,
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(16)),
-                          height: isExpand ? 160 : 80,
-                          width: isExpand ? 160 : 80,
-                        ),
-                      ),
-                    )
-                  : Container(),
-            ],
-          ),
-          SizedBox(
-            height: 3,
-          ),
-          Text(
-            restaurant.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: isExpand ? 16 : 14),
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                restaurant.location,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: isExpand ? 13 : 12, color: Colors.black54),
-              ),
-              SizedBox(
-                width: 5,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.star,
-                    size: isExpand ? 13 : 12,
-                    color: Colors.black54,
-                  ),
-                  Text(
-                    restaurant.review,
-                    style: TextStyle(
-                      fontSize: isExpand ? 13 : 12,
-                      color: Colors.black54,
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(10),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      restaurant.name + "\n",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
-                ],
-              ),
-            ],
-          )
-        ],
+                ),
+              ],
+            ),
+            restaurant.discountTitle != null
+                ? Positioned(
+                    top: 7,
+                    left: -5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: 80,
+                          height: 25,
+                          decoration: BoxDecoration(
+                              color: primary1,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(2),
+                                  topRight: Radius.circular(2),
+                                  bottomRight: Radius.circular(2))),
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(4),
+                          child: Text(
+                            restaurant.discountTitle,
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        CustomPaint(
+                          size: Size(5, 5),
+                          painter: TrianglePainter(),
+                        )
+                      ],
+                    ),
+                  )
+                : Container(),
+          ],
+        ),
       ),
     );
 
@@ -636,18 +707,29 @@ class RestaurantHomeWidget extends StatelessWidget {
                 child: child,
               );
             },
-            child: Container(
-              width: isExpand ? 160 : 80,
-              height: 150,
-              margin: EdgeInsets.only(right: distanceBetweenItem),
-              child: restaurantWidget,
-            ),
-          )
-        : Container(
-            width: isExpand ? 160 : 80,
-            height: 150,
-            margin: EdgeInsets.only(right: distanceBetweenItem),
             child: restaurantWidget,
-          );
+          )
+        : restaurantWidget;
+  }
+}
+
+class TrianglePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = Color(0xFFCA9312)
+      ..style = PaintingStyle.fill;
+
+    Path path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(5, 0);
+    path.lineTo(5, 5);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }

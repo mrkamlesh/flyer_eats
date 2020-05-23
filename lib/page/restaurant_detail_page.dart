@@ -218,11 +218,18 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Text(
-                                        widget.restaurant.name,
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
+                                      Expanded(
+                                        child: Text(
+                                          widget.restaurant.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
                                       ),
                                       Container(
                                         padding: EdgeInsets.symmetric(

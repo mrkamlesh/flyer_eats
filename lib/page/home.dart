@@ -164,16 +164,44 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               horizontal: horizontalPaddingDraggable),
                           margin:
                               EdgeInsets.only(bottom: distanceSectionContent),
-                          child: Text(
-                            "Top Restaurants",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Top Restaurants",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  /*Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                    return BlocProvider.value(
+                                        value: _bloc,
+                                        child: RestaurantListPage(
+                                          image: "assets/allrestaurant.png",
+                                          isExternalImage: false,
+                                          title: "All Restaurants",
+                                        ));
+                                  }));*/
+                                },
+                                child: Container(
+                                  width: 70,
+                                  child: Text(
+                                    "See All",
+                                    textAlign: TextAlign.end,
+                                    style:
+                                        TextStyle(color: primary3, fontSize: 14),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                         Container(
-                          margin:
-                              EdgeInsets.only(bottom: distanceBetweenSection),
-                          height: 120,
+                          margin: EdgeInsets.only(
+                              bottom: distanceBetweenSection - 10),
+                          height: 160,
                           child: RestaurantListWidget(
                             type: RestaurantViewType.home,
                             restaurants: ExampleModel.getRestaurants(),
@@ -325,7 +353,7 @@ class _HomeActionWidgetState extends State<HomeActionWidget>
       height: 110,
       decoration: BoxDecoration(
         color: primary,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
               offset: Offset(2, 2),

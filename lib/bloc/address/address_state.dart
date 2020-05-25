@@ -7,13 +7,6 @@ abstract class AddressState extends Equatable {
   const AddressState();
 }
 
-class Loading extends AddressState {
-  const Loading();
-
-  @override
-  List<Object> get props => [];
-}
-
 class AddressLoaded extends AddressState {
   final Address address;
 
@@ -23,32 +16,20 @@ class AddressLoaded extends AddressState {
   List<Object> get props => [address];
 }
 
-class NoAddressLoaded extends AddressState {
-  const NoAddressLoaded();
+class LoadingAddressInformation extends AddressState {
+  const LoadingAddressInformation();
 
   @override
-  List<Object> get props => [
-
-
-  ];
+  List<Object> get props => [];
 }
 
-class ErrorLoading extends AddressState {
+class ErrorLoadingAddressInformation extends AddressState {
   final String message;
 
-  const ErrorLoading(this.message);
+  const ErrorLoadingAddressInformation(this.message);
 
   @override
   List<Object> get props => [message];
-}
-
-class DefaultAddressLoaded extends AddressState {
-  final Address address;
-
-  const DefaultAddressLoaded(this.address);
-
-  @override
-  List<Object> get props => [address];
 }
 
 class ListAddressLoaded extends AddressState {
@@ -58,6 +39,54 @@ class ListAddressLoaded extends AddressState {
 
   @override
   List<Object> get props => [list];
+}
+
+class LoadingListAddress extends AddressState {
+  const LoadingListAddress();
+
+  @override
+  List<Object> get props => [];
+}
+
+class ErrorLoadingListAddress extends AddressState {
+  final String message;
+
+  const ErrorLoadingListAddress(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class NoAddressLoaded extends AddressState {
+  const NoAddressLoaded();
+
+  @override
+  List<Object> get props => [];
+}
+
+class PriceCalculateSuccess extends AddressState {
+  final double price;
+
+  const PriceCalculateSuccess(this.price);
+
+  @override
+  List<Object> get props => [price];
+}
+
+class PriceCalculateLoading extends AddressState {
+  const PriceCalculateLoading();
+
+  @override
+  List<Object> get props => [];
+}
+
+class PriceCalculateError extends AddressState {
+  final String message;
+
+  const PriceCalculateError(this.message);
+
+  @override
+  List<Object> get props => [message];
 }
 
 class AddressUpdated extends AddressState {

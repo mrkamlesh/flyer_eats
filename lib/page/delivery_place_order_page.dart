@@ -11,9 +11,11 @@ import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/pickup.dart';
+import 'package:flyereats/page/address_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/delivery_information_widget.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
+import 'package:shimmer/shimmer.dart';
 
 class DeliveryPlaceOderPage extends StatefulWidget {
   final PickUp pickUp;
@@ -26,21 +28,11 @@ class DeliveryPlaceOderPage extends StatefulWidget {
 
 class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<Offset> _navBarAnimation;
   AddressBloc _bloc;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
-    _navBarAnimation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
-        .animate(
-            CurvedAnimation(parent: _animationController, curve: Curves.ease));
 
     widget.pickUp.items.removeWhere((item) {
       return item == "" || item == null;
@@ -57,308 +49,418 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      bottomNavigationBar: AnimatedBuilder(
-          animation: _navBarAnimation,
-          builder: (context, child) {
-            return Transform.translate(
-              offset: _navBarAnimation.value,
-              child: child,
-            );
-          },
-          child: PlaceOrderBar(
-            placeOrder: () {},
-            amount: 50,
-          )),
-      body: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 0,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                width: AppUtil.getScreenWidth(context),
-                height: AppUtil.getBannerHeight(context),
-                child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: Image.asset(
-                      "assets/pickup.png",
+    return BlocProvider<AddressBloc>(
+      create: (context) {
+        return _bloc;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            Positioned(
+              top: 0,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: AppUtil.getScreenWidth(context),
+                  height: AppUtil.getBannerHeight(context),
+                  child: FittedBox(
                       fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                    )),
+                      child: Image.asset(
+                        "assets/pickup.png",
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                      )),
+                ),
               ),
             ),
-          ),
-          Container(
-            decoration: BoxDecoration(color: Colors.black54),
-            width: AppUtil.getScreenWidth(context),
-            height: AppUtil.getBannerHeight(context),
-          ),
-          Column(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topCenter,
-                child: CustomAppBar(
-                  leading: "assets/back.svg",
-                  drawer: "assets/drawer.svg",
-                  title: "Pickup & Drop",
-                  onTapLeading: () {
-                    Navigator.pop(context);
-                  },
+            Container(
+              decoration: BoxDecoration(color: Colors.black54),
+              width: AppUtil.getScreenWidth(context),
+              height: AppUtil.getBannerHeight(context),
+            ),
+            Column(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: CustomAppBar(
+                    leading: "assets/back.svg",
+                    drawer: "assets/drawer.svg",
+                    title: "Pickup & Drop",
+                    onTapLeading: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-          DraggableScrollableSheet(
-            initialChildSize: (AppUtil.getScreenHeight(context) -
-                    AppUtil.getToolbarHeight(context)) /
-                AppUtil.getScreenHeight(context),
-            minChildSize: (AppUtil.getScreenHeight(context) -
-                    AppUtil.getToolbarHeight(context)) /
-                AppUtil.getScreenHeight(context),
-            maxChildSize: 1.0,
-            builder: (context, controller) {
-              return Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(32),
-                        topLeft: Radius.circular(32))),
-                padding: EdgeInsets.only(
-                    left: horizontalPaddingDraggable,
-                    right: horizontalPaddingDraggable,
-                    top: 20),
-                child: CustomScrollView(
-                  controller: controller,
-                  slivers: <Widget>[
-                    SliverToBoxAdapter(
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 25),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              height: 20,
-                              width: 20,
-                              margin: EdgeInsets.only(right: 20),
-                              child: SvgPicture.asset(
-                                "assets/locationpick.svg",
+              ],
+            ),
+            DraggableScrollableSheet(
+              initialChildSize: (AppUtil.getScreenHeight(context) -
+                      AppUtil.getToolbarHeight(context)) /
+                  AppUtil.getScreenHeight(context),
+              minChildSize: (AppUtil.getScreenHeight(context) -
+                      AppUtil.getToolbarHeight(context)) /
+                  AppUtil.getScreenHeight(context),
+              maxChildSize: 1.0,
+              builder: (context, controller) {
+                return Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(32),
+                          topLeft: Radius.circular(32))),
+                  padding: EdgeInsets.only(
+                      left: horizontalPaddingDraggable,
+                      right: horizontalPaddingDraggable,
+                      top: 20),
+                  child: CustomScrollView(
+                    controller: controller,
+                    slivers: <Widget>[
+                      SliverToBoxAdapter(
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 25),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
                                 height: 20,
                                 width: 20,
+                                margin: EdgeInsets.only(right: 20),
+                                child: SvgPicture.asset(
+                                  "assets/locationpick.svg",
+                                  height: 20,
+                                  width: 20,
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                      margin: EdgeInsets.only(bottom: 10),
-                                      child: Text(
-                                        widget.pickUp.shop.name,
-                                        style: TextStyle(fontSize: 16),
-                                      )),
-                                  Text(
-                                    widget.pickUp.shop.address,
-                                    style: TextStyle(fontSize: 12),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                        margin: EdgeInsets.only(bottom: 10),
+                                        child: Text(
+                                          widget.pickUp.shop.name,
+                                          style: TextStyle(fontSize: 16),
+                                        )),
+                                    Text(
+                                      widget.pickUp.shop.address,
+                                      style: TextStyle(fontSize: 12),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              height: 20,
-                              width: 20,
-                              margin: EdgeInsets.only(right: 20),
-                              child: SvgPicture.asset(
-                                "assets/additems.svg",
+                      SliverToBoxAdapter(
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
                                 height: 20,
                                 width: 20,
+                                margin: EdgeInsets.only(right: 20),
+                                child: SvgPicture.asset(
+                                  "assets/additems.svg",
+                                  height: 20,
+                                  width: 20,
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                      margin: EdgeInsets.only(bottom: 15),
-                                      child: Text(
-                                        "ADD ITEMS",
-                                        style: TextStyle(fontSize: 16),
-                                      )),
-                                  Column(
-                                    children: List.generate(
-                                        widget.pickUp.items.length, (index) {
-                                      return Container(
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
                                         margin: EdgeInsets.only(bottom: 15),
                                         child: Text(
-                                          widget.pickUp.items[index],
+                                          "ADD ITEMS",
                                           style: TextStyle(fontSize: 16),
+                                        )),
+                                    Column(
+                                      children: List.generate(
+                                          widget.pickUp.items.length, (index) {
+                                        return Container(
+                                          margin: EdgeInsets.only(bottom: 15),
+                                          child: Text(
+                                            widget.pickUp.items[index],
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        );
+                                      }),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 15),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                height: 20,
+                                width: 20,
+                                margin: EdgeInsets.only(right: 20),
+                                child: SvgPicture.asset(
+                                  "assets/attachment.svg",
+                                  height: 20,
+                                  width: 20,
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 15),
+                                    child: Text(
+                                      "ATTACHMENTS",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                  widget.pickUp.attachment.length != 0
+                                      ? Column(
+                                          children: List.generate(
+                                              widget.pickUp.attachment.length,
+                                              (index) {
+                                            return Container(
+                                              width: AppUtil.getScreenWidth(
+                                                      context) -
+                                                  80,
+                                              height: 60,
+                                              child: ListView(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                children: <Widget>[
+                                                  ImageThumbnail(
+                                                      0,
+                                                      widget.pickUp
+                                                          .attachment[index])
+                                                ],
+                                              ),
+                                            );
+                                          }),
+                                        )
+                                      : Container(
+                                          child: Text(
+                                            "No Attachment",
+                                            style: TextStyle(fontSize: 12),
+                                          ),
                                         ),
-                                      );
-                                    }),
-                                  )
                                 ],
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 15),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              height: 20,
-                              width: 20,
-                              margin: EdgeInsets.only(right: 20),
-                              child: SvgPicture.asset(
-                                "assets/attachment.svg",
+                      SliverToBoxAdapter(
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 15),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
                                 height: 20,
                                 width: 20,
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 15),
-                                  child: Text(
-                                    "ATTACHMENTS",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
+                                margin: EdgeInsets.only(right: 20),
+                                child: SvgPicture.asset(
+                                  "assets/distance.svg",
+                                  height: 20,
+                                  width: 20,
                                 ),
-                                widget.pickUp.attachment.length != 0
-                                    ? Column(
-                                        children: List.generate(
-                                            widget.pickUp.attachment.length,
-                                            (index) {
-                                          return Container(
-                                            width: AppUtil.getScreenWidth(
-                                                    context) -
-                                                80,
-                                            height: 60,
-                                            child: ListView(
-                                              scrollDirection: Axis.horizontal,
-                                              children: <Widget>[
-                                                ImageThumbnail(
-                                                    0,
-                                                    widget.pickUp
-                                                        .attachment[index])
-                                              ],
-                                            ),
-                                          );
-                                        }),
-                                      )
-                                    : Container(
-                                        child: Text(
-                                          "No Attachment",
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                      ),
-                              ],
-                            )
-                          ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 15),
+                                    child: Text(
+                                      "DISTANCE",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: AppUtil.getScreenWidth(context) - 80,
+                                    child: Text(
+                                      "7 Kilometers",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  //PickupInformationWidget()
+                                ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 15),
-                        child: Row(
+                      SliverToBoxAdapter(
+                        child: PickupInformationWidget(),
+                      )
+                    ],
+                  ),
+                );
+              },
+            ),
+            Positioned(
+              bottom: 0,
+              child: Column(
+                children: <Widget>[
+                  BlocBuilder<AddressBloc, AddressState>(
+                      condition: (oldState, state) {
+                    if (state is AddressLoaded ||
+                        state is LoadingAddressInformation ||
+                        state is ErrorLoadingAddressInformation ||
+                        state is NoAddressLoaded) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  }, builder: (context, state) {
+                    if (state is LoadingAddressInformation) {
+                      return Container(
+                        height: 90,
+                        width: AppUtil.getScreenWidth(context),
+                        padding: EdgeInsets.symmetric(
+                            vertical: horizontalPaddingDraggable - 5,
+                            horizontal: horizontalPaddingDraggable),
+                        decoration:
+                            BoxDecoration(color: Colors.white, boxShadow: [
+                          BoxShadow(
+                              color: Colors.orange[100],
+                              blurRadius: 5,
+                              spreadRadius: 0,
+                              offset: Offset(0, -1)),
+                        ]),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Container(
-                              height: 20,
-                              width: 20,
-                              margin: EdgeInsets.only(right: 20),
-                              child: SvgPicture.asset(
-                                "assets/distance.svg",
+                            Shimmer.fromColors(
+                              child: Container(
+                                width: 100,
                                 height: 20,
-                                width: 20,
+                                color: Colors.black,
                               ),
+                              baseColor: Colors.grey[300],
+                              highlightColor: Colors.grey[100],
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 15),
-                                  child: Text(
-                                    "DISTANCE",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                ),
-                                Container(
-                                  width: AppUtil.getScreenWidth(context) - 80,
-                                  child: Text(
-                                    "7 Kilometers",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                //PickupInformationWidget()
-                              ],
-                            )
+                            Shimmer.fromColors(
+                              child: Container(
+                                width: AppUtil.getScreenWidth(context) - 100,
+                                height: 20,
+                                color: Colors.black,
+                              ),
+                              baseColor: Colors.grey[300],
+                              highlightColor: Colors.grey[100],
+                            ),
                           ],
                         ),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: PickupInformationWidget(),
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-          Positioned(
-            bottom: 0,
-            child: BlocProvider<AddressBloc>(
-                create: (context) {
-                  return _bloc;
-                },
-                child: Column(
-                  children: <Widget>[
-                    BlocBuilder<AddressBloc, AddressState>(
-                      builder: (context, state) {
-                        if (state is Loading) {
-                          return Container();
-                        } else if (state is AddressLoaded) {
-                          return DeliveryInformationWidget(
-                            address: state.address,
-                            distance: "30 Min",
-                            allAddresses: ExampleModel.getAddresses(),
-                          );
-                        }
-                        return Text("Fail");
-                      },
-                    ),
-                    OrderBottomNavBar(
-                      isValid: true,
-                      description: "Delivery Amount",
-                      amount: 110,
+                      );
+                    } else if (state is NoAddressLoaded) {
+                      return Container(
+                        height: 90,
+                        width: AppUtil.getScreenWidth(context),
+                        padding: EdgeInsets.symmetric(
+                            vertical: horizontalPaddingDraggable - 5,
+                            horizontal: horizontalPaddingDraggable),
+                        decoration:
+                            BoxDecoration(color: Colors.white, boxShadow: [
+                          BoxShadow(
+                              color: Colors.orange[100],
+                              blurRadius: 5,
+                              spreadRadius: 0,
+                              offset: Offset(0, -1)),
+                        ]),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(right: 20),
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 20,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                                Text(
+                                  "ADD NEW ADDRESS",
+                                  style: TextStyle(
+                                      color: Colors.orange,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    } else if (state is AddressLoaded) {
+                      return DeliveryInformationWidget(
+                        address: state.address,
+                        distance: "30 Min",
+                        allAddresses: ExampleModel.getAddresses(),
+                        bloc: _bloc,
+                      );
+                    } else {
+                      return Text("Fail");
+                    }
+                  }),
+                  BlocBuilder<AddressBloc, AddressState>(
+                      condition: (oldState, state) {
+                    if (state is AddressLoaded ||
+                        state is LoadingAddressInformation ||
+                        state is ErrorLoadingAddressInformation ||
+                        state is NoAddressLoaded ||
+                        state is PriceCalculateLoading ||
+                        state is PriceCalculateError ||
+                        state is PriceCalculateSuccess) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  }, builder: (context, state) {
+                    bool isValid = false;
+                    String description = "Calculating...";
+                    double amount = 0.0;
+                    if (state is LoadingAddressInformation ||
+                        state is ErrorLoadingAddressInformation ||
+                        state is NoAddressLoaded ||
+                        state is PriceCalculateLoading ||
+                        state is PriceCalculateError) {
+                      isValid = false;
+                    } else if (state is AddressLoaded) {
+                      _bloc.add(CalculatePrice(state.address, state.address));
+                    } else if (state is PriceCalculateSuccess) {
+                      isValid = true;
+                      description = "Delivery Amount";
+                      amount = state.price;
+                    }
+                    return OrderBottomNavBar(
+                      isValid: isValid,
+                      description: description,
+                      amount: amount.floor(),
                       showRupee: true,
                       buttonText: "PLACE ORDER",
-                      onButtonTap: () {},
-                    ),
-                  ],
-                )),
-          )
-        ],
+                      onButtonTap: () {
+                      },
+                    );
+                  }),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -381,80 +483,6 @@ class PickupInformationWidget extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class PlaceOrderBar extends StatelessWidget {
-  final int amount;
-  final Function placeOrder;
-
-  const PlaceOrderBar({Key key, this.amount, this.placeOrder})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: kBottomNavigationBarHeight,
-      width: AppUtil.getScreenWidth(context),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Colors.yellow[600]))),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Delivery Amount",
-                  style: TextStyle(fontSize: 12),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SvgPicture.asset(
-                      "assets/rupee.svg",
-                      width: 13,
-                      height: 13,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "$amount",
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-          Expanded(
-              child: GestureDetector(
-            onTap: placeOrder,
-            child: SizedBox.expand(
-              child: Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.yellow[600],
-                    borderRadius:
-                        BorderRadius.only(topLeft: Radius.circular(18))),
-                child: Text(
-                  "PLACE ORDER",
-                  style: TextStyle(
-                    fontSize: 19,
-                  ),
-                ),
-              ),
-            ),
-          ))
-        ],
-      ),
     );
   }
 }

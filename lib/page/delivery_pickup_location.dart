@@ -50,15 +50,84 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            Positioned(
-              top: 0,
-              child: Container(
-                height: (AppUtil.getScreenHeight(context) -
-                        AppUtil.getToolbarHeight(context)) /
-                    2,
-                width: AppUtil.getScreenWidth(context),
-                color: Colors.black12,
-              ),
+            Column(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    color: Colors.black12,
+                    child: Text("This is a map"),
+                  ),
+                ),
+                Container(
+                  width: AppUtil.getScreenWidth(context),
+                  decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 5, spreadRadius: 0)
+                  ]),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPaddingDraggable,
+                      vertical: distanceBetweenSection),
+                  child: BlocBuilder<ChooseShopBloc, Shop>(
+                    builder: (context, state) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          CustomTextField(
+                            controller: nameController,
+                            hint: "ENTER SHOP",
+                            onChange: (text) {
+                              _bloc.add(EntryShopName(text));
+                            },
+                          ),
+                          CustomTextField(
+                            controller: addressController,
+                            hint: "Enter Shop Number, Building Name",
+                            onChange: (text) {
+                              _bloc.add(EntryAddress(text));
+                            },
+                          ),
+                          CustomTextField(lines: 3, hint: "Address"),
+                          BlocBuilder<ChooseShopBloc, Shop>(
+                            builder: (context, state) {
+                              return GestureDetector(
+                                onTap: state.isValid()
+                                    ? () {
+                                        Navigator.pop(context, state);
+                                      }
+                                    : () {},
+                                child: Stack(
+                                  children: <Widget>[
+                                    Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFFFB531),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "Done",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                    ),
+                                    AnimatedOpacity(
+                                      opacity: state.isValid() ? 0.0 : 0.5,
+                                      child: Container(
+                                        height: 50,
+                                        color: Colors.white,
+                                      ),
+                                      duration: Duration(milliseconds: 300),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                )
+              ],
             ),
             Positioned(
               top: AppUtil.getToolbarHeight(context) / 2,
@@ -79,77 +148,6 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                     )),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              child: Container(
-                width: AppUtil.getScreenWidth(context),
-                decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                  BoxShadow(color: Colors.grey, blurRadius: 5, spreadRadius: 0)
-                ]),
-                padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPaddingDraggable,
-                    vertical: distanceBetweenSection),
-                child: BlocBuilder<ChooseShopBloc, Shop>(
-                  builder: (context, state) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        CustomTextField(
-                          controller: nameController,
-                          hint: "ENTER SHOP",
-                          onChange: (text) {
-                            _bloc.add(EntryShopName(text));
-                          },
-                        ),
-                        CustomTextField(
-                          controller: addressController,
-                          hint: "Enter Shop Number, Building Name",
-                          onChange: (text) {
-                            _bloc.add(EntryAddress(text));
-                          },
-                        ),
-                        CustomTextField(lines: 3, hint: "Address"),
-                        BlocBuilder<ChooseShopBloc, Shop>(
-                          builder: (context, state) {
-                            return GestureDetector(
-                              onTap: state.isValid()
-                                  ? () {
-                                      Navigator.pop(context, state);
-                                    }
-                                  : () {},
-                              child: Stack(
-                                children: <Widget>[
-                                  Container(
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFFFB531),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "Done",
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                  ),
-                                  AnimatedOpacity(
-                                    opacity: state.isValid() ? 0.0 : 0.5,
-                                    child: Container(
-                                      height: 50,
-                                      color: Colors.white,
-                                    ),
-                                    duration: Duration(milliseconds: 300),
-                                  )
-                                ],
-                              ),
-                            );
-                          },
-                        )
-                      ],
-                    );
-                  },
-                ),
-              ),
-            )
           ],
         ),
       ),

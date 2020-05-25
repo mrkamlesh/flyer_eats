@@ -39,11 +39,11 @@ class CustomAppBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           leading != null
-              ? Container(
-                  height: 40,
-                  width: 40,
-                  child: GestureDetector(
-                    onTap: onTapLeading,
+              ? GestureDetector(
+                  onTap: onTapLeading,
+                  child: Container(
+                    height: 40,
+                    width: 40,
                     child: SvgPicture.asset(
                       leading,
                       color: Colors.white,
@@ -74,11 +74,11 @@ class CustomAppBar extends StatelessWidget {
             ),
           ),
           drawer != null
-              ? Container(
-                  height: 40,
-                  width: 40,
-                  child: GestureDetector(
-                    onTap: onTapDrawer,
+              ? GestureDetector(
+                  onTap: onTapDrawer,
+                  child: Container(
+                    height: 40,
+                    width: 40,
                     child: SvgPicture.asset(
                       drawer,
                       color: Colors.white,

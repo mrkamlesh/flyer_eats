@@ -153,13 +153,13 @@ class ExampleModel {
     _listFoods.add(Food(
         "Idly",
         "Loremp ipsum dos amet color Loremp ipsum dos amet color Loremp ipsum dos amet color",
-        10,
+        31032,
         "https://www.kannammacooks.com/wp-content/uploads/soft-idli-batter-recipe-using-idli-rava-mixie-blender-method.jpg",
         true));
     _listFoods.add(Food(
         "Masala Dosa",
         "Loremp ",
-        80,
+        3152,
         "https://cdn.theculturetrip.com/wp-content/uploads/2017/08/13040792475_51fdc1f447_k.jpg",
         false));
     _listFoods.add(Food(

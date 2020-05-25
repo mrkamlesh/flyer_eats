@@ -71,7 +71,7 @@ class _FoodListWidgetState extends State<FoodListWidget>
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.black,
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           margin: EdgeInsets.only(
                               top: 2, bottom: 18, left: 5, right: 5),
@@ -111,7 +111,7 @@ class _FoodListWidgetState extends State<FoodListWidget>
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.black,
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             margin: EdgeInsets.only(
                                 top: 2, bottom: 18, left: 5, right: 5),
@@ -143,7 +143,7 @@ class _FoodListWidgetState extends State<FoodListWidget>
                 crossAxisCount: 2,
                 mainAxisSpacing: 20,
                 crossAxisSpacing: 20,
-                childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 250));
+                childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 245));
 
     return SliverPadding(padding: widget.padding, sliver: list);
   }
@@ -222,8 +222,8 @@ class FoodList extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: Colors.yellow[600],
                       borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(18),
-                          bottomRight: Radius.circular(18))),
+                          topLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10))),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[Icon(Icons.add), Text("Add")],
@@ -239,8 +239,8 @@ class FoodList extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Colors.yellow[600],
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(18),
-                      bottomRight: Radius.circular(18))),
+                      topLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[Icon(Icons.add), Text("Add")],
@@ -254,7 +254,7 @@ class FoodList extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.yellow[600],
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(18), bottomRight: Radius.circular(18))),
+              topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -265,7 +265,7 @@ class FoodList extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.yellow[700],
                     borderRadius:
-                        BorderRadius.only(topLeft: Radius.circular(18))),
+                        BorderRadius.only(topLeft: Radius.circular(10))),
                 child: Icon(Icons.remove)),
           )),
           Expanded(
@@ -278,7 +278,7 @@ class FoodList extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.yellow[700],
                     borderRadius:
-                        BorderRadius.only(bottomRight: Radius.circular(18))),
+                        BorderRadius.only(bottomRight: Radius.circular(10))),
                 child: Icon(Icons.add)),
           ))
         ],
@@ -290,13 +290,18 @@ class FoodList extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
-              BoxShadow(
+              /*BoxShadow(
                   color: Colors.black26,
                   blurRadius: 6,
                   spreadRadius: 0,
-                  offset: Offset(2, 3))
+                  offset: Offset(2, 3))*/
+              BoxShadow(
+                color: shadow,
+                blurRadius: 7,
+                spreadRadius: -3,
+              )
             ],
           ),
           child: Stack(
@@ -306,7 +311,9 @@ class FoodList extends StatelessWidget {
                   Container(
                     //margin: EdgeInsets.only(left: 10, top: 10, right: 10),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10)),
                       child: CachedNetworkImage(
                         imageUrl: food.image,
                         width: (AppUtil.getScreenWidth(context) - 30) / 2,
@@ -334,12 +341,30 @@ class FoodList extends StatelessWidget {
                         Container(
                           margin: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 10),
-                          child: Text(
-                            food.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                          child: Row(
+                            children: <Widget>[
+                              food.isAvailable
+                                  ? Container(
+                                      height: 12,
+                                      width: 12,
+                                      margin: EdgeInsets.only(right: 10),
+                                      child: SvgPicture.asset(
+                                        "assets/box_circle.svg",
+                                        width: 12,
+                                        height: 12,
+                                      ),
+                                    )
+                                  : Container(),
+                              Expanded(
+                                child: Text(
+                                  food.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         Container(
@@ -361,23 +386,24 @@ class FoodList extends StatelessWidget {
               Positioned(
                 bottom: 0,
                 child: Container(
-                  height: 50,
+                  height: 40,
                   width: (AppUtil.getScreenWidth(context) - 60) / 2,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Expanded(
-                        flex: 4,
+                        flex: 5,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 10),
                           child: Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: Alignment.center,
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 SvgPicture.asset(
                                   "assets/rupee.svg",
-                                  height: 11,
-                                  width: 11,
+                                  height: 8,
+                                  width: 8,
                                   color: Colors.black,
                                 ),
                                 SizedBox(
@@ -387,8 +413,9 @@ class FoodList extends StatelessWidget {
                                   "${food.price}",
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -397,8 +424,8 @@ class FoodList extends StatelessWidget {
                         ),
                       ),
                       quantity == 0
-                          ? Expanded(flex: 6, child: addButton)
-                          : Expanded(flex: 6, child: changeQuantityButton),
+                          ? Expanded(flex: 5, child: addButton)
+                          : Expanded(flex: 5, child: changeQuantityButton),
                     ],
                   ),
                 ),
@@ -413,13 +440,13 @@ class FoodList extends StatelessWidget {
           margin: EdgeInsets.only(top: 2, bottom: 18, left: 5, right: 5),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                  color: shadow,
-                  blurRadius: 6,
-                  spreadRadius: 0,
-                  offset: Offset(2, 3))
+                color: shadow,
+                blurRadius: 7,
+                spreadRadius: -3,
+              )
             ],
           ),
           child: Container(
@@ -429,7 +456,7 @@ class FoodList extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.all(10),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                     child: CachedNetworkImage(
                       imageUrl: food.image,
                       height: 80,
@@ -498,31 +525,40 @@ class FoodList extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: <Widget>[
-                                    SvgPicture.asset(
-                                      "assets/rupee.svg",
-                                      height: 11,
-                                      width: 11,
-                                      color: Colors.black,
-                                    ),
-                                    SizedBox(
-                                      width: 3,
-                                    ),
-                                    Text(
-                                      "${food.price}",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
+                              Expanded(
+                                flex: 4,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: <Widget>[
+                                      SvgPicture.asset(
+                                        "assets/rupee.svg",
+                                        height: 11,
+                                        width: 11,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Text(
+                                        "${food.price}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              quantity == 0 ? addButton : changeQuantityButton,
+                              SizedBox(
+                                width: 5,
+                              ),
+                              quantity == 0
+                                  ? Expanded(flex: 6, child: addButton)
+                                  : Expanded(
+                                      flex: 6, child: changeQuantityButton),
                             ],
                           ),
                         ),

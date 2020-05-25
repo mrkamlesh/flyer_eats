@@ -508,7 +508,7 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                 SizedBox(
                   width: 10,
                 ),
-                Expanded(
+                /*Expanded(
                   child: GestureDetector(
                     onTap: () {},
                     child: Row(
@@ -527,6 +527,14 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                         )
                       ],
                     ),
+                  ),
+                ),*/
+                Expanded(child: Container()),
+                Container(
+                  margin: EdgeInsets.only(right: 20),
+                  child: SvgPicture.asset(
+                    "assets/search.svg",
+                    color: Colors.grey,
                   ),
                 ),
                 Container(

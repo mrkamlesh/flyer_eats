@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flyereats/classes/app_util.dart';
@@ -12,6 +13,7 @@ import 'package:flyereats/widget/promo_list.dart';
 import 'package:flyereats/widget/restaurant_list.dart';
 import 'package:flyereats/widget/shop_category_list.dart';
 import 'package:flyereats/classes/example_model.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -20,7 +22,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
-  bool isScrollingDown = false;
+  bool _isScrollingDown = false;
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
 
@@ -119,17 +121,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               controller.addListener(() {
                 if (controller.position.userScrollDirection ==
                     ScrollDirection.reverse) {
-                  if (!isScrollingDown) {
-                    isScrollingDown = true;
+                  if (!_isScrollingDown) {
+                    _isScrollingDown = true;
                     setState(() {
                       _animationController.forward().orCancel;
                     });
                   }
                 }
-                if (controller.position.userScrollDirection ==
-                    ScrollDirection.forward) {
-                  if (isScrollingDown) {
-                    isScrollingDown = false;
+                if ((controller.position.userScrollDirection ==
+                        ScrollDirection.forward) |
+                    (controller.offset >=
+                            controller.position.maxScrollExtent -
+                                kBottomNavigationBarHeight &&
+                        !controller.position.outOfRange)) {
+                  if (_isScrollingDown) {
+                    _isScrollingDown = false;
                     setState(() {
                       _animationController.reverse().orCancel;
                     });
@@ -174,24 +180,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               GestureDetector(
-                                onTap: (){
-                                  /*Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                    return BlocProvider.value(
-                                        value: _bloc,
-                                        child: RestaurantListPage(
-                                          image: "assets/allrestaurant.png",
-                                          isExternalImage: false,
-                                          title: "All Restaurants",
-                                        ));
-                                  }));*/
-                                },
+                                onTap: () {},
                                 child: Container(
                                   width: 70,
                                   child: Text(
                                     "See All",
                                     textAlign: TextAlign.end,
-                                    style:
-                                        TextStyle(color: primary3, fontSize: 14),
+                                    style: TextStyle(
+                                        color: primary3, fontSize: 14),
                                   ),
                                 ),
                               )
@@ -203,7 +199,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               bottom: distanceBetweenSection - 10),
                           height: 160,
                           child: RestaurantListWidget(
-                            type: RestaurantViewType.home,
+                            type: RestaurantViewType.topRestaurant,
                             restaurants: ExampleModel.getRestaurants(),
                           ),
                         ),
@@ -237,50 +233,63 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: horizontalPaddingDraggable),
-                          margin:
-                              EdgeInsets.only(bottom: distanceSectionContent),
-                          child: Text(
-                            "Reorder from Your Favourite",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                          margin: EdgeInsets.only(
+                              bottom: distanceSectionContent - 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Order Again",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                  width: 70,
+                                  child: Text(
+                                    "See All",
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                        color: primary3, fontSize: 14),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                         Container(
-                          margin:
-                              EdgeInsets.only(bottom: distanceBetweenSection),
-                          height: 200,
+                          margin: EdgeInsets.only(bottom: 20),
+                          height: 135,
                           child: RestaurantListWidget(
-                            type: RestaurantViewType.home,
+                            type: RestaurantViewType.orderAgainRestaurant,
                             restaurants: ExampleModel.getRestaurants(),
                             isExpand: true,
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          margin:
-                              EdgeInsets.only(bottom: distanceSectionContent),
-                          child: Text(
-                            "It is Dinner Time",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Container(
                           margin:
                               EdgeInsets.only(bottom: distanceBetweenSection),
-                          decoration:
-                              BoxDecoration(color: Colors.white, boxShadow: [
-                            BoxShadow(
-                                offset: Offset(2, 2),
-                                color: Colors.black26,
-                                spreadRadius: 0,
-                                blurRadius: 5)
-                          ]),
-                          height: 230,
-                          child: RestaurantListWidget(
-                            type: RestaurantViewType.home,
-                            restaurants: ExampleModel.getRestaurants(),
-                            isExpand: true,
+                          height: 130,
+                          width: AppUtil.getScreenWidth(context),
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                "https://cdn6.f-cdn.com/contestentries/1146228/26247298/59d210472a379_thumb900.jpg",
+                            height: 130,
+                            width: AppUtil.getScreenWidth(context),
+                            fit: BoxFit.cover,
+                            alignment: Alignment.center,
+                            placeholder: (context, url) {
+                              return Shimmer.fromColors(
+                                  child: Container(
+                                    height: 130,
+                                    width: AppUtil.getScreenWidth(context),
+                                    color: Colors.black,
+                                  ),
+                                  baseColor: Colors.grey[300],
+                                  highlightColor: Colors.grey[100]);
+                            },
                           ),
                         ),
                         Container(
@@ -297,15 +306,29 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           margin:
                               EdgeInsets.only(bottom: distanceSectionContent),
                           child: Text(
-                            "Nearby Restaurant",
+                            "It's Dinner Time",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Container(
-                          height: 120,
+                          height: 210,
+                          padding: EdgeInsets.only(
+                              top: distanceSectionContent,
+                              bottom: distanceSectionContent),
+                          margin: EdgeInsets.only(
+                              bottom: distanceBetweenSection + distanceSectionContent),
+                          decoration:
+                              BoxDecoration(color: Colors.white, boxShadow: [
+                            BoxShadow(
+                                offset: Offset(2, 2),
+                                color: Colors.black26,
+                                spreadRadius: 0,
+                                blurRadius: 5)
+                          ]),
+                          alignment: Alignment.center,
                           child: RestaurantListWidget(
-                            type: RestaurantViewType.home,
+                            type: RestaurantViewType.dinnerTimeRestaurant,
                             restaurants: ExampleModel.getRestaurants(),
                           ),
                         ),

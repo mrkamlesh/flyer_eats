@@ -35,7 +35,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
   Animation<Offset> _navBarAnimation;
   PageController _rankPageController;
   Timer _timer;
-  DetailPageBloc _bloc;
   FoodCart _foodCart = FoodCart(Map<int, FoodCartItem>());
 
   bool _isListMode = true;
@@ -61,8 +60,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
           duration: Duration(milliseconds: 700), curve: Curves.ease);
     });
 
-    _bloc = BlocProvider.of<DetailPageBloc>(context);
-    _bloc.add(PageDetailRestaurantOpen());
+    BlocProvider.of<DetailPageBloc>(context).add(PageDetailRestaurantOpen());
   }
 
   @override
@@ -105,12 +103,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                   onButtonTap: () async {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return BlocProvider.value(
-                        value: _bloc,
-                        child: RestaurantPlaceOrderPage(
-                          foodCart: _foodCart,
-                          restaurant: widget.restaurant,
-                        ),
+                      return RestaurantPlaceOrderPage(
+                        foodCart: _foodCart,
+                        restaurant: widget.restaurant,
                       );
                     }));
                   },

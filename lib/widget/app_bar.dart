@@ -42,7 +42,7 @@ class CustomAppBar extends StatelessWidget {
               ? GestureDetector(
                   onTap: onTapLeading,
                   child: Container(
-                    height: 40,
+                    height: kToolbarHeight,
                     width: 40,
                     child: SvgPicture.asset(
                       leading,
@@ -62,14 +62,18 @@ class CustomAppBar extends StatelessWidget {
           Expanded(
             child: GestureDetector(
               onTap: onTapTitle,
-              child: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
+              child: Container(
+                height: kToolbarHeight,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
               ),
             ),
           ),
@@ -77,7 +81,7 @@ class CustomAppBar extends StatelessWidget {
               ? GestureDetector(
                   onTap: onTapDrawer,
                   child: Container(
-                    height: 40,
+                    height: kToolbarHeight,
                     width: 40,
                     child: SvgPicture.asset(
                       drawer,

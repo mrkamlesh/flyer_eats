@@ -70,67 +70,9 @@ class DeliveryInformationWidget extends StatelessWidget {
                                 List<Address> list = state.list;
                                 List<Widget> address = [];
                                 for (int i = 0; i < list.length; i++) {
-                                  address.add(Container(
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    child: InkWell(
-                                      onTap: () {
-                                        bloc.add(OpenAddress(list[i].id));
-                                        Navigator.pop(context);
-                                      },
-                                      child: Column(
-                                        children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 10),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: <Widget>[
-                                                Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 16),
-                                                  child: Icon(
-                                                    Icons.home,
-                                                    size: 25,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: <Widget>[
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 10),
-                                                        child: Text(
-                                                          list[i].title,
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        list[i].address,
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black45),
-                                                      )
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          Divider(
-                                            height: 1,
-                                            color: Colors.black12,
-                                          )
-                                        ],
-                                      ),
-                                    ),
+                                  address.add(AddressItemWidget(
+                                    bloc: bloc,
+                                    address: list[i],
                                   ));
                                 }
 
@@ -238,7 +180,10 @@ class DeliveryInformationWidget extends StatelessWidget {
                                   ],
                                 );
                               } else if (state is LoadingListAddress) {
-                                return CircularProgressIndicator();
+                                return SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: CircularProgressIndicator());
                               } else if (state is ErrorLoadingListAddress) {
                                 return Text("Fail load addresses");
                               }
@@ -284,5 +229,67 @@ class DeliveryInformationWidget extends StatelessWidget {
             )
           ],
         ));
+  }
+}
+
+class AddressItemWidget extends StatelessWidget {
+  final Address address;
+  final AddressBloc bloc;
+
+  const AddressItemWidget({Key key, this.address, this.bloc}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 20),
+      child: InkWell(
+        onTap: () {
+          bloc.add(OpenAddress(address.id));
+          Navigator.pop(context);
+        },
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(right: 16),
+                    child: Icon(
+                      Icons.home,
+                      size: 25,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            address.title,
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Text(
+                          address.address,
+                          style: TextStyle(fontSize: 14, color: Colors.black45),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Divider(
+              height: 1,
+              color: Colors.black12,
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

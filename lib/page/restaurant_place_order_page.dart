@@ -339,7 +339,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                 ),
                 BlocBuilder<DetailPageBloc, DetailPageState>(
                   builder: (context, state) {
-                    int amount = 0;
+                    double amount = 0;
                     if (state is CartState) {
                       state.cart.cart.forEach((i, item) {
                         amount = amount + item.food.price * item.quantity;

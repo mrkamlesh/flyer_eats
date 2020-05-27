@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/food_category.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
@@ -27,7 +25,6 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
   int _selectedFoodCategory = -1;
   AnimationController _animationController;
   Animation<double> _scaleAnimation;
-  DetailPageBloc _bloc;
 
   @override
   void initState() {
@@ -40,7 +37,6 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
     _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
 
-    _bloc = BlocProvider.of<DetailPageBloc>(context);
   }
 
   @override
@@ -84,13 +80,10 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
 
   void _navigateToRestaurantList(FoodCategory foodCategory) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return BlocProvider.value(
-        value: _bloc,
-        child: RestaurantListPage(
-          title: foodCategory.name,
-          image: foodCategory.image,
-          isExternalImage: true,
-        ),
+      return RestaurantListPage(
+        title: foodCategory.name,
+        image: foodCategory.image,
+        isExternalImage: true,
       );
     }));
   }

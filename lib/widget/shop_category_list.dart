@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/shop_category.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
@@ -22,7 +20,6 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
   AnimationController _animationController;
   Animation<double> _scaleAnimation;
   int _selectedShop = -1;
-  DetailPageBloc _bloc;
 
   @override
   void initState() {
@@ -35,8 +32,6 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
-
-    _bloc = BlocProvider.of<DetailPageBloc>(context);
   }
 
   @override
@@ -49,30 +44,31 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
   Widget build(BuildContext context) {
     List<Widget> _listShopWidget = [];
     for (int i = 0; i < widget.shopCategories.length; i++) {
-      _listShopWidget.add(Expanded(
-        child: ShopCategoryWidget(
-          widget.shopCategories[i],
-          onTap: () {
-            setState(() {
-              _selectedShop = i;
-              _animationController.forward().orCancel.whenComplete(() {
-                _animationController.reverse().orCancel.whenComplete(() {
-                  switch (i) {
-                    case (0):
-                      _navigateToRestaurantListPage();
-                      break;
-                    default:
-                      break;
-                  }
-                });
+      _listShopWidget.add(ShopCategoryWidget(
+        widget.shopCategories[i],
+        onTap: () {
+          setState(() {
+            _selectedShop = i;
+            _animationController.forward().orCancel.whenComplete(() {
+              _animationController.reverse().orCancel.whenComplete(() {
+                switch (i) {
+                  case (0):
+                    _navigateToRestaurantListPage();
+                    break;
+                  default:
+                    break;
+                }
               });
             });
-          },
-          scale: _scaleAnimation,
-          index: i,
-          selectedIndex: _selectedShop,
-        ),
+          });
+        },
+        scale: _scaleAnimation,
+        index: i,
+        selectedIndex: _selectedShop,
       ));
+      if (i < widget.shopCategories.length - 1) {
+        _listShopWidget.add(Expanded(flex: 1, child: Container()));
+      }
     }
 
     return Row(
@@ -83,13 +79,11 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
 
   void _navigateToRestaurantListPage() {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return BlocProvider.value(
-          value: _bloc,
-          child: RestaurantListPage(
-            image: "assets/allrestaurant.png",
-            isExternalImage: false,
-            title: "All Restaurants",
-          ));
+      return RestaurantListPage(
+        image: "assets/allrestaurant.png",
+        isExternalImage: false,
+        title: "All Restaurants",
+      );
     }));
   }
 }
@@ -120,7 +114,7 @@ class ShopCategoryWidget extends StatelessWidget {
 
     Widget child = GestureDetector(
       onTap: onTap,
-      child: SizedBox(
+      child: Container(
         width: iconSize + 30,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -129,8 +123,6 @@ class ShopCategoryWidget extends StatelessWidget {
               padding: EdgeInsets.all(10),
               margin: EdgeInsets.only(
                 top: 5,
-                left: 5,
-                right: 5,
                 bottom: 10,
               ),
               decoration: BoxDecoration(
@@ -141,11 +133,16 @@ class ShopCategoryWidget extends StatelessWidget {
                         color: Colors.black26, spreadRadius: -3, blurRadius: 8)
                   ]),
               child: SizedBox(
-                child: SvgPicture.asset(
-                  category.icon,
-                  width: iconSize,
-                  height: iconSize,
-                  alignment: Alignment.center,
+                width: iconSize,
+                height: iconSize,
+                child: FittedBox(
+                  fit: BoxFit.fill,
+                  child: SvgPicture.asset(
+                    category.icon,
+                    width: iconSize,
+                    height: iconSize,
+                    alignment: Alignment.center,
+                  ),
                 ),
               ),
             ),

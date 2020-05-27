@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/restaurant.dart';
@@ -45,8 +43,6 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
   Animation<double> _scaleAnimation;
   Animation<double> _fadeAnimation;
 
-  DetailPageBloc _bloc;
-
   @override
   void initState() {
     super.initState();
@@ -60,8 +56,6 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
     _fadeAnimation = Tween<double>(begin: 0.0, end: widget.fade).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
-
-    _bloc = BlocProvider.of<DetailPageBloc>(context);
   }
 
   @override
@@ -233,11 +227,8 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
   void _navigateToRestaurantDetailPage(Restaurant restaurant) {
     Navigator.push(context,
         MaterialPageRoute<RestaurantDetailPage>(builder: (context) {
-      return BlocProvider.value(
-        value: _bloc,
-        child: RestaurantDetailPage(
-          restaurant: restaurant,
-        ),
+      return RestaurantDetailPage(
+        restaurant: restaurant,
       );
     }));
   }
@@ -516,22 +507,27 @@ class RestaurantDetailListWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            restaurant.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
                         Expanded(
                           child: Container(
                             margin: EdgeInsets.only(bottom: 5),
                             child: Column(
+                              mainAxisAlignment:
+                                  restaurant.discountDescription != null
+                                      ? MainAxisAlignment.start
+                                      : MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 5),
+                                  child: Text(
+                                    restaurant.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
                                 Container(
                                   margin: EdgeInsets.only(bottom: 7),
                                   child: Text(
@@ -567,10 +563,10 @@ class RestaurantDetailListWidget extends StatelessWidget {
                             ),
                           ),
                         ),
-                        /*Divider(
+                        Divider(
                           height: 0.1,
                           color: Colors.black26,
-                        ),*/
+                        ),
                         Container(
                           margin: EdgeInsets.only(top: 7),
                           child: Row(

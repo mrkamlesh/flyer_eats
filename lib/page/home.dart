@@ -1,13 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyereats/bloc/location/location_bloc.dart';
+import 'package:flyereats/bloc/location/location_state.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flyereats/page/delivery_process_order_page.dart';
+import 'package:flyereats/page/restaurants_list_page.dart';
+import 'package:flyereats/page/select_location_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/banner_list_widget.dart';
 import 'package:flyereats/widget/custom_bottom_navigation_bar.dart';
+import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/food_category_list.dart';
 import 'package:flyereats/widget/promo_list.dart';
 import 'package:flyereats/widget/restaurant_list.dart';
@@ -21,14 +27,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   int _currentIndex = 0;
   bool _isScrollingDown = false;
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
 
   @override
-  void initState() {
+  initState() {
     super.initState();
+
+    AppUtil.checkLocationServiceAndPermission();
 
     _animationController = AnimationController(
       vsync: this,
@@ -49,8 +59,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       extendBody: true,
       extendBodyBehindAppBar: true,
+      endDrawer: EndDrawer(),
       bottomNavigationBar: AnimatedBuilder(
         animation: _navBarAnimation,
         builder: (context, child) {
@@ -103,12 +115,42 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
           Align(
             alignment: Alignment.topCenter,
-            child: CustomAppBar(
-              leading: "assets/location.svg",
-              drawer: "assets/drawer.svg",
-              title: "No 217, C Block, Vascon Venus",
-              onTapLeading: () {},
-              onTapDrawer: () {},
+            child: BlocBuilder<LocationBloc, LocationState>(
+              condition: (oldState, state) {
+                if (state is LocationSelected) {
+                  return true;
+                } else {
+                  return false;
+                }
+              },
+              builder: (context, state) {
+                String s = "Choose Location Here";
+                if (state is LocationSelected) {
+                  s = state.location.address;
+                }
+
+                return CustomAppBar(
+                  leading: "assets/location.svg",
+                  drawer: "assets/drawer.svg",
+                  title: s,
+                  onTapTitle: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return SelectLocationPage();
+                    }));
+                  },
+                  onTapLeading: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return SelectLocationPage();
+                    }));
+                  },
+                  onTapDrawer: () {
+                    _scaffoldKey.currentState.openEndDrawer();
+                    //Scaffold.of(context).openDrawer();
+                  },
+                );
+              },
             ),
           ),
           DraggableScrollableSheet(
@@ -156,7 +198,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       children: <Widget>[
                         Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPaddingDraggable),
+                              horizontal: horizontalPaddingDraggable - 5),
                           margin:
                               EdgeInsets.only(bottom: distanceSectionContent),
                           height: 110,
@@ -180,9 +222,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return RestaurantListPage(
+                                      title: "Top Restaurants",
+                                      isExternalImage: false,
+                                      image: "assets/allrestaurant.png",
+                                    );
+                                  }));
+                                },
                                 child: Container(
                                   width: 70,
+                                  height: 20,
+                                  alignment: Alignment.centerRight,
                                   child: Text(
                                     "See All",
                                     textAlign: TextAlign.end,
@@ -245,9 +298,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return RestaurantListPage(
+                                      title: "Order Again",
+                                      isExternalImage: false,
+                                      image: "assets/allrestaurant.png",
+                                    );
+                                  }));
+                                },
                                 child: Container(
+                                  height: 20,
                                   width: 70,
+                                  alignment: Alignment.centerRight,
                                   child: Text(
                                     "See All",
                                     textAlign: TextAlign.end,
@@ -312,12 +376,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         Container(
-                          height: 210,
+                          height: 190,
                           padding: EdgeInsets.only(
                               top: distanceSectionContent,
                               bottom: distanceSectionContent),
                           margin: EdgeInsets.only(
-                              bottom: distanceBetweenSection + distanceSectionContent),
+                              bottom: distanceBetweenSection +
+                                  distanceSectionContent),
                           decoration:
                               BoxDecoration(color: Colors.white, boxShadow: [
                             BoxShadow(
@@ -328,7 +393,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           ]),
                           alignment: Alignment.center,
                           child: RestaurantListWidget(
-                            type: RestaurantViewType.dinnerTimeRestaurant,
+                            type: RestaurantViewType.topRestaurant,
                             restaurants: ExampleModel.getRestaurants(),
                           ),
                         ),

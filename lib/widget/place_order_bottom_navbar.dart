@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flyereats/classes/app_util.dart';
 
 class OrderBottomNavBar extends StatelessWidget {
-  final int amount;
+  final amount;
   final String description;
   final String buttonText;
   final bool showRupee;

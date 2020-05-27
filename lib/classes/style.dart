@@ -17,3 +17,5 @@ Color primary1 = Colors.yellow[600];
 Color primary2 = Color(0xFFFFb531);
 Color primary3 = Color(0xFFF47B22);
 Color shadow = Colors.black26;
+
+String mapApi = "AIzaSyCoUa2tLisTVw00rL43A8rgeFdB5xW5i-s";

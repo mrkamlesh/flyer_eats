@@ -1,7 +1,7 @@
 class Food {
   final String title;
   final String description;
-  final int price;
+  final double price;
   final String image;
   final bool isAvailable;
 

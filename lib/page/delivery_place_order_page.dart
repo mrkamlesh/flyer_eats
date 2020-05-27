@@ -378,31 +378,34 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                               spreadRadius: 0,
                               offset: Offset(0, -1)),
                         ]),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(right: 20),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 20,
-                                    color: Colors.orange,
-                                  ),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return AddressPage();
+                            }));
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(right: 20),
+                                child: Icon(
+                                  Icons.add,
+                                  size: 20,
+                                  color: Colors.orange,
                                 ),
-                                Text(
-                                  "ADD NEW ADDRESS",
-                                  style: TextStyle(
-                                      color: Colors.orange,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                          ],
+                              ),
+                              Text(
+                                "ADD NEW ADDRESS",
+                                style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
                         ),
                       );
                     } else if (state is AddressLoaded) {
@@ -452,8 +455,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                       amount: amount.floor(),
                       showRupee: true,
                       buttonText: "PLACE ORDER",
-                      onButtonTap: () {
-                      },
+                      onButtonTap: () {},
                     );
                   }),
                 ],

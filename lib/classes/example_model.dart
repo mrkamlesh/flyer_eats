@@ -6,6 +6,7 @@ import 'package:flyereats/model/promo.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/shop_category.dart';
 import 'package:flyereats/model/address.dart';
+import 'package:flyereats/model/location.dart';
 
 class ExampleModel {
   static List<Promo> getPromos() {
@@ -33,7 +34,7 @@ class ExampleModel {
     List<Restaurant> _topRestaurants = [];
     _topRestaurants.add(Restaurant(
         "Amuthasurabhi Amuthasurabhi dasdasdasd",
-        "25m",
+        "25 mins",
         "4.5",
         "https://media-cdn.tripadvisor.com/media/photo-s/12/c1/c3/f5/restaurant-araz.jpg",
         "South Indian | North Indian",
@@ -41,58 +42,58 @@ class ExampleModel {
         discountDescription: "30 % Off Up to 60 RS"));
     _topRestaurants.add(Restaurant(
         "Gowri Khrisna",
-        "32m",
+        "32 mins",
         "4.7",
         "https://cdn.vox-cdn.com/thumbor/r6GaFXzgvkbJsq5ioEyxXtqQYlM=/0x0:2000x1335/1200x800/filters:focal(840x508:1160x828)/cdn.vox-cdn.com/uploads/chorus_image/image/66533246/2019_10_07_Pilot_restaurant_003.0.jpg",
         "South Indian | North Indian"));
     _topRestaurants.add(Restaurant(
         "Ruchi Resta",
-        "33m",
+        "33 mins",
         "4.1",
         "https://media-cdn.tripadvisor.com/media/photo-s/13/c0/61/84/indian-summer-nights.jpg",
         "South Indian | North Indian"));
     _topRestaurants.add(Restaurant(
         "Suryaa",
-        "10m",
+        "10 mins",
         "4.6",
         "https://media-cdn.tripadvisor.com/media/photo-s/10/14/58/e3/restaurant-roadside-view.jpg",
         "Pizza"));
     _topRestaurants.add(Restaurant(
         "The Dinner",
-        "20m",
+        "20 mins",
         "4.3",
         "https://media-cdn.tripadvisor.com/media/photo-s/0f/95/ff/60/indian-cuisine.jpg",
         "Tandorine"));
     _topRestaurants.add(Restaurant(
         "Other Restaurant",
-        "45m",
+        "45 mins",
         "4.2",
         "https://akm-img-a-in.tosshub.com/indiatoday/images/story/201509/dhaba-story_647_090415065808.jpg",
         "Italian Cuisine"));
     _topRestaurants.add(Restaurant(
         "Other Restaurant",
-        "15m",
+        "15 mins",
         "4.9",
         "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
         "South Indian | North Indian"));
 
     _topRestaurants.add(Restaurant(
         "Other Restaurant",
-        "15m",
+        "15 mins",
         "4.9",
         "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
         "South Indian | North Indian"));
 
     _topRestaurants.add(Restaurant(
         "Other Restaurant",
-        "15m",
+        "15 mins",
         "4.9",
         "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
         "South Indian | North Indian"));
 
     _topRestaurants.add(Restaurant(
         "Other Restaurant",
-        "15m",
+        "15 mins",
         "4.9",
         "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
         "South Indian | North Indian"));
@@ -153,7 +154,7 @@ class ExampleModel {
     _listFoods.add(Food(
         "Idly",
         "Loremp ipsum dos amet color Loremp ipsum dos amet color Loremp ipsum dos amet color",
-        31032,
+        310.32,
         "https://www.kannammacooks.com/wp-content/uploads/soft-idli-batter-recipe-using-idli-rava-mixie-blender-method.jpg",
         true));
     _listFoods.add(Food(
@@ -228,6 +229,98 @@ class ExampleModel {
         AddressType.other,
         latitude: "",
         longitude: ""));
+
+    return list;
+  }
+
+  static List<Location> getLocations() {
+    List<Location> list = List();
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+
+
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",));
 
     return list;
   }

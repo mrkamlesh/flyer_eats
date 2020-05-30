@@ -14,6 +14,7 @@ import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/delivery_information_widget.dart';
+import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/food_list.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
 
@@ -52,6 +53,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: EndDrawer(),
       body: Stack(
         children: <Widget>[
           Positioned(
@@ -80,15 +82,21 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
             children: <Widget>[
               Align(
                 alignment: Alignment.topCenter,
-                child: CustomAppBar(
-                  leading: "assets/back.svg",
-                  drawer: "assets/drawer.svg",
-                  title: widget.restaurant.name,
-                  onTapLeading: () {
-                    Navigator.pop(context);
+                child: Builder(
+                  builder: (context) {
+                    return CustomAppBar(
+                      leading: "assets/back.svg",
+                      drawer: "assets/drawer.svg",
+                      title: widget.restaurant.name,
+                      onTapLeading: () {
+                        Navigator.pop(context);
+                      },
+                      onTapDrawer: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                      backgroundColor: Colors.transparent,
+                    );
                   },
-                  onTapDrawer: () {},
-                  backgroundColor: Colors.transparent,
                 ),
               ),
             ],

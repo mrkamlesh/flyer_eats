@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flyereats/model/address.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -115,4 +116,63 @@ class InitState extends AddressState {
 
   @override
   List<Object> get props => [];
+}
+
+class LoadingCurrentAddress extends AddressState {
+  const LoadingCurrentAddress();
+
+  @override
+  List<Object> get props => [];
+}
+
+class LoadingCurrentAddressSuccess extends AddressState {
+  final LatLng latLng;
+
+  const LoadingCurrentAddressSuccess(this.latLng);
+
+  @override
+  List<Object> get props => [latLng];
+}
+
+class LoadingCurrentAddressError extends AddressState {
+  final String message;
+
+  const LoadingCurrentAddressError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class UpdatingMapAddress extends AddressState {
+  const UpdatingMapAddress();
+
+  @override
+  List<Object> get props => [];
+}
+
+class UpdatingMapAddressSuccess extends AddressState {
+  final Address address;
+
+  const UpdatingMapAddressSuccess(this.address);
+
+  @override
+  List<Object> get props => [address];
+}
+
+class UpdatingMapAddressError extends AddressState {
+  final String message;
+
+  const UpdatingMapAddressError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class LocationAddressMoved extends AddressState {
+  final LatLng latLng;
+
+  const LocationAddressMoved(this.latLng);
+
+  @override
+  List<Object> get props => [latLng];
 }

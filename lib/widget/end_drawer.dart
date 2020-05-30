@@ -3,6 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/page/account_page.dart';
+import 'package:flyereats/page/app_settings_page.dart';
+import 'package:flyereats/page/help_page.dart';
+import 'package:flyereats/page/login/login_number_page.dart';
+import 'package:flyereats/page/my_wallet_page.dart';
+import 'package:flyereats/page/order_history_page.dart';
 
 class EndDrawer extends StatelessWidget {
   final String image;
@@ -89,16 +94,24 @@ class EndDrawer extends StatelessWidget {
           SizedBox(
             height: distanceSectionContent,
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  "Order History",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          InkWell(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return OrderHistoryPage();
+              }));
+            },
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "Order History",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
-              ),
-              Icon(Icons.keyboard_arrow_right),
-            ],
+                Icon(Icons.keyboard_arrow_right),
+              ],
+            ),
           ),
           SizedBox(
             height: distanceSectionContent,
@@ -110,16 +123,24 @@ class EndDrawer extends StatelessWidget {
           SizedBox(
             height: distanceSectionContent,
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  "My Wallet",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          InkWell(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return MyWalletPage();
+              }));
+            },
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "My Wallet",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
-              ),
-              Icon(Icons.keyboard_arrow_right),
-            ],
+                Icon(Icons.keyboard_arrow_right),
+              ],
+            ),
           ),
           SizedBox(
             height: distanceSectionContent,
@@ -131,16 +152,24 @@ class EndDrawer extends StatelessWidget {
           SizedBox(
             height: distanceSectionContent,
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  "App Settings",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return AppSettingsPage();
+              }));
+            },
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "App Settings",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
-              ),
-              Icon(Icons.keyboard_arrow_right),
-            ],
+                Icon(Icons.keyboard_arrow_right),
+              ],
+            ),
           ),
           SizedBox(
             height: distanceSectionContent,
@@ -152,16 +181,24 @@ class EndDrawer extends StatelessWidget {
           SizedBox(
             height: distanceSectionContent,
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  "Help",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return HelpPage();
+              }));
+            },
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "Help",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
-              ),
-              Icon(Icons.keyboard_arrow_right),
-            ],
+                Icon(Icons.keyboard_arrow_right),
+              ],
+            ),
           ),
           SizedBox(
             height: distanceSectionContent,
@@ -169,6 +206,28 @@ class EndDrawer extends StatelessWidget {
           Divider(
             height: 1.0,
             color: Colors.black12,
+          ),
+          SizedBox(
+            height: distanceSectionContent,
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return LoginNumberPage();
+              }));
+            },
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "**Login Mock Up**",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Icon(Icons.keyboard_arrow_right),
+              ],
+            ),
           ),
         ],
       ),

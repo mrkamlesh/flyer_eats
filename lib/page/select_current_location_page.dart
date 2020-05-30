@@ -38,17 +38,6 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
 
   @override
   Widget build(BuildContext context) {
-    /* BlocListener<LocationBloc, LocationState>(
-      listener: (context, state) {
-        if (state is LoadingLocationError) {
-          final snackBar = SnackBar(
-            content: Text(state.message),
-          );
-          Scaffold.of(context).showSnackBar(snackBar);
-        }
-      },
-    );*/
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -96,6 +85,8 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
                             state.location.latitude, state.location.longitude);
                       } else if (state is LocationMoved) {
                         loc = state.latLng;
+                        BlocProvider.of<LocationBloc>(context)
+                            .add(UpdateLocation(loc));
                       }
 
                       if (loc != null) {
@@ -111,6 +102,10 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
                         },
                         markers: Set.of((marker != null) ? [marker] : []),
                         mapType: MapType.normal,
+                        onTap: (latLng) {
+                          BlocProvider.of<LocationBloc>(context)
+                              .add(MoveLocation(latLng));
+                        },
                         zoomControlsEnabled: true,
                         myLocationEnabled: true,
                         myLocationButtonEnabled: true,
@@ -209,7 +204,10 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
                                 onTap: state is UpdatingLocationSuccess
                                     ? () {
                                         //Navigator pop
-                                        Navigator.pushReplacementNamed(context, "/");
+                                        BlocProvider.of<LocationBloc>(context)
+                                            .add(GetCurrentLocation());
+                                        Navigator.pushReplacementNamed(
+                                            context, "/");
                                       }
                                     : () {},
                                 child: Stack(

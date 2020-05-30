@@ -32,7 +32,8 @@ class AddressDBProvider {
           "description TEXT,"
           "type VARCHAR(30),"
           "longitude TEXT,"
-          "latitude TEXT"
+          "latitude TEXT,"
+          "mapAddress TEXT"
           ")");
     });
   }
@@ -41,7 +42,7 @@ class AddressDBProvider {
     final db = await database;
     for (int i = 0; i < ExampleModel.getAddresses().length; i++) {
       await db.rawInsert(
-          "INSERT Into address (title, address, description, type, longitude, latitude)"
+          "INSERT Into address (title, address, description, type, longitude, latitude, mapAddress)"
           " VALUES (?,?,?,?,?,?)",
           [
             ExampleModel.getAddresses()[i].title,
@@ -49,7 +50,8 @@ class AddressDBProvider {
             ExampleModel.getAddresses()[i].address,
             ExampleModel.getAddresses()[i].type.toString(),
             ExampleModel.getAddresses()[i].longitude,
-            ExampleModel.getAddresses()[i].latitude
+            ExampleModel.getAddresses()[i].latitude,
+            ExampleModel.getAddresses()[i].mapAddress
           ]);
     }
   }
@@ -57,15 +59,16 @@ class AddressDBProvider {
   addAddress(Address address) async {
     final db = await database;
     var raw = await db.rawInsert(
-        "INSERT Into address (title, address, description, type, longitude, latitude)"
-        " VALUES (?,?,?,?,?,?)",
+        "INSERT Into address (title, address, description, type, longitude, latitude, mapAddress)"
+        " VALUES (?,?,?,?,?,?,?)",
         [
           address.title,
           address.address,
           address.address,
           address.type.toString(),
           address.longitude,
-          address.latitude
+          address.latitude,
+          address.mapAddress
         ]);
     return raw;
   }

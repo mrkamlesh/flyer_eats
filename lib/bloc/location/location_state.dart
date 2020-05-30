@@ -80,12 +80,12 @@ class LoadingPredefinedLocations extends LocationState {
 }
 
 class LoadingPredefinedLocationsSuccess extends LocationState {
-  final List<Location> location;
+  final List<Location> locations;
 
-  const LoadingPredefinedLocationsSuccess(this.location);
+  const LoadingPredefinedLocationsSuccess(this.locations);
 
   @override
-  List<Object> get props => [location];
+  List<Object> get props => [locations];
 }
 
 class LoadingPredefinedLocationsError extends LocationState {
@@ -107,8 +107,21 @@ class LocationSelected extends LocationState {
 }
 
 class NoLocationsAvailable extends LocationState {
-  const NoLocationsAvailable();
+
+  final String message;
+
+  const NoLocationsAvailable({this.message = "We are not available yet in your location"});
 
   @override
   List<Object> get props => [];
+}
+
+class PredefinedLocationsFiltered extends LocationState {
+
+  final List<Location> locations;
+
+  const PredefinedLocationsFiltered(this.locations);
+
+  @override
+  List<Object> get props => [locations];
 }

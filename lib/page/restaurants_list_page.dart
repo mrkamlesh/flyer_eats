@@ -8,6 +8,7 @@ import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/custom_bottom_navigation_bar.dart';
+import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/restaurant_list.dart';
 
 class RestaurantListPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class RestaurantListPage extends StatefulWidget {
 
 class _RestaurantListPageState extends State<RestaurantListPage>
     with SingleTickerProviderStateMixin {
+
   int _currentIndex = 0;
   bool _isScrollingDown = false;
   AnimationController _animationController;
@@ -57,6 +59,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
+      endDrawer: EndDrawer(),
       bottomNavigationBar: AnimatedBuilder(
         animation: _navBarAnimation,
         builder: (context, child) {
@@ -128,15 +131,21 @@ class _RestaurantListPageState extends State<RestaurantListPage>
           ),
           Align(
             alignment: Alignment.topCenter,
-            child: CustomAppBar(
-              leading: "assets/back.svg",
-              drawer: "assets/drawer.svg",
-              title: "Vascon Venus",
-              onTapLeading: () {
-                Navigator.pop(context);
+            child: Builder(
+              builder: (context){
+                return CustomAppBar(
+                  leading: "assets/back.svg",
+                  drawer: "assets/drawer.svg",
+                  title: "Vascon Venus",
+                  onTapLeading: () {
+                    Navigator.pop(context);
+                  },
+                  onTapDrawer: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                  backgroundColor: Colors.transparent,
+                );
               },
-              onTapDrawer: () {},
-              backgroundColor: Colors.transparent,
             ),
           ),
           DraggableScrollableSheet(

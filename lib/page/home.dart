@@ -3,12 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flyereats/bloc/location/location_bloc.dart';
+import 'package:flyereats/bloc/location/location_event.dart';
 import 'package:flyereats/bloc/location/location_state.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flyereats/page/delivery_process_order_page.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
+import 'package:flyereats/page/search_page.dart';
 import 'package:flyereats/page/select_location_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/banner_list_widget.dart';
@@ -19,6 +21,7 @@ import 'package:flyereats/widget/promo_list.dart';
 import 'package:flyereats/widget/restaurant_list.dart';
 import 'package:flyereats/widget/shop_category_list.dart';
 import 'package:flyereats/classes/example_model.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Home extends StatefulWidget {
@@ -27,8 +30,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   int _currentIndex = 0;
   bool _isScrollingDown = false;
   AnimationController _animationController;
@@ -59,7 +60,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       extendBody: true,
       extendBodyBehindAppBar: true,
       endDrawer: EndDrawer(),
@@ -93,6 +93,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               onItemSelected: (index) {
                 setState(() {
                   _currentIndex = index;
+                  if (index == 2){
+                    Navigator.push(context, MaterialPageRoute(builder: (context){
+                      return SearchPage();
+                    }));
+                  }
                 });
               },
               selectedIndex: _currentIndex,
@@ -115,39 +120,119 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
           Align(
             alignment: Alignment.topCenter,
-            child: BlocBuilder<LocationBloc, LocationState>(
-              condition: (oldState, state) {
-                if (state is LocationSelected) {
+            child: BlocConsumer<LocationBloc, LocationState>(
+              buildWhen: (oldState, state) {
+                if (state is LocationSelected ||
+                    state is LoadingPredefinedLocations ||
+                    state is LoadingPredefinedLocationsSuccess ||
+                    state is LoadingPredefinedLocationsError ||
+                    state is NoLocationsAvailable ||
+                    state is LoadingLocation ||
+                    state is LoadingLocationSuccess ||
+                    state is LoadingLocationError ||
+                    state is LocationSelected) {
                   return true;
                 } else {
                   return false;
                 }
               },
+              listenWhen: (oldState, state) {
+                if (state is LoadingPredefinedLocationsError ||
+                    state is NoLocationsAvailable ||
+                    state is LoadingLocationError) {
+                  return true;
+                } else {
+                  return false;
+                }
+              },
+              listener: (context, state) {
+                if (state is LoadingPredefinedLocationsError) {
+                  final snackBar = SnackBar(
+                    content: Text(
+                      state.message,
+                    ),
+                    duration: Duration(days: 365),
+                    action: SnackBarAction(
+                      label: "Retry",
+                      onPressed: () {
+                        BlocProvider.of<LocationBloc>(context)
+                            .add(GetCurrentLocation());
+                      },
+                    ),
+                  );
+                  Scaffold.of(context).showSnackBar(snackBar);
+                } else if (state is LoadingLocationError) {
+                  final snackBar = SnackBar(
+                    content: Text(state.message),
+                    duration: Duration(days: 365),
+                    action: SnackBarAction(
+                      label: "Retry",
+                      onPressed: () {
+                        BlocProvider.of<LocationBloc>(context)
+                            .add(GetCurrentLocation());
+                      },
+                    ),
+                  );
+                  Scaffold.of(context).showSnackBar(snackBar);
+                } else if (state is NoLocationsAvailable) {
+                  final snackBar = SnackBar(
+                    content: Text(state.message),
+                  );
+                  Scaffold.of(context).showSnackBar(snackBar);
+                }
+              },
               builder: (context, state) {
-                String s = "Choose Location Here";
-                if (state is LocationSelected) {
-                  s = state.location.address;
+                String titleText = "Choose Location Here";
+                bool isLoading = false;
+                if (state is LoadingPredefinedLocations ||
+                    state is LoadingLocation) {
+                  titleText = "Loading Location...";
+                  isLoading = true;
+                } else if (state is LoadingPredefinedLocationsError ||
+                    state is LoadingLocationError ||
+                    state is NoLocationsAvailable) {
+                  titleText = "";
+                  isLoading = false;
+                } else if (state is LoadingLocationSuccess) {
+                  titleText = "Loading Location...";
+                  isLoading = true;
+                  BlocProvider.of<LocationBloc>(context).add(
+                      GetPredefinedLocations(LatLng(
+                          state.location.latitude, state.location.longitude)));
+                } else if (state is LoadingPredefinedLocationsSuccess) {
+                  titleText = "Loading Location...";
+                  isLoading = true;
+                  BlocProvider.of<LocationBloc>(context)
+                      .add(SelectLocation(state.locations[0]));
+                } else if (state is LocationSelected) {
+                  titleText = state.location.address;
+                  isLoading = false;
                 }
 
-                return CustomAppBar(
-                  leading: "assets/location.svg",
-                  drawer: "assets/drawer.svg",
-                  title: s,
-                  onTapTitle: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return SelectLocationPage();
-                    }));
-                  },
-                  onTapLeading: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return SelectLocationPage();
-                    }));
-                  },
-                  onTapDrawer: () {
-                    _scaffoldKey.currentState.openEndDrawer();
-                    //Scaffold.of(context).openDrawer();
+                return Builder(
+                  builder: (context) {
+                    return CustomAppBar(
+                      leading: "assets/location.svg",
+                      drawer: "assets/drawer.svg",
+                      title: titleText,
+                      isLoading: isLoading,
+                      onTapTitle: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return SelectLocationPage();
+                        }));
+                      },
+                      onTapLeading: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return SelectLocationPage();
+                        }));
+                      },
+                      onTapDrawer: () {
+                        Scaffold.of(context).openEndDrawer();
+                        //Scaffold.of(context).openDrawer();
+                      },
+                    );
                   },
                 );
               },

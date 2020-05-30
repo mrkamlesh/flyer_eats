@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/classes/app_util.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String leading;
-  final String title;
+  final String title ;
   final String drawer;
   final Function onTapLeading;
   final Function onTapTitle;
   final Function onTapDrawer;
   final Color backgroundColor;
+  final bool isLoading;
 
   const CustomAppBar(
       {Key key,
@@ -19,7 +21,8 @@ class CustomAppBar extends StatelessWidget {
       this.onTapLeading,
       this.onTapTitle,
       this.onTapDrawer,
-      this.backgroundColor = Colors.black38})
+      this.backgroundColor = Colors.black38,
+      this.isLoading = false})
       : super(key: key);
 
   @override
@@ -77,6 +80,12 @@ class CustomAppBar extends StatelessWidget {
               ),
             ),
           ),
+          isLoading
+              ? SpinKitCircle(
+                  color: Colors.white,
+            size: kToolbarHeight - 30,
+                )
+              : Container(),
           drawer != null
               ? GestureDetector(
                   onTap: onTapDrawer,

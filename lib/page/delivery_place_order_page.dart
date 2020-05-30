@@ -14,6 +14,7 @@ import 'package:flyereats/model/pickup.dart';
 import 'package:flyereats/page/address_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/delivery_information_widget.dart';
+import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -54,6 +55,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
         return _bloc;
       },
       child: Scaffold(
+        endDrawer: EndDrawer(),
         body: Stack(
           children: <Widget>[
             Positioned(
@@ -82,12 +84,19 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
               children: <Widget>[
                 Align(
                   alignment: Alignment.topCenter,
-                  child: CustomAppBar(
-                    leading: "assets/back.svg",
-                    drawer: "assets/drawer.svg",
-                    title: "Pickup & Drop",
-                    onTapLeading: () {
-                      Navigator.pop(context);
+                  child: Builder(
+                    builder: (context){
+                      return CustomAppBar(
+                        leading: "assets/back.svg",
+                        drawer: "assets/drawer.svg",
+                        title: "Pickup & Drop",
+                        onTapLeading: () {
+                          Navigator.pop(context);
+                        },
+                        onTapDrawer: () {
+                          Scaffold.of(context).openEndDrawer();
+                        },
+                      );
                     },
                   ),
                 ),
@@ -379,11 +388,12 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                               offset: Offset(0, -1)),
                         ]),
                         child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(context,
+                          onTap: () async {
+                            await Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
                               return AddressPage();
                             }));
+                            _bloc.add(InitDefaultAddress());
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,

@@ -39,7 +39,8 @@ dependencies:
   geolocator: ^5.3.1
   location: ^3.0.2
   google_map_location_picker: ^3.3.1
-
+  flutter_spinkit: ^4.1.2+1
+  pin_code_fields: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -97,6 +98,11 @@ flutter:
     - assets/check.svg
     - assets/wallet.svg
     - assets/currentloc.svg
+    - assets/facebook.svg
+    - assets/gmail.svg
+    - assets/flyereatslogo.png
+    - assets/india_flag.svg
+    - assets/singapore_flag.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

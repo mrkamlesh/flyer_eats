@@ -2,6 +2,7 @@ import 'package:flyereats/model/banner.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/food_category.dart';
+import 'package:flyereats/model/order.dart';
 import 'package:flyereats/model/promo.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/shop_category.dart';
@@ -238,90 +239,136 @@ class ExampleModel {
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
 
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
 
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
 
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
 
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
 
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
-
-
-    list.add(Location(
-      id: "1",
-      location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
-    list.add(Location(
-      id: "1",
-      location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
-    list.add(Location(
-      id: "1",
-      location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
 
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
 
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
-    list.add(Location(
-      id: "1",
-      location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
 
     list.add(Location(
       id: "1",
       location: "Tamilnadu/Adiramapattinam",
-      address: "Adiramappinam, Thanjvur, Tamilnadu",));
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
 
+    list.add(Location(
+      id: "1",
+      location: "Tamilnadu/Adiramapattinam",
+      address: "Adiramappinam, Thanjvur, Tamilnadu",
+    ));
+
+    return list;
+  }
+
+  static List<Order> getOrderHistory() {
+    List<Order> listOrder = List();
+
+    listOrder.add(Order(ExampleModel.getRestaurants()[0],
+        ExampleModel.getFoodCart(), "30 April 2020", "Delivered"));
+    listOrder.add(Order(ExampleModel.getRestaurants()[1],
+        ExampleModel.getFoodCart(), "20 May 2020", "Delivered"));
+    listOrder.add(Order(ExampleModel.getRestaurants()[2],
+        ExampleModel.getFoodCart(), "1 June 2020", "Delivered"));
+
+    return listOrder;
+  }
+
+  static List<String> getLoyatyRewards() {
+    List<String> list = List();
+
+    list.add(
+        "https://impact21.com/wp-content/uploads/Featured-Image-Graphic-795x500-Loyalty-Misconceptions2.jpg");
+    list.add("https://miro.medium.com/max/1200/1*oKNynti0JWjuNqzHoI0Fgw.png");
+    list.add(
+        "https://revenue-hub.com/wp-content/uploads/2017/07/loyalty-rewards-1024x606.jpg");
+    list.add(
+        "https://www.ledgerinsights.com/wp-content/uploads/2019/10/rewards-customer-loyalty-810x476.jpg");
+    list.add(
+        "https://www.cpapsupplyusa.com/pub/media/images/loyalty-points.jpg");
     return list;
   }
 }

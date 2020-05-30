@@ -12,6 +12,7 @@ import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/page/delivery_pickup_location.dart';
 import 'package:flyereats/widget/app_bar.dart';
+import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flyereats/page/delivery_place_order_page.dart';
@@ -62,6 +63,7 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage>
       child: Scaffold(
         extendBody: true,
         extendBodyBehindAppBar: true,
+        endDrawer: EndDrawer(),
         bottomNavigationBar: AnimatedBuilder(
             animation: _navBarAnimation,
             builder: (context, child) {
@@ -121,12 +123,19 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage>
               children: <Widget>[
                 Align(
                   alignment: Alignment.topCenter,
-                  child: CustomAppBar(
-                    leading: "assets/back.svg",
-                    drawer: "assets/drawer.svg",
-                    title: "Pickup & Drop",
-                    onTapLeading: () {
-                      Navigator.pop(context);
+                  child: Builder(
+                    builder: (context) {
+                      return CustomAppBar(
+                        leading: "assets/back.svg",
+                        drawer: "assets/drawer.svg",
+                        title: "Pickup & Drop",
+                        onTapLeading: () {
+                          Navigator.pop(context);
+                        },
+                        onTapDrawer: () {
+                          Scaffold.of(context).openEndDrawer();
+                        },
+                      );
                     },
                   ),
                 ),
@@ -337,12 +346,12 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage>
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      File file = await ImagePicker.pickImage(
+                      PickedFile file = await ImagePicker().getImage(
                           source: ImageSource.camera, imageQuality: 20);
                       if (file != null) {
                         _keyAnimatedList.currentState.insertItem(0,
                             duration: Duration(milliseconds: 400));
-                        _bloc.add(AddAttachment(file));
+                        _bloc.add(AddAttachment(File(file.path)));
                       }
                     },
                     splashColor: Colors.black12,
@@ -356,12 +365,12 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage>
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      File file = await ImagePicker.pickImage(
-                          source: ImageSource.gallery);
+                      PickedFile file = await ImagePicker()
+                          .getImage(source: ImageSource.gallery);
                       if (file != null) {
                         _keyAnimatedList.currentState.insertItem(0,
                             duration: Duration(milliseconds: 400));
-                        _bloc.add(AddAttachment(file));
+                        _bloc.add(AddAttachment(File(file.path)));
                       }
                     },
                     splashColor: Colors.black12,

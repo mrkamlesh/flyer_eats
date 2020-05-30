@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/classes/data_provider.dart';
 import 'package:flyereats/classes/data_repository.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,6 +8,8 @@ import './bloc.dart';
 
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
   DataRepository repository = DataRepository();
+  List<Location> savedPredefinedLocations = List();
+  Location selectedLocation = Location();
 
   @override
   LocationState get initialState => InitialLocationState();
@@ -27,6 +28,10 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       yield* mapGetPredefinedLocationsToState(event.latLng);
     } else if (event is SelectLocation) {
       yield* mapSelectLocationToState(event.location);
+    } else if (event is FilterLocations) {
+      yield* mapFilterLocationsToState(event.filter);
+    } else if (event is GetPreviousLocation) {
+      yield* mapGetPreviousLocationToState();
     }
   }
 
@@ -81,6 +86,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       if (list.length == 0) {
         yield NoLocationsAvailable();
       } else {
+        savedPredefinedLocations = list;
         yield LoadingPredefinedLocationsSuccess(list);
       }
     } catch (e) {
@@ -89,6 +95,20 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   }
 
   Stream<LocationState> mapSelectLocationToState(Location location) async* {
+    selectedLocation = location;
     yield LocationSelected(location);
+  }
+
+  Stream<LocationState> mapFilterLocationsToState(String filter) async* {
+    List<Location> filteredList = savedPredefinedLocations.where((location) {
+      return location.location.toLowerCase().contains(filter) ||
+          location.address.toLowerCase().contains(filter);
+    }).toList();
+
+    yield PredefinedLocationsFiltered(filteredList);
+  }
+
+  Stream<LocationState> mapGetPreviousLocationToState() async* {
+    yield LocationSelected(selectedLocation);
   }
 }

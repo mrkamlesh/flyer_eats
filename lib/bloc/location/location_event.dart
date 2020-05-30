@@ -16,7 +16,6 @@ class InitDefaultAddress extends LocationEvent {
 }
 
 class GetCurrentLocation extends LocationEvent {
-
   final LocationEvent followedBy;
 
   const GetCurrentLocation({this.followedBy});
@@ -61,3 +60,19 @@ class SelectLocation extends LocationEvent {
   List<Object> get props => [location];
 }
 
+class FilterLocations extends LocationEvent {
+  final String filter;
+
+  const FilterLocations(this.filter);
+
+  @override
+  List<Object> get props => [filter];
+}
+
+class GetPreviousLocation extends LocationEvent {
+  const GetPreviousLocation();
+
+  @override
+  List<Object> get props => [];
+
+}

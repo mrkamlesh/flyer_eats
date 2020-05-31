@@ -41,6 +41,7 @@ dependencies:
   google_map_location_picker: ^3.3.1
   flutter_spinkit: ^4.1.2+1
   pin_code_fields: ^3.0.1
+  flutter_html: ^1.0.0
 
 dev_dependencies:
   flutter_test:

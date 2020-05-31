@@ -7,7 +7,6 @@ import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:flyereats/page/select_current_location_page.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SelectLocationPage extends StatefulWidget {
   @override
@@ -16,16 +15,14 @@ class SelectLocationPage extends StatefulWidget {
 
 class _SelectLocationPageState extends State<SelectLocationPage> {
   int _groupValue = -1;
+  int _selectedCountry = 101;
   TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
-    BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation());
-    /*BlocProvider.of<LocationBloc>(context)
-        .add(GetPredefinedLocations(LatLng(10.69, 77.004)));*/
-    //_bloc.add(GetPredefinedLocations(LatLng(10.69, 77.004)));
+    BlocProvider.of<LocationBloc>(context)
+        .add(GetPredefinedLocations(_selectedCountry.toString()));
   }
 
   @override
@@ -69,18 +66,20 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                 ),
               ),
             ),
-            Positioned(
-              top: AppUtil.getToolbarHeight(context),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(32),
-                        topLeft: Radius.circular(32))),
-                padding: EdgeInsets.only(
-                  top: horizontalPaddingDraggable,
+            Column(
+              children: <Widget>[
+                SizedBox(
+                  height: AppUtil.getToolbarHeight(context),
                 ),
-                child: Container(
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(32),
+                          topLeft: Radius.circular(32))),
+                  padding: EdgeInsets.only(
+                    top: horizontalPaddingDraggable,
+                  ),
                   height: AppUtil.getScreenHeight(context) -
                       AppUtil.getToolbarHeight(context) -
                       MediaQuery.of(context).padding.top,
@@ -100,7 +99,8 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                               Text(
                                 "SELECT LOCATION",
                                 style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
                               ),
                               InkWell(
                                   onTap: () {
@@ -139,7 +139,8 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                               ),
                               Text(
                                 "CURRENT LOCATION",
-                                style: TextStyle(color: primary3, fontSize: 16),
+                                style:
+                                    TextStyle(color: primary3, fontSize: 16),
                               ),
                             ],
                           ),
@@ -153,6 +154,86 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                         child: Text(
                           "Locations",
                           style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        margin: EdgeInsets.only(
+                            bottom: 20,
+                            left: horizontalPaddingDraggable,
+                            right: horizontalPaddingDraggable),
+                        child: DropdownButton<int>(
+                          underline: Container(),
+                          isExpanded: true,
+                          value: _selectedCountry,
+                          icon: Icon(Icons.expand_more),
+                          items: [
+                            DropdownMenuItem(
+                              value: 101,
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    height: 20,
+                                    width: 27,
+                                    child: SvgPicture.asset(
+                                      "assets/india_flag.svg",
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      "India",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 196,
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    height: 20,
+                                    width: 27,
+                                    child: SvgPicture.asset(
+                                      "assets/singapore_flag.svg",
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      "Singapore",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                          onChanged: (i) {
+                            setState(() {
+                              _selectedCountry = i;
+                            });
+                            BlocProvider.of<LocationBloc>(context).add(
+                                GetPredefinedLocations(
+                                    _selectedCountry.toString()));
+                          },
                         ),
                       ),
                       Container(
@@ -172,11 +253,12 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                 .add(FilterLocations(filter));
                           },
                           decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(vertical: 15),
+                            contentPadding:
+                                EdgeInsets.symmetric(vertical: 15),
                             border: InputBorder.none,
                             hintText: "SELECT LOCATIONS",
-                            hintStyle:
-                                TextStyle(fontSize: 16, color: Colors.black38),
+                            hintStyle: TextStyle(
+                                fontSize: 16, color: Colors.black38),
                           ),
                         ),
                       ),
@@ -198,16 +280,12 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                 state is LoadingPredefinedLocationsSuccess ||
                                 state is LoadingPredefinedLocationsError ||
                                 state is NoLocationsAvailable ||
-                                state is LoadingLocation ||
-                                state is LoadingLocationSuccess ||
-                                state is LoadingLocationError ||
                                 state is PredefinedLocationsFiltered)
                               return true;
                             return false;
                           },
                           builder: (context, state) {
-                            if (state is LoadingPredefinedLocations ||
-                                state is LoadingLocation) {
+                            if (state is LoadingPredefinedLocations) {
                               return Center(
                                   child: SizedBox(
                                 width: 40,
@@ -217,29 +295,17 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                             } else if (state
                                 is LoadingPredefinedLocationsError) {
                               return Center(child: Text("${state.message}"));
-                            } else if (state is LoadingLocationError) {
-                              return Center(child: Text("${state.message}"));
-                            } else if (state is LoadingLocationSuccess) {
-                              BlocProvider.of<LocationBloc>(context).add(
-                                  GetPredefinedLocations(LatLng(
-                                      state.location.latitude,
-                                      state.location.longitude)));
-                              return Center(
-                                  child: SizedBox(
-                                width: 40,
-                                height: 40,
-                                child: CircularProgressIndicator(),
-                              ));
                             } else if (state is NoLocationsAvailable) {
                               return Center(child: Text(state.message));
                             } else if (state
                                     is LoadingPredefinedLocationsSuccess ||
                                 state is PredefinedLocationsFiltered) {
                               List<Location> list = List();
-
-                              if (state is LoadingPredefinedLocationsSuccess) {
+                              if (state
+                                  is LoadingPredefinedLocationsSuccess) {
                                 list = state.locations;
-                              } else if (state is PredefinedLocationsFiltered) {
+                              } else if (state
+                                  is PredefinedLocationsFiltered) {
                                 list = state.locations;
                               }
 
@@ -293,7 +359,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                     ],
                   ),
                 ),
-              ),
+              ],
             )
           ],
         ),
@@ -311,7 +377,6 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
 
   Future<bool> _onBackPressed() async {
     Navigator.pop(context);
-
 
     return true;
   }

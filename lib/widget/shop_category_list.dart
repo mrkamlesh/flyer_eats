@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/shop_category.dart';
-import 'package:flyereats/page/restaurants_list_page.dart';
 
 class ShopCategoryListWidget extends StatefulWidget {
   final List<ShopCategory> shopCategories;
+  final Function(int) onTap;
 
-  const ShopCategoryListWidget({Key key, this.shopCategories})
+  const ShopCategoryListWidget({Key key, this.shopCategories, this.onTap})
       : super(key: key);
 
   @override
@@ -51,13 +51,7 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
             _selectedShop = i;
             _animationController.forward().orCancel.whenComplete(() {
               _animationController.reverse().orCancel.whenComplete(() {
-                switch (i) {
-                  case (0):
-                    _navigateToRestaurantListPage();
-                    break;
-                  default:
-                    break;
-                }
+                widget.onTap(i);
               });
             });
           });
@@ -75,16 +69,6 @@ class _ShopCategoryListWidgetState extends State<ShopCategoryListWidget>
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: _listShopWidget,
     );
-  }
-
-  void _navigateToRestaurantListPage() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return RestaurantListPage(
-        image: "assets/allrestaurant.png",
-        isExternalImage: false,
-        title: "All Restaurants",
-      );
-    }));
   }
 }
 

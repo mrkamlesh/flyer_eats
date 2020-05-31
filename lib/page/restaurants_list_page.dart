@@ -2,10 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/restaurantlist/restaurantlist_bloc.dart';
+import 'package:flyereats/bloc/restaurantlist/restaurantlist_event.dart';
+import 'package:flyereats/bloc/restaurantlist/restaurantlist_state.dart';
 import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/model/location.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/custom_bottom_navigation_bar.dart';
 import 'package:flyereats/widget/end_drawer.dart';
@@ -16,9 +20,14 @@ class RestaurantListPage extends StatefulWidget {
   final String title;
   final String image;
   final bool isExternalImage;
+  final Location location;
 
   const RestaurantListPage(
-      {Key key, this.title, this.image, this.isExternalImage = false})
+      {Key key,
+      this.title,
+      this.image,
+      this.isExternalImage = false,
+      this.location})
       : super(key: key);
 
   @override
@@ -27,7 +36,6 @@ class RestaurantListPage extends StatefulWidget {
 
 class _RestaurantListPageState extends State<RestaurantListPage>
     with SingleTickerProviderStateMixin {
-
   int _currentIndex = 0;
   bool _isScrollingDown = false;
   AnimationController _animationController;
@@ -56,180 +64,199 @@ class _RestaurantListPageState extends State<RestaurantListPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      endDrawer: EndDrawer(),
-      bottomNavigationBar: AnimatedBuilder(
-        animation: _navBarAnimation,
-        builder: (context, child) {
-          return Transform.translate(
-            offset: _navBarAnimation.value,
-            child: child,
-          );
-        },
-        child: BottomAppBar(
-          elevation: 8,
-          clipBehavior: Clip.antiAlias,
-          child: AnimatedBuilder(
-            animation: _navBarAnimation,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: _navBarAnimation.value,
-                child: child,
-              );
-            },
-            child: CustomBottomNavBar(
-              animationDuration: Duration(milliseconds: 300),
-              items: [
-                BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
-                BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
-                BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
-                BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
-              ],
-              onItemSelected: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
+    return BlocProvider<RestaurantListBloc>(
+      create: (context) {
+        return RestaurantListBloc()
+          ..add(GetRestaurantList(widget.location.address));
+      },
+      child: Scaffold(
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        endDrawer: EndDrawer(),
+        bottomNavigationBar: AnimatedBuilder(
+          animation: _navBarAnimation,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: _navBarAnimation.value,
+              child: child,
+            );
+          },
+          child: BottomAppBar(
+            elevation: 8,
+            clipBehavior: Clip.antiAlias,
+            child: AnimatedBuilder(
+              animation: _navBarAnimation,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: _navBarAnimation.value,
+                  child: child,
+                );
               },
-              selectedIndex: _currentIndex,
-              selectedColor: Colors.orange[700],
-              unselectedColor: Colors.black26,
-            ),
-          ),
-        ),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 0,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                width: AppUtil.getScreenWidth(context),
-                height: AppUtil.getBannerHeight(context),
-                child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: widget.isExternalImage
-                        ? CachedNetworkImage(
-                            imageUrl: widget.image,
-                            fit: BoxFit.cover,
-                            alignment: Alignment.center,
-                          )
-                        : Image.asset(
-                            widget.image,
-                            fit: BoxFit.cover,
-                            alignment: Alignment.center,
-                          )),
+              child: CustomBottomNavBar(
+                animationDuration: Duration(milliseconds: 300),
+                items: [
+                  BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
+                  BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
+                  BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
+                  BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
+                ],
+                onItemSelected: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                selectedIndex: _currentIndex,
+                selectedColor: Colors.orange[700],
+                unselectedColor: Colors.black26,
               ),
             ),
           ),
-          Container(
-            decoration: BoxDecoration(color: Colors.black54),
-            width: AppUtil.getScreenWidth(context),
-            height: AppUtil.getBannerHeight(context),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Builder(
-              builder: (context){
-                return CustomAppBar(
-                  leading: "assets/back.svg",
-                  drawer: "assets/drawer.svg",
-                  title: "Vascon Venus",
-                  onTapLeading: () {
-                    Navigator.pop(context);
-                  },
-                  onTapDrawer: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
-                  backgroundColor: Colors.transparent,
+        ),
+        body: Stack(
+          children: <Widget>[
+            Positioned(
+              top: 0,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: AppUtil.getScreenWidth(context),
+                  height: AppUtil.getBannerHeight(context),
+                  child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: widget.isExternalImage
+                          ? CachedNetworkImage(
+                              imageUrl: widget.image,
+                              fit: BoxFit.cover,
+                              alignment: Alignment.center,
+                            )
+                          : Image.asset(
+                              widget.image,
+                              fit: BoxFit.cover,
+                              alignment: Alignment.center,
+                            )),
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(color: Colors.black54),
+              width: AppUtil.getScreenWidth(context),
+              height: AppUtil.getBannerHeight(context),
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Builder(
+                builder: (context) {
+                  return CustomAppBar(
+                    leading: "assets/back.svg",
+                    drawer: "assets/drawer.svg",
+                    title: widget.location.address,
+                    onTapLeading: () {
+                      Navigator.pop(context);
+                    },
+                    onTapDrawer: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    backgroundColor: Colors.transparent,
+                  );
+                },
+              ),
+            ),
+            DraggableScrollableSheet(
+              initialChildSize: (AppUtil.getScreenHeight(context) -
+                      AppUtil.getToolbarHeight(context)) /
+                  AppUtil.getScreenHeight(context),
+              minChildSize: (AppUtil.getScreenHeight(context) -
+                      AppUtil.getToolbarHeight(context)) /
+                  AppUtil.getScreenHeight(context),
+              maxChildSize: 1.0,
+              builder: (context, controller) {
+                controller.addListener(() {
+                  if (controller.position.userScrollDirection ==
+                      ScrollDirection.reverse) {
+                    if (!_isScrollingDown) {
+                      _isScrollingDown = true;
+                      setState(() {
+                        _animationController.forward().orCancel;
+                      });
+                    }
+                  }
+                  if ((controller.position.userScrollDirection ==
+                          ScrollDirection.forward) |
+                      (controller.offset >=
+                              controller.position.maxScrollExtent -
+                                  kBottomNavigationBarHeight &&
+                          !controller.position.outOfRange)) {
+                    if (_isScrollingDown) {
+                      _isScrollingDown = false;
+                      setState(() {
+                        _animationController.reverse().orCancel;
+                      });
+                    }
+                  }
+                });
+                return Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(32),
+                          topLeft: Radius.circular(32))),
+                  child: BlocBuilder<RestaurantListBloc, RestaurantListState>(
+                    builder: (context, state) {
+                      if (state is SuccessRestaurantList) {
+                        return CustomScrollView(
+                          controller: controller,
+                          slivers: <Widget>[
+                            SliverPersistentHeader(
+                              pinned: true,
+                              delegate: ListRestaurantFilterWidget(
+                                title: widget.title,
+                                isListSelected: _isListMode,
+                                onListButtonTap: () {
+                                  setState(
+                                    () {
+                                      if (!_isListMode) {
+                                        _isListMode = true;
+                                      }
+                                    },
+                                  );
+                                },
+                                onGridButtonTap: () {
+                                  setState(
+                                    () {
+                                      if (_isListMode) {
+                                        _isListMode = false;
+                                      }
+                                    },
+                                  );
+                                },
+                                size: 27,
+                              ),
+                            ),
+                            RestaurantListWidget(
+                              restaurants: state.restaurants,
+                              fade: 0.4,
+                              scale: 0.95,
+                              type: _isListMode
+                                  ? RestaurantViewType.detailList
+                                  : RestaurantViewType.detailGrid,
+                            ),
+                          ],
+                        );
+                      } else if (state is LoadingRestaurantList) {
+                        return LoadingRestaurantListWidget();
+                      } else if (state is NoRestaurantListAvaliable) {
+                        return Container(
+                          child: Text("No restaurant list available"),
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
                 );
               },
-            ),
-          ),
-          DraggableScrollableSheet(
-            initialChildSize: (AppUtil.getScreenHeight(context) -
-                    AppUtil.getToolbarHeight(context)) /
-                AppUtil.getScreenHeight(context),
-            minChildSize: (AppUtil.getScreenHeight(context) -
-                    AppUtil.getToolbarHeight(context)) /
-                AppUtil.getScreenHeight(context),
-            maxChildSize: 1.0,
-            builder: (context, controller) {
-              controller.addListener(() {
-                if (controller.position.userScrollDirection ==
-                    ScrollDirection.reverse) {
-                  if (!_isScrollingDown) {
-                    _isScrollingDown = true;
-                    setState(() {
-                      _animationController.forward().orCancel;
-                    });
-                  }
-                }
-                if ((controller.position.userScrollDirection ==
-                        ScrollDirection.forward) |
-                    (controller.offset >=
-                            controller.position.maxScrollExtent -
-                                kBottomNavigationBarHeight &&
-                        !controller.position.outOfRange)) {
-                  if (_isScrollingDown) {
-                    _isScrollingDown = false;
-                    setState(() {
-                      _animationController.reverse().orCancel;
-                    });
-                  }
-                }
-              });
-              return Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(32),
-                        topLeft: Radius.circular(32))),
-                child: CustomScrollView(
-                  controller: controller,
-                  slivers: <Widget>[
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: ListRestaurantFilterWidget(
-                        title: widget.title,
-                        isListSelected: _isListMode,
-                        onListButtonTap: () {
-                          setState(
-                            () {
-                              if (!_isListMode) {
-                                _isListMode = true;
-                              }
-                            },
-                          );
-                        },
-                        onGridButtonTap: () {
-                          setState(
-                            () {
-                              if (_isListMode) {
-                                _isListMode = false;
-                              }
-                            },
-                          );
-                        },
-                        size: 27,
-                      ),
-                    ),
-                    RestaurantListWidget(
-                      restaurants: ExampleModel.getRestaurants(),
-                      fade: 0.4,
-                      scale: 0.95,
-                      type: _isListMode
-                          ? RestaurantViewType.detailList
-                          : RestaurantViewType.detailGrid,
-                    ),
-                  ],
-                ),
-              );
-            },
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

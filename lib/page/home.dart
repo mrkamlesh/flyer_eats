@@ -8,6 +8,7 @@ import 'package:flyereats/bloc/location/location_state.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flyereats/model/location.dart';
 import 'package:flyereats/page/delivery_process_order_page.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
 import 'package:flyereats/page/search_page.dart';
@@ -21,7 +22,6 @@ import 'package:flyereats/widget/promo_list.dart';
 import 'package:flyereats/widget/restaurant_list.dart';
 import 'package:flyereats/widget/shop_category_list.dart';
 import 'package:flyereats/classes/example_model.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Home extends StatefulWidget {
@@ -34,6 +34,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool _isScrollingDown = false;
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
+
+  Location _selectedLocation;
 
   @override
   initState() {
@@ -93,8 +95,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               onItemSelected: (index) {
                 setState(() {
                   _currentIndex = index;
-                  if (index == 2){
-                    Navigator.push(context, MaterialPageRoute(builder: (context){
+                  if (index == 2) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
                       return SearchPage();
                     }));
                   }
@@ -196,9 +199,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 } else if (state is LoadingLocationSuccess) {
                   titleText = "Loading Location...";
                   isLoading = true;
-                  BlocProvider.of<LocationBloc>(context).add(
-                      GetPredefinedLocations(LatLng(
-                          state.location.latitude, state.location.longitude)));
+                  BlocProvider.of<LocationBloc>(context)
+                      .add(GetPredefinedLocations("101"));
                 } else if (state is LoadingPredefinedLocationsSuccess) {
                   titleText = "Loading Location...";
                   isLoading = true;
@@ -207,6 +209,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 } else if (state is LocationSelected) {
                   titleText = state.location.address;
                   isLoading = false;
+                  _selectedLocation = state.location;
                 }
 
                 return Builder(
@@ -288,6 +291,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               EdgeInsets.only(bottom: distanceSectionContent),
                           height: 110,
                           child: ShopCategoryListWidget(
+                            onTap: (i) {
+                              if (i == 0) {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return RestaurantListPage(
+                                    image: "assets/allrestaurant.png",
+                                    isExternalImage: false,
+                                    title: "All Restaurants",
+                                    location: _selectedLocation,
+                                  );
+                                }));
+                              }
+                            },
                             shopCategories: ExampleModel.getShopCategories(),
                           ),
                         ),

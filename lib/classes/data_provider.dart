@@ -5,13 +5,72 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class DataProvider {
+  var client = http.Client();
 
-  Future<dynamic> getLocations(double lat, double long) async {
-    String url = "http://flyereats.in/store/getaddress?lat=$lat&lng=$long";
+  String baseUrl = "https://www.pollachiarea.com/flyereats/";
+  String baseUrl2 = "http://flyereats.in/";
+
+  Future<dynamic> getLocations(String countryId) async {
+    String url = "${baseUrl}store/addressesWithCountry?country_id=$countryId";
 
     var responseJson;
     try {
-      final response = await http.get(url);
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getRestaurantList(String address) async {
+    String addressUrl = Uri.encodeComponent(address);
+    String url =
+        "${baseUrl}mobileapp/apinew/search?json=true&sortby=is_open&cusinetype=food&page=1&isgetoffer=1&address=$addressUrl&api_key=flyereats";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getRestaurantTop(String address) async {
+    String addressUrl = Uri.encodeComponent(address);
+    String url =
+        "${baseUrl}mobileapp/apinew/GetTopMerchentList?json=true&address=$addressUrl&api_key=flyereats";
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getCategory(String restaurantId) async {
+    String url =
+        "${baseUrl}mobileapp/apinew/MenuCategory?json=true&merchant_id=$restaurantId&api_key=flyereats";
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getFoods(String restaurantId, String categoryId) async {
+    String url =
+        "${baseUrl2}mobileapp/apinew/getItem?json=true&api_key=flyereats&merchant_id=$restaurantId&cat_id=$categoryId";
+    var responseJson;
+    try {
+      final response = await client.get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');

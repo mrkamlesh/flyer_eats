@@ -10,9 +10,10 @@ import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/bloc/food/detail_page_event.dart';
 import 'package:flyereats/bloc/food/detail_page_state.dart';
 import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
+import 'package:flyereats/model/menu_category.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/page/restaurant_place_order_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
@@ -37,6 +38,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
   PageController _rankPageController;
   Timer _timer;
   FoodCart _foodCart = FoodCart(Map<int, FoodCartItem>());
+  List<Food> _foods = List();
 
   bool _isListMode = true;
   bool _isVegOnly = false;
@@ -61,7 +63,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
           duration: Duration(milliseconds: 700), curve: Curves.ease);
     });
 
-    BlocProvider.of<DetailPageBloc>(context).add(PageDetailRestaurantOpen());
+    BlocProvider.of<DetailPageBloc>(context)
+        .add(PageDetailRestaurantOpen(widget.restaurant.id));
   }
 
   @override
@@ -280,7 +283,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(
-                                    widget.restaurant.description,
+                                    widget.restaurant.cuisine,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -316,18 +319,21 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                   vertical: 5,
                                   horizontal: horizontalPaddingDraggable),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Text(
-                                    widget.restaurant.description,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.black54),
+                                  Expanded(
+                                    child: Text(
+                                      widget.restaurant.address,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
                                   ),
                                   Text(
-                                    widget.restaurant.location,
+                                    widget.restaurant.deliveryEstimation,
                                     style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold),
@@ -376,10 +382,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                     SliverPersistentHeader(
                       pinned: true,
                       delegate: DetailRestaurantFilterTabs(
-                        onTabTap: (index) {
-                          /*_bloc
-                                  .add(ChangeQuantity(0, Food("title", "description", "price", "image", true), 5));*/
-                        },
+                        widget.restaurant.id,
                         offset: offset,
                         isListSelected: _isListMode,
                         onListButtonTap: () {
@@ -409,14 +412,25 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                         },
                         isVegOnly: _isVegOnly,
                         size: 27,
-                        tabController: TabController(
-                            length: 5, vsync: this, initialIndex: 0),
                       ),
                     ),
                     BlocBuilder<DetailPageBloc, DetailPageState>(
                       builder: (context, state) {
                         if (state is CartState) {
                           _foodCart = state.cart;
+                        }
+                        if (state is OnDataLoaded) {
+                          _foods = state.list;
+                        }
+                        if (state is OnDataLoading) {
+                          return _isListMode
+                              ? FoodListLoadingWidget()
+                              : FoodGridLoadingWidget();
+                        }
+                        if (state is NoFoodAvailable) {
+                          return SliverToBoxAdapter(
+                            child: Text("No food avaliable"),
+                          );
                         }
                         return FoodListWidget(
                           padding: _isListMode
@@ -431,7 +445,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                   top: 10,
                                   bottom: 10 + kBottomNavigationBarHeight),
                           cart: _foodCart,
-                          listFood: ExampleModel.getFoods(),
+                          listFood: _foods,
                           type: _isListMode
                               ? FoodListViewType.list
                               : FoodListViewType.grid,
@@ -451,26 +465,24 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
 }
 
 class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
+  final String restaurantId;
   final Function onListButtonTap;
   final Function onGridButtonTap;
   final bool isListSelected;
   final double size;
   final bool isVegOnly;
   final Function(bool) onSwitchChanged;
-  final TabController tabController;
   final double offset;
-  final Function(int) onTabTap;
 
-  DetailRestaurantFilterTabs({
+  DetailRestaurantFilterTabs(
+    this.restaurantId, {
     this.onListButtonTap,
     this.onGridButtonTap,
     this.isListSelected,
     this.size,
     this.isVegOnly,
     this.onSwitchChanged,
-    this.tabController,
     this.offset,
-    this.onTabTap,
   });
 
   @override
@@ -584,38 +596,52 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                 ),
               ],
             ),
-            Container(
-              alignment: Alignment.centerLeft,
-              child: TabBar(
-                onTap: onTabTap,
-                isScrollable: true,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.black26,
-                indicatorColor: Colors.yellow[600],
-                controller: tabController,
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                indicatorPadding:
-                    EdgeInsets.only(left: 0, right: 15, bottom: 2, top: 0),
-                labelPadding: EdgeInsets.only(left: 0, right: 15, bottom: 0),
-                tabs: <Widget>[
-                  Tab(
-                    text: "Best Selling",
+            BlocBuilder<DetailPageBloc, DetailPageState>(
+              condition: (oldState, state) {
+                if (state is MenusLoaded) {
+                  return true;
+                } else {
+                  return false;
+                }
+              },
+              builder: (context, state) {
+                List<MenuCategory> menus = List();
+                if (state is MenusLoaded) {
+                  menus = state.menus;
+                }
+
+                List<Tab> tabs = List();
+                for (int i = 0; i < menus.length; i++) {
+                  tabs.add(Tab(
+                    text: menus[i].name,
+                  ));
+                }
+
+                return DefaultTabController(
+                  length: menus.length,
+                  initialIndex: 0,
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: TabBar(
+                      onTap: (i) {
+                        BlocProvider.of<DetailPageBloc>(context).add(
+                            RestaurantMenuChange(restaurantId, menus[i].id));
+                      },
+                      isScrollable: true,
+                      labelColor: Colors.black,
+                      unselectedLabelColor: Colors.black26,
+                      indicatorColor: Colors.yellow[600],
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                      indicatorPadding: EdgeInsets.only(
+                          left: 0, right: 15, bottom: 2, top: 0),
+                      labelPadding:
+                          EdgeInsets.only(left: 0, right: 15, bottom: 0),
+                      tabs: tabs,
+                    ),
                   ),
-                  Tab(
-                    text: "Breakfast",
-                  ),
-                  Tab(
-                    text: "Dinner",
-                  ),
-                  Tab(
-                    text: "Lunch",
-                  ),
-                  Tab(
-                    text: "Snacks Time",
-                  ),
-                ],
-              ),
+                );
+              },
             ),
           ],
         ),

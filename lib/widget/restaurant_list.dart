@@ -313,7 +313,7 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(right: 10, left: 10, bottom: 5),
                         child: Text(
-                          restaurant.description,
+                          restaurant.cuisine,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: 10, color: Colors.black45),
@@ -341,7 +341,7 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-                                    restaurant.location,
+                                    restaurant.deliveryEstimation,
                                     style: TextStyle(
                                         fontSize: 12, color: Colors.black),
                                   ),
@@ -531,7 +531,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                 Container(
                                   margin: EdgeInsets.only(bottom: 7),
                                   child: Text(
-                                    restaurant.description,
+                                    restaurant.cuisine,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -549,11 +549,15 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                           SizedBox(
                                             width: 5,
                                           ),
-                                          Text(
-                                            restaurant.discountDescription,
-                                            style: TextStyle(
-                                              color: primary3,
-                                              fontSize: 12,
+                                          Expanded(
+                                            child: Text(
+                                              restaurant.discountDescription,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                color: primary3,
+                                                fontSize: 12,
+                                              ),
                                             ),
                                           )
                                         ],
@@ -582,7 +586,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-                                    restaurant.location,
+                                    restaurant.deliveryEstimation,
                                     style: TextStyle(
                                         fontSize: 12, color: Colors.black),
                                   ),
@@ -914,5 +918,33 @@ class TrianglePainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return false;
+  }
+}
+
+class LoadingRestaurantListWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+          top: distanceSectionContent - 10,
+          bottom: distanceSectionContent + kBottomNavigationBarHeight),
+      child: ListView.builder(
+          itemBuilder: (context, i) {
+            return Shimmer.fromColors(
+                child: Container(
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),
+                    color: Colors.black,),
+                  margin: EdgeInsets.only(
+                      bottom: 10,
+                      top: 10,
+                      left: horizontalPaddingDraggable,
+                      right: horizontalPaddingDraggable),
+                  height: 115,
+                ),
+                baseColor: Colors.grey[300],
+                highlightColor: Colors.grey[100]);
+          },
+          itemCount: 5),
+    );
   }
 }

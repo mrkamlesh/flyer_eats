@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/bloc/food/detail_page_event.dart';
-import 'package:flyereats/bloc/food/detail_page_state.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/food.dart';
@@ -64,38 +63,18 @@ class _FoodListWidgetState extends State<FoodListWidget>
         ? SliverList(
             delegate: SliverChildBuilderDelegate(
             (context, i) {
-              return BlocBuilder<DetailPageBloc, DetailPageState>(
-                builder: (context, state) {
-                  if (state is OnDataLoading) {
-                    return Shimmer.fromColors(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          margin: EdgeInsets.only(
-                              top: 2, bottom: 18, left: 5, right: 5),
-                          height: 100,
-                          child: SizedBox.expand(),
-                        ),
-                        baseColor: Colors.grey[300],
-                        highlightColor: Colors.grey[100]);
-                  }
-
-                  return FoodList(
-                    type: widget.type,
-                    index: i,
-                    scale: _scaleAnimation,
-                    selectedIndex: _selectedFood,
-                    food: widget.listFood[i],
-                    quantity: widget.cart.getQuantity(i),
-                    onTapRemove: () {
-                      _onTapRemove(i);
-                    },
-                    onTapAdd: () {
-                      _onTapAdd(i);
-                    },
-                  );
+              return FoodList(
+                type: widget.type,
+                index: i,
+                scale: _scaleAnimation,
+                selectedIndex: _selectedFood,
+                food: widget.listFood[i],
+                quantity: widget.cart.getQuantity(i),
+                onTapRemove: () {
+                  _onTapRemove(i);
+                },
+                onTapAdd: () {
+                  _onTapAdd(i);
                 },
               );
             },
@@ -104,36 +83,18 @@ class _FoodListWidgetState extends State<FoodListWidget>
         : SliverGrid(
             delegate: SliverChildBuilderDelegate(
               (context, i) {
-                return BlocBuilder<DetailPageBloc, DetailPageState>(
-                  builder: (context, state) {
-                    if (state is OnDataLoading) {
-                      return Shimmer.fromColors(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            margin: EdgeInsets.only(
-                                top: 2, bottom: 18, left: 5, right: 5),
-                          ),
-                          baseColor: Colors.grey[300],
-                          highlightColor: Colors.grey[100]);
-                    } else {
-                      return FoodList(
-                        type: widget.type,
-                        index: i,
-                        quantity: widget.cart.getQuantity(i),
-                        scale: _scaleAnimation,
-                        selectedIndex: _selectedFood,
-                        food: widget.listFood[i],
-                        onTapRemove: () {
-                          _onTapRemove(i);
-                        },
-                        onTapAdd: () {
-                          _onTapAdd(i);
-                        },
-                      );
-                    }
+                return FoodList(
+                  type: widget.type,
+                  index: i,
+                  quantity: widget.cart.getQuantity(i),
+                  scale: _scaleAnimation,
+                  selectedIndex: _selectedFood,
+                  food: widget.listFood[i],
+                  onTapRemove: () {
+                    _onTapRemove(i);
+                  },
+                  onTapAdd: () {
+                    _onTapAdd(i);
                   },
                 );
               },
@@ -361,7 +322,8 @@ class FoodList extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontSize: 16, fontWeight: FontWeight.bold),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -575,5 +537,63 @@ class FoodList extends StatelessWidget {
         return Container();
         break;
     }
+  }
+}
+
+class FoodListLoadingWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: EdgeInsets.only(
+          left: horizontalPaddingDraggable - 5,
+          right: horizontalPaddingDraggable - 5,
+          top: 10,
+          bottom: kBottomNavigationBarHeight),
+      sliver: SliverList(
+          delegate: SliverChildBuilderDelegate((context, i) {
+        return Shimmer.fromColors(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: EdgeInsets.only(top: 2, bottom: 18, left: 5, right: 5),
+              height: 100,
+              child: SizedBox.expand(),
+            ),
+            baseColor: Colors.grey[300],
+            highlightColor: Colors.grey[100]);
+      }, childCount: 5)),
+    );
+  }
+}
+
+class FoodGridLoadingWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: EdgeInsets.only(
+          left: horizontalPaddingDraggable - 5,
+          right: horizontalPaddingDraggable - 5,
+          top: 10,
+          bottom: kBottomNavigationBarHeight),
+      sliver: SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 245),
+          delegate: SliverChildBuilderDelegate((context, i) {
+        return Shimmer.fromColors(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            baseColor: Colors.grey[300],
+            highlightColor: Colors.grey[100]);
+      }, childCount: 5)),
+    );
   }
 }

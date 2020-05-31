@@ -80,7 +80,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
                         height: 5,
                       ),
                       Text(
-                        widget.order.restaurant.location,
+                        widget.order.restaurant.deliveryEstimation,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 12, color: Colors.black26),

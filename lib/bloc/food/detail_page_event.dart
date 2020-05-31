@@ -8,10 +8,24 @@ abstract class DetailPageEvent extends Equatable {
 }
 
 class PageDetailRestaurantOpen extends DetailPageEvent {
-  const PageDetailRestaurantOpen();
+
+  final String restaurantId;
+
+  const PageDetailRestaurantOpen(this.restaurantId);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [restaurantId];
+}
+
+class RestaurantMenuChange extends DetailPageEvent {
+
+  final String restaurantId;
+  final String menuId;
+
+  const RestaurantMenuChange(this.restaurantId, this.menuId);
+
+  @override
+  List<Object> get props => [restaurantId, menuId];
 }
 
 class SwitchVegOnly extends DetailPageEvent {
@@ -28,15 +42,6 @@ class FilterList extends DetailPageEvent {
 
   @override
   List<Object> get props => [];
-}
-
-class SwitchCategory extends DetailPageEvent {
-  final String id;
-
-  const SwitchCategory(this.id);
-
-  @override
-  List<Object> get props => [id];
 }
 
 class ChangeQuantity extends DetailPageEvent {

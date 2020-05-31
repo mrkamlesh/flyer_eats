@@ -43,12 +43,12 @@ class MoveLocation extends LocationEvent {
 }
 
 class GetPredefinedLocations extends LocationEvent {
-  final LatLng latLng;
+  final String countryId;
 
-  const GetPredefinedLocations(this.latLng);
+  const GetPredefinedLocations(this.countryId);
 
   @override
-  List<Object> get props => [latLng];
+  List<Object> get props => [countryId];
 }
 
 class SelectLocation extends LocationEvent {

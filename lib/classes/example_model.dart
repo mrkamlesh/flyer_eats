@@ -34,70 +34,98 @@ class ExampleModel {
   static List<Restaurant> getRestaurants() {
     List<Restaurant> _topRestaurants = [];
     _topRestaurants.add(Restaurant(
+        "1",
         "Amuthasurabhi Amuthasurabhi dasdasdasd",
         "25 mins",
         "4.5",
         "https://media-cdn.tripadvisor.com/media/photo-s/12/c1/c3/f5/restaurant-araz.jpg",
         "South Indian | North Indian",
+        "Pollachi",
         discountTitle: "30% OFF",
         discountDescription: "30 % Off Up to 60 RS"));
     _topRestaurants.add(Restaurant(
-        "Gowri Khrisna",
-        "32 mins",
-        "4.7",
-        "https://cdn.vox-cdn.com/thumbor/r6GaFXzgvkbJsq5ioEyxXtqQYlM=/0x0:2000x1335/1200x800/filters:focal(840x508:1160x828)/cdn.vox-cdn.com/uploads/chorus_image/image/66533246/2019_10_07_Pilot_restaurant_003.0.jpg",
-        "South Indian | North Indian"));
+      "2",
+      "Gowri Khrisna",
+      "32 mins",
+      "4.7",
+      "https://cdn.vox-cdn.com/thumbor/r6GaFXzgvkbJsq5ioEyxXtqQYlM=/0x0:2000x1335/1200x800/filters:focal(840x508:1160x828)/cdn.vox-cdn.com/uploads/chorus_image/image/66533246/2019_10_07_Pilot_restaurant_003.0.jpg",
+      "South Indian | North Indian",
+      "Pollachi",
+    ));
     _topRestaurants.add(Restaurant(
-        "Ruchi Resta",
-        "33 mins",
-        "4.1",
-        "https://media-cdn.tripadvisor.com/media/photo-s/13/c0/61/84/indian-summer-nights.jpg",
-        "South Indian | North Indian"));
+      "3",
+      "Ruchi Resta",
+      "33 mins",
+      "4.1",
+      "https://media-cdn.tripadvisor.com/media/photo-s/13/c0/61/84/indian-summer-nights.jpg",
+      "South Indian | North Indian",
+      "Pollachi",
+    ));
     _topRestaurants.add(Restaurant(
-        "Suryaa",
-        "10 mins",
-        "4.6",
-        "https://media-cdn.tripadvisor.com/media/photo-s/10/14/58/e3/restaurant-roadside-view.jpg",
-        "Pizza"));
+      "4",
+      "Suryaa",
+      "10 mins",
+      "4.6",
+      "https://media-cdn.tripadvisor.com/media/photo-s/10/14/58/e3/restaurant-roadside-view.jpg",
+      "Pizza",
+      "Pollachi",
+    ));
     _topRestaurants.add(Restaurant(
+        "5",
         "The Dinner",
         "20 mins",
         "4.3",
         "https://media-cdn.tripadvisor.com/media/photo-s/0f/95/ff/60/indian-cuisine.jpg",
-        "Tandorine"));
+        "Tandorine",
+        ""));
     _topRestaurants.add(Restaurant(
-        "Other Restaurant",
-        "45 mins",
-        "4.2",
-        "https://akm-img-a-in.tosshub.com/indiatoday/images/story/201509/dhaba-story_647_090415065808.jpg",
-        "Italian Cuisine"));
+      "6",
+      "Other Restaurant",
+      "45 mins",
+      "4.2",
+      "https://akm-img-a-in.tosshub.com/indiatoday/images/story/201509/dhaba-story_647_090415065808.jpg",
+      "Italian Cuisine",
+      "Pollachi",
+    ));
     _topRestaurants.add(Restaurant(
-        "Other Restaurant",
-        "15 mins",
-        "4.9",
-        "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
-        "South Indian | North Indian"));
+      "8",
+      "Other Restaurant",
+      "15 mins",
+      "4.9",
+      "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
+      "South Indian | North Indian",
+      "Pollachi",
+    ));
 
     _topRestaurants.add(Restaurant(
-        "Other Restaurant",
-        "15 mins",
-        "4.9",
-        "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
-        "South Indian | North Indian"));
+      "9",
+      "Other Restaurant",
+      "15 mins",
+      "4.9",
+      "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
+      "South Indian | North Indian",
+      "Pollachi",
+    ));
 
     _topRestaurants.add(Restaurant(
-        "Other Restaurant",
-        "15 mins",
-        "4.9",
-        "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
-        "South Indian | North Indian"));
+      "10",
+      "Other Restaurant",
+      "15 mins",
+      "4.9",
+      "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
+      "South Indian | North Indian",
+      "Pollachi",
+    ));
 
     _topRestaurants.add(Restaurant(
-        "Other Restaurant",
-        "15 mins",
-        "4.9",
-        "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
-        "South Indian | North Indian"));
+      "11",
+      "Other Restaurant",
+      "15 mins",
+      "4.9",
+      "https://bali.queenstandoor.com/upload/gallery/large_Insade1.jpg",
+      "South Indian | North Indian",
+      "Pollachi",
+    ));
     return _topRestaurants;
   }
 
@@ -153,36 +181,42 @@ class ExampleModel {
   static List<Food> getFoods() {
     List<Food> _listFoods = [];
     _listFoods.add(Food(
+      "1",
         "Idly",
         "Loremp ipsum dos amet color Loremp ipsum dos amet color Loremp ipsum dos amet color",
         310.32,
         "https://www.kannammacooks.com/wp-content/uploads/soft-idli-batter-recipe-using-idli-rava-mixie-blender-method.jpg",
         true));
     _listFoods.add(Food(
+        "2",
         "Masala Dosa",
         "Loremp ",
         3152,
         "https://cdn.theculturetrip.com/wp-content/uploads/2017/08/13040792475_51fdc1f447_k.jpg",
         false));
     _listFoods.add(Food(
+      "3",
         "Rogan Josh",
         "Loremp ipsum dos amet color",
         10,
         "https://img.theculturetrip.com/1024x/smart/wp-content/uploads/2017/08/1024px-rogan_josh.jpg",
         false));
     _listFoods.add(Food(
+        "4",
         "Hyderabadi Biriyani",
         "Loremp ipsum dos amet color",
         70,
         "https://www.kannammacooks.com/wp-content/uploads/soft-idli-batter-recipe-using-idli-rava-mixie-blender-method.jpg",
         true));
     _listFoods.add(Food(
+        "5",
         "Indian chaats",
         "Loremp ipsum dos amet color",
         90,
         "https://img.theculturetrip.com/1024x/smart/wp-content/uploads/2017/08/6456856581_b68cf171fd_b.jpg",
         true));
     _listFoods.add(Food(
+        "6",
         "Vada Pav",
         "Loremp ipsum dos amet color",
         10,

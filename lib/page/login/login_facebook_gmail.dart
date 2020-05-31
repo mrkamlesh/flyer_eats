@@ -86,7 +86,6 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                             ),
                             margin: EdgeInsets.only(bottom: 20),
                             child: TextField(
-                              autofocus: true,
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                 contentPadding:

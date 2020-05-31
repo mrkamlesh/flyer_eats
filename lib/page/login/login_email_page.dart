@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/page/login/register_page.dart';
 
 class LoginEmailPage extends StatefulWidget {
   @override
@@ -35,7 +36,6 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
             child: Container(
               height: AppUtil.getScreenHeight(context),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Align(
                     alignment: Alignment.topCenter,
@@ -88,7 +88,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.symmetric(vertical: 15),
+                                EdgeInsets.symmetric(vertical: 15),
                                 border: InputBorder.none,
                                 hintText: "Enter your email",
                                 hintStyle: TextStyle(
@@ -105,11 +105,10 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                             ),
                             margin: EdgeInsets.only(bottom: 10),
                             child: TextField(
-                              autofocus: true,
                               obscureText: true,
                               decoration: InputDecoration(
                                 contentPadding:
-                                    EdgeInsets.symmetric(vertical: 15),
+                                EdgeInsets.symmetric(vertical: 15),
                                 border: InputBorder.none,
                                 hintText: "Password",
                                 hintStyle: TextStyle(
@@ -126,7 +125,12 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (builder) {
+                                    return RegisterPage();
+                                  }));
+                            },
                             child: Stack(
                               children: <Widget>[
                                 Container(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flyereats/bloc/food/detail_page_bloc.dart';
-import 'package:flyereats/bloc/food/food_repository.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/page/home.dart';
 
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider<DetailPageBloc>(
             create: (context) {
-              return DetailPageBloc(FoodRepository());
+              return DetailPageBloc();
             },
           ),
           BlocProvider<LocationBloc>(

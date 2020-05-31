@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
+import 'package:flyereats/model/menu_category.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -49,12 +50,19 @@ class CartState extends DetailPageState {
   List<Object> get props => [cart];
 }
 
-class CategoryState extends DetailPageState {
-  final String id;
+class MenusLoaded extends DetailPageState {
+  final List<MenuCategory> menus;
 
-  const CategoryState(this.id);
+  const MenusLoaded(this.menus);
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [menus];
 }
 
+class NoFoodAvailable extends DetailPageState {
+
+  const NoFoodAvailable();
+
+  @override
+  List<Object> get props => [];
+}

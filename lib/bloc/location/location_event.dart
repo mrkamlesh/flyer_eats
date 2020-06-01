@@ -74,5 +74,14 @@ class GetPreviousLocation extends LocationEvent {
 
   @override
   List<Object> get props => [];
+}
 
+class GetLocationByLatLng extends LocationEvent {
+  final double lat;
+  final double lng;
+
+  const GetLocationByLatLng(this.lat, this.lng);
+
+  @override
+  List<Object> get props => [lat, lng];
 }

@@ -233,6 +233,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                               ),
                             ),
                             RestaurantListWidget(
+                              location: widget.location,
                               restaurants: state.restaurants,
                               fade: 0.4,
                               scale: 0.95,

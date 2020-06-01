@@ -5,13 +5,15 @@ import 'package:flyereats/classes/app_util.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String leading;
-  final String title ;
+  final String title;
+
   final String drawer;
   final Function onTapLeading;
   final Function onTapTitle;
   final Function onTapDrawer;
   final Color backgroundColor;
   final bool isLoading;
+  final bool isFlag;
 
   const CustomAppBar(
       {Key key,
@@ -22,7 +24,8 @@ class CustomAppBar extends StatelessWidget {
       this.onTapTitle,
       this.onTapDrawer,
       this.backgroundColor = Colors.black38,
-      this.isLoading = false})
+      this.isLoading = false,
+      this.isFlag = false})
       : super(key: key);
 
   @override
@@ -42,20 +45,33 @@ class CustomAppBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           leading != null
-              ? GestureDetector(
-                  onTap: onTapLeading,
-                  child: Container(
-                    height: kToolbarHeight,
-                    width: 40,
-                    child: SvgPicture.asset(
-                      leading,
-                      color: Colors.white,
-                      width: 20,
-                      height: 20,
-                      fit: BoxFit.none,
-                    ),
-                  ),
-                )
+              ? isFlag
+                  ? GestureDetector(
+                      onTap: onTapLeading,
+                      child: Container(
+                        height: kToolbarHeight,
+                        width: 28,
+                        child: SvgPicture.asset(
+                          leading,
+                          width: 20,
+                          height: 20,
+                        ),
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: onTapLeading,
+                      child: Container(
+                        height: kToolbarHeight,
+                        width: 40,
+                        child: SvgPicture.asset(
+                          leading,
+                          color: Colors.white,
+                          width: 20,
+                          height: 20,
+                          fit: BoxFit.none,
+                        ),
+                      ),
+                    )
               : SizedBox(
                   width: 28,
                 ),
@@ -83,7 +99,7 @@ class CustomAppBar extends StatelessWidget {
           isLoading
               ? SpinKitCircle(
                   color: Colors.white,
-            size: kToolbarHeight - 30,
+                  size: kToolbarHeight - 30,
                 )
               : Container(),
           drawer != null

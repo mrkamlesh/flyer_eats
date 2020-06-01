@@ -112,27 +112,35 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       body: Stack(
         children: <Widget>[
-          Positioned(
-            top: 0,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: BannerListWidget(
-                bannerList: ExampleModel.getBanners(),
-              ),
-            ),
-          ),
+          BlocBuilder<LocationBloc, LocationState>(
+              condition: (oldState, state) {
+            if (state is LocationSelected) {
+              return true;
+            } else {
+              return false;
+            }
+          }, builder: (context, state) {
+            if (state is LocationSelected) {
+              return Positioned(
+                top: 0,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: BannerListWidget(
+                    bannerList: ExampleModel.getBanners(),
+                  ),
+                ),
+              );
+            }
+            return Container();
+          }),
           Align(
             alignment: Alignment.topCenter,
             child: BlocConsumer<LocationBloc, LocationState>(
               buildWhen: (oldState, state) {
-                if (state is LocationSelected ||
-                    state is LoadingPredefinedLocations ||
-                    state is LoadingPredefinedLocationsSuccess ||
-                    state is LoadingPredefinedLocationsError ||
-                    state is NoLocationsAvailable ||
-                    state is LoadingLocation ||
+                if (state is LoadingLocation ||
                     state is LoadingLocationSuccess ||
                     state is LoadingLocationError ||
+                    state is NoLocationsAvailable ||
                     state is LocationSelected) {
                   return true;
                 } else {
@@ -140,8 +148,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 }
               },
               listenWhen: (oldState, state) {
-                if (state is LoadingPredefinedLocationsError ||
-                    state is NoLocationsAvailable ||
+                if (state is NoLocationsAvailable ||
                     state is LoadingLocationError) {
                   return true;
                 } else {
@@ -149,22 +156,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 }
               },
               listener: (context, state) {
-                if (state is LoadingPredefinedLocationsError) {
-                  final snackBar = SnackBar(
-                    content: Text(
-                      state.message,
-                    ),
-                    duration: Duration(days: 365),
-                    action: SnackBarAction(
-                      label: "Retry",
-                      onPressed: () {
-                        BlocProvider.of<LocationBloc>(context)
-                            .add(GetCurrentLocation());
-                      },
-                    ),
-                  );
-                  Scaffold.of(context).showSnackBar(snackBar);
-                } else if (state is LoadingLocationError) {
+                if (state is LoadingLocationError) {
                   final snackBar = SnackBar(
                     content: Text(state.message),
                     duration: Duration(days: 365),
@@ -186,36 +178,44 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               },
               builder: (context, state) {
                 String titleText = "Choose Location Here";
+                String leading;
                 bool isLoading = false;
-                if (state is LoadingPredefinedLocations ||
-                    state is LoadingLocation) {
+                bool isFlag = false;
+                if (state is LoadingLocationSuccess) {
                   titleText = "Loading Location...";
                   isLoading = true;
-                } else if (state is LoadingPredefinedLocationsError ||
-                    state is LoadingLocationError ||
-                    state is NoLocationsAvailable) {
-                  titleText = "";
+                  BlocProvider.of<LocationBloc>(context).add(
+                      GetLocationByLatLng(
+                          state.location.latitude, state.location.longitude));
+                } else if (state is NoLocationsAvailable) {
+                  titleText = "No Locations Available";
                   isLoading = false;
-                } else if (state is LoadingLocationSuccess) {
-                  titleText = "Loading Location...";
-                  isLoading = true;
-                  BlocProvider.of<LocationBloc>(context)
-                      .add(GetPredefinedLocations("101"));
-                } else if (state is LoadingPredefinedLocationsSuccess) {
-                  titleText = "Loading Location...";
-                  isLoading = true;
-                  BlocProvider.of<LocationBloc>(context)
-                      .add(SelectLocation(state.locations[0]));
+                } else if (state is LoadingLocationError) {
+                  titleText = "Error Getting Location";
+                  isLoading = false;
                 } else if (state is LocationSelected) {
                   titleText = state.location.address;
                   isLoading = false;
+                  switch (state.location.country) {
+                    case "101":
+                      leading = "assets/india_flag.svg";
+                      break;
+                    case "196":
+                      leading = "assets/singapore_flag.svg";
+                      break;
+                  }
                   _selectedLocation = state.location;
+                  isFlag = true;
+                } else if (state is LoadingLocation) {
+                  titleText = "Loading Location...";
+                  isLoading = true;
                 }
 
                 return Builder(
                   builder: (context) {
                     return CustomAppBar(
-                      leading: "assets/location.svg",
+                      leading: leading,
+                      isFlag: isFlag,
                       drawer: "assets/drawer.svg",
                       title: titleText,
                       isLoading: isLoading,
@@ -241,266 +241,303 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               },
             ),
           ),
-          DraggableScrollableSheet(
-            initialChildSize: AppUtil.getDraggableHeight(context) /
-                AppUtil.getScreenHeight(context),
-            minChildSize: AppUtil.getDraggableHeight(context) /
-                AppUtil.getScreenHeight(context),
-            maxChildSize: 1.0,
-            builder: (context, controller) {
-              controller.addListener(() {
-                if (controller.position.userScrollDirection ==
-                    ScrollDirection.reverse) {
-                  if (!_isScrollingDown) {
-                    _isScrollingDown = true;
-                    setState(() {
-                      _animationController.forward().orCancel;
+          BlocBuilder<LocationBloc, LocationState>(
+            condition: (oldState, state) {
+              if (state is LoadingLocation ||
+                  state is LoadingLocationSuccess ||
+                  state is LoadingLocationError ||
+                  state is NoLocationsAvailable ||
+                  state is LocationSelected) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+            builder: (context, state) {
+              if (state is LoadingLocation || state is LoadingLocationSuccess) {
+                return Center(child: HomeLoadingWidget());
+              } else if (state is LoadingLocationError) {
+                return Center(child: HomeErrorWidget("Can Not Get Location"));
+              } else if (state is NoLocationsAvailable) {
+                return Center(child: HomeErrorWidget("No Available Location"));
+              } else if (state is LocationSelected) {
+                return DraggableScrollableSheet(
+                  initialChildSize: AppUtil.getDraggableHeight(context) /
+                      AppUtil.getScreenHeight(context),
+                  minChildSize: AppUtil.getDraggableHeight(context) /
+                      AppUtil.getScreenHeight(context),
+                  maxChildSize: 1.0,
+                  builder: (context, controller) {
+                    controller.addListener(() {
+                      if (controller.position.userScrollDirection ==
+                          ScrollDirection.reverse) {
+                        if (!_isScrollingDown) {
+                          _isScrollingDown = true;
+                          setState(() {
+                            _animationController.forward().orCancel;
+                          });
+                        }
+                      }
+                      if ((controller.position.userScrollDirection ==
+                              ScrollDirection.forward) |
+                          (controller.offset >=
+                                  controller.position.maxScrollExtent -
+                                      kBottomNavigationBarHeight &&
+                              !controller.position.outOfRange)) {
+                        if (_isScrollingDown) {
+                          _isScrollingDown = false;
+                          setState(() {
+                            _animationController.reverse().orCancel;
+                          });
+                        }
+                      }
                     });
-                  }
-                }
-                if ((controller.position.userScrollDirection ==
-                        ScrollDirection.forward) |
-                    (controller.offset >=
-                            controller.position.maxScrollExtent -
-                                kBottomNavigationBarHeight &&
-                        !controller.position.outOfRange)) {
-                  if (_isScrollingDown) {
-                    _isScrollingDown = false;
-                    setState(() {
-                      _animationController.reverse().orCancel;
-                    });
-                  }
-                }
-              });
-              return SingleChildScrollView(
-                  controller: controller,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(32),
-                            topLeft: Radius.circular(32))),
-                    padding: EdgeInsets.only(top: 10, bottom: 32),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPaddingDraggable - 5),
-                          margin:
-                              EdgeInsets.only(bottom: distanceSectionContent),
-                          height: 110,
-                          child: ShopCategoryListWidget(
-                            onTap: (i) {
-                              if (i == 0) {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return RestaurantListPage(
-                                    image: "assets/allrestaurant.png",
-                                    isExternalImage: false,
-                                    title: "All Restaurants",
-                                    location: _selectedLocation,
-                                  );
-                                }));
-                              }
-                            },
-                            shopCategories: ExampleModel.getShopCategories(),
-                          ),
-                        ),
-                        HomeActionWidget(),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPaddingDraggable),
-                          margin:
-                              EdgeInsets.only(bottom: distanceSectionContent),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                    return SingleChildScrollView(
+                        controller: controller,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
+                          padding: EdgeInsets.only(top: 10, bottom: 32),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              Text(
-                                "Top Restaurants",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return RestaurantListPage(
-                                      title: "Top Restaurants",
-                                      isExternalImage: false,
-                                      image: "assets/allrestaurant.png",
-                                    );
-                                  }));
-                                },
-                                child: Container(
-                                  width: 70,
-                                  height: 20,
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    "See All",
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                        color: primary3, fontSize: 14),
-                                  ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPaddingDraggable - 5),
+                                margin: EdgeInsets.only(
+                                    bottom: distanceSectionContent),
+                                height: 110,
+                                child: ShopCategoryListWidget(
+                                  onTap: (i) {
+                                    if (i == 0) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return RestaurantListPage(
+                                          image: "assets/allrestaurant.png",
+                                          isExternalImage: false,
+                                          title: "All Restaurants",
+                                          location: _selectedLocation,
+                                        );
+                                      }));
+                                    }
+                                  },
+                                  shopCategories:
+                                      ExampleModel.getShopCategories(),
                                 ),
-                              )
+                              ),
+                              HomeActionWidget(),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPaddingDraggable),
+                                margin: EdgeInsets.only(
+                                    bottom: distanceSectionContent),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      "Top Restaurants",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return RestaurantListPage(
+                                            title: "Top Restaurants",
+                                            isExternalImage: false,
+                                            image: "assets/allrestaurant.png",
+                                          );
+                                        }));
+                                      },
+                                      child: Container(
+                                        width: 70,
+                                        height: 20,
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          "See All",
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                              color: primary3, fontSize: 14),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    bottom: distanceBetweenSection - 10),
+                                height: 160,
+                                child: RestaurantListWidget(
+                                  type: RestaurantViewType.topRestaurant,
+                                  restaurants: ExampleModel.getRestaurants(),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPaddingDraggable),
+                                margin: EdgeInsets.only(
+                                    bottom: distanceSectionContent),
+                                child: Text(
+                                  "Food Categories",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    bottom: distanceBetweenSection),
+                                height: 130,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          offset: Offset(2, 2),
+                                          color: Colors.black26,
+                                          spreadRadius: 0,
+                                          blurRadius: 5)
+                                    ]),
+                                child: FoodCategoryListWidget(
+                                  foodCategoryList:
+                                      ExampleModel.getFoodCategories(),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPaddingDraggable),
+                                margin: EdgeInsets.only(
+                                    bottom: distanceSectionContent - 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      "Order Again",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return RestaurantListPage(
+                                            title: "Order Again",
+                                            isExternalImage: false,
+                                            image: "assets/allrestaurant.png",
+                                          );
+                                        }));
+                                      },
+                                      child: Container(
+                                        height: 20,
+                                        width: 70,
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          "See All",
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                              color: primary3, fontSize: 14),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(bottom: 20),
+                                height: 135,
+                                child: RestaurantListWidget(
+                                  type: RestaurantViewType.orderAgainRestaurant,
+                                  restaurants: ExampleModel.getRestaurants(),
+                                  isExpand: true,
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    bottom: distanceBetweenSection),
+                                height: 130,
+                                width: AppUtil.getScreenWidth(context),
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      "https://cdn6.f-cdn.com/contestentries/1146228/26247298/59d210472a379_thumb900.jpg",
+                                  height: 130,
+                                  width: AppUtil.getScreenWidth(context),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.center,
+                                  placeholder: (context, url) {
+                                    return Shimmer.fromColors(
+                                        child: Container(
+                                          height: 130,
+                                          width:
+                                              AppUtil.getScreenWidth(context),
+                                          color: Colors.black,
+                                        ),
+                                        baseColor: Colors.grey[300],
+                                        highlightColor: Colors.grey[100]);
+                                  },
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    bottom: distanceBetweenSection),
+                                height: 150,
+                                child: PromoListWidget(
+                                  promoList: ExampleModel.getPromos(),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPaddingDraggable),
+                                margin: EdgeInsets.only(
+                                    bottom: distanceSectionContent),
+                                child: Text(
+                                  "It's Dinner Time",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                height: 190,
+                                padding: EdgeInsets.only(
+                                    top: distanceSectionContent,
+                                    bottom: distanceSectionContent),
+                                margin: EdgeInsets.only(
+                                    bottom: distanceBetweenSection +
+                                        distanceSectionContent),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          offset: Offset(2, 2),
+                                          color: Colors.black26,
+                                          spreadRadius: 0,
+                                          blurRadius: 5)
+                                    ]),
+                                alignment: Alignment.center,
+                                child: RestaurantListWidget(
+                                  type: RestaurantViewType.topRestaurant,
+                                  restaurants: ExampleModel.getRestaurants(),
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(
-                              bottom: distanceBetweenSection - 10),
-                          height: 160,
-                          child: RestaurantListWidget(
-                            type: RestaurantViewType.topRestaurant,
-                            restaurants: ExampleModel.getRestaurants(),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPaddingDraggable),
-                          margin:
-                              EdgeInsets.only(bottom: distanceSectionContent),
-                          child: Text(
-                            "Food Categories",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Container(
-                          margin:
-                              EdgeInsets.only(bottom: distanceBetweenSection),
-                          height: 130,
-                          decoration:
-                              BoxDecoration(color: Colors.white, boxShadow: [
-                            BoxShadow(
-                                offset: Offset(2, 2),
-                                color: Colors.black26,
-                                spreadRadius: 0,
-                                blurRadius: 5)
-                          ]),
-                          child: FoodCategoryListWidget(
-                            foodCategoryList: ExampleModel.getFoodCategories(),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPaddingDraggable),
-                          margin: EdgeInsets.only(
-                              bottom: distanceSectionContent - 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "Order Again",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return RestaurantListPage(
-                                      title: "Order Again",
-                                      isExternalImage: false,
-                                      image: "assets/allrestaurant.png",
-                                    );
-                                  }));
-                                },
-                                child: Container(
-                                  height: 20,
-                                  width: 70,
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    "See All",
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                        color: primary3, fontSize: 14),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          height: 135,
-                          child: RestaurantListWidget(
-                            type: RestaurantViewType.orderAgainRestaurant,
-                            restaurants: ExampleModel.getRestaurants(),
-                            isExpand: true,
-                          ),
-                        ),
-                        Container(
-                          margin:
-                              EdgeInsets.only(bottom: distanceBetweenSection),
-                          height: 130,
-                          width: AppUtil.getScreenWidth(context),
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                "https://cdn6.f-cdn.com/contestentries/1146228/26247298/59d210472a379_thumb900.jpg",
-                            height: 130,
-                            width: AppUtil.getScreenWidth(context),
-                            fit: BoxFit.cover,
-                            alignment: Alignment.center,
-                            placeholder: (context, url) {
-                              return Shimmer.fromColors(
-                                  child: Container(
-                                    height: 130,
-                                    width: AppUtil.getScreenWidth(context),
-                                    color: Colors.black,
-                                  ),
-                                  baseColor: Colors.grey[300],
-                                  highlightColor: Colors.grey[100]);
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin:
-                              EdgeInsets.only(bottom: distanceBetweenSection),
-                          height: 150,
-                          child: PromoListWidget(
-                            promoList: ExampleModel.getPromos(),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPaddingDraggable),
-                          margin:
-                              EdgeInsets.only(bottom: distanceSectionContent),
-                          child: Text(
-                            "It's Dinner Time",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Container(
-                          height: 190,
-                          padding: EdgeInsets.only(
-                              top: distanceSectionContent,
-                              bottom: distanceSectionContent),
-                          margin: EdgeInsets.only(
-                              bottom: distanceBetweenSection +
-                                  distanceSectionContent),
-                          decoration:
-                              BoxDecoration(color: Colors.white, boxShadow: [
-                            BoxShadow(
-                                offset: Offset(2, 2),
-                                color: Colors.black26,
-                                spreadRadius: 0,
-                                blurRadius: 5)
-                          ]),
-                          alignment: Alignment.center,
-                          child: RestaurantListWidget(
-                            type: RestaurantViewType.topRestaurant,
-                            restaurants: ExampleModel.getRestaurants(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ));
+                        ));
+                  },
+                );
+              }
+              return Container();
             },
           )
         ],
@@ -668,6 +705,28 @@ class _HomeActionWidgetState extends State<HomeActionWidget>
           ),
         ],
       ),
+    );
+  }
+}
+
+class HomeLoadingWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text("loading"),
+    );
+  }
+}
+
+class HomeErrorWidget extends StatelessWidget {
+  final String message;
+
+  const HomeErrorWidget(this.message);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text(message),
     );
   }
 }

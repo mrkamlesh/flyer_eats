@@ -120,6 +120,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                   builder: (context, state) {
                     if (state is CartState) {
                       _foodCart = state.cart;
+                      /*_listFood = List();
+                      _foodCart.cart
+                          .forEach((id, food) => _listFood.add(food.food));*/
                     }
 
                     return CustomScrollView(
@@ -163,10 +166,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                               borderRadius: BorderRadius.circular(18),
                               boxShadow: [
                                 BoxShadow(
-                                    color: Colors.orange[100],
-                                    blurRadius: 5,
-                                    spreadRadius: 0,
-                                    offset: Offset(2, 3)),
+                                  color: shadow,
+                                  blurRadius: 7,
+                                  spreadRadius: -3,
+                                )
                               ],
                             ),
                             child: Row(
@@ -204,10 +207,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                               borderRadius: BorderRadius.circular(18),
                               boxShadow: [
                                 BoxShadow(
-                                    color: Colors.orange[100],
-                                    blurRadius: 5,
-                                    spreadRadius: 0,
-                                    offset: Offset(2, 3)),
+                                  color: shadow,
+                                  blurRadius: 7,
+                                  spreadRadius: -3,
+                                )
                               ],
                             ),
                             child: Row(
@@ -271,10 +274,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                               borderRadius: BorderRadius.circular(18),
                               boxShadow: [
                                 BoxShadow(
-                                    color: Colors.orange[100],
-                                    blurRadius: 5,
-                                    spreadRadius: 0,
-                                    offset: Offset(2, 3)),
+                                  color: shadow,
+                                  blurRadius: 7,
+                                  spreadRadius: -3,
+                                )
                               ],
                             ),
                             child: Column(

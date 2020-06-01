@@ -240,6 +240,20 @@ class AddressItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String type;
+    switch (address.type) {
+      case AddressType.home:
+        type = "HOME";
+        break;
+      case AddressType.office:
+        type = "OFFICE";
+        break;
+      case AddressType.other:
+        type = "OTHER";
+        break;
+      default:
+        break;
+    }
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: InkWell(
@@ -250,7 +264,7 @@ class AddressItemWidget extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(bottom: 10),
+              margin: EdgeInsets.only(bottom: 15),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
@@ -268,13 +282,26 @@ class AddressItemWidget extends StatelessWidget {
                         Container(
                           margin: EdgeInsets.only(bottom: 10),
                           child: Text(
-                            address.title,
+                            type,
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            address.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
                         Text(
                           address.address,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: 14, color: Colors.black45),
                         )
                       ],

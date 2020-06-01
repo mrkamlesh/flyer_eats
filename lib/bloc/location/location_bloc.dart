@@ -32,6 +32,8 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       yield* mapFilterLocationsToState(event.filter);
     } else if (event is GetPreviousLocation) {
       yield* mapGetPreviousLocationToState();
+    } else if (event is GetLocationByLatLng) {
+      yield* mapGetLocationByLatLngToState(event.lat, event.lng);
     }
   }
 
@@ -78,11 +80,11 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     yield LocationMoved(latLng);
   }
 
-  Stream<LocationState> mapGetPredefinedLocationsToState(String countryId) async* {
+  Stream<LocationState> mapGetPredefinedLocationsToState(
+      String countryId) async* {
     yield LoadingPredefinedLocations();
     try {
-      List<Location> list =
-          await repository.getLocations(countryId);
+      List<Location> list = await repository.getLocations(countryId);
       if (list.length == 0) {
         yield NoLocationsAvailable();
       } else {
@@ -110,5 +112,15 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   Stream<LocationState> mapGetPreviousLocationToState() async* {
     yield LocationSelected(selectedLocation);
+  }
+
+  Stream<LocationState> mapGetLocationByLatLngToState(
+      double lat, double lng) async* {
+    Location location = await repository.getLocationByLatLng(lat, lng);
+    if (location != null) {
+      yield LocationSelected(location);
+    } else {
+      yield NoLocationsAvailable();
+    }
   }
 }

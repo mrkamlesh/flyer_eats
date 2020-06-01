@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/page/restaurant_detail_page.dart';
 import 'package:shimmer/shimmer.dart';
@@ -18,6 +19,7 @@ enum RestaurantViewType {
 
 class RestaurantListWidget extends StatefulWidget {
   final List<Restaurant> restaurants;
+  final Location location;
   final bool isExpand;
   final double scale;
   final double fade;
@@ -30,6 +32,7 @@ class RestaurantListWidget extends StatefulWidget {
     this.scale = 0.95,
     this.fade = 0.4,
     this.type,
+    this.location,
   }) : super(key: key);
 
   @override
@@ -215,7 +218,7 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
               crossAxisCount: 2,
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
-              childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 230,
+              childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 240,
             ),
           ),
         );
@@ -229,6 +232,7 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
         MaterialPageRoute<RestaurantDetailPage>(builder: (context) {
       return RestaurantDetailPage(
         restaurant: restaurant,
+        location: widget.location,
       );
     }));
   }
@@ -311,7 +315,7 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(right: 10, left: 10, bottom: 5),
+                        margin: EdgeInsets.only(right: 10, left: 10, bottom: 7),
                         child: Text(
                           restaurant.cuisine,
                           maxLines: 1,
@@ -319,14 +323,20 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                           style: TextStyle(fontSize: 10, color: Colors.black45),
                         ),
                       ),
-                      /*Divider(
-                        height: 0.1,
-                        color: Colors.black26,
-                      ),*/
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Divider(
+                          height: 0.1,
+                          color: Colors.black26,
+                        ),
+                      ),
                       Expanded(
                         child: Container(
-                          margin:
-                              EdgeInsets.only(bottom: 10, right: 10, left: 10),
+                          margin: EdgeInsets.only(
+                            bottom: 10,
+                            right: 10,
+                            left: 10,
+                          ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -932,8 +942,10 @@ class LoadingRestaurantListWidget extends StatelessWidget {
           itemBuilder: (context, i) {
             return Shimmer.fromColors(
                 child: Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),
-                    color: Colors.black,),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.black,
+                  ),
                   margin: EdgeInsets.only(
                       bottom: 10,
                       top: 10,

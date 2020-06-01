@@ -16,6 +16,18 @@ class DataRepository {
     return locations;
   }
 
+  Future<Location> getLocationByLatLng(double lat, double lng) async {
+    final response = await _provider.getLocationByLatLng(lat, lng);
+
+    if (response['code'] == 1) {
+      var locationMap = response['details'];
+      Location location = Location.fromJson2(locationMap);
+      return location;
+    } else {
+      return null;
+    }
+  }
+
   Future<List<Restaurant>> getRestaurantList(String address) async {
     final response = await _provider.getRestaurantList(address);
     if (response['code'] == 1) {

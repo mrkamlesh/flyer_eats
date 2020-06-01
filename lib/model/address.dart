@@ -73,7 +73,6 @@ class Address {
         latitude != null &&
         longitude != null &&
         type != null &&
-        mapAddress != null &&
         title != "" &&
         address != "";
   }

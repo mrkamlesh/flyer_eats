@@ -205,7 +205,9 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
                                     ? () {
                                         //Navigator pop
                                         BlocProvider.of<LocationBloc>(context)
-                                            .add(GetCurrentLocation());
+                                            .add(GetLocationByLatLng(
+                                                state.location.latitude,
+                                                state.location.longitude));
                                         Navigator.pushReplacementNamed(
                                             context, "/");
                                       }

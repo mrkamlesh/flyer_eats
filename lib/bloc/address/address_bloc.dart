@@ -9,7 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class AddressBloc extends Bloc<AddressEvent, AddressState> {
   final AddressRepository addressRepository;
 
-  Address address = Address(null, null, null, AddressType.home);
+  Address address;
 
   AddressBloc(this.addressRepository);
 
@@ -28,19 +28,22 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       yield* mapOpenAddressToState(event.id);
     } else if (event is CalculatePrice) {
       yield* mapCalculatePriceToState(event.from, event.to);
-    } else if (event is AddressPageOpen) {
+    } else if (event is AddressAddPageOpen) {
       yield* mapAddressPageOpenToState();
-    } else if (event is UpdateMapAddress) {
-      yield* mapUpdateMapAddressToState(event.latLng);
+    } else if (event is UpdateAddressLocation) {
+      yield* mapUpdateAddressLocationToState(event.latLng);
     } else if (event is UpdateAddressInformation) {
       yield* mapUpdateAddressInformationToState(event);
     } else if (event is AddAddress) {
       yield* mapAddAddressToState(event.address);
-    } /*else if (event is UpdateAddress) {
+    } else if (event is AddressUpdatePageOpen) {
+      yield* mapAddressUpdatePageOpenToState(event.address);
+    } else if (event is UpdateAddress) {
       yield* mapUpdateAddressToState(event.address);
     } else if (event is RemoveAddress) {
       yield* mapRemoveAddressToState(event.id);
-    } else if (event is ValidatingAddress) {
+    }
+    /*else if (event is ValidatingAddress) {
       yield* mapValidatingAddressToSTate(event.address);
     }*/
   }
@@ -94,7 +97,8 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   }
 
   Stream<AddressState> mapAddressPageOpenToState() async* {
-    yield LoadingCurrentAddress();
+    address = Address(null, null, null, AddressType.home);
+    yield LoadingTemporaryAddress();
     try {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
@@ -102,23 +106,20 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
         throw Exception();
       });
 
-      add(UpdateMapAddress(LatLng(position.latitude, position.longitude)));
-
-      /*yield LoadingCurrentAddressSuccess(
-          LatLng(position.latitude, position.longitude));*/
+      add(UpdateAddressLocation(LatLng(position.latitude, position.longitude)));
     } catch (e) {
-      yield LoadingCurrentAddressError("Can not get current location");
+      yield LoadingTemporaryAddressError("Can not get current location");
     }
   }
 
-  Stream<AddressState> mapUpdateMapAddressToState(LatLng latLng) async* {
-    yield UpdatingMapAddress();
+  Stream<AddressState> mapUpdateAddressLocationToState(LatLng latLng) async* {
+    yield LoadingTemporaryAddress();
     try {
       List<Placemark> placeMark = await Geolocator()
           .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
 
       Address newAddress = address.copyWith(
-          mapAddress: placeMark[0].name +
+          address: placeMark[0].name +
               " " +
               placeMark[0].locality +
               " " +
@@ -128,9 +129,9 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
           latitude: placeMark[0].position.latitude.toString(),
           longitude: placeMark[0].position.longitude.toString());
       address = newAddress;
-      yield UpdatingMapAddressSuccess(newAddress);
+      yield LoadingTemporaryAddressSuccess(newAddress, isFromMap: true);
     } catch (e) {
-      yield UpdatingMapAddressError("Can not get current location");
+      yield LoadingTemporaryAddressError("Can not get current location");
     }
   }
 
@@ -139,7 +140,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     Address newAddress = address.copyWith(
         type: event.type, address: event.address, title: event.title);
     address = newAddress;
-    yield UpdatingMapAddressSuccess(newAddress);
+    yield LoadingTemporaryAddressSuccess(newAddress);
   }
 
   Stream<AddressState> mapAddAddressToState(Address address) async* {
@@ -152,23 +153,35 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-/*  Stream<AddressState> mapUpdateAddressToState(Address address) async* {
-    yield Loading();
+  Stream<AddressState> mapAddressUpdatePageOpenToState(
+      Address addressEvent) async* {
+    address = addressEvent;
+    yield LoadingTemporaryAddress();
+    try {
+      yield LoadingTemporaryAddressSuccess(addressEvent, isFromMap: true);
+    } catch (e) {
+      yield LoadingTemporaryAddressError("Can not get current location");
+    }
+  }
+
+  Stream<AddressState> mapUpdateAddressToState(Address address) async* {
+    yield LoadingAddressInformation();
     try {
       await addressRepository.updateAddress(address);
       yield AddressUpdated();
     } catch (e) {
-      yield ErrorLoading(e.toString());
+      yield ErrorLoadingListAddress(e.toString());
     }
   }
 
   Stream<AddressState> mapRemoveAddressToState(int id) async* {
-    yield Loading();
+    yield LoadingAddressInformation();
     try {
       await addressRepository.deleteAddress(id);
       yield AddressRemoved();
+      add(OpenListAddress());
     } catch (e) {
-      yield ErrorLoading(e.toString());
+      yield ErrorLoadingListAddress(e.toString());
     }
-  }*/
+  }
 }

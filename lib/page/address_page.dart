@@ -13,6 +13,10 @@ import 'package:flyereats/model/address.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AddressPage extends StatefulWidget {
+  final Address address;
+
+  const AddressPage({Key key, this.address}) : super(key: key);
+
   @override
   _AddressPageState createState() => _AddressPageState();
 }
@@ -25,11 +29,24 @@ class _AddressPageState extends State<AddressPage> {
   final double initLat = 28.620446;
   final double initLng = 77.227515;
 
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AddressBloc>(
       create: (context) {
-        return AddressBloc(AddressRepository())..add(AddressPageOpen());
+        if (widget.address != null) {
+          return AddressBloc(AddressRepository())
+            ..add(AddressUpdatePageOpen(widget.address));
+        } else {
+          return AddressBloc(AddressRepository())..add(AddressAddPageOpen());
+        }
       },
       child: Scaffold(
         body: Stack(
@@ -39,7 +56,7 @@ class _AddressPageState extends State<AddressPage> {
                 Expanded(
                   child: BlocBuilder<AddressBloc, AddressState>(
                     condition: (oldState, state) {
-                      if (state is UpdatingMapAddressSuccess) {
+                      if (state is LoadingTemporaryAddressSuccess) {
                         return true;
                       } else {
                         return false;
@@ -47,24 +64,27 @@ class _AddressPageState extends State<AddressPage> {
                     },
                     builder: (context, state) {
                       Marker marker;
-                      if (state is UpdatingMapAddressSuccess) {
-                        marker = Marker(
-                            markerId: MarkerId("location"),
-                            position: LatLng(
-                                double.parse(state.address.latitude),
-                                double.parse(state.address.longitude)),
-                            icon: BitmapDescriptor.defaultMarker);
-                        _animateCameraToPosition(LatLng(
-                            double.parse(state.address.latitude),
-                            double.parse(state.address.longitude)));
+                      if (state is LoadingTemporaryAddressSuccess) {
+                        if (state.address.latitude != null &&
+                            state.address.longitude != null) {
+                          marker = Marker(
+                              markerId: MarkerId("location"),
+                              position: LatLng(
+                                  double.parse(state.address.latitude),
+                                  double.parse(state.address.longitude)),
+                              icon: BitmapDescriptor.defaultMarker);
+                          _animateCameraToPosition(LatLng(
+                              double.parse(state.address.latitude),
+                              double.parse(state.address.longitude)));
+                        }
                       }
 
                       return GoogleMap(
                         markers: Set.of((marker != null) ? [marker] : []),
                         mapType: MapType.normal,
                         onTap: (latLng) {
-                          BlocProvider.of(context)
-                              .add(UpdateMapAddress(latLng));
+                          BlocProvider.of<AddressBloc>(context)
+                              .add(UpdateAddressLocation(latLng));
                         },
                         zoomControlsEnabled: true,
                         myLocationEnabled: true,
@@ -98,12 +118,25 @@ class _AddressPageState extends State<AddressPage> {
                       padding: EdgeInsets.symmetric(
                           horizontal: horizontalPaddingDraggable,
                           vertical: distanceBetweenSection),
-                      child: BlocBuilder<AddressBloc, AddressState>(
+                      child: BlocConsumer<AddressBloc, AddressState>(
+                        listener: (oldState, state) {
+                          if (state is LoadingTemporaryAddressSuccess) {
+                            if (state.isFromMap != null) {
+                              _addressController.text = state.address.address;
+                              _titleController.text = state.address.title;
+                            }
+                          }
+                        },
                         builder: (context, state) {
+                          Address address = Address(null, null, null, null);
+                          if (state is LoadingTemporaryAddressSuccess) {
+                            address = state.address;
+                          }
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
                               CustomTextField(
+                                controller: _titleController,
                                 hint: "Enter Address",
                                 onChange: (title) {
                                   BlocProvider.of<AddressBloc>(context).add(
@@ -111,6 +144,7 @@ class _AddressPageState extends State<AddressPage> {
                                 },
                               ),
                               CustomTextField(
+                                controller: _addressController,
                                 lines: 3,
                                 hint: "Address",
                                 onChange: (address) {
@@ -156,59 +190,42 @@ class _AddressPageState extends State<AddressPage> {
                                   ],
                                 ),
                               ),
-                              BlocBuilder<AddressBloc, AddressState>(
-                                /*condition: (oldState, state){
-                                  if (state is UpdatingMapAddressSuccess){
-                                    return true;
-                                  } else {
-                                    return false;
-                                  }
-                                },*/
-                                builder: (context, state) {
-                                  Address address =
-                                      Address(null, null, null, null);
-                                  if (state is UpdatingMapAddressSuccess) {
-                                    address = state.address;
-                                  }
-
-                                  return GestureDetector(
-                                    onTap: address.isValid()
-                                        ? () {
-                                            BlocProvider.of<AddressBloc>(
-                                                    context)
-                                                .add(AddAddress(address));
-                                            Navigator.pop(context);
-                                          }
-                                        : () {},
-                                    child: Stack(
-                                      children: <Widget>[
-                                        Container(
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFFFFB531),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "Done",
-                                            style: TextStyle(fontSize: 20),
-                                          ),
-                                        ),
-                                        AnimatedOpacity(
-                                          opacity:
-                                              address.isValid() ? 0.0 : 0.5,
-                                          child: Container(
-                                            height: 50,
-                                            color: Colors.white,
-                                          ),
-                                          duration: Duration(milliseconds: 300),
-                                        )
-                                      ],
+                              GestureDetector(
+                                onTap: address.isValid()
+                                    ? () {
+                                  widget.address == null ?
+                                        BlocProvider.of<AddressBloc>(context)
+                                            .add(AddAddress(address)) :
+                                  BlocProvider.of<AddressBloc>(context)
+                                      .add(UpdateAddress(address));
+                                        Navigator.pop(context);
+                                      }
+                                    : () {},
+                                child: Stack(
+                                  children: <Widget>[
+                                    Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFFFB531),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        widget.address == null ? "DONE" : "UPDATE",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
                                     ),
-                                  );
-                                },
-                              ),
+                                    AnimatedOpacity(
+                                      opacity: address.isValid() ? 0.0 : 0.5,
+                                      child: Container(
+                                        height: 50,
+                                        color: Colors.white,
+                                      ),
+                                      duration: Duration(milliseconds: 300),
+                                    )
+                                  ],
+                                ),
+                              )
                             ],
                           );
                         },
@@ -216,8 +233,7 @@ class _AddressPageState extends State<AddressPage> {
                     ),
                     BlocBuilder<AddressBloc, AddressState>(
                         builder: (context, state) {
-                      if (state is UpdateMapAddress ||
-                          state is LoadingCurrentAddress) {
+                      if (state is LoadingTemporaryAddress) {
                         return LinearProgressIndicator();
                       } else {
                         return SizedBox();

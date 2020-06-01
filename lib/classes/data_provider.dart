@@ -23,6 +23,19 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> getLocationByLatLng(double lat, double lng) async {
+    String url = "${baseUrl}mobileapp/apinew/search?json=true&isgetoffer=1&lat=$lat&lng=$lng&searchin=db&api_key=flyereats";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
   Future<dynamic> getRestaurantList(String address) async {
     String addressUrl = Uri.encodeComponent(address);
     String url =

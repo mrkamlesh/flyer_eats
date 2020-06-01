@@ -31,9 +31,7 @@ class OpenAddress extends AddressEvent {
   List<Object> get props => [id];
 }
 
-
 class CalculatePrice extends AddressEvent {
-
   final Address from;
   final Address to;
 
@@ -79,21 +77,20 @@ class ValidatingAddress extends AddressEvent {
   List<Object> get props => [address];
 }
 
-class AddressPageOpen extends AddressEvent {
-  const AddressPageOpen();
+class AddressAddPageOpen extends AddressEvent {
+  const AddressAddPageOpen();
 
   @override
   List<Object> get props => [];
 }
 
-class UpdateMapAddress extends AddressEvent {
+class UpdateAddressLocation extends AddressEvent {
   final LatLng latLng;
 
-  const UpdateMapAddress(this.latLng);
+  const UpdateAddressLocation(this.latLng);
 
   @override
   List<Object> get props => [latLng];
-
 }
 
 class UpdateAddressInformation extends AddressEvent {
@@ -105,5 +102,13 @@ class UpdateAddressInformation extends AddressEvent {
 
   @override
   List<Object> get props => [title, address, type];
+}
 
+class AddressUpdatePageOpen extends AddressEvent {
+  final Address address;
+
+  const AddressUpdatePageOpen(this.address);
+
+  @override
+  List<Object> get props => [address];
 }

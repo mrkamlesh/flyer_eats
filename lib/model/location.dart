@@ -24,4 +24,15 @@ class Location {
       country: parsedJson['country_id'],
     );
   }
+
+  factory Location.fromJson2(Map<String, dynamic> parsedJson) {
+    return Location(
+      address: parsedJson['addressdetail']['address'],
+      latitude: 0.0,
+      longitude: 0.0,
+      location: parsedJson['addressdetail']['location'],
+      id: parsedJson['addressdetail']['address'],
+      country: parsedJson['country_id'],
+    );
+  }
 }

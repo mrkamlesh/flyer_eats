@@ -13,6 +13,7 @@ import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
+import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/menu_category.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/page/restaurant_place_order_page.dart';
@@ -23,8 +24,10 @@ import 'package:flyereats/widget/place_order_bottom_navbar.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   final Restaurant restaurant;
+  final Location location;
 
-  const RestaurantDetailPage({Key key, this.restaurant}) : super(key: key);
+  const RestaurantDetailPage({Key key, this.restaurant, this.location})
+      : super(key: key);
 
   @override
   _RestaurantDetailPageState createState() => _RestaurantDetailPageState();
@@ -147,7 +150,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                     return CustomAppBar(
                       leading: "assets/back.svg",
                       drawer: "assets/drawer.svg",
-                      title: "Vascon Venus",
+                      title: widget.location.address,
                       onTapLeading: () {
                         Navigator.pop(context);
                       },
@@ -282,12 +285,14 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Text(
-                                    widget.restaurant.cuisine,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.black54),
+                                  Expanded(
+                                    child: Text(
+                                      widget.restaurant.cuisine,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
                                   ),
                                   Container(
                                     height: 15,
@@ -414,7 +419,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                         size: 27,
                       ),
                     ),
-                    BlocBuilder<DetailPageBloc, DetailPageState>(
+                    BlocConsumer<DetailPageBloc, DetailPageState>(
+                      listener: (context, state) {
+                        if (state is CartState) {
+                          _isScrollingDown = false;
+                          _animationController.reverse().orCancel;
+                        }
+                      },
                       builder: (context, state) {
                         if (state is CartState) {
                           _foodCart = state.cart;

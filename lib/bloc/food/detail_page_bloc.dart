@@ -64,7 +64,7 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
   }
 
   Stream<DetailPageState> mapChangeQuantityToState(
-      int id, Food food, int quantity) async* {
+      String id, Food food, int quantity) async* {
     //yield OnDataLoading();
     foodCartRepository.foodCart.changeQuantity(id, food, quantity);
     FoodCart cart = FoodCart(Map.from((foodCartRepository.foodCart).cart));

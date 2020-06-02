@@ -16,7 +16,7 @@ class FoodRepository {
     return foodProvider.getSavedCart();
   }
 
-  saveDataCart(int id, Food food, int quantity) {
+  saveDataCart(String id, Food food, int quantity) {
     foodProvider.saveCart(id, food, quantity);
   }
 
@@ -26,5 +26,5 @@ class FoodRepository {
 }
 
 class FoodCartRepository {
-  FoodCart foodCart = FoodCart(Map<int, FoodCartItem>());
+  FoodCart foodCart = FoodCart(Map<String, FoodCartItem>());
 }

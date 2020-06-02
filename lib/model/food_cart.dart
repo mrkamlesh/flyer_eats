@@ -1,19 +1,19 @@
 import 'package:flyereats/model/food.dart';
 
 class FoodCart {
-  final Map<int, FoodCartItem> cart;
+  final Map<String, FoodCartItem> cart;
 
   FoodCart(this.cart);
 
-  bool isFoodExist(int id) {
+  bool isFoodExist(String id) {
     return cart.containsKey(id);
   }
 
-  void addFoodToCart(int id, Food food, int quantity) {
+  void addFoodToCart(String id, Food food, int quantity) {
     cart[id] = FoodCartItem(id, food, quantity);
   }
 
-  int getQuantity(int id) {
+  int getQuantity(String id) {
     if (!isFoodExist(id)) {
       return 0;
     } else {
@@ -21,13 +21,13 @@ class FoodCart {
     }
   }
 
-  void removeFood(int id) {
+  void removeFood(String id) {
     if (isFoodExist(id)) {
       cart.remove(id);
     }
   }
 
-  void changeQuantity(int id, Food food, int quantity) {
+  void changeQuantity(String id, Food food, int quantity) {
     if (!isFoodExist(id)) {
       addFoodToCart(id, food, 1);
     } else {
@@ -40,7 +40,7 @@ class FoodCart {
 }
 
 class FoodCartItem {
-  final int id;
+  final String id;
   final Food food;
   int quantity;
 

@@ -15,7 +15,7 @@ class FoodProvider {
     return foodCart;
   }
 
-  saveCart(int id, Food food, int quantity) {
+  saveCart(String id, Food food, int quantity) {
     //save to shared preference
 
     foodCart.changeQuantity(id, food, quantity);

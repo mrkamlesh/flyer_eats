@@ -120,9 +120,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                   builder: (context, state) {
                     if (state is CartState) {
                       _foodCart = state.cart;
-                      /*_listFood = List();
+                      _listFood = List();
                       _foodCart.cart
-                          .forEach((id, food) => _listFood.add(food.food));*/
+                          .forEach((id, food) => _listFood.add(food.food));
                     }
 
                     return CustomScrollView(

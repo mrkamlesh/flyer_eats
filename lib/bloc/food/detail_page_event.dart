@@ -45,7 +45,7 @@ class FilterList extends DetailPageEvent {
 }
 
 class ChangeQuantity extends DetailPageEvent {
-  final int id;
+  final String id;
   final Food food;
   final int quantity;
 

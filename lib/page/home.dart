@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flyereats/bloc/location/location_bloc.dart';
 import 'package:flyereats/bloc/location/location_event.dart';
 import 'package:flyereats/bloc/location/location_state.dart';
+import 'package:flyereats/bloc/restauranttop/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Location _selectedLocation;
 
+  RestaurantTopBloc _topRestaurantBloc;
+
   @override
   initState() {
     super.initState();
@@ -51,11 +54,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
         .animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
+    _topRestaurantBloc = RestaurantTopBloc();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _topRestaurantBloc.close();
     super.dispose();
   }
 
@@ -149,7 +155,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               },
               listenWhen: (oldState, state) {
                 if (state is NoLocationsAvailable ||
-                    state is LoadingLocationError) {
+                    state is LoadingLocationError ||
+                    state is LoadingLocationSuccess ||
+                    state is LocationSelected) {
                   return true;
                 } else {
                   return false;
@@ -174,6 +182,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     content: Text(state.message),
                   );
                   Scaffold.of(context).showSnackBar(snackBar);
+                } else if (state is LoadingLocationSuccess) {
+                  BlocProvider.of<LocationBloc>(context).add(
+                      GetLocationByLatLng(
+                          state.location.latitude, state.location.longitude));
+                } else if (state is LocationSelected) {
+                  _topRestaurantBloc
+                      .add(GetRestaurantTop(state.location.address));
                 }
               },
               builder: (context, state) {
@@ -184,14 +199,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 if (state is LoadingLocationSuccess) {
                   titleText = "Loading Location...";
                   isLoading = true;
-                  BlocProvider.of<LocationBloc>(context).add(
-                      GetLocationByLatLng(
-                          state.location.latitude, state.location.longitude));
                 } else if (state is NoLocationsAvailable) {
                   titleText = "No Locations Available";
                   isLoading = false;
                 } else if (state is LoadingLocationError) {
-                  titleText = "Error Getting Location";
+                  titleText = "Click Here to Choose Location";
                   isLoading = false;
                 } else if (state is LocationSelected) {
                   titleText = state.location.address;
@@ -329,56 +341,83 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                               HomeActionWidget(),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: horizontalPaddingDraggable),
-                                margin: EdgeInsets.only(
-                                    bottom: distanceSectionContent),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      "Top Restaurants",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return RestaurantListPage(
-                                            title: "Top Restaurants",
-                                            isExternalImage: false,
-                                            image: "assets/allrestaurant.png",
-                                          );
-                                        }));
-                                      },
-                                      child: Container(
-                                        width: 70,
-                                        height: 20,
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          "See All",
-                                          textAlign: TextAlign.end,
-                                          style: TextStyle(
-                                              color: primary3, fontSize: 14),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    bottom: distanceBetweenSection - 10),
-                                height: 160,
-                                child: RestaurantListWidget(
-                                  type: RestaurantViewType.topRestaurant,
-                                  restaurants: ExampleModel.getRestaurants(),
+                              BlocProvider<RestaurantTopBloc>(
+                                create: (context) {
+                                  return _topRestaurantBloc;
+                                },
+                                child: BlocBuilder<RestaurantTopBloc,
+                                    RestaurantTopState>(
+                                  builder: (context, state) {
+                                    if (state is SuccessRestaurantTop) {
+                                      return Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    horizontalPaddingDraggable),
+                                            margin: EdgeInsets.only(
+                                                bottom: distanceSectionContent),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(
+                                                  "Top Restaurants",
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) {
+                                                      return RestaurantListPage(
+                                                        title:
+                                                            "Top Restaurants",
+                                                        isExternalImage: false,
+                                                        image:
+                                                            "assets/allrestaurant.png",
+                                                      );
+                                                    }));
+                                                  },
+                                                  child: Container(
+                                                    width: 70,
+                                                    height: 20,
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: Text(
+                                                      "See All",
+                                                      textAlign: TextAlign.end,
+                                                      style: TextStyle(
+                                                          color: primary3,
+                                                          fontSize: 14),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                bottom: distanceBetweenSection -
+                                                    10),
+                                            height: 160,
+                                            child: RestaurantListWidget(
+                                              type: RestaurantViewType
+                                                  .topRestaurant,
+                                              restaurants: state.restaurants,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                    return Container();
+                                  },
                                 ),
                               ),
                               Container(

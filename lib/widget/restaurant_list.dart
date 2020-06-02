@@ -385,7 +385,7 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                 )
               ],
             ),
-            restaurant.discountTitle != null
+            restaurant.discountTitle != null && restaurant.discountTitle != ""
                 ? Positioned(
                     top: 7,
                     left: -5,
@@ -404,7 +404,9 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                           alignment: Alignment.center,
                           padding: EdgeInsets.all(4),
                           child: Text(
-                            restaurant.discountTitle,
+                            AppUtil.parseHtmlString(restaurant.discountTitle),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
@@ -561,7 +563,8 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                           ),
                                           Expanded(
                                             child: Text(
-                                              restaurant.discountDescription,
+                                              AppUtil.parseHtmlString(restaurant
+                                                  .discountDescription),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
@@ -733,7 +736,7 @@ class TopRestaurantHomeWidget extends StatelessWidget {
                 ),
               ],
             ),
-            restaurant.discountTitle != null
+            restaurant.discountTitle != null && restaurant.discountTitle != ""
                 ? Positioned(
                     top: 7,
                     left: -5,
@@ -752,7 +755,7 @@ class TopRestaurantHomeWidget extends StatelessWidget {
                           alignment: Alignment.center,
                           padding: EdgeInsets.all(4),
                           child: Text(
-                            restaurant.discountTitle,
+                            AppUtil.parseHtmlString(restaurant.discountTitle),
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),

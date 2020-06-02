@@ -7,11 +7,11 @@ import 'package:http/http.dart' as http;
 class DataProvider {
   var client = http.Client();
 
-  String baseUrl = "https://www.pollachiarea.com/flyereats/";
-  String baseUrl2 = "http://flyereats.in/";
+  String developmentServerUrl = "https://www.pollachiarea.com/flyereats/";
+  String productionServerUrl = "http://flyereats.in/";
 
   Future<dynamic> getLocations(String countryId) async {
-    String url = "${baseUrl}store/addressesWithCountry?country_id=$countryId";
+    String url = "${productionServerUrl}store/addressesWithCountry?country_id=$countryId";
 
     var responseJson;
     try {
@@ -24,7 +24,7 @@ class DataProvider {
   }
 
   Future<dynamic> getLocationByLatLng(double lat, double lng) async {
-    String url = "${baseUrl}mobileapp/apinew/search?json=true&isgetoffer=1&lat=$lat&lng=$lng&searchin=db&api_key=flyereats";
+    String url = "${productionServerUrl}mobileapp/apinew/search?json=true&isgetoffer=1&lat=$lat&lng=$lng&searchin=db&api_key=flyereats";
 
     var responseJson;
     try {
@@ -39,7 +39,7 @@ class DataProvider {
   Future<dynamic> getRestaurantList(String address) async {
     String addressUrl = Uri.encodeComponent(address);
     String url =
-        "${baseUrl}mobileapp/apinew/search?json=true&sortby=is_open&cusinetype=food&page=1&isgetoffer=1&address=$addressUrl&api_key=flyereats";
+        "${productionServerUrl}mobileapp/apinew/search?json=true&sortby=is_open&cusinetype=food&page=1&isgetoffer=1&address=$addressUrl&api_key=flyereats";
 
     var responseJson;
     try {
@@ -54,7 +54,7 @@ class DataProvider {
   Future<dynamic> getRestaurantTop(String address) async {
     String addressUrl = Uri.encodeComponent(address);
     String url =
-        "${baseUrl}mobileapp/apinew/GetTopMerchentList?json=true&address=$addressUrl&api_key=flyereats";
+        "${productionServerUrl}mobileapp/apinew/GetTopMerchentList?json=true&address=$addressUrl&api_key=flyereats";
     var responseJson;
     try {
       final response = await client.get(url);
@@ -67,7 +67,7 @@ class DataProvider {
 
   Future<dynamic> getCategory(String restaurantId) async {
     String url =
-        "${baseUrl}mobileapp/apinew/MenuCategory?json=true&merchant_id=$restaurantId&api_key=flyereats";
+        "${productionServerUrl}mobileapp/apinew/MenuCategory?json=true&merchant_id=$restaurantId&api_key=flyereats";
     var responseJson;
     try {
       final response = await client.get(url);
@@ -80,7 +80,7 @@ class DataProvider {
 
   Future<dynamic> getFoods(String restaurantId, String categoryId) async {
     String url =
-        "${baseUrl2}mobileapp/apinew/getItem?json=true&api_key=flyereats&merchant_id=$restaurantId&cat_id=$categoryId";
+        "${productionServerUrl}mobileapp/apinew/getItem?json=true&api_key=flyereats&merchant_id=$restaurantId&cat_id=$categoryId";
     var responseJson;
     try {
       final response = await client.get(url);
@@ -102,6 +102,7 @@ class DataProvider {
       case 403:
         throw UnauthorizedException(response.body.toString());
       case 500:
+        throw BadRequestException(response.body.toString());
       default:
         throw FetchDataException('Error Communicating with server');
     }

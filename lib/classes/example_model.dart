@@ -227,10 +227,10 @@ class ExampleModel {
   }
 
   static FoodCart getFoodCart() {
-    FoodCart cart = FoodCart(Map<int, FoodCartItem>());
-    cart.cart[5] = FoodCartItem(5, ExampleModel.getFoods()[0], 2);
-    cart.cart[4] = FoodCartItem(4, ExampleModel.getFoods()[1], 2);
-    cart.cart[1] = FoodCartItem(1, ExampleModel.getFoods()[5], 3);
+    FoodCart cart = FoodCart(Map<String, FoodCartItem>());
+    cart.cart["5"] = FoodCartItem("5", ExampleModel.getFoods()[0], 2);
+    cart.cart["4"] = FoodCartItem("4", ExampleModel.getFoods()[1], 2);
+    cart.cart["1"] = FoodCartItem("1", ExampleModel.getFoods()[5], 3);
     return cart;
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:html/parser.dart';
 
 class AppUtil {
   static double getScreenHeight(context) {
@@ -47,6 +48,15 @@ class AppUtil {
         return;
       }
     }
+  }
+
+  static String parseHtmlString(String htmlString) {
+
+    var document = parse(htmlString);
+
+    String parsedString = parse(document.body.text).documentElement.text;
+
+    return parsedString;
   }
 
 }

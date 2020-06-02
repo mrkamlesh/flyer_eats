@@ -69,7 +69,7 @@ class _FoodListWidgetState extends State<FoodListWidget>
                 scale: _scaleAnimation,
                 selectedIndex: _selectedFood,
                 food: widget.listFood[i],
-                quantity: widget.cart.getQuantity(i),
+                quantity: widget.cart.getQuantity(widget.listFood[i].id),
                 onTapRemove: () {
                   _onTapRemove(i);
                 },
@@ -86,7 +86,7 @@ class _FoodListWidgetState extends State<FoodListWidget>
                 return FoodList(
                   type: widget.type,
                   index: i,
-                  quantity: widget.cart.getQuantity(i),
+                  quantity: widget.cart.getQuantity(widget.listFood[i].id),
                   scale: _scaleAnimation,
                   selectedIndex: _selectedFood,
                   food: widget.listFood[i],
@@ -116,9 +116,9 @@ class _FoodListWidgetState extends State<FoodListWidget>
     _animationController.forward().orCancel.whenComplete(() {
       _animationController.reverse().orCancel.whenComplete(() {
         BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(
-            _selectedFood,
+            widget.listFood[_selectedFood].id,
             widget.listFood[_selectedFood],
-            (widget.cart.getQuantity(i) + 1)));
+            (widget.cart.getQuantity(widget.listFood[_selectedFood].id) + 1)));
       });
     });
   }
@@ -130,9 +130,9 @@ class _FoodListWidgetState extends State<FoodListWidget>
     _animationController.forward().orCancel.whenComplete(() {
       _animationController.reverse().orCancel.whenComplete(() {
         BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(
-            _selectedFood,
+            widget.listFood[_selectedFood].id,
             widget.listFood[_selectedFood],
-            (widget.cart.getQuantity(i) - 1)));
+            (widget.cart.getQuantity(widget.listFood[_selectedFood].id) - 1)));
       });
     });
   }
@@ -584,16 +584,16 @@ class FoodGridLoadingWidget extends StatelessWidget {
               crossAxisSpacing: 20,
               childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 245),
           delegate: SliverChildBuilderDelegate((context, i) {
-        return Shimmer.fromColors(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            baseColor: Colors.grey[300],
-            highlightColor: Colors.grey[100]);
-      }, childCount: 5)),
+            return Shimmer.fromColors(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                baseColor: Colors.grey[300],
+                highlightColor: Colors.grey[100]);
+          }, childCount: 5)),
     );
   }
 }

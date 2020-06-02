@@ -51,6 +51,7 @@ class CustomAppBar extends StatelessWidget {
                       child: Container(
                         height: kToolbarHeight,
                         width: 28,
+                        margin: EdgeInsets.only(left: 12),
                         child: SvgPicture.asset(
                           leading,
                           width: 20,

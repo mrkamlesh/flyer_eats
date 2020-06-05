@@ -67,7 +67,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
     return BlocProvider<RestaurantListBloc>(
       create: (context) {
         return RestaurantListBloc()
-          ..add(GetRestaurantList(widget.location.address));
+          ..add(GetFirstDataRestaurantList(widget.location.address));
       },
       child: Scaffold(
         extendBody: true,
@@ -170,88 +170,89 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                   AppUtil.getScreenHeight(context),
               maxChildSize: 1.0,
               builder: (context, controller) {
-                controller.addListener(() {
-                  if (controller.position.userScrollDirection ==
-                      ScrollDirection.reverse) {
-                    if (!_isScrollingDown) {
-                      _isScrollingDown = true;
-                      setState(() {
-                        _animationController.forward().orCancel;
-                      });
+                if (!controller.hasListeners) {
+                  controller.addListener(() {
+                    double maxScroll = controller.position.maxScrollExtent;
+                    double currentScroll = controller.position.pixels;
+
+                    if (currentScroll == maxScroll)
+                      BlocProvider.of<RestaurantListBloc>(context)
+                          .add(LoadMore(widget.location.address));
+
+                    if (controller.position.userScrollDirection ==
+                        ScrollDirection.reverse) {
+                      if (!_isScrollingDown) {
+                        _isScrollingDown = true;
+                        setState(() {
+                          _animationController.forward().orCancel;
+                        });
+                      }
                     }
-                  }
-                  if ((controller.position.userScrollDirection ==
-                          ScrollDirection.forward) |
-                      (controller.offset >=
-                              controller.position.maxScrollExtent -
-                                  kBottomNavigationBarHeight &&
-                          !controller.position.outOfRange)) {
-                    if (_isScrollingDown) {
-                      _isScrollingDown = false;
-                      setState(() {
-                        _animationController.reverse().orCancel;
-                      });
+                    if ((controller.position.userScrollDirection ==
+                            ScrollDirection.forward) |
+                        (controller.offset >=
+                                controller.position.maxScrollExtent -
+                                    kBottomNavigationBarHeight &&
+                            !controller.position.outOfRange)) {
+                      if (_isScrollingDown) {
+                        _isScrollingDown = false;
+                        setState(() {
+                          _animationController.reverse().orCancel;
+                        });
+                      }
                     }
-                  }
-                });
+                  });
+                }
+
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(32),
                           topLeft: Radius.circular(32))),
-                  child: BlocBuilder<RestaurantListBloc, RestaurantListState>(
-                    builder: (context, state) {
-                      if (state is SuccessRestaurantList) {
-                        return CustomScrollView(
-                          controller: controller,
-                          slivers: <Widget>[
-                            SliverPersistentHeader(
-                              pinned: true,
-                              delegate: ListRestaurantFilterWidget(
-                                title: widget.title,
-                                isListSelected: _isListMode,
-                                onListButtonTap: () {
-                                  setState(
-                                    () {
-                                      if (!_isListMode) {
-                                        _isListMode = true;
-                                      }
-                                    },
-                                  );
-                                },
-                                onGridButtonTap: () {
-                                  setState(
-                                    () {
-                                      if (_isListMode) {
-                                        _isListMode = false;
-                                      }
-                                    },
-                                  );
-                                },
-                                size: 27,
-                              ),
-                            ),
-                            RestaurantListWidget(
-                              location: widget.location,
-                              restaurants: state.restaurants,
-                              fade: 0.4,
-                              scale: 0.95,
-                              type: _isListMode
-                                  ? RestaurantViewType.detailList
-                                  : RestaurantViewType.detailGrid,
-                            ),
-                          ],
-                        );
-                      } else if (state is LoadingRestaurantList) {
-                        return LoadingRestaurantListWidget();
-                      } else if (state is NoRestaurantListAvaliable) {
-                        return Container(
-                          child: Text("No restaurant list available"),
-                        );
-                      }
-                      return Container();
-                    },
+                  child: CustomScrollView(
+                    controller: controller,
+                    slivers: <Widget>[
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: ListRestaurantFilterWidget(
+                          title: widget.title,
+                          isListSelected: _isListMode,
+                          onListButtonTap: () {
+                            setState(
+                              () {
+                                if (!_isListMode) {
+                                  _isListMode = true;
+                                }
+                              },
+                            );
+                          },
+                          onGridButtonTap: () {
+                            setState(
+                              () {
+                                if (_isListMode) {
+                                  _isListMode = false;
+                                }
+                              },
+                            );
+                          },
+                          size: 27,
+                        ),
+                      ),
+                      BlocBuilder<RestaurantListBloc, RestaurantListState>(
+                        builder: (c, s) {
+                          return RestaurantListWidget(
+                            restaurants: s.restaurants,
+                            location: widget.location,
+                            fade: 0.4,
+                            scale: 0.95,
+                            type: _isListMode
+                                ? RestaurantViewType.detailList
+                                : RestaurantViewType.detailGrid,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 );
               },
@@ -302,7 +303,9 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
             ),
             Expanded(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  _onTapFilter(context);
+                },
                 child: Row(
                   children: <Widget>[
                     Icon(
@@ -380,5 +383,34 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return true;
+  }
+
+  void _onTapFilter(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        builder: (context) {
+          return Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        "FILTERS (2)",
+                      ),
+                    ),
+                    Text("Clear Filter"),
+                    Icon(Icons.clear),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
   }
 }

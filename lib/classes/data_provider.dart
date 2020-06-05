@@ -11,7 +11,8 @@ class DataProvider {
   String productionServerUrl = "http://flyereats.in/";
 
   Future<dynamic> getLocations(String countryId) async {
-    String url = "${productionServerUrl}store/addressesWithCountry?country_id=$countryId";
+    String url =
+        "${productionServerUrl}store/addressesWithCountry?country_id=$countryId";
 
     var responseJson;
     try {
@@ -24,7 +25,8 @@ class DataProvider {
   }
 
   Future<dynamic> getLocationByLatLng(double lat, double lng) async {
-    String url = "${productionServerUrl}mobileapp/apinew/search?json=true&isgetoffer=1&lat=$lat&lng=$lng&searchin=db&api_key=flyereats";
+    String url =
+        "${productionServerUrl}mobileapp/apinew/search?json=true&isgetoffer=1&lat=$lat&lng=$lng&searchin=db&api_key=flyereats";
 
     var responseJson;
     try {
@@ -36,10 +38,22 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getRestaurantList(String address) async {
+  Future<dynamic> getRestaurantList(String address, int page,
+      {String cuisineType, String sortBy}) async {
     String addressUrl = Uri.encodeComponent(address);
+    String cuisineTypeParam;
+    if (cuisineType != null) {
+      cuisineTypeParam = "&cuisine_type=$cuisineType";
+    } else {
+      cuisineTypeParam = "";
+    }
+    String sortByParam;
+    if (sortBy != null) {
+      sortByParam = "&sortby=$sortBy";
+    } else
+      sortByParam = "";
     String url =
-        "${productionServerUrl}mobileapp/apinew/search?json=true&sortby=is_open&cusinetype=food&page=1&isgetoffer=1&address=$addressUrl&api_key=flyereats";
+        "${productionServerUrl}mobileapp/apinew/search?json=true&cusinetype=food&page=$page&isgetoffer=1&address=$addressUrl&api_key=flyereats$cuisineTypeParam$sortByParam";
 
     var responseJson;
     try {

@@ -6,11 +6,20 @@ abstract class RestaurantListEvent extends Equatable {
   const RestaurantListEvent();
 }
 
-class GetRestaurantList extends RestaurantListEvent {
+class GetFirstDataRestaurantList extends RestaurantListEvent {
 
   final String address;
 
-  const GetRestaurantList(this.address);
+  const GetFirstDataRestaurantList(this.address);
+
+  @override
+  List<Object> get props => [address];
+}
+
+class LoadMore extends RestaurantListEvent {
+  final String address;
+
+  const LoadMore(this.address);
 
   @override
   List<Object> get props => [address];

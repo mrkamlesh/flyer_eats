@@ -1,48 +1,111 @@
-import 'package:equatable/equatable.dart';
+import 'package:flyereats/model/filter.dart';
 import 'package:flyereats/model/restaurant.dart';
-import 'package:meta/meta.dart';
+import 'package:flyereats/model/sort_by.dart';
 
-@immutable
-abstract class RestaurantListState extends Equatable {
-  const RestaurantListState();
-}
-
-class LoadingRestaurantList extends RestaurantListState {
-
-  const LoadingRestaurantList();
-
-  @override
-  List<Object> get props => [];
-}
-
-class SuccessRestaurantList extends RestaurantListState {
+class RestaurantListState {
   final List<Restaurant> restaurants;
+  final int page;
+  final List<SortBy> sortBy;
+  final List<Filter> filter;
+  final bool isLoading;
+  final String error;
+  final bool hasReachedMax;
 
-  const SuccessRestaurantList(this.restaurants);
+  const RestaurantListState({
+    this.restaurants,
+    this.page,
+    this.filter,
+    this.isLoading,
+    this.error,
+    this.sortBy,
+    this.hasReachedMax,
+  });
 
-  @override
-  List<Object> get props => [restaurants];
-}
+  factory RestaurantListState.initial() {
+    return RestaurantListState(
+        restaurants: List(),
+        page: 0,
+        isLoading: true,
+        sortBy: null,
+        error: null,
+        hasReachedMax: false);
+  }
 
-class ErrorRestaurantList extends RestaurantListState {
-  final String message;
+  factory RestaurantListState.loading({
+    List<Restaurant> restaurants,
+    int page,
+    List<SortBy> sortBy,
+    List<Filter> filters,
+  }) {
+    return RestaurantListState(
+      restaurants: restaurants,
+      filter: filters,
+      sortBy: sortBy,
+      page: page,
+      isLoading: true,
+      error: null,
+      hasReachedMax: false,
+    );
+  }
 
-  ErrorRestaurantList(this.message);
+  factory RestaurantListState.firstLoaded(
+      {List<Restaurant> restaurants,
+      List<SortBy> sortBy,
+      List<Filter> filters,
+      int page,
+      bool hasReachedMax}) {
+    return RestaurantListState(
+      restaurants: restaurants,
+      filter: filters,
+      sortBy: sortBy,
+      page: page,
+      isLoading: false,
+      error: null,
+    );
+  }
 
-  @override
-  List<Object> get props => [message];
-}
+  factory RestaurantListState.loaded(
+      {List<Restaurant> restaurants,
+      List<SortBy> sortBy,
+      List<Filter> filters,
+      int page,
+      bool hasReachedMax}) {
+    return RestaurantListState(
+        restaurants: restaurants,
+        filter: filters,
+        sortBy: sortBy,
+        page: page,
+        isLoading: false,
+        error: null,
+        hasReachedMax: hasReachedMax);
+  }
 
-class InitialRestaurantListState extends RestaurantListState {
-  const InitialRestaurantListState();
+  factory RestaurantListState.error(
+      {List<Restaurant> restaurants,
+      List<SortBy> sortBy,
+      List<Filter> filters,
+      int page,
+      String error}) {
+    return RestaurantListState(
+        restaurants: restaurants,
+        filter: filters,
+        sortBy: sortBy,
+        page: page,
+        isLoading: false,
+        error: error);
+  }
 
-  @override
-  List<Object> get props => [];
-}
-
-class NoRestaurantListAvaliable extends RestaurantListState {
-  const NoRestaurantListAvaliable();
-
-  @override
-  List<Object> get props => [];
+  RestaurantListState copyWith(
+      {List<Restaurant> list,
+      int page,
+      String sortBy,
+      List<String> cuisineType,
+      bool isLoading,
+      bool hasReachedMax}) {
+    return RestaurantListState(
+        restaurants: restaurants ?? this.restaurants,
+        page: page ?? this.page,
+        isLoading: isLoading ?? this.isLoading,
+        sortBy: sortBy ?? this.sortBy);
+  }
 }

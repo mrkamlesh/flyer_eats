@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/restaurantlist/restaurantlist_bloc.dart';
+import 'package:flyereats/bloc/restaurantlist/restaurantlist_state.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/location.dart';
@@ -163,64 +166,124 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
           },
         );
       case RestaurantViewType.detailList:
-        return SliverPadding(
-          padding: EdgeInsets.only(
-              top: distanceSectionContent - 10,
-              bottom: distanceSectionContent + kBottomNavigationBarHeight),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate((context, i) {
-              return RestaurantDetailListWidget(
-                restaurant: widget.restaurants[i],
-                index: i,
-                selectedIndex: _selectedTopRestaurant,
-                onTap: () {
-                  setState(() {
-                    _selectedTopRestaurant = i;
-                    _animationController.forward().orCancel.whenComplete(() {
-                      _animationController.reverse().orCancel.whenComplete(() {
-                        _navigateToRestaurantDetailPage(widget.restaurants[i]);
-                      });
-                    });
-                  });
-                },
-                scale: _scaleAnimation,
+        return BlocBuilder<RestaurantListBloc, RestaurantListState>(
+          builder: (context, state) {
+            if (state.restaurants.isEmpty && state.isLoading) {
+              return SliverToBoxAdapter(
+                child: Container(height: AppUtil.getScreenHeight(context), child: LoadingRestaurantListWidget()),
               );
-            }, childCount: widget.restaurants.length),
-          ),
+            }
+            return SliverPadding(
+              padding: EdgeInsets.only(
+                  top: distanceSectionContent - 10,
+                  bottom: distanceSectionContent + kBottomNavigationBarHeight),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate((context, i) {
+                  if (state.isLoading && i == state.restaurants.length) {
+                    return Container(
+                      child: Center(
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    );
+                  }
+                  return RestaurantDetailListWidget(
+                    restaurant: widget.restaurants[i],
+                    index: i,
+                    selectedIndex: _selectedTopRestaurant,
+                    onTap: () {
+                      setState(() {
+                        _selectedTopRestaurant = i;
+                        _animationController
+                            .forward()
+                            .orCancel
+                            .whenComplete(() {
+                          _animationController
+                              .reverse()
+                              .orCancel
+                              .whenComplete(() {
+                            _navigateToRestaurantDetailPage(
+                                widget.restaurants[i]);
+                          });
+                        });
+                      });
+                    },
+                    scale: _scaleAnimation,
+                  );
+                },
+                    childCount: state.isLoading
+                        ? widget.restaurants.length + 1
+                        : widget.restaurants.length),
+              ),
+            );
+          },
         );
       case RestaurantViewType.detailGrid:
-        return SliverPadding(
-          padding: EdgeInsets.only(
-              left: horizontalPaddingDraggable,
-              right: horizontalPaddingDraggable,
-              top: distanceSectionContent,
-              bottom: distanceSectionContent + kBottomNavigationBarHeight),
-          sliver: SliverGrid(
-            delegate: SliverChildBuilderDelegate((context, i) {
-              return RestaurantDetailGridWidget(
-                restaurant: widget.restaurants[i],
-                index: i,
-                selectedIndex: _selectedTopRestaurant,
-                onTap: () {
-                  setState(() {
-                    _selectedTopRestaurant = i;
-                    _animationController.forward().orCancel.whenComplete(() {
-                      _animationController.reverse().orCancel.whenComplete(() {
-                        _navigateToRestaurantDetailPage(widget.restaurants[i]);
-                      });
-                    });
-                  });
-                },
-                scale: _scaleAnimation,
+        return BlocBuilder<RestaurantListBloc, RestaurantListState>(
+          builder: (context, state) {
+            if (state.restaurants.isEmpty && state.isLoading) {
+              return SliverToBoxAdapter(
+                child: Container(height: AppUtil.getScreenHeight(context), child: LoadingRestaurantListWidget()),
               );
-            }, childCount: widget.restaurants.length),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20,
-              childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 240,
-            ),
-          ),
+            }
+            return SliverPadding(
+              padding: EdgeInsets.only(
+                  left: horizontalPaddingDraggable,
+                  right: horizontalPaddingDraggable,
+                  top: distanceSectionContent,
+                  bottom: distanceSectionContent + kBottomNavigationBarHeight),
+              sliver: SliverGrid(
+                delegate: SliverChildBuilderDelegate((context, i) {
+                  if (state.isLoading && i == state.restaurants.length) {
+                    return Container(
+                      child: Center(
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    );
+                  }
+                  return RestaurantDetailGridWidget(
+                    restaurant: widget.restaurants[i],
+                    index: i,
+                    selectedIndex: _selectedTopRestaurant,
+                    onTap: () {
+                      setState(() {
+                        _selectedTopRestaurant = i;
+                        _animationController
+                            .forward()
+                            .orCancel
+                            .whenComplete(() {
+                          _animationController
+                              .reverse()
+                              .orCancel
+                              .whenComplete(() {
+                            _navigateToRestaurantDetailPage(
+                                widget.restaurants[i]);
+                          });
+                        });
+                      });
+                    },
+                    scale: _scaleAnimation,
+                  );
+                },
+                    childCount: state.isLoading
+                        ? widget.restaurants.length + 1
+                        : widget.restaurants.length),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 240,
+                ),
+              ),
+            );
+          },
         );
       default:
         return Container();
@@ -550,7 +613,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                         fontSize: 12, color: Colors.black45),
                                   ),
                                 ),
-                                restaurant.discountDescription != null
+                                restaurant.discountDescription != null && restaurant.discountDescription != ""
                                     ? Row(
                                         children: <Widget>[
                                           SvgPicture.asset(

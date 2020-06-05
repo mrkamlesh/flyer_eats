@@ -1,8 +1,10 @@
 import 'package:flyereats/classes/data_provider.dart';
+import 'package:flyereats/model/filter.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/menu_category.dart';
 import 'package:flyereats/model/restaurant.dart';
+import 'package:flyereats/model/sort_by.dart';
 
 class DataRepository {
   DataProvider _provider = DataProvider();
@@ -28,8 +30,8 @@ class DataRepository {
     }
   }
 
-  Future<List<Restaurant>> getRestaurantList(String address) async {
-    final response = await _provider.getRestaurantList(address);
+  Future<List<Restaurant>> getRestaurantList(String address, int page) async {
+    final response = await _provider.getRestaurantList(address, page);
     if (response['code'] == 1) {
       var listLocations = response['details']['data'] as List;
       List<Restaurant> restaurants = listLocations.map((i) {
@@ -40,6 +42,46 @@ class DataRepository {
       return List();
     }
   }
+
+  Future<Map<String, dynamic>> getFirstDataRestaurantList(String address) async {
+
+    Map<String, dynamic> map = Map();
+
+    final response = await _provider.getRestaurantList(address, 0);
+    if (response['code'] == 1) {
+      var listLocations = response['details']['data'] as List;
+      List<Restaurant> restaurants = listLocations.map((i) {
+        return Restaurant.fromJson(i);
+      }).toList();
+
+      map['restaurants'] = restaurants;
+
+      var listSortBY = response['details']['sortoptions'];
+      List<SortBy> sortBy = List();
+      sortBy.add(SortBy(
+          key: listSortBY['sort_ratings']['key'],
+          title: listSortBY['sort_ratings']['title']));
+      sortBy.add(SortBy(
+          key: listSortBY['sort_recommended']['key'],
+          title: listSortBY['sort_recommended']['title']));
+      sortBy.add(SortBy(
+          key: listSortBY['sort_distance']['key'],
+          title: listSortBY['sort_distance']['title']));
+      map['sortBy'] = sortBy;
+
+      var listFilter = response['details']['filteroptions']['cuisine_type']['options'] as List;
+      List<Filter> filters = listFilter.map((i) {
+        return Filter.fromJson(i);
+      }).toList();
+      map['filters'] = filters;
+
+      return map;
+    } else {
+      return Map();
+    }
+  }
+
+
 
   Future<List<Restaurant>> getRestaurantTop(String address) async {
     final response = await _provider.getRestaurantTop(address);

@@ -355,7 +355,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                   ],
                                 ),
                               ),
-                              widget.restaurant.discountDescription != null
+                              widget.restaurant.discountDescription != null && widget.restaurant.discountDescription != ""
                                   ? Container(
                                       margin: EdgeInsets.only(
                                         top: 5,
@@ -368,7 +368,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                       padding: EdgeInsets.all(10),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        widget.restaurant.discountDescription,
+                                        AppUtil.parseHtmlString(widget.restaurant.discountDescription),
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold),

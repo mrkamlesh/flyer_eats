@@ -42,6 +42,10 @@ class _RestaurantListPageState extends State<RestaurantListPage>
   Animation<Offset> _navBarAnimation;
 
   bool _isListMode = true;
+  int _selectedFilter = 0;
+  int _radioFilterGroup = -1;
+
+  RestaurantListBloc _bloc;
 
   @override
   void initState() {
@@ -54,11 +58,14 @@ class _RestaurantListPageState extends State<RestaurantListPage>
             begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
         .animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
+    _bloc = RestaurantListBloc();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _bloc.close();
     super.dispose();
   }
 
@@ -66,8 +73,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
   Widget build(BuildContext context) {
     return BlocProvider<RestaurantListBloc>(
       create: (context) {
-        return RestaurantListBloc()
-          ..add(GetFirstDataRestaurantList(widget.location.address));
+        return _bloc..add(GetFirstDataRestaurantList(widget.location.address));
       },
       child: Scaffold(
         extendBody: true,
@@ -176,8 +182,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                     double currentScroll = controller.position.pixels;
 
                     if (currentScroll == maxScroll)
-                      BlocProvider.of<RestaurantListBloc>(context)
-                          .add(LoadMore(widget.location.address));
+                      _bloc.add(LoadMore(widget.location.address));
 
                     if (controller.position.userScrollDirection ==
                         ScrollDirection.reverse) {
@@ -216,6 +221,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                       SliverPersistentHeader(
                         pinned: true,
                         delegate: ListRestaurantFilterWidget(
+                          onTap: _onTapFilter,
                           title: widget.title,
                           isListSelected: _isListMode,
                           onListButtonTap: () {
@@ -240,6 +246,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                         ),
                       ),
                       BlocBuilder<RestaurantListBloc, RestaurantListState>(
+                        bloc: _bloc,
                         builder: (c, s) {
                           return RestaurantListWidget(
                             restaurants: s.restaurants,
@@ -256,11 +263,242 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                   ),
                 );
               },
-            )
+            ),
           ],
         ),
       ),
     );
+  }
+
+  _onTapFilter() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        builder: (context) {
+          return BlocBuilder<RestaurantListBloc, RestaurantListState>(
+            bloc: _bloc,
+            builder: (context, currentState) {
+              return StatefulBuilder(
+                builder: (context, state) {
+                  return Stack(
+                    children: <Widget>[
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(32)),
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(
+                                left: horizontalPaddingDraggable,
+                                right: horizontalPaddingDraggable,
+                                top: 25,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(
+                                      "FILTERS (${currentState.selectedFilter.length})",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      _bloc.add(
+                                          ClearFilter(widget.location.address));
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      child: Text(
+                                        "Clear Filter",
+                                        style: TextStyle(
+                                            color: primary3, fontSize: 14),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child:
+                                          Container(child: Icon(Icons.clear))),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 15, bottom: 0),
+                              child: Divider(
+                                color: Colors.black12,
+                                endIndent: 0,
+                                indent: 0,
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 3,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey[100]),
+                                        child: ListView(
+                                          children: <Widget>[
+                                            FilterItem(
+                                              text: "SORT",
+                                              index: 0,
+                                              selectedIndex: _selectedFilter,
+                                              onTap: () {
+                                                state(() {
+                                                  _selectedFilter = 0;
+                                                });
+                                              },
+                                            ),
+                                            FilterItem(
+                                              text: "CUISINES",
+                                              index: 1,
+                                              selectedIndex: _selectedFilter,
+                                              onTap: () {
+                                                state(() {
+                                                  _selectedFilter = 1;
+                                                });
+                                              },
+                                            ),
+                                            FilterItem(
+                                              text: "OTHERS",
+                                              index: 2,
+                                              selectedIndex: _selectedFilter,
+                                              onTap: () {
+                                                state(() {
+                                                  _selectedFilter = 2;
+                                                });
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 7,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: horizontalPaddingDraggable,
+                                            right: horizontalPaddingDraggable,
+                                            bottom: horizontalPaddingDraggable),
+                                        child: IndexedStack(
+                                          index: _selectedFilter,
+                                          children: <Widget>[
+                                            ListView.builder(
+                                              itemBuilder: (context, i) {
+                                                return RadioListTile(
+                                                    controlAffinity:
+                                                        ListTileControlAffinity
+                                                            .leading,
+                                                    isThreeLine: false,
+                                                    dense: false,
+                                                    value: i,
+                                                    title: Text(currentState
+                                                        .sortBy[i].title),
+                                                    groupValue:
+                                                        _radioFilterGroup,
+                                                    onChanged: (value) {
+                                                      state(() {
+                                                        _radioFilterGroup = i;
+                                                      });
+                                                      _bloc.add(SelectSortBy(
+                                                          currentState
+                                                              .sortBy[i].key));
+                                                    });
+                                              },
+                                              itemCount:
+                                                  currentState.sortBy.length,
+                                            ),
+                                            ListView.builder(
+                                              itemBuilder: (context, i) {
+                                                bool value = false;
+                                                for (int j = 0;
+                                                    j <
+                                                        currentState
+                                                            .selectedFilter
+                                                            .length;
+                                                    j++) {
+                                                  if (currentState
+                                                          .filters[i].id ==
+                                                      currentState
+                                                          .selectedFilter[j]) {
+                                                    value = true;
+                                                    break;
+                                                  }
+                                                }
+
+                                                return CheckboxListTile(
+                                                  value: value,
+                                                  dense: false,
+                                                  controlAffinity:
+                                                      ListTileControlAffinity
+                                                          .leading,
+                                                  onChanged: (value) {
+                                                    if (value) {
+                                                      _bloc.add(AddFilter(
+                                                          currentState
+                                                              .filters[i].id));
+                                                    } else {
+                                                      _bloc.add(RemoveFilter(
+                                                          currentState
+                                                              .filters[i].id));
+                                                    }
+                                                  },
+                                                  isThreeLine: false,
+                                                  title: Text(currentState
+                                                      .filters[i].title),
+                                                );
+                                              },
+                                              itemCount:
+                                                  currentState.filters.length,
+                                            ),
+                                            Text("3"),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: GestureDetector(
+                          onTap: () {
+                            _bloc.add(ApplyFilter(widget.location.address));
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(color: primary1),
+                            child: Text("APPLY FILTER"),
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              );
+            },
+          );
+        });
   }
 }
 
@@ -270,8 +508,10 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
   final bool isListSelected;
   final double size;
   final String title;
+  final Function onTap;
 
   ListRestaurantFilterWidget({
+    this.onTap,
     this.title,
     this.onListButtonTap,
     this.onGridButtonTap,
@@ -303,9 +543,7 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
             ),
             Expanded(
               child: GestureDetector(
-                onTap: () {
-                  _onTapFilter(context);
-                },
+                onTap: onTap,
                 child: Row(
                   children: <Widget>[
                     Icon(
@@ -384,33 +622,35 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return true;
   }
+}
 
-  void _onTapFilter(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: false,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-        builder: (context) {
-          return Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        "FILTERS (2)",
-                      ),
-                    ),
-                    Text("Clear Filter"),
-                    Icon(Icons.clear),
-                  ],
-                ),
-              ],
-            ),
-          );
-        });
+class FilterItem extends StatelessWidget {
+  final String text;
+  final int index;
+  final int selectedIndex;
+  final Function onTap;
+
+  const FilterItem(
+      {Key key, this.text, this.index, this.selectedIndex, this.onTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        padding: EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 20),
+        decoration: BoxDecoration(
+          color: index == selectedIndex ? primary1 : Colors.transparent,
+        ),
+        child: Text(
+          text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: 14),
+        ),
+      ),
+    );
   }
 }

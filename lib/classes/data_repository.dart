@@ -43,11 +43,12 @@ class DataRepository {
     }
   }
 
-  Future<Map<String, dynamic>> getFirstDataRestaurantList(String address) async {
-
+  Future<Map<String, dynamic>> getFirstDataRestaurantList(String address,
+      {String cuisineType, String sortBy}) async {
     Map<String, dynamic> map = Map();
 
-    final response = await _provider.getRestaurantList(address, 0);
+    final response = await _provider.getRestaurantList(address, 0,
+        sortBy: sortBy, cuisineType: cuisineType);
     if (response['code'] == 1) {
       var listLocations = response['details']['data'] as List;
       List<Restaurant> restaurants = listLocations.map((i) {
@@ -69,7 +70,8 @@ class DataRepository {
           title: listSortBY['sort_distance']['title']));
       map['sortBy'] = sortBy;
 
-      var listFilter = response['details']['filteroptions']['cuisine_type']['options'] as List;
+      var listFilter = response['details']['filteroptions']['cuisine_type']
+          ['options'] as List;
       List<Filter> filters = listFilter.map((i) {
         return Filter.fromJson(i);
       }).toList();
@@ -80,8 +82,6 @@ class DataRepository {
       return Map();
     }
   }
-
-
 
   Future<List<Restaurant>> getRestaurantTop(String address) async {
     final response = await _provider.getRestaurantTop(address);

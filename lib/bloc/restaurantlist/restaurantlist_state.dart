@@ -6,15 +6,19 @@ class RestaurantListState {
   final List<Restaurant> restaurants;
   final int page;
   final List<SortBy> sortBy;
-  final List<Filter> filter;
+  final String selectedSortBy;
+  final List<String> selectedFilter;
+  final List<Filter> filters;
   final bool isLoading;
   final String error;
   final bool hasReachedMax;
 
   const RestaurantListState({
+    this.selectedSortBy,
+    this.selectedFilter,
     this.restaurants,
     this.page,
-    this.filter,
+    this.filters,
     this.isLoading,
     this.error,
     this.sortBy,
@@ -26,12 +30,15 @@ class RestaurantListState {
         restaurants: List(),
         page: 0,
         isLoading: true,
-        sortBy: null,
+        sortBy: List(),
         error: null,
-        hasReachedMax: false);
+        filters: List(),
+        hasReachedMax: false,
+        selectedSortBy: null,
+        selectedFilter: List());
   }
 
-  factory RestaurantListState.loading({
+/*  factory RestaurantListState.loading({
     List<Restaurant> restaurants,
     int page,
     List<SortBy> sortBy,
@@ -93,17 +100,25 @@ class RestaurantListState {
         page: page,
         isLoading: false,
         error: error);
-  }
+  }*/
 
   RestaurantListState copyWith(
-      {List<Restaurant> list,
+      {List<Restaurant> restaurants,
       int page,
-      String sortBy,
-      List<String> cuisineType,
+      List<SortBy> sortBy,
+      String selectedSortBy,
+      List<String> selectedFilter,
+      List<Filter> filter,
       bool isLoading,
+      String error,
       bool hasReachedMax}) {
     return RestaurantListState(
         restaurants: restaurants ?? this.restaurants,
+        filters: filter ?? this.filters,
+        error: error ?? this.error,
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+        selectedFilter: selectedFilter ?? this.selectedFilter,
+        selectedSortBy: selectedSortBy ?? this.selectedSortBy,
         page: page ?? this.page,
         isLoading: isLoading ?? this.isLoading,
         sortBy: sortBy ?? this.sortBy);

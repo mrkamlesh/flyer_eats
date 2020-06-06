@@ -41,17 +41,9 @@ class DataProvider {
   Future<dynamic> getRestaurantList(String address, int page,
       {String cuisineType, String sortBy}) async {
     String addressUrl = Uri.encodeComponent(address);
-    String cuisineTypeParam;
-    if (cuisineType != null) {
-      cuisineTypeParam = "&cuisine_type=$cuisineType";
-    } else {
-      cuisineTypeParam = "";
-    }
-    String sortByParam;
-    if (sortBy != null) {
-      sortByParam = "&sortby=$sortBy";
-    } else
-      sortByParam = "";
+    String cuisineTypeParam =
+        cuisineType != null ? "&cuisine_type=$cuisineType" : "";
+    String sortByParam = sortBy != null ? "&sortby=$sortBy" : "";
     String url =
         "${productionServerUrl}mobileapp/apinew/search?json=true&cusinetype=food&page=$page&isgetoffer=1&address=$addressUrl&api_key=flyereats$cuisineTypeParam$sortByParam";
 

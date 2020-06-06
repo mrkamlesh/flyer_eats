@@ -17,58 +17,96 @@ class RestaurantListBloc
     RestaurantListEvent event,
   ) async* {
     if (event is GetFirstDataRestaurantList) {
-      yield* mapGetRestaurantListToState(event.address);
+      yield* mapGetFirstDataRestaurantListToState(event.address);
     } else if (event is LoadMore) {
       yield* mapLoadMoreToState(event.address);
+    } else if (event is SelectSortBy) {
+      yield* mapSelectSortByToState(event.selectedSortBy);
+    } else if (event is AddFilter) {
+      yield* mapAddFilterToState(event.addedFilter);
+    } else if (event is RemoveFilter) {
+      yield* mapRemoveFilterToState(event.removedFilter);
+    } else if (event is ApplyFilter) {
+      yield* mapApplyFilterToState(event.address);
+    } else if (event is ClearFilter){
+      yield* mapGetFirstDataRestaurantListToState(event.address);
     }
   }
 
-  Stream<RestaurantListState> mapGetRestaurantListToState(
+  Stream<RestaurantListState> mapGetFirstDataRestaurantListToState(
       String address) async* {
-    yield RestaurantListState.loading(restaurants: List(), page: 0);
+    yield state.copyWith(
+        isLoading: true,
+        restaurants: List(),
+        selectedFilter: List(),
+        selectedSortBy: null);
     try {
       Map<String, dynamic> map =
           await repository.getFirstDataRestaurantList(address);
 
-      yield RestaurantListState.firstLoaded(
+      yield state.copyWith(
           restaurants: map['restaurants'],
           page: state.page + 1,
           sortBy: map['sortBy'],
-          filters: map['filters']);
+          filter: map['filters'],
+          isLoading: false);
     } catch (e) {
-      yield RestaurantListState.error(
-          restaurants: state.restaurants,
-          filters: state.filter,
-          sortBy: state.sortBy,
-          page: state.page,
-          error: e.toString());
+      yield state.copyWith(error: e.toString());
     }
   }
 
   Stream<RestaurantListState> mapLoadMoreToState(String address) async* {
-    yield RestaurantListState.loading(
-        restaurants: state.restaurants,
-        page: state.page,
-        filters: state.filter,
-        sortBy: state.sortBy);
+    yield state.copyWith(isLoading: true, error: null);
     try {
       List<Restaurant> restaurants =
           await repository.getRestaurantList(address, state.page);
 
       restaurants = state.restaurants + restaurants;
 
-      yield RestaurantListState.loaded(
-          restaurants: restaurants,
-          page: state.page + 1,
-          filters: state.filter,
-          sortBy: state.sortBy);
+      yield state.copyWith(
+          restaurants: restaurants, page: state.page + 1, isLoading: false);
     } catch (e) {
-      yield RestaurantListState.error(
-          restaurants: state.restaurants,
-          page: state.page,
-          filters: state.filter,
-          sortBy: state.sortBy,
-          error: e.toString());
+      yield state.copyWith(error: e.toString());
+    }
+  }
+
+  Stream<RestaurantListState> mapSelectSortByToState(
+      String selectedSortBy) async* {
+    yield state.copyWith(selectedSortBy: selectedSortBy);
+  }
+
+  Stream<RestaurantListState> mapAddFilterToState(String addedFilter) async* {
+    List<String> selectedFilters = state.selectedFilter;
+    selectedFilters.add(addedFilter);
+    yield state.copyWith(selectedFilter: selectedFilters);
+  }
+
+  Stream<RestaurantListState> mapRemoveFilterToState(
+      String removedFilter) async* {
+    List<String> selectedFilters = state.selectedFilter;
+    selectedFilters.remove(removedFilter);
+    yield state.copyWith(selectedFilter: selectedFilters);
+  }
+
+  Stream<RestaurantListState> mapApplyFilterToState(String address) async* {
+    String selectedSortBy = state.selectedSortBy;
+    String selectedFilters = state.selectedFilter.join(",");
+
+    yield state.copyWith(isLoading: true, restaurants: List());
+    try {
+      Map<String, dynamic> map = await repository.getFirstDataRestaurantList(
+          address,
+          cuisineType: selectedFilters,
+          sortBy: selectedSortBy);
+
+      yield state.copyWith(
+          restaurants: map['restaurants'],
+          page: state.page + 1,
+          sortBy: map['sortBy'],
+          filter: map['filters'],
+          isLoading: false);
+    } catch (e) {
+      yield state.copyWith(error: e.toString());
     }
   }
 }

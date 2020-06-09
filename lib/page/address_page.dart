@@ -7,6 +7,7 @@ import 'package:flyereats/bloc/address/address_bloc.dart';
 import 'package:flyereats/bloc/address/address_event.dart';
 import 'package:flyereats/bloc/address/address_repository.dart';
 import 'package:flyereats/bloc/address/address_state.dart';
+import 'package:flyereats/bloc/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/address.dart';
@@ -125,6 +126,52 @@ class _AddressPageState extends State<AddressPage> {
                               _addressController.text = state.address.address;
                               _titleController.text = state.address.title;
                             }
+                          } else if (state is AddressUpdated) {
+                            if (state.isUpdated) {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        "Success",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text("successfully updated"),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("OK"))
+                                      ],
+                                    );
+                                  });
+                            } else {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        "Error",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text(
+                                          "Something went wrong during processing your request"),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("OK"))
+                                      ],
+                                    );
+                                  });
+                            }
                           }
                         },
                         builder: (context, state) {
@@ -190,41 +237,52 @@ class _AddressPageState extends State<AddressPage> {
                                   ],
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: address.isValid()
-                                    ? () {
-                                  widget.address == null ?
-                                        BlocProvider.of<AddressBloc>(context)
-                                            .add(AddAddress(address)) :
-                                  BlocProvider.of<AddressBloc>(context)
-                                      .add(UpdateAddress(address));
-                                        Navigator.pop(context);
-                                      }
-                                    : () {},
-                                child: Stack(
-                                  children: <Widget>[
-                                    Container(
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFFFB531),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        widget.address == null ? "DONE" : "UPDATE",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
+                              BlocBuilder<LoginBloc, LoginState>(
+                                builder: (context, loginState) {
+                                  return GestureDetector(
+                                    onTap: address.isValid()
+                                        ? () {
+                                            widget.address == null
+                                                ? BlocProvider.of<AddressBloc>(
+                                                        context)
+                                                    .add(AddAddress(address))
+                                                : BlocProvider.of<AddressBloc>(
+                                                        context)
+                                                    .add(UpdateAddress(address,
+                                                        loginState.user.token));
+                                            //Navigator.pop(context);
+                                          }
+                                        : () {},
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xFFFFB531),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            widget.address == null
+                                                ? "DONE"
+                                                : "UPDATE",
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ),
+                                        AnimatedOpacity(
+                                          opacity:
+                                              address.isValid() ? 0.0 : 0.5,
+                                          child: Container(
+                                            height: 50,
+                                            color: Colors.white,
+                                          ),
+                                          duration: Duration(milliseconds: 300),
+                                        )
+                                      ],
                                     ),
-                                    AnimatedOpacity(
-                                      opacity: address.isValid() ? 0.0 : 0.5,
-                                      child: Container(
-                                        height: 50,
-                                        color: Colors.white,
-                                      ),
-                                      duration: Duration(milliseconds: 300),
-                                    )
-                                  ],
-                                ),
+                                  );
+                                },
                               )
                             ],
                           );

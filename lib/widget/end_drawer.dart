@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/page/account_page.dart';
@@ -57,27 +59,33 @@ class EndDrawer extends StatelessWidget {
                 SizedBox(
                   width: 10,
                 ),
+
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Saravanan Nagarajan",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        "9620077525",
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: TextStyle(fontSize: 16, color: Colors.black45),
-                      ),
-                    ],
+                  child: BlocBuilder<LoginBloc, LoginState>(
+                    builder: (context, state) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            state.user.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            state.user.phone,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black45),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
                 Icon(Icons.keyboard_arrow_right),

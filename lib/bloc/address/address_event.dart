@@ -16,19 +16,22 @@ class InitDefaultAddress extends AddressEvent {
 }
 
 class OpenListAddress extends AddressEvent {
-  const OpenListAddress();
+  final String token;
+
+  const OpenListAddress(this.token);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [token];
 }
 
 class OpenAddress extends AddressEvent {
-  final int id;
+  final String id;
+  final String token;
 
-  const OpenAddress(this.id);
+  const OpenAddress(this.id, this.token);
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id, token];
 }
 
 class CalculatePrice extends AddressEvent {
@@ -52,20 +55,23 @@ class AddAddress extends AddressEvent {
 
 class UpdateAddress extends AddressEvent {
   final Address address;
+  final String token;
 
-  const UpdateAddress(this.address);
+  const UpdateAddress(this.address, this.token);
 
   @override
-  List<Object> get props => [address];
+  List<Object> get props => [address, token];
 }
 
 class RemoveAddress extends AddressEvent {
-  final int id;
+  final String id;
 
-  const RemoveAddress(this.id);
+  final String token;
+
+  const RemoveAddress(this.id, this.token);
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id, token];
 }
 
 class ValidatingAddress extends AddressEvent {

@@ -209,7 +209,7 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
                                                 state.location.latitude,
                                                 state.location.longitude));
                                         Navigator.pushReplacementNamed(
-                                            context, "/");
+                                            context, "/home");
                                       }
                                     : () {},
                                 child: Stack(

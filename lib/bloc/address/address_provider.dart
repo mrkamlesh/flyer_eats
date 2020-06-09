@@ -1,13 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flyereats/classes/app_exceptions.dart';
 import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:http/http.dart' as http;
 
 class AddressDBProvider {
+  var client = http.Client();
+  String baseUrl = "http://flyereats.in/";
+
   AddressDBProvider._();
 
   static final AddressDBProvider db = AddressDBProvider._();
@@ -73,45 +79,84 @@ class AddressDBProvider {
     return raw;
   }
 
-  updateAddress(Address address) async {
-    final db = await database;
-    var raw = await db.update('address', address.toMap(),
-        where: 'id=?', whereArgs: [address.id]);
-    return raw;
-  }
-
-  deleteAddress(int id) async {
-    final db = await database;
-    var raw = await db.delete('address', where: 'id=?', whereArgs: [id]);
-    return raw;
-  }
-
-  Future<Address> getAddress(int id) async {
-    final db = await database;
-    List<Map<String, dynamic>> addresses =
-        await db.query("address", where: "id = ?", whereArgs: [id]);
-    return Address.fromMap(addresses[0]);
-  }
-
   Future<Address> getDefaultAddress() async {
     final db = await database;
     List<Map<String, dynamic>> addresses = await db.query("address");
-    if (addresses.isEmpty){
+    if (addresses.isEmpty) {
       return null;
     } else {
       return Address.fromMap(addresses[0]);
     }
   }
 
-  Future<List<Address>> getAllAddress() async {
-    final db = await database;
-    List<Map<String, dynamic>> mapAddress =
-        await db.query("address", orderBy: 'title');
-    List<Address> listAddress = [];
-    for (int i = 0; i < mapAddress.length; i++) {
-      listAddress.add(Address.fromMap(mapAddress[i]));
-    }
+  Future<dynamic> deleteAddress(String id, String token) async {
+    String url =
+        "${baseUrl}mobileapp/apinew/deleteAddressBook?json=true&&client_token=$token&id=$id&lang_id=en&lang=en&api_key=flyereats";
 
-    return listAddress;
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> updateAddress(Address address, String token) async {
+    String url =
+        "${baseUrl}mobileapp/apinew/saveAddressBook?json=true&id=${address.id}&action=edit&street=${address.address}&location_name=${address.title}"
+        "&client_token=$token&api_key=flyereats";
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getAddress(String id, String token) async {
+    String url =
+        "${baseUrl}mobileapp/apinew/getAddressBookDetails?json=true&client_token=$token&id=$id&lang_id=en&lang=en&api_key=flyereats";
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getAllAddress(String token) async {
+    String url =
+        "${baseUrl}mobileapp/apinew/getAddressBook?json=true&client_token=$token&json=true&lang_id=en&lang=en&api_key=flyereats";
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  dynamic _returnResponse(http.Response response) {
+    switch (response.statusCode) {
+      case 200:
+        var responseJson = json.decode(response.body.toString());
+        return responseJson;
+      case 400:
+        throw BadRequestException(response.body.toString());
+      case 401:
+      case 403:
+        throw UnauthorizedException(response.body.toString());
+      case 500:
+        throw BadRequestException(response.body.toString());
+      default:
+        throw FetchDataException('Error Communicating with server');
+    }
   }
 }

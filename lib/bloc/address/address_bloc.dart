@@ -23,9 +23,9 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     if (event is InitDefaultAddress) {
       yield* mapInitDefaultAddressToState();
     } else if (event is OpenListAddress) {
-      yield* mapOpenListAddressToState();
+      yield* mapOpenListAddressToState(event.token);
     } else if (event is OpenAddress) {
-      yield* mapOpenAddressToState(event.id);
+      yield* mapOpenAddressToState(event.id, event.token);
     } else if (event is CalculatePrice) {
       yield* mapCalculatePriceToState(event.from, event.to);
     } else if (event is AddressAddPageOpen) {
@@ -39,13 +39,10 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     } else if (event is AddressUpdatePageOpen) {
       yield* mapAddressUpdatePageOpenToState(event.address);
     } else if (event is UpdateAddress) {
-      yield* mapUpdateAddressToState(event.address);
+      yield* mapUpdateAddressToState(event.address, event.token);
     } else if (event is RemoveAddress) {
-      yield* mapRemoveAddressToState(event.id);
+      yield* mapRemoveAddressToState(event.id, event.token);
     }
-    /*else if (event is ValidatingAddress) {
-      yield* mapValidatingAddressToSTate(event.address);
-    }*/
   }
 
   Stream<AddressState> mapInitDefaultAddressToState() async* {
@@ -63,20 +60,20 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapOpenListAddressToState() async* {
+  Stream<AddressState> mapOpenListAddressToState(String token) async* {
     yield LoadingListAddress();
     try {
-      List<Address> list = await addressRepository.getAllAddress();
+      List<Address> list = await addressRepository.getAllAddress(token);
       yield ListAddressLoaded(list);
     } catch (e) {
       yield ErrorLoadingListAddress(e.toString());
     }
   }
 
-  Stream<AddressState> mapOpenAddressToState(int id) async* {
+  Stream<AddressState> mapOpenAddressToState(String id, String token) async* {
     yield LoadingAddressInformation();
     try {
-      Address address = await addressRepository.getAddress(id);
+      Address address = await addressRepository.getAddress(id, token);
       yield AddressLoaded(address);
     } catch (e) {
       yield ErrorLoadingListAddress(e.toString());
@@ -164,22 +161,23 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapUpdateAddressToState(Address address) async* {
-    yield LoadingAddressInformation();
+  Stream<AddressState> mapUpdateAddressToState(
+      Address address, String token) async* {
+    yield LoadingTemporaryAddress();
     try {
-      await addressRepository.updateAddress(address);
-      yield AddressUpdated();
+      bool isUpdated = await addressRepository.updateAddress(address, token);
+      yield AddressUpdated(isUpdated);
     } catch (e) {
       yield ErrorLoadingListAddress(e.toString());
     }
   }
 
-  Stream<AddressState> mapRemoveAddressToState(int id) async* {
+  Stream<AddressState> mapRemoveAddressToState(String id, String token) async* {
     yield LoadingAddressInformation();
     try {
-      await addressRepository.deleteAddress(id);
-      yield AddressRemoved();
-      add(OpenListAddress());
+      bool isRemoved = await addressRepository.deleteAddress(id, token);
+      yield AddressRemoved(isRemoved);
+      add(OpenListAddress(token));
     } catch (e) {
       yield ErrorLoadingListAddress(e.toString());
     }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyereats/bloc/bloc.dart';
 import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/page/home.dart';
+import 'package:flyereats/page/login/login_facebook_gmail.dart';
 
 import 'bloc/location/location_bloc.dart';
 
@@ -26,6 +28,11 @@ class MyApp extends StatelessWidget {
             create: (context) {
               return LocationBloc()..add(GetCurrentLocation());
             },
+          ),
+          BlocProvider<LoginBloc>(
+            create: (context) {
+              return LoginBloc()..add(InitLoginEvent());
+            },
           )
         ],
         child: MaterialApp(
@@ -35,7 +42,8 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: "/",
           routes: {
-            "/": (context) => Home(),
+            "/": (context) => LoginFacebookGmail(),
+            "/home": (context) => Home(),
           },
         ));
   }

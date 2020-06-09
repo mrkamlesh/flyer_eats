@@ -238,11 +238,11 @@ class ExampleModel {
     List<Address> list = [];
 
     list.add(Address(
-        1, "Maumere", "It is somewhere in Indonesia", AddressType.other,
+        "1", "Maumere", "It is somewhere in Indonesia", AddressType.other,
         latitude: "", longitude: ""));
 
     list.add(Address(
-        2,
+        "2",
         "Home",
         "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
         AddressType.other,
@@ -250,7 +250,7 @@ class ExampleModel {
         longitude: ""));
 
     list.add(Address(
-        3,
+        "3",
         "Others",
         "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
         AddressType.other,
@@ -258,7 +258,7 @@ class ExampleModel {
         longitude: ""));
 
     list.add(Address(
-        4,
+        "4",
         "Office",
         "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
         AddressType.other,

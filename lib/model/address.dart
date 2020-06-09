@@ -1,7 +1,7 @@
 enum AddressType { home, office, other }
 
 class Address {
-  final int id;
+  final String id;
   final String title;
   final String address;
   final String mapAddress;
@@ -75,5 +75,14 @@ class Address {
         type != null &&
         title != "" &&
         address != "";
+  }
+
+  factory Address.fromJson(Map<String, dynamic> parsedJson) {
+
+    return Address(parsedJson['id'], parsedJson['location_name'],
+        parsedJson['street'], AddressType.home,
+        longitude: parsedJson['delivery_longitude'],
+        latitude: parsedJson['delivery_latitude'],
+        mapAddress: parsedJson['street']);
   }
 }

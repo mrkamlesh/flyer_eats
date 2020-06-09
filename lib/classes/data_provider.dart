@@ -3,12 +3,45 @@ import 'dart:io';
 import 'package:flyereats/classes/app_exceptions.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DataProvider {
+  static String emailKey = "EMAIL";
+  static String passwordKey = "PASSWORD";
+
   var client = http.Client();
 
   String developmentServerUrl = "https://www.pollachiarea.com/flyereats/";
   String productionServerUrl = "http://flyereats.in/";
+
+  Future<dynamic> loginWithEmail(String email, String password) async {
+    String url =
+        "${productionServerUrl}mobileapp/apinew/login?json=true/next_steps=account&email_address=$email&password=$password&api_key=flyereats";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<bool> saveLoginInformation(String email, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(emailKey, email);
+    prefs.setString(passwordKey, password);
+    return true;
+  }
+
+  Future<Map<String, String>> getLoginInformation() async {
+    Map<String, String> map = Map();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    map['email'] = prefs.getString(emailKey);
+    map['password'] = prefs.getString(passwordKey);
+    return map;
+  }
 
   Future<dynamic> getLocations(String countryId) async {
     String url =

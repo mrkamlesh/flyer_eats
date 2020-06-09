@@ -5,9 +5,28 @@ import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/menu_category.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/sort_by.dart';
+import 'package:flyereats/model/user.dart';
 
 class DataRepository {
   DataProvider _provider = DataProvider();
+
+  Future<User> loginWithEmail(String email, String password) async {
+    final response = await _provider.loginWithEmail(email, password);
+    if (response['code'] == 1) {
+      return User.fromJson(response['details'], email, password);
+    } else {
+      return null;
+    }
+  }
+
+  Future<bool> saveLoginInformation(String email, String password) async {
+    await _provider.saveLoginInformation(email, password);
+    return true;
+  }
+
+  Future<Map<String, String>> getLoginInformation() async {
+    return await _provider.getLoginInformation();
+  }
 
   Future<List<Location>> getLocations(String countryId) async {
     final response = await _provider.getLocations(countryId);
@@ -20,7 +39,6 @@ class DataRepository {
 
   Future<Location> getLocationByLatLng(double lat, double lng) async {
     final response = await _provider.getLocationByLatLng(lat, lng);
-
     if (response['code'] == 1) {
       var locationMap = response['details'];
       Location location = Location.fromJson2(locationMap);

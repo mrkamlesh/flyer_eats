@@ -90,10 +90,12 @@ class PriceCalculateError extends AddressState {
 }
 
 class AddressUpdated extends AddressState {
-  const AddressUpdated();
+  final bool isUpdated;
+
+  const AddressUpdated(this.isUpdated);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [isUpdated];
 }
 
 class AddressAdded extends AddressState {
@@ -104,10 +106,12 @@ class AddressAdded extends AddressState {
 }
 
 class AddressRemoved extends AddressState {
-  const AddressRemoved();
+  final bool isRemoved;
+
+  const AddressRemoved(this.isRemoved);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [isRemoved];
 }
 
 class InitState extends AddressState {
@@ -124,15 +128,6 @@ class LoadingTemporaryAddress extends AddressState {
   List<Object> get props => [];
 }
 
-/*class LoadingCurrentAddressSuccess extends AddressState {
-  final LatLng latLng;
-
-  const LoadingCurrentAddressSuccess(this.latLng);
-
-  @override
-  List<Object> get props => [latLng];
-}*/
-
 class LoadingTemporaryAddressError extends AddressState {
   final String message;
 
@@ -141,40 +136,6 @@ class LoadingTemporaryAddressError extends AddressState {
   @override
   List<Object> get props => [message];
 }
-
-/*class UpdatingMapAddress extends AddressState {
-  const UpdatingMapAddress();
-
-  @override
-  List<Object> get props => [];
-}*/
-
-/*class UpdatingMapAddressSuccess extends AddressState {
-  final Address address;
-
-  const UpdatingMapAddressSuccess(this.address);
-
-  @override
-  List<Object> get props => [address];
-}*/
-
-/*class UpdatingMapAddressError extends AddressState {
-  final String message;
-
-  const UpdatingMapAddressError(this.message);
-
-  @override
-  List<Object> get props => [message];
-}*/
-
-/*class LocationAddressMoved extends AddressState {
-  final LatLng latLng;
-
-  const LocationAddressMoved(this.latLng);
-
-  @override
-  List<Object> get props => [latLng];
-}*/
 
 class LoadingTemporaryAddressSuccess extends AddressState {
   final Address address;

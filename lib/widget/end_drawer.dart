@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/bloc.dart';
+import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/page/account_page.dart';
@@ -59,7 +59,6 @@ class EndDrawer extends StatelessWidget {
                 SizedBox(
                   width: 10,
                 ),
-
                 Expanded(
                   child: BlocBuilder<LoginBloc, LoginState>(
                     builder: (context, state) {

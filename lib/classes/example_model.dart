@@ -180,7 +180,7 @@ class ExampleModel {
 
   static List<Food> getFoods() {
     List<Food> _listFoods = [];
-    _listFoods.add(Food(
+/*    _listFoods.add(Food(
       "1",
         "Idly",
         "Loremp ipsum dos amet color Loremp ipsum dos amet color Loremp ipsum dos amet color",
@@ -221,7 +221,7 @@ class ExampleModel {
         "Loremp ipsum dos amet color",
         10,
         "https://img.theculturetrip.com/1024x/smart/wp-content/uploads/2017/08/3437240332_48cea3c8ca_o.jpg",
-        true));
+        true));*/
 
     return _listFoods;
   }

@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/bloc/food/detail_page_state.dart';
+import 'package:flyereats/bloc/foodorder/bloc.dart';
+import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
@@ -52,326 +54,349 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      endDrawer: EndDrawer(),
-      body: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 0,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                width: AppUtil.getScreenWidth(context),
-                height: AppUtil.getBannerHeight(context),
-                child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: CachedNetworkImage(
-                      imageUrl: widget.restaurant.image,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                    )),
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(color: Colors.black54),
-            width: AppUtil.getScreenWidth(context),
-            height: AppUtil.getBannerHeight(context),
-          ),
-          Column(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topCenter,
-                child: Builder(
-                  builder: (context) {
-                    return CustomAppBar(
-                      leading: "assets/back.svg",
-                      drawer: "assets/drawer.svg",
-                      title: widget.restaurant.name,
-                      onTapLeading: () {
-                        Navigator.pop(context);
-                      },
-                      onTapDrawer: () {
-                        Scaffold.of(context).openEndDrawer();
-                      },
-                      backgroundColor: Colors.transparent,
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          DraggableScrollableSheet(
-            initialChildSize: (AppUtil.getScreenHeight(context) -
-                    AppUtil.getToolbarHeight(context)) /
-                AppUtil.getScreenHeight(context),
-            minChildSize: (AppUtil.getScreenHeight(context) -
-                    AppUtil.getToolbarHeight(context)) /
-                AppUtil.getScreenHeight(context),
-            maxChildSize: 1.0,
-            builder: (context, controller) {
-              return Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(32),
-                        topLeft: Radius.circular(32))),
-                child: BlocBuilder<DetailPageBloc, DetailPageState>(
-                  builder: (context, state) {
-                    if (state is CartState) {
-                      _foodCart = state.cart;
-                      _listFood = List();
-                      _foodCart.cart
-                          .forEach((id, food) => _listFood.add(food.food));
-                    }
-
-                    return CustomScrollView(
-                      controller: controller,
-                      slivers: <Widget>[
-                        SliverPersistentHeader(
-                          delegate: DeliveryOptions(
-                              groupValue: _radioGroup,
-                              onTapSelfPickup: (i) {
-                                setState(() {
-                                  _radioGroup = i;
-                                });
-                              },
-                              onTapDeliveryOption: (i) {
-                                setState(() {
-                                  _radioGroup = i;
-                                });
-                              }),
-                          pinned: true,
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, loginState) {
+        return BlocProvider<FoodOrderBloc>(
+          create: (context) {
+            return FoodOrderBloc()
+              ..add(InitPlaceOrder(
+                  widget.restaurant, widget.foodCart, loginState.user));
+          },
+          child: Scaffold(
+            endDrawer: EndDrawer(),
+            body: BlocBuilder<FoodOrderBloc, FoodOrderState>(
+              builder: (context, state) {
+                if (state is InitialFoodOrderState) return Container();
+                return Stack(
+                  children: <Widget>[
+                    Positioned(
+                      top: 0,
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          width: AppUtil.getScreenWidth(context),
+                          height: AppUtil.getBannerHeight(context),
+                          child: FittedBox(
+                              fit: BoxFit.cover,
+                              child: CachedNetworkImage(
+                                imageUrl: widget.restaurant.image,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                              )),
                         ),
-                        FoodListWidget(
-                          padding: EdgeInsets.only(
-                              top: 20,
-                              bottom: 10,
-                              right: horizontalPaddingDraggable,
-                              left: horizontalPaddingDraggable),
-                          type: FoodListViewType.list,
-                          cart: _foodCart,
-                          listFood: _listFood,
-                        ),
-                        SliverToBoxAdapter(
-                          child: Container(
-                            height: 55,
-                            padding: EdgeInsets.symmetric(
-                                vertical: 17,
-                                horizontal: horizontalPaddingDraggable),
-                            margin: EdgeInsets.symmetric(
-                                horizontal: horizontalPaddingDraggable),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(18),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: shadow,
-                                  blurRadius: 7,
-                                  spreadRadius: -3,
-                                )
-                              ],
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                SvgPicture.asset(
-                                  "assets/discount.svg",
-                                  height: 24,
-                                  width: 24,
-                                  color: Colors.black,
-                                ),
-                                SizedBox(
-                                  width: 17,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "APPLY COUPON",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SliverToBoxAdapter(
-                          child: Container(
-                            height: 55,
-                            margin: EdgeInsets.only(
-                                top: 20,
-                                left: horizontalPaddingDraggable,
-                                right: horizontalPaddingDraggable),
-                            padding: EdgeInsets.only(
-                                top: 17, bottom: 17, left: 17, right: 17),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(18),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: shadow,
-                                  blurRadius: 7,
-                                  spreadRadius: -3,
-                                )
-                              ],
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: 25,
-                                  child: Checkbox(
-                                      activeColor: Colors.green,
-                                      value: _isUseWallet,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _isUseWallet = value;
-                                        });
-                                      }),
-                                ),
-                                SizedBox(
-                                  width: 17,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "WALLET AMOUNT",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    SvgPicture.asset(
-                                      "assets/rupee.svg",
-                                      height: 12,
-                                      width: 12,
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      "30",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SliverToBoxAdapter(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                                top: 20,
-                                left: horizontalPaddingDraggable,
-                                right: horizontalPaddingDraggable,
-                                bottom: kBottomNavigationBarHeight + 130),
-                            padding: EdgeInsets.only(
-                                left: horizontalPaddingDraggable,
-                                right: horizontalPaddingDraggable,
-                                top: horizontalPaddingDraggable,
-                                bottom: 7),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(18),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: shadow,
-                                  blurRadius: 7,
-                                  spreadRadius: -3,
-                                )
-                              ],
-                            ),
-                            child: Column(
-                              children: <Widget>[
-                                OrderRowItem(
-                                  title: "ORDER",
-                                  color: Colors.black,
-                                  amount: 60,
-                                ),
-                                OrderRowItem(
-                                  title: "TAX",
-                                  color: Colors.black,
-                                  amount: 10,
-                                ),
-                                OrderRowItem(
-                                  title: "PACKAGING",
-                                  color: Colors.black,
-                                  amount: 0,
-                                ),
-                                OrderRowItem(
-                                  title: "DELIVERY FEE",
-                                  color: Colors.black,
-                                  amount: 0,
-                                ),
-                                OrderRowItem(
-                                  title: "DISCOUNT",
-                                  color: Colors.green,
-                                  amount: 10,
-                                ),
-                                OrderRowItem(
-                                  title: "OFFER",
-                                  color: Colors.green,
-                                  amount: 0,
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 13),
-                                  child: Divider(
-                                    height: 1,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                                OrderRowItem(
-                                    title: "TOTAL",
-                                    color: Colors.black,
-                                    amount: 60),
-                              ],
-                            ),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(color: Colors.black54),
+                      width: AppUtil.getScreenWidth(context),
+                      height: AppUtil.getBannerHeight(context),
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Builder(
+                            builder: (context) {
+                              return CustomAppBar(
+                                leading: "assets/back.svg",
+                                drawer: "assets/drawer.svg",
+                                title: widget.restaurant.name,
+                                onTapLeading: () {
+                                  Navigator.pop(context);
+                                },
+                                onTapDrawer: () {
+                                  Scaffold.of(context).openEndDrawer();
+                                },
+                                backgroundColor: Colors.transparent,
+                              );
+                            },
                           ),
                         ),
                       ],
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          Positioned(
-            bottom: 0,
-            child: Column(
-              children: <Widget>[
-                DeliveryInformationWidget(
-                  address: Address(
-                    "1",
-                    "Home",
-                    "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
-                    AddressType.other,
-                  ),
-                  distance: "30 Min",
-                  allAddresses: ExampleModel.getAddresses(),
-                ),
-                BlocBuilder<DetailPageBloc, DetailPageState>(
-                  builder: (context, state) {
-                    double amount = 0;
-                    if (state is CartState) {
-                      state.cart.cart.forEach((i, item) {
-                        amount = amount + item.food.price * item.quantity;
-                      });
-                    }
+                    ),
+                    DraggableScrollableSheet(
+                      initialChildSize: (AppUtil.getScreenHeight(context) -
+                              AppUtil.getToolbarHeight(context)) /
+                          AppUtil.getScreenHeight(context),
+                      minChildSize: (AppUtil.getScreenHeight(context) -
+                              AppUtil.getToolbarHeight(context)) /
+                          AppUtil.getScreenHeight(context),
+                      maxChildSize: 1.0,
+                      builder: (context, controller) {
+                        return Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
+                          child: BlocBuilder<DetailPageBloc, DetailPageState>(
+                            builder: (context, state) {
+                              if (state is CartState) {
+                                _foodCart = state.cart;
+                                _listFood = List();
+                                _foodCart.cart.forEach(
+                                    (id, food) => _listFood.add(food.food));
+                              }
 
-                    return OrderBottomNavBar(
-                      isValid: amount > 0 ? true : false,
-                      amount: amount,
-                      description: "Total Amount",
-                      onButtonTap: () {},
-                      buttonText: "PLACE ORDER",
-                      showRupee: true,
-                    );
-                  },
-                ),
-              ],
+                              return CustomScrollView(
+                                controller: controller,
+                                slivers: <Widget>[
+                                  SliverPersistentHeader(
+                                    delegate: DeliveryOptions(
+                                        groupValue: _radioGroup,
+                                        onTapSelfPickup: (i) {
+                                          setState(() {
+                                            _radioGroup = i;
+                                          });
+                                        },
+                                        onTapDeliveryOption: (i) {
+                                          setState(() {
+                                            _radioGroup = i;
+                                          });
+                                        }),
+                                    pinned: true,
+                                  ),
+                                  FoodListWidget(
+                                    padding: EdgeInsets.only(
+                                        top: 20,
+                                        bottom: 10,
+                                        right: horizontalPaddingDraggable,
+                                        left: horizontalPaddingDraggable),
+                                    type: FoodListViewType.list,
+                                    cart: _foodCart,
+                                    listFood: _listFood,
+                                  ),
+                                  SliverToBoxAdapter(
+                                    child: Container(
+                                      height: 55,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 17,
+                                          horizontal:
+                                              horizontalPaddingDraggable),
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal:
+                                              horizontalPaddingDraggable),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(18),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: shadow,
+                                            blurRadius: 7,
+                                            spreadRadius: -3,
+                                          )
+                                        ],
+                                      ),
+                                      child: Row(
+                                        children: <Widget>[
+                                          SvgPicture.asset(
+                                            "assets/discount.svg",
+                                            height: 24,
+                                            width: 24,
+                                            color: Colors.black,
+                                          ),
+                                          SizedBox(
+                                            width: 17,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              "APPLY COUPON",
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SliverToBoxAdapter(
+                                    child: Container(
+                                      height: 55,
+                                      margin: EdgeInsets.only(
+                                          top: 20,
+                                          left: horizontalPaddingDraggable,
+                                          right: horizontalPaddingDraggable),
+                                      padding: EdgeInsets.only(
+                                          top: 17,
+                                          bottom: 17,
+                                          left: 17,
+                                          right: 17),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(18),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: shadow,
+                                            blurRadius: 7,
+                                            spreadRadius: -3,
+                                          )
+                                        ],
+                                      ),
+                                      child: Row(
+                                        children: <Widget>[
+                                          SizedBox(
+                                            width: 25,
+                                            child: Checkbox(
+                                                activeColor: Colors.green,
+                                                value: _isUseWallet,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    _isUseWallet = value;
+                                                  });
+                                                }),
+                                          ),
+                                          SizedBox(
+                                            width: 17,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              "WALLET AMOUNT",
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                          Row(
+                                            children: <Widget>[
+                                              SvgPicture.asset(
+                                                "assets/rupee.svg",
+                                                height: 12,
+                                                width: 12,
+                                              ),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                "30",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SliverToBoxAdapter(
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          top: 20,
+                                          left: horizontalPaddingDraggable,
+                                          right: horizontalPaddingDraggable,
+                                          bottom:
+                                              kBottomNavigationBarHeight + 130),
+                                      padding: EdgeInsets.only(
+                                          left: horizontalPaddingDraggable,
+                                          right: horizontalPaddingDraggable,
+                                          top: horizontalPaddingDraggable,
+                                          bottom: 7),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(18),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: shadow,
+                                            blurRadius: 7,
+                                            spreadRadius: -3,
+                                          )
+                                        ],
+                                      ),
+                                      child: Column(
+                                        children: <Widget>[
+                                          OrderRowItem(
+                                            title: "ORDER",
+                                            color: Colors.black,
+                                            amount: 60,
+                                          ),
+                                          OrderRowItem(
+                                            title: "TAX",
+                                            color: Colors.black,
+                                            amount: 10,
+                                          ),
+                                          OrderRowItem(
+                                            title: "PACKAGING",
+                                            color: Colors.black,
+                                            amount: 0,
+                                          ),
+                                          OrderRowItem(
+                                            title: "DELIVERY FEE",
+                                            color: Colors.black,
+                                            amount: 0,
+                                          ),
+                                          OrderRowItem(
+                                            title: "DISCOUNT",
+                                            color: Colors.green,
+                                            amount: 10,
+                                          ),
+                                          OrderRowItem(
+                                            title: "OFFER",
+                                            color: Colors.green,
+                                            amount: 0,
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 13),
+                                            child: Divider(
+                                              height: 1,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                          OrderRowItem(
+                                              title: "TOTAL",
+                                              color: Colors.black,
+                                              amount: 60),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      child: Column(
+                        children: <Widget>[
+                          DeliveryInformationWidget(
+                            address: Address(
+                              "1",
+                              "Home",
+                              "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
+                              AddressType.other,
+                            ),
+                            distance: "30 Min",
+                            allAddresses: ExampleModel.getAddresses(),
+                          ),
+                          BlocBuilder<DetailPageBloc, DetailPageState>(
+                            builder: (context, state) {
+                              double amount = 0;
+                              if (state is CartState) {
+                                state.cart.cart.forEach((i, item) {
+                                  amount =
+                                      amount + item.food.price * item.quantity;
+                                });
+                              }
+
+                              return OrderBottomNavBar(
+                                isValid: amount > 0 ? true : false,
+                                amount: amount,
+                                description: "Total Amount",
+                                onButtonTap: () {},
+                                buttonText: "PLACE ORDER",
+                                showRupee: true,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                );
+              },
             ),
-          )
-        ],
-      ),
+          ),
+        );
+      },
     );
   }
 }

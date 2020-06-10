@@ -5,21 +5,34 @@ class Food {
   final double price;
   final String image;
   final bool isAvailable;
+  final double discount;
+  final String formattedPrice;
+  final String formattedDiscountPrice;
 
-  Food(this.id, this.title, this.description, this.price, this.image,
-      this.isAvailable);
+  Food(
+      {this.id,
+      this.title,
+      this.description,
+      this.price,
+      this.image,
+      this.isAvailable,
+      this.discount,
+      this.formattedPrice,
+      this.formattedDiscountPrice});
 
   factory Food.fromJson(Map<String, dynamic> parsedJson) {
-    bool available = true;
-    if (parsedJson['not_available'] == "1") available = false;
+    bool available = parsedJson['not_available'] == "1" ? false : true;
 
     return Food(
-      parsedJson['item_id'],
-      parsedJson['item_name'],
-      parsedJson['item_description'],
-      double.parse(parsedJson['prices'][0]['price']),
-      parsedJson['photo'],
-      available,
-    );
+        id: parsedJson['item_id'],
+        title: parsedJson['item_name'],
+        description: parsedJson['item_description'],
+        price: double.parse(parsedJson['prices'][0]['price']),
+        image: parsedJson['photo'],
+        isAvailable: available,
+        discount: parsedJson['discount'] != "" ? double.parse(parsedJson['discount']) : 0,
+        formattedPrice: parsedJson['prices'][0]['formatted_price'],
+        formattedDiscountPrice: parsedJson['prices'][0]
+            ['price_discount_pretty']);
   }
 }

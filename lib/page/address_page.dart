@@ -7,7 +7,7 @@ import 'package:flyereats/bloc/address/address_bloc.dart';
 import 'package:flyereats/bloc/address/address_event.dart';
 import 'package:flyereats/bloc/address/address_repository.dart';
 import 'package:flyereats/bloc/address/address_state.dart';
-import 'package:flyereats/bloc/bloc.dart';
+import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/address.dart';

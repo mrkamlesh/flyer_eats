@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flyereats/bloc/login/login_event.dart';
+import 'package:flyereats/bloc/login/login_state.dart';
 import 'package:flyereats/classes/data_repository.dart';
 import 'package:flyereats/model/user.dart';
-import './bloc.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   DataRepository _repository = DataRepository();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/bloc/login/login_bloc.dart';
 import 'package:flyereats/bloc/login/login_event.dart';
@@ -20,11 +19,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<DetailPageBloc>(
-            create: (context) {
-              return DetailPageBloc();
-            },
-          ),
           BlocProvider<LocationBloc>(
             create: (context) {
               return LocationBloc()..add(GetCurrentLocation());

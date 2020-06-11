@@ -2,8 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
+import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/user.dart';
+import 'package:flyereats/model/voucher.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -49,6 +51,24 @@ class ChangeContactPhone extends FoodOrderEvent {
   List<Object> get props => [contact];
 }
 
+class ChangeInstruction extends FoodOrderEvent {
+  final String instruction;
+
+  const ChangeInstruction(this.instruction);
+
+  @override
+  List<Object> get props => [instruction];
+}
+
+class ApplyVoucher extends FoodOrderEvent {
+  final Voucher voucher;
+
+  const ApplyVoucher(this.voucher);
+
+  @override
+  List<Object> get props => [voucher];
+}
+
 class ChangeQuantityFoodCart extends FoodOrderEvent {
   final String id;
   final Food food;
@@ -58,4 +78,22 @@ class ChangeQuantityFoodCart extends FoodOrderEvent {
 
   @override
   List<Object> get props => [id, food, quantity];
+}
+
+class GetPaymentOptions extends FoodOrderEvent {
+
+  /*  final Restaurant restaurant;
+  final FoodCart foodCart;
+  final User user;
+  final String transactionType;
+  final Address address;
+  final String contact;
+  final String deliveryInstruction;*/
+
+  final PlaceOrder order;
+
+  GetPaymentOptions(this.order);
+
+  @override
+  List<Object> get props => [order];
 }

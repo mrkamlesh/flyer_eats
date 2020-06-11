@@ -524,6 +524,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
             );
           },
           barrierDismissible: true);
+    } else {
+      Navigator.pop(context);
     }
 
     return true;
@@ -597,7 +599,7 @@ class RestaurantDetailBottomNavBar extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "$totalAmount",
+                      "${AppUtil.doubleRemoveZeroTrailing(totalAmount)}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style:

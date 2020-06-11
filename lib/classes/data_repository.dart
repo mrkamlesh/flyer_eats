@@ -3,12 +3,34 @@ import 'package:flyereats/model/filter.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/menu_category.dart';
+import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/sort_by.dart';
 import 'package:flyereats/model/user.dart';
+import 'package:flyereats/model/voucher.dart';
 
 class DataRepository {
   DataProvider _provider = DataProvider();
+
+  Future<PlaceOrder> getPaymentOptions(PlaceOrder placeOrder) async {
+    final response = await _provider.getPaymentOptions(placeOrder);
+    if (response['code'] == 1) {
+      PlaceOrder placeOrder = PlaceOrder(
+        isValid: true,
+        message: response['msg'],
+        deliveryCharges:
+            (response['details']['cart'] as Map).containsKey('delivery_charges')
+                ? double.parse(
+                    response['details']['cart']['delivery_charges']['amount'])
+                : 0,
+        razorKey: response['details']['razorpay']['razor_key'],
+        razorSecret: response['details']['razorpay']['razor_secret'],
+      );
+      return placeOrder;
+    } else {
+      return PlaceOrder(isValid: false, message: response['msg']);
+    }
+  }
 
   Future<User> loginWithEmail(String email, String password) async {
     final response = await _provider.loginWithEmail(email, password);
@@ -35,6 +57,30 @@ class DataRepository {
       return Location.fromJson(i);
     }).toList();
     return locations;
+  }
+
+  Future<List<String>> getPromos(String restaurantId, String token) async {
+    final response = await _provider.getPromos(restaurantId, token);
+    if (response['code'] == 1) {
+      var listResponse = response['details']['voucher'] as List;
+      List<String> list = listResponse.map((e) => (e as String)).toList();
+      list.add(response['details']['free_delivery']);
+      return list;
+    } else {
+      return null;
+    }
+  }
+
+  Future<dynamic> applyVoucher(String restaurantId, String voucherCode,
+      double totalOrder, String token) async {
+    final response = await _provider.applyCoupon(
+        restaurantId, voucherCode, totalOrder, token);
+    if (response['code'] == 1) {
+      Voucher voucher = Voucher.fromJson(response['details']);
+      return voucher;
+    } else {
+      return response['msg'] as String;
+    }
   }
 
   Future<Location> getLocationByLatLng(double lat, double lng) async {

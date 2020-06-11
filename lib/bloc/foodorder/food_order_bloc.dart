@@ -1,14 +1,18 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flyereats/classes/data_repository.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/user.dart';
+import 'package:flyereats/model/voucher.dart';
 import './bloc.dart';
 
 class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
+  DataRepository repository = DataRepository();
+
   @override
   FoodOrderState get initialState => InitialFoodOrderState();
 
@@ -22,11 +26,18 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     } else if (event is ChangeTransactionType) {
       yield* mapChangeTransactionTypeToState(event.transactionType);
     } else if (event is ChangeAddress) {
-      yield* mapChangeAddress(event.address);
+      yield* mapChangeAddressToState(event.address);
     } else if (event is ChangeContactPhone) {
-      yield* mapChangeContacPhone(event.contact);
+      yield* mapChangeContactPhoneToState(event.contact);
     } else if (event is ChangeQuantityFoodCart) {
-      yield* mapChangeQuantityFoodCart(event.id, event.food, event.quantity);
+      yield* mapChangeQuantityFoodCartToState(
+          event.id, event.food, event.quantity);
+    } else if (event is ChangeInstruction) {
+      yield* mapChangeInstructionToState(event.instruction);
+    } else if (event is GetPaymentOptions) {
+      yield* mapGetPaymentOptionsToState(event.order);
+    } else if (event is ApplyVoucher) {
+      yield* mapApplyCouponToState(event.voucher);
     }
   }
 
@@ -35,38 +46,89 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     yield FoodOrderState(
         placeOrder:
             state.placeOrder.copyWith(transactionType: transactionType));
+    add(GetPaymentOptions(state.placeOrder));
   }
 
-  Stream<FoodOrderState> mapChangeAddress(Address address) async* {
+  Stream<FoodOrderState> mapChangeAddressToState(Address address) async* {
     yield FoodOrderState(
         placeOrder: state.placeOrder.copyWith(address: address));
+    add(GetPaymentOptions(state.placeOrder));
   }
 
-  Stream<FoodOrderState> mapChangeContacPhone(String contact) async* {
+  Stream<FoodOrderState> mapChangeContactPhoneToState(String contact) async* {
     yield FoodOrderState(
         placeOrder: state.placeOrder.copyWith(contact: contact));
   }
 
-  Stream<FoodOrderState> mapChangeQuantityFoodCart(
+  Stream<FoodOrderState> mapChangeQuantityFoodCartToState(
       String id, Food food, int quantity) async* {
     FoodCart newCart = state.placeOrder.foodCart;
     newCart.changeQuantity(id, food, quantity);
 
-    yield FoodOrderState(
-        placeOrder: state.placeOrder.copyWith(foodCart: newCart));
+    if (newCart.cart.length > 0) {
+      yield FoodOrderState(
+          placeOrder: state.placeOrder.copyWith(foodCart: newCart));
+      add(GetPaymentOptions(state.placeOrder));
+    } else {
+      yield NoItemsInCart();
+    }
   }
 
   Stream<FoodOrderState> mapInitPlaceOrderToState(
       Restaurant restaurant, FoodCart foodCart, User user) async* {
     yield FoodOrderState(
       placeOrder: PlaceOrder(
+        isValid: true,
         restaurant: restaurant,
         foodCart: foodCart,
         user: user,
         address: user.defaultAddress,
         contact: user.phone,
         transactionType: 'delivery',
+        deliveryInstruction: '',
+        deliveryCharges: 0,
+        voucher: Voucher(amount: 0),
       ),
     );
+
+    add(GetPaymentOptions(state.placeOrder));
+  }
+
+  Stream<FoodOrderState> mapChangeInstructionToState(
+      String instruction) async* {
+    yield FoodOrderState(
+        placeOrder:
+            state.placeOrder.copyWith(deliveryInstruction: instruction));
+  }
+
+  Stream<FoodOrderState> mapGetPaymentOptionsToState(PlaceOrder order) async* {
+    yield LoadingGetPayments(
+        placeOrder: state.placeOrder.copyWith(isValid: false));
+    try {
+      PlaceOrder result = await repository.getPaymentOptions(state.placeOrder);
+
+      if (result.isValid) {
+        yield FoodOrderState(
+            placeOrder: state.placeOrder.copyWith(
+                isValid: true,
+                message: result.message,
+                razorKey: result.razorKey,
+                razorSecret: result.razorSecret,
+                deliveryCharges: result.deliveryCharges));
+      } else {
+        yield FoodOrderState(
+            placeOrder: state.placeOrder
+                .copyWith(isValid: false, message: result.message));
+      }
+    } catch (e) {
+      yield FoodOrderState(
+          placeOrder:
+              state.placeOrder.copyWith(isValid: false, message: e.toString()));
+    }
+  }
+
+  Stream<FoodOrderState> mapApplyCouponToState(Voucher voucher) async* {
+    yield FoodOrderState(
+        placeOrder: state.placeOrder.copyWith(voucher: voucher));
   }
 }

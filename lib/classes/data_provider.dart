@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flyereats/classes/app_exceptions.dart';
+import 'package:flyereats/model/place_order.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,9 +15,97 @@ class DataProvider {
   String developmentServerUrl = "https://www.pollachiarea.com/flyereats/";
   String productionServerUrl = "http://flyereats.in/";
 
+  Future<dynamic> getPaymentOptions(PlaceOrder order) async {
+    String paramsUrl = "next_step=payment_option&id=${order.address.id}"
+        "&formatted_address=${order.address.address}"
+        "&google_lat=${order.address.latitude}"
+        "&google_lng=${order.address.longitude}"
+        "&location_name=${order.address.title}"
+        "&contact_phone=${order.contact}"
+        "&delivery_instruction=${order.deliveryInstruction}"
+        "&address_id=${order.address.id}"
+        "&cart_subtotal=${order.subTotal()}"
+        "&merchant_id=${order.restaurant.id}"
+        "&client_token=${order.user.token}"
+        "&transaction_type=${order.transactionType}"
+        "&cart=${order.cartToString()}"
+        "&api_key=flyereats"
+/*        "&shipstreet_latlong="
+        "&searchshipaddress="
+        "&shipaddressselected="
+        "&addrsub_lat=10.6619719"
+        "&addrsub_lng=77.0078637"
+        "&street=Pollachi Bus Stand, Palakkad-Pollachi Rd, Pollachi, Tamil Nadu, India"
+        "&city=Pollachi"
+        "&state=Tamilnadu&zipcode=642002"
+        "&contact_phone=+919688322332"
+        "&street=Pollachi Bus Stand, Palakkad-Pollachi Rd, Pollachi, Tamil Nadu, India"
+        "&city=Pollachi"
+        "&state=Tamilnadu"
+        "&zipcode=642002"
+        "&location_name=G"
+        "&save_address=2"
+        "&contact_phone=+919688322332"
+        "&google_lat=10.662025792166915"
+        "&google_lng=77.00790369623213"
+        "&addrsub_lat=10.6619719"
+        "&addrsub_lng=77.0078637"
+        "&lang_id=en"
+        "&lang=en"
+        "&app_version=4.0.1"
+        "&device_id=f3HrzBaFgJ4:APA91bHHMPLgAKBBkrgvu0imCQuGET7gehNQHtzqWM3G4kaUQRZV4UgrEBRBq805-nniR0eDZS0SMTt7j36kuNhgnrTWW3kYadHxotBcpTdRfWCEt9OlP45GjedIUB0bxRGNFf2V55vt"
+        "&device_platform=Android"
+        "&client_token=3khrihr4isa0fq4b88bd85385b989358685ce1b927d1339"
+        "&client_state_city=Tamilnadu/Pollachi"*/
+        ;
+
+    String url =
+        "${productionServerUrl}mobileapp/apinew/getPaymentOptions?json=true&$paramsUrl";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getPromos(String restaurantId, String token) async {
+    String url =
+        "${productionServerUrl}mobileapp/apinew/loadPromos?json=true&merchant_id=$restaurantId"
+        "&api_key=flyereats&client_token=$token";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> applyCoupon(String restaurantId, String voucherCode,
+      double totalOrder, String token) async {
+    String url = "${productionServerUrl}mobileapp/apinew/applyVoucher?json=true"
+        "&merchant_id=$restaurantId&voucher_code=$voucherCode"
+        "&cart_sub_total=$totalOrder&api_key=flyereats&client_token=$token";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
   Future<dynamic> loginWithEmail(String email, String password) async {
     String url =
-        "${productionServerUrl}mobileapp/apinew/login?json=true/next_steps=account&email_address=$email&password=$password&api_key=flyereats";
+        "${productionServerUrl}mobileapp/apinew/login?json=true&next_steps=account&email_address=$email&password=$password&api_key=flyereats";
 
     var responseJson;
     try {

@@ -23,7 +23,6 @@ class AppUtil {
     return getScreenHeight(context) * 0.35 + getBannerOffset();
   }
 
-
   static double getToolbarHeight(context) {
     return kToolbarHeight + MediaQuery.of(context).padding.top;
   }
@@ -51,7 +50,6 @@ class AppUtil {
   }
 
   static String parseHtmlString(String htmlString) {
-
     var document = parse(htmlString);
 
     String parsedString = parse(document.body.text).documentElement.text;
@@ -59,4 +57,7 @@ class AppUtil {
     return parsedString;
   }
 
+  static String doubleRemoveZeroTrailing(double value) {
+    return value.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+  }
 }

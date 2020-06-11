@@ -8,17 +8,20 @@ class Food {
   final double discount;
   final String formattedPrice;
   final String formattedDiscountPrice;
+  final String categoryId;
 
-  Food(
-      {this.id,
-      this.title,
-      this.description,
-      this.price,
-      this.image,
-      this.isAvailable,
-      this.discount,
-      this.formattedPrice,
-      this.formattedDiscountPrice});
+  Food({
+    this.id,
+    this.title,
+    this.description,
+    this.price,
+    this.image,
+    this.isAvailable,
+    this.discount,
+    this.formattedPrice,
+    this.formattedDiscountPrice,
+    this.categoryId,
+  });
 
   factory Food.fromJson(Map<String, dynamic> parsedJson) {
     bool available = parsedJson['not_available'] == "1" ? false : true;
@@ -30,9 +33,12 @@ class Food {
         price: double.parse(parsedJson['prices'][0]['price']),
         image: parsedJson['photo'],
         isAvailable: available,
-        discount: parsedJson['discount'] != "" ? double.parse(parsedJson['discount']) : 0,
+        discount: parsedJson['discount'] != ""
+            ? double.parse(parsedJson['discount'])
+            : 0,
         formattedPrice: parsedJson['prices'][0]['formatted_price'],
         formattedDiscountPrice: parsedJson['prices'][0]
-            ['price_discount_pretty']);
+            ['price_discount_pretty'],
+        categoryId: parsedJson['cat_id']);
   }
 }

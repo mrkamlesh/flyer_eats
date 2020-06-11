@@ -3,20 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/address/address_repository.dart';
+import 'package:flyereats/bloc/address/bloc.dart';
 import 'package:flyereats/bloc/foodorder/bloc.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/restaurant.dart';
+import 'package:flyereats/model/voucher.dart';
+import 'package:flyereats/page/address_page.dart';
+import 'package:flyereats/page/apply_coupon_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
-import 'package:flyereats/widget/delivery_information_widget.dart';
 import 'package:flyereats/widget/end_drawer.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
+import 'package:shimmer/shimmer.dart';
 
 class RestaurantPlaceOrderPage extends StatefulWidget {
   final Restaurant restaurant;
@@ -33,32 +36,52 @@ class RestaurantPlaceOrderPage extends StatefulWidget {
 class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
     with SingleTickerProviderStateMixin {
   bool _isUseWallet = false;
+  AddressBloc _addressBloc;
+  FoodOrderBloc _foodOrderBloc;
 
   @override
   void initState() {
     super.initState();
+    _addressBloc = AddressBloc(AddressRepository());
+    _foodOrderBloc = FoodOrderBloc();
   }
 
   @override
   void dispose() {
     super.dispose();
+    _addressBloc.close();
+    _foodOrderBloc.close();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
-        return BlocProvider<FoodOrderBloc>(
-          create: (context) {
-            return FoodOrderBloc()
-              ..add(InitPlaceOrder(
-                  widget.restaurant, widget.foodCart, loginState.user));
-          },
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<FoodOrderBloc>(
+              create: (context) {
+                return _foodOrderBloc
+                  ..add(InitPlaceOrder(
+                      widget.restaurant, widget.foodCart, loginState.user));
+              },
+            ),
+            BlocProvider<AddressBloc>(
+              create: (context) {
+                return _addressBloc;
+              },
+            )
+          ],
           child: Scaffold(
             endDrawer: EndDrawer(),
             body: BlocBuilder<FoodOrderBloc, FoodOrderState>(
               builder: (context, state) {
-                if (state is InitialFoodOrderState) return Container();
+                if (state is InitialFoodOrderState) {
+                  return Container();
+                } else if (state is NoItemsInCart) {
+                  return Container(
+                      child: Center(child: Text("No Items in cart")));
+                }
                 return Stack(
                   children: <Widget>[
                     Positioned(
@@ -91,13 +114,13 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                             builder: (context) {
                               return CustomAppBar(
                                 leading: "assets/back.svg",
-                                drawer: "assets/drawer.svg",
-                                title: widget.restaurant.name,
+                                title: widget.restaurant.name +
+                                    " (" +
+                                    state.placeOrder.foodCart.cart.length
+                                        .toString() +
+                                    ")",
                                 onTapLeading: () {
                                   Navigator.pop(context);
-                                },
-                                onTapDrawer: () {
-                                  Scaffold.of(context).openEndDrawer();
                                 },
                                 backgroundColor: Colors.transparent,
                               );
@@ -131,12 +154,13 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                               FoodListPlaceOrder(),
                               SliverToBoxAdapter(
                                 child: Container(
-                                  height: 55,
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 17,
+                                      vertical: horizontalPaddingDraggable,
                                       horizontal: horizontalPaddingDraggable),
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: horizontalPaddingDraggable),
+                                  margin: EdgeInsets.only(
+                                      left: horizontalPaddingDraggable,
+                                      right: horizontalPaddingDraggable,
+                                      bottom: 20),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(18),
@@ -148,26 +172,158 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                       )
                                     ],
                                   ),
-                                  child: Row(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      SvgPicture.asset(
-                                        "assets/discount.svg",
-                                        height: 24,
-                                        width: 24,
-                                        color: Colors.black,
+                                      Text(
+                                        "DELIVERY INSTRUCTION",
+                                        style: TextStyle(fontSize: 16),
                                       ),
                                       SizedBox(
-                                        width: 17,
+                                        height: 5,
                                       ),
-                                      Expanded(
-                                        child: Text(
-                                          "APPLY COUPON",
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      )
+                                      Divider(
+                                        color: Colors.black12,
+                                      ),
+                                      TextField(
+                                        onChanged: (value) {
+                                          _foodOrderBloc
+                                              .add(ChangeInstruction(value));
+                                        },
+                                        maxLines: 2,
+                                        decoration: InputDecoration(
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 0, horizontal: 0),
+                                            hintText:
+                                                "Enter your instruction here",
+                                            hintStyle: TextStyle(fontSize: 12),
+                                            border: InputBorder.none),
+                                      ),
                                     ],
                                   ),
                                 ),
+                              ),
+                              SliverToBoxAdapter(
+                                child: state.placeOrder.voucher.id == null
+                                    ? GestureDetector(
+                                        onTap: () async {
+                                          Voucher result = await Navigator.push(
+                                              context, MaterialPageRoute(
+                                                  builder: (context) {
+                                            return ApplyCouponPage(
+                                              restaurant: widget.restaurant,
+                                              totalOrder:
+                                                  state.placeOrder.getTotal(),
+                                            );
+                                          }));
+
+                                          _foodOrderBloc
+                                              .add(ApplyVoucher(result));
+                                        },
+                                        child: Container(
+                                          height: 55,
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 17,
+                                              horizontal:
+                                                  horizontalPaddingDraggable),
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal:
+                                                  horizontalPaddingDraggable),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: shadow,
+                                                blurRadius: 7,
+                                                spreadRadius: -3,
+                                              )
+                                            ],
+                                          ),
+                                          child: Row(
+                                            children: <Widget>[
+                                              SvgPicture.asset(
+                                                "assets/discount.svg",
+                                                height: 24,
+                                                width: 24,
+                                                color: Colors.black,
+                                              ),
+                                              SizedBox(
+                                                width: 17,
+                                              ),
+                                              Expanded(
+                                                child: Text(
+                                                  "APPLY COUPON",
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        height: 55,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 17,
+                                            horizontal:
+                                                horizontalPaddingDraggable),
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal:
+                                                horizontalPaddingDraggable),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: shadow,
+                                              blurRadius: 7,
+                                              spreadRadius: -3,
+                                            )
+                                          ],
+                                        ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            SvgPicture.asset(
+                                              "assets/check.svg",
+                                              height: 24,
+                                              width: 24,
+
+                                            ),
+                                            SizedBox(
+                                              width: 17,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                state.placeOrder.voucher.name,
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ),
+                                            /*Row(
+                                        children: <Widget>[
+                                          SvgPicture.asset(
+                                            "assets/rupee.svg",
+                                            height: 12,
+                                            width: 12,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            "30",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18),
+                                          )
+                                        ],
+                                      )*/
+                                          ],
+                                        ),
+                                      ),
                               ),
                               SliverToBoxAdapter(
                                 child: Container(
@@ -180,7 +336,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                       top: 17, bottom: 17, left: 17, right: 17),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(18),
+                                    borderRadius: BorderRadius.circular(10),
                                     boxShadow: [
                                       BoxShadow(
                                         color: shadow,
@@ -233,75 +389,138 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                   ),
                                 ),
                               ),
-                              SliverToBoxAdapter(
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                      top: 20,
-                                      left: horizontalPaddingDraggable,
-                                      right: horizontalPaddingDraggable,
-                                      bottom: kBottomNavigationBarHeight + 130),
-                                  padding: EdgeInsets.only(
-                                      left: horizontalPaddingDraggable,
-                                      right: horizontalPaddingDraggable,
-                                      top: horizontalPaddingDraggable,
-                                      bottom: 7),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(18),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: shadow,
-                                        blurRadius: 7,
-                                        spreadRadius: -3,
-                                      )
-                                    ],
-                                  ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      OrderRowItem(
-                                        title: "ORDER",
-                                        color: Colors.black,
-                                        amount: 60,
+                              BlocBuilder<FoodOrderBloc, FoodOrderState>(
+                                bloc: _foodOrderBloc,
+                                builder: (context, state) {
+                                  if (state is LoadingGetPayments) {
+                                    return SliverToBoxAdapter(
+                                        child: Container(
+                                      margin: EdgeInsets.only(
+                                          top: 20,
+                                          left: horizontalPaddingDraggable,
+                                          right: horizontalPaddingDraggable,
+                                          bottom:
+                                              kBottomNavigationBarHeight + 160),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text("Calculating..."),
+                                        ],
                                       ),
-                                      OrderRowItem(
-                                        title: "TAX",
-                                        color: Colors.black,
-                                        amount: 10,
+                                    ));
+                                  }
+
+                                  if (!state.placeOrder.isValid) {
+                                    return SliverToBoxAdapter(
+                                        child: Container(
+                                      margin: EdgeInsets.only(
+                                          top: 20,
+                                          left: horizontalPaddingDraggable,
+                                          right: horizontalPaddingDraggable,
+                                          bottom:
+                                              kBottomNavigationBarHeight + 160),
+                                      child: Container(
+                                        child: Text(state.placeOrder.message),
                                       ),
-                                      OrderRowItem(
-                                        title: "PACKAGING",
-                                        color: Colors.black,
-                                        amount: 0,
-                                      ),
-                                      OrderRowItem(
-                                        title: "DELIVERY FEE",
-                                        color: Colors.black,
-                                        amount: 0,
-                                      ),
-                                      OrderRowItem(
-                                        title: "DISCOUNT",
-                                        color: Colors.green,
-                                        amount: 10,
-                                      ),
-                                      OrderRowItem(
-                                        title: "OFFER",
-                                        color: Colors.green,
-                                        amount: 0,
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(bottom: 13),
-                                        child: Divider(
-                                          height: 1,
-                                          color: Colors.black54,
+                                    ));
+                                  } else {
+                                    return SliverToBoxAdapter(
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            top: 20,
+                                            left: horizontalPaddingDraggable,
+                                            right: horizontalPaddingDraggable,
+                                            bottom: kBottomNavigationBarHeight +
+                                                160),
+                                        padding: EdgeInsets.only(
+                                            left: horizontalPaddingDraggable,
+                                            right: horizontalPaddingDraggable,
+                                            top: horizontalPaddingDraggable,
+                                            bottom: 7),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: shadow,
+                                              blurRadius: 7,
+                                              spreadRadius: -3,
+                                            )
+                                          ],
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            OrderRowItem(
+                                              title: "ORDER",
+                                              color: Colors.black,
+                                              amount: AppUtil
+                                                  .doubleRemoveZeroTrailing(
+                                                      state.placeOrder
+                                                          .getOrderTotal()),
+                                            ),
+                                            OrderRowItem(
+                                              title: "TAX",
+                                              color: Colors.black,
+                                              amount: "0",
+                                            ),
+                                            OrderRowItem(
+                                              title: "PACKAGING",
+                                              color: Colors.black,
+                                              amount: "0",
+                                            ),
+                                            OrderRowItem(
+                                              title: "DELIVERY FEE",
+                                              color: Colors.black,
+                                              amount: AppUtil
+                                                  .doubleRemoveZeroTrailing(
+                                                      state.placeOrder
+                                                          .deliveryCharges),
+                                            ),
+                                            OrderRowItem(
+                                              title: "DISCOUNT",
+                                              color: Colors.green,
+                                              amount: AppUtil
+                                                  .doubleRemoveZeroTrailing(
+                                                      state.placeOrder
+                                                          .getDiscountTotal()),
+                                            ),
+                                            OrderRowItem(
+                                              title: "OFFER/COUPON",
+                                              color: Colors.green,
+                                              amount: AppUtil
+                                                  .doubleRemoveZeroTrailing(
+                                                      state.placeOrder.voucher
+                                                          .amount),
+                                            ),
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 13),
+                                              child: Divider(
+                                                height: 1,
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                            OrderRowItem(
+                                                title: "TOTAL",
+                                                color: Colors.black,
+                                                amount: AppUtil
+                                                    .doubleRemoveZeroTrailing(
+                                                        state.placeOrder
+                                                            .getTotal())),
+                                          ],
                                         ),
                                       ),
-                                      OrderRowItem(
-                                          title: "TOTAL",
-                                          color: Colors.black,
-                                          amount: 60),
-                                    ],
-                                  ),
-                                ),
+                                    );
+                                  }
+                                },
                               ),
                             ],
                           ),
@@ -312,36 +531,29 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                       bottom: 0,
                       child: Column(
                         children: <Widget>[
-                          DeliveryInformationWidget(
-                            address: Address(
-                              "1",
-                              "Home",
-                              "No 217, C Block, Vascon Venus, Hosaroad Junction, Elec.city, Bangalore 560100",
-                              AddressType.other,
-                            ),
-                            distance: "30 Min",
-                            allAddresses: ExampleModel.getAddresses(),
+                          FoodListDeliveryInformation(
+                            address: state.placeOrder.address,
+                            token: state.placeOrder.user.token,
+                            foodOrderBloc: _foodOrderBloc,
+                            addressBloc: _addressBloc,
+                            contact: state.placeOrder.contact,
+                            deliveryEstimation:
+                                widget.restaurant.deliveryEstimation,
                           ),
-                          /*BlocBuilder<DetailPageBloc, DetailPageState>(
-                            builder: (context, state) {
-                              double amount = 0;
-                              if (state is CartState) {
-                                state.cart.cart.forEach((i, item) {
-                                  amount =
-                                      amount + item.food.price * item.quantity;
-                                });
-                              }
-
-                              return OrderBottomNavBar(
-                                isValid: amount > 0 ? true : false,
-                                amount: amount,
-                                description: "Total Amount",
-                                onButtonTap: () {},
-                                buttonText: "PLACE ORDER",
-                                showRupee: true,
-                              );
-                            },
-                          ),*/
+                          OrderBottomNavBar(
+                            isValid: state.placeOrder.isValid,
+                            onButtonTap:
+                                state.placeOrder.isValid ? () {} : () {},
+                            showRupee:
+                                (state is LoadingGetPayments) ? false : true,
+                            amount: (state is LoadingGetPayments)
+                                ? "..."
+                                : state.placeOrder.getTotal(),
+                            buttonText: "PLACE ORDER",
+                            description: (state is LoadingGetPayments)
+                                ? "Calculating..."
+                                : "Total Amount",
+                          ),
                         ],
                       ),
                     )
@@ -367,9 +579,10 @@ class DeliveryOptions extends SliverPersistentHeaderDelegate {
               color: Colors.white,
               borderRadius: BorderRadius.only(
                   topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-          padding:
-              EdgeInsets.only(top: 10 + MediaQuery.of(context).padding.top),
-          margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+          padding: EdgeInsets.only(
+              top: 10 + MediaQuery.of(context).padding.top,
+              right: horizontalPaddingDraggable,
+              left: horizontalPaddingDraggable),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -485,7 +698,7 @@ class RadioCustom extends StatelessWidget {
 class OrderRowItem extends StatelessWidget {
   final String title;
   final Color color;
-  final int amount;
+  final String amount;
 
   const OrderRowItem({Key key, this.title, this.color, this.amount})
       : super(key: key);
@@ -510,13 +723,10 @@ class OrderRowItem extends StatelessWidget {
           SizedBox(
             width: 5,
           ),
-          SizedBox(
-            width: 20,
-            child: Text(
-              "$amount",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: color, fontSize: 16),
-            ),
+          Text(
+            "$amount",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: color, fontSize: 16),
           ),
         ],
       ),
@@ -555,51 +765,58 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
         List<Food> foodList = List();
         state.placeOrder.foodCart.cart
             .forEach((id, food) => foodList.add(food.food));
-        return SliverList(
-            delegate: SliverChildBuilderDelegate(
-          (context, i) {
-            return FoodItemPlaceOrder(
-              index: i,
-              scale: _scaleAnimation,
-              selectedIndex: _selectedFood,
-              food: foodList[i],
-              quantity: state.placeOrder.foodCart.getQuantity(foodList[i].id),
-              onTapRemove: () {
-                setState(() {
-                  _selectedFood = i;
-                });
-                _animationController.forward().orCancel.whenComplete(() {
-                  _animationController.reverse().orCancel.whenComplete(() {
-                    BlocProvider.of<FoodOrderBloc>(context).add(
-                        ChangeQuantityFoodCart(
-                            foodList[i].id,
-                            foodList[i],
-                            (state.placeOrder.foodCart
-                                    .getQuantity(foodList[i].id) -
-                                1)));
+        return SliverPadding(
+          padding: EdgeInsets.only(
+              top: 20,
+              bottom: 10,
+              right: horizontalPaddingDraggable - 5,
+              left: horizontalPaddingDraggable - 5),
+          sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+            (context, i) {
+              return FoodItemPlaceOrder(
+                index: i,
+                scale: _scaleAnimation,
+                selectedIndex: _selectedFood,
+                food: foodList[i],
+                quantity: state.placeOrder.foodCart.getQuantity(foodList[i].id),
+                onTapRemove: () {
+                  setState(() {
+                    _selectedFood = i;
                   });
-                });
-              },
-              onTapAdd: () {
-                setState(() {
-                  _selectedFood = i;
-                });
-                _animationController.forward().orCancel.whenComplete(() {
-                  _animationController.reverse().orCancel.whenComplete(() {
-                    BlocProvider.of<FoodOrderBloc>(context).add(
-                        ChangeQuantityFoodCart(
-                            foodList[i].id,
-                            foodList[i],
-                            (state.placeOrder.foodCart
-                                    .getQuantity(foodList[i].id) +
-                                1)));
+                  _animationController.forward().orCancel.whenComplete(() {
+                    _animationController.reverse().orCancel.whenComplete(() {
+                      BlocProvider.of<FoodOrderBloc>(context).add(
+                          ChangeQuantityFoodCart(
+                              foodList[i].id,
+                              foodList[i],
+                              (state.placeOrder.foodCart
+                                      .getQuantity(foodList[i].id) -
+                                  1)));
+                    });
                   });
-                });
-              },
-            );
-          },
-          childCount: foodList.length,
-        ));
+                },
+                onTapAdd: () {
+                  setState(() {
+                    _selectedFood = i;
+                  });
+                  _animationController.forward().orCancel.whenComplete(() {
+                    _animationController.reverse().orCancel.whenComplete(() {
+                      BlocProvider.of<FoodOrderBloc>(context).add(
+                          ChangeQuantityFoodCart(
+                              foodList[i].id,
+                              foodList[i],
+                              (state.placeOrder.foodCart
+                                      .getQuantity(foodList[i].id) +
+                                  1)));
+                    });
+                  });
+                },
+              );
+            },
+            childCount: foodList.length,
+          )),
+        );
       },
     );
   }
@@ -813,7 +1030,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
                                     width: 3,
                                   ),
                                   Text(
-                                    "${food.price}",
+                                    "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -836,6 +1053,549 @@ class FoodItemPlaceOrder extends StatelessWidget {
                   ],
                 ),
               ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FoodListDeliveryInformation extends StatefulWidget {
+  final Address address;
+  final String token;
+  final String contact;
+  final String deliveryEstimation;
+  final AddressBloc addressBloc;
+  final FoodOrderBloc foodOrderBloc;
+
+  const FoodListDeliveryInformation(
+      {Key key,
+      this.address,
+      this.token,
+      this.addressBloc,
+      this.foodOrderBloc,
+      this.contact,
+      this.deliveryEstimation})
+      : super(key: key);
+
+  @override
+  _FoodListDeliveryInformationState createState() =>
+      _FoodListDeliveryInformationState();
+}
+
+class _FoodListDeliveryInformationState
+    extends State<FoodListDeliveryInformation> {
+  int _countrySelected = 0;
+  String contactPredicate = "+91";
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 140,
+      width: AppUtil.getScreenWidth(context),
+      padding: EdgeInsets.symmetric(
+          vertical: horizontalPaddingDraggable - 5,
+          horizontal: horizontalPaddingDraggable),
+      decoration: BoxDecoration(color: Colors.white, boxShadow: [
+        BoxShadow(
+            color: Colors.orange[100],
+            blurRadius: 5,
+            spreadRadius: 0,
+            offset: Offset(0, -1)),
+      ]),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Text("Delivery To"),
+              SizedBox(
+                width: 10,
+              ),
+              Container(
+                padding: EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                    color: Colors.yellow[600],
+                    borderRadius: BorderRadius.circular(2)),
+                child: Text(widget.address.title),
+              ),
+              Expanded(child: Container()),
+              GestureDetector(
+                onTap: () {
+                  BlocProvider.of<AddressBloc>(context)
+                      .add(OpenListAddress(widget.token));
+
+                  showModalBottomSheet(
+                      isScrollControlled: false,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32))),
+                      context: context,
+                      builder: (context) {
+                        return BlocBuilder<AddressBloc, AddressState>(
+                          bloc: widget.addressBloc,
+                          builder: (context, state) {
+                            if (state is ListAddressLoaded) {
+                              List<Address> list = state.list;
+                              List<Widget> address = [];
+                              for (int i = 0; i < list.length; i++) {
+                                address.add(AddressItemWidget(
+                                  address: list[i],
+                                  foodOrderBloc: widget.foodOrderBloc,
+                                ));
+                              }
+
+                              return Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(32),
+                                        topRight: Radius.circular(32))),
+                                child: Stack(
+                                  children: <Widget>[
+                                    SingleChildScrollView(
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20,
+                                            right: 20,
+                                            bottom: kBottomNavigationBarHeight,
+                                            top: 20),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(32)),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 52),
+                                            ),
+                                            Container(
+                                              child: Column(
+                                                children: address,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      child: Container(
+                                          width:
+                                              AppUtil.getScreenWidth(context),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(32),
+                                                  topRight:
+                                                      Radius.circular(32)),
+                                              color: Colors.white),
+                                          padding: EdgeInsets.only(
+                                              top: 20, left: 20, bottom: 20),
+                                          child: Text(
+                                            "SELECT ADDRESS",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          )),
+                                    ),
+                                    Positioned(
+                                        bottom: 0,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return AddressPage();
+                                            }));
+                                          },
+                                          child: Container(
+                                            width:
+                                                AppUtil.getScreenWidth(context),
+                                            height: kBottomNavigationBarHeight,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      right: 20),
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    size: 20,
+                                                    color: Colors.orange,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "ADD NEW ADDRESS",
+                                                  style: TextStyle(
+                                                      color: Colors.orange,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        )),
+                                    Positioned(
+                                        top: 5,
+                                        right: 0,
+                                        child: IconButton(
+                                            icon: Icon(Icons.clear),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            }))
+                                  ],
+                                ),
+                              );
+                            } else if (state is LoadingListAddress) {
+                              return Container(
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              );
+                            } else if (state is ErrorLoadingListAddress) {
+                              return Text("Fail load addresses");
+                            }
+                            return Container();
+                          },
+                        );
+                      });
+                },
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  height: 30,
+                  width: 60,
+                  child: Text(
+                    "Change",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                flex: 7,
+                child: Text(
+                  widget.address.address,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  widget.deliveryEstimation,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          ),
+          Container(
+            child: Divider(
+              color: Colors.black12,
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                      text: "Contact Number: ",
+                      style: TextStyle(color: Colors.black),
+                      children: [
+                        TextSpan(
+                            text: widget.contact,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black))
+                      ]),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                      isScrollControlled: false,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32))),
+                      context: context,
+                      builder: (context) {
+                        return Column(
+                          children: <Widget>[
+                            Container(
+                                width: AppUtil.getScreenWidth(context),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(32),
+                                        topRight: Radius.circular(32)),
+                                    color: Colors.white),
+                                padding: EdgeInsets.only(
+                                    top: 20, left: 20, bottom: 20),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                        "ENTER NUMBER",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    IconButton(
+                                        icon: Icon(Icons.clear),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        }),
+                                  ],
+                                )),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: horizontalPaddingDraggable),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: Colors.black12, width: 2)),
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: 100,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    child: DropdownButton<int>(
+                                      underline: Container(),
+                                      isExpanded: false,
+                                      isDense: true,
+                                      iconSize: 0,
+                                      value: _countrySelected,
+                                      items: [
+                                        DropdownMenuItem(
+                                          value: 0,
+                                          child: Container(
+                                            width: 80,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Container(
+                                                    height: 20,
+                                                    child: SvgPicture.asset(
+                                                        "assets/india_flag.svg"),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    "+91",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 1,
+                                          child: Container(
+                                            width: 80,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Container(
+                                                    height: 20,
+                                                    child: SvgPicture.asset(
+                                                        "assets/singapore_flag.svg"),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    "+65",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      onChanged: (i) {
+                                        setState(() {
+                                          _countrySelected = i;
+                                          contactPredicate =
+                                              i == 0 ? "+91" : "+65";
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              left: BorderSide(
+                                                  color: Colors.black12,
+                                                  width: 2))),
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: TextField(
+                                        onSubmitted: (value) {
+                                          if (value != "") {
+                                            widget.foodOrderBloc.add(
+                                                ChangeContactPhone(
+                                                    contactPredicate + value));
+                                            Navigator.pop(context);
+                                          }
+                                        },
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.symmetric(
+                                              vertical: 15),
+                                          border: InputBorder.none,
+                                          hintText: "Enter phone number",
+                                          hintStyle: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black38),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      });
+                },
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  height: 30,
+                  width: 60,
+                  child: Text(
+                    "Change",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class AddressItemWidget extends StatelessWidget {
+  final Address address;
+  final FoodOrderBloc foodOrderBloc;
+
+  const AddressItemWidget({Key key, this.address, this.foodOrderBloc})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    String type;
+    switch (address.type) {
+      case AddressType.home:
+        type = "HOME";
+        break;
+      case AddressType.office:
+        type = "OFFICE";
+        break;
+      case AddressType.other:
+        type = "OTHER";
+        break;
+      default:
+        break;
+    }
+    return Container(
+      margin: EdgeInsets.only(bottom: 20),
+      child: InkWell(
+        onTap: () {
+          foodOrderBloc.add(ChangeAddress(address));
+          Navigator.pop(context);
+        },
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 15),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(right: 16),
+                    child: Icon(
+                      Icons.home,
+                      size: 25,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            type,
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            address.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Text(
+                          address.address,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 14, color: Colors.black45),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Divider(
+              height: 1,
+              color: Colors.black12,
             )
           ],
         ),

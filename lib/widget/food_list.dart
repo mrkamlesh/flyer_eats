@@ -372,7 +372,7 @@ class FoodList extends StatelessWidget {
                                   width: 3,
                                 ),
                                 Text(
-                                  "${food.price}",
+                                  "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
@@ -503,7 +503,7 @@ class FoodList extends StatelessWidget {
                                         width: 3,
                                       ),
                                       Text(
-                                        "${food.price}",
+                                        "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(

@@ -32,6 +32,17 @@ class DataRepository {
     }
   }
 
+  Future<PlaceOrder> placeOrder(PlaceOrder placeOrder) async {
+    final response = await _provider.placeOrder(placeOrder);
+    if (response['code'] == 1) {
+      PlaceOrder placeOrder = PlaceOrder(
+          id: response['details']['order_id'], message: response['msg']);
+      return placeOrder;
+    } else {
+      return PlaceOrder(isValid: false, message: response['msg']);
+    }
+  }
+
   Future<User> loginWithEmail(String email, String password) async {
     final response = await _provider.loginWithEmail(email, password);
     if (response['code'] == 1) {

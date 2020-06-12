@@ -72,6 +72,75 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> placeOrder(PlaceOrder order) async {
+    String paramsUrl = "merchant_id=${order.restaurant.id}"
+        "&client_token=${order.user.token}"
+        "&transaction_type=${order.transactionType}"
+        "&cart=${order.cartToString()}"
+        "&formatted_address=${order.address.address}"
+        "&google_lat=${order.address.latitude}"
+        "&google_lng=${order.address.longitude}"
+        "&voucher_code=${order.voucher.name}"
+        "&next_step=payment_option"
+        "&id=${order.address.id}"
+        "&location_name=${order.address.title}"
+        "&contact_phone=${order.contact}"
+        "&delivery_instruction=${order.deliveryInstruction}"
+        "&street=${order.address.address}"
+        "&payment_list=${order.paymentList}"
+        "&voucher_amount=${order.voucher.amount}"
+        "&voucher_type=${order.voucher.type}"
+        "&api_key=flyereats"
+        "&earned_points=null"
+        "&paypal_flag=2"
+        "&paypal_mode="
+        "&client_id_sandbox="
+        "&client_id_live="
+        "&client_id="
+        "&paypal_card_fee="
+        "&pts_redeem_points="
+        "&pts_redeem_amount="
+
+/*        "&delivery_date=2020-06-09"
+        "&delivery_time=10:44 PM"
+        "&delivery_asap="
+        "&formatted_address=25/2c, Annaji Rao Rd, Mettupalayam Mettupalayam Tamilnadu 641301"
+        "&google_lat=11.308392677645749"
+        "&google_lng=76.93527662096479"
+        "&addrsub_lat=11.304615"
+        "&addrsub_lng=76.938307"
+        "&shipstreet_latlong="
+        "&searchshipaddress="
+        "&shipaddressselected="
+        "&state=Tamilnadu"
+        "&zipcode=641301"
+        "&search_address=Mettupalayam, Tamilnadu, India"
+        "&device_id=f3HrzBaFgJ4:APA91bHHMPLgAKBBkrgvu0imCQuGET7gehNQHtzqWM3G4kaUQRZV4UgrEBRBq805-nniR0eDZS0SMTt7j36kuNhgnrTWW3kYadHxotBcpTdRfWCEt9OlP45GjedIUB0bxRGNFf2V55vt"
+        "&cod_change_required="
+        "&order_change="
+        "&redeem_points="
+        "&tips_percentage=0"
+        "&json=true"
+        "&lang_id=en"
+        "&lang=en"
+        "&app_version=4.0.1"
+        "&device_id=f3HrzBaFgJ4:APA91bHHMPLgAKBBkrgvu0imCQuGET7gehNQHtzqWM3G4kaUQRZV4UgrEBRBq805-nniR0eDZS0SMTt7j36kuNhgnrTWW3kYadHxotBcpTdRfWCEt9OlP45GjedIUB0bxRGNFf2V55vt"
+        "&device_platform=Android"
+        "&client_state_city=Tamilnadu/Mettupalayam"*/;
+
+    String url =
+        "${productionServerUrl}mobileapp/apinew/placeOrder?json=true&$paramsUrl";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
   Future<dynamic> getPromos(String restaurantId, String token) async {
     String url =
         "${productionServerUrl}mobileapp/apinew/loadPromos?json=true&merchant_id=$restaurantId"

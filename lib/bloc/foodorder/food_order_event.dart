@@ -60,6 +60,15 @@ class ChangeInstruction extends FoodOrderEvent {
   List<Object> get props => [instruction];
 }
 
+class ChangePaymentList extends FoodOrderEvent {
+  final String paymentList;
+
+  const ChangePaymentList(this.paymentList);
+
+  @override
+  List<Object> get props => [paymentList];
+}
+
 class ApplyVoucher extends FoodOrderEvent {
   final Voucher voucher;
 
@@ -80,16 +89,14 @@ class ChangeQuantityFoodCart extends FoodOrderEvent {
   List<Object> get props => [id, food, quantity];
 }
 
+class PlaceOrderEvent extends FoodOrderEvent {
+  PlaceOrderEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class GetPaymentOptions extends FoodOrderEvent {
-
-  /*  final Restaurant restaurant;
-  final FoodCart foodCart;
-  final User user;
-  final String transactionType;
-  final Address address;
-  final String contact;
-  final String deliveryInstruction;*/
-
   final PlaceOrder order;
 
   GetPaymentOptions(this.order);

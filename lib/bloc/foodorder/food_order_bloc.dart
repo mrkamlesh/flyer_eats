@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flyereats/bloc/foodorder/bloc.dart';
 import 'package:flyereats/classes/data_repository.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/model/food.dart';
@@ -8,7 +9,6 @@ import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
-import './bloc.dart';
 
 class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   DataRepository repository = DataRepository();
@@ -38,6 +38,10 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapGetPaymentOptionsToState(event.order);
     } else if (event is ApplyVoucher) {
       yield* mapApplyCouponToState(event.voucher);
+    } else if (event is ChangePaymentList) {
+      yield* mapChangePaymentListToState(event.paymentList);
+    } else if (event is PlaceOrderEvent) {
+      yield* mapPlaceOrderEventToState();
     }
   }
 
@@ -88,6 +92,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         deliveryInstruction: '',
         deliveryCharges: 0,
         voucher: Voucher(amount: 0),
+        paymentList: "",
       ),
     );
 
@@ -130,5 +135,33 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   Stream<FoodOrderState> mapApplyCouponToState(Voucher voucher) async* {
     yield FoodOrderState(
         placeOrder: state.placeOrder.copyWith(voucher: voucher));
+  }
+
+  Stream<FoodOrderState> mapChangePaymentListToState(
+      String paymentList) async* {
+    yield FoodOrderState(
+        placeOrder: state.placeOrder.copyWith(paymentList: paymentList));
+
+    add(PlaceOrderEvent());
+  }
+
+  Stream<FoodOrderState> mapPlaceOrderEventToState() async* {
+    yield LoadingPlaceOrder(placeOrder: state.placeOrder);
+    try {
+      PlaceOrder placeOrder = await repository.placeOrder(state.placeOrder);
+
+      if (placeOrder.id != null) {
+        yield SuccessPlaceOrder(
+            placeOrder: state.placeOrder
+                .copyWith(id: placeOrder.id, message: placeOrder.message));
+      } else {
+        ErrorPlaceOrder(placeOrder.message,
+            placeOrder: state.placeOrder
+                .copyWith(isValid: false, message: placeOrder.message));
+      }
+    } catch (e) {
+      yield ErrorPlaceOrder(e.toString(),
+          placeOrder: state.placeOrder.copyWith());
+    }
   }
 }

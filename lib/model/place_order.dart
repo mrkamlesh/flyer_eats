@@ -7,6 +7,7 @@ import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
 
 class PlaceOrder {
+  final String id;
   final bool isValid;
   final String message;
   final Restaurant restaurant;
@@ -23,6 +24,7 @@ class PlaceOrder {
   final double deliveryCharges;
 
   PlaceOrder({
+    this.id,
     this.isValid,
     this.message,
     this.restaurant,
@@ -40,6 +42,7 @@ class PlaceOrder {
   });
 
   PlaceOrder copyWith({
+    String id,
     bool isValid,
     String message,
     Restaurant restaurant,
@@ -56,6 +59,7 @@ class PlaceOrder {
     double deliveryCharges,
   }) {
     return PlaceOrder(
+        id: id ?? this.id,
         isValid: isValid ?? this.isValid,
         message: message ?? this.message,
         restaurant: restaurant ?? this.restaurant,

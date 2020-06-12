@@ -38,6 +38,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
   bool _isUseWallet = false;
   AddressBloc _addressBloc;
   FoodOrderBloc _foodOrderBloc;
+  String _paymentList = "";
 
   @override
   void initState() {
@@ -292,7 +293,6 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                               "assets/check.svg",
                                               height: 24,
                                               width: 24,
-
                                             ),
                                             SizedBox(
                                               width: 17,
@@ -542,13 +542,130 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                           ),
                           OrderBottomNavBar(
                             isValid: state.placeOrder.isValid,
-                            onButtonTap:
-                                state.placeOrder.isValid ? () {} : () {},
+                            onButtonTap: state.placeOrder.isValid
+                                ? () {
+                                    showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(32),
+                                                topRight: Radius.circular(32))),
+                                        builder: (context) {
+                                          return StatefulBuilder(
+                                            builder: (context, newState) {
+                                              return Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 40,
+                                                    horizontal:
+                                                        horizontalPaddingDraggable -
+                                                            10),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(32),
+                                                    topRight:
+                                                        Radius.circular(32),
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    RadioListTile(
+                                                      value: "rzr",
+                                                      dense: true,
+                                                      groupValue: _paymentList,
+                                                      onChanged: (value) {
+                                                        newState(() {
+                                                          _paymentList = value;
+                                                        });
+                                                        _foodOrderBloc.add(
+                                                            ChangePaymentList(
+                                                                value));
+                                                        Navigator.pop(context);
+                                                      },
+                                                      controlAffinity:
+                                                          ListTileControlAffinity
+                                                              .leading,
+                                                      isThreeLine: false,
+                                                      title: Row(
+                                                        children: <Widget>[
+                                                          SvgPicture.asset(
+                                                            "assets/onlinepayment.svg",
+                                                            height: 36,
+                                                            width: 36,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 15,
+                                                          ),
+                                                          Text(
+                                                            "Online Payment",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 20),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    RadioListTile(
+                                                      value: "cod",
+                                                      dense: true,
+                                                      groupValue: _paymentList,
+                                                      onChanged: (value) {
+                                                        newState(() {
+                                                          _paymentList = value;
+                                                        });
+                                                        _foodOrderBloc.add(
+                                                            ChangePaymentList(
+                                                                value));
+                                                        Navigator.pop(context);
+                                                      },
+                                                      controlAffinity:
+                                                          ListTileControlAffinity
+                                                              .leading,
+                                                      isThreeLine: false,
+                                                      title: Row(
+                                                        children: <Widget>[
+                                                          SvgPicture.asset(
+                                                            "assets/cod.svg",
+                                                            height: 36,
+                                                            width: 36,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 15,
+                                                          ),
+                                                          Text(
+                                                            "Cash On Delivey",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 20),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        });
+                                  }
+                                : () {},
                             showRupee:
                                 (state is LoadingGetPayments) ? false : true,
                             amount: (state is LoadingGetPayments)
                                 ? "..."
-                                : state.placeOrder.getTotal(),
+                                : AppUtil.doubleRemoveZeroTrailing(
+                                    state.placeOrder.getTotal()),
                             buttonText: "PLACE ORDER",
                             description: (state is LoadingGetPayments)
                                 ? "Calculating..."

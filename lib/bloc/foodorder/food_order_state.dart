@@ -24,3 +24,18 @@ class LoadingGetPayments extends FoodOrderState {
 class NoItemsInCart extends FoodOrderState {
   NoItemsInCart() : super();
 }
+
+class LoadingPlaceOrder extends FoodOrderState {
+  LoadingPlaceOrder({PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+}
+
+class SuccessPlaceOrder extends FoodOrderState {
+  SuccessPlaceOrder({PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+}
+
+class ErrorPlaceOrder extends FoodOrderState {
+  final String message;
+
+  ErrorPlaceOrder(this.message, {PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
+}

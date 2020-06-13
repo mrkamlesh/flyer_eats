@@ -4,6 +4,7 @@ import 'package:flyereats/classes/app_exceptions.dart';
 import 'package:flyereats/model/place_order.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataProvider {
@@ -142,6 +143,21 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> getOrderDetail(String orderId, String token) async {
+    String url =
+        "${productionServerUrl}mobileapp/apinew/getReceipt?json=true&order_id=$orderId"
+        "&api_key=flyereats&client_token=$token";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
   Future<dynamic> getPromos(String restaurantId, String token) async {
     String url =
         "${productionServerUrl}mobileapp/apinew/loadPromos?json=true&merchant_id=$restaurantId"
@@ -158,14 +174,41 @@ class DataProvider {
   }
 
   Future<dynamic> getOrderHistory(String token) async {
-    String url =
+    /*String url =
         "${productionServerUrl}mobileapp/apinew/getOrderHistory?json=true"
-        "&api_key=flyereats&client_token=$token";
+        "&api_key=flyereats&client_token=$token";*/
+
+    String url =
+        "${productionServerUrl}mobileapp/apinew/getOrderHistory?json=true&api_key=flyereats";
+
+/*    var bodyJson = jsonEncode({
+      "client_token": token,
+    });
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await http.post(
+        url,
+        body: bodyJson,
+      );
       responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }*/
+
+    var bodyJson = {
+      "client_token": token,
+    };
+
+    var responseJson;
+    Dio dio = Dio();
+    try {
+      final response = await dio.post(
+        url,
+        data: bodyJson,
+      );
+      int i = 0;
+      //responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }

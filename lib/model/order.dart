@@ -9,6 +9,13 @@ class Order {
   final String date;
   final String status;
   final String total;
+  final String paymentType;
+
+/*  final String offer;
+  final String voucher;
+  final String packaging;
+  final String deliveryCharge;
+  final String tax;*/
 
   Order(
       {this.restaurant,
@@ -17,7 +24,8 @@ class Order {
       this.status,
       this.id,
       this.title,
-      this.total});
+      this.total,
+      this.paymentType});
 
   factory Order.fromJson(Map<String, dynamic> parsedJson) {
     return Order(
@@ -29,6 +37,7 @@ class Order {
       status: parsedJson['status'],
       total: parsedJson['total'],
       foodCart: FoodCart(Map()),
+      paymentType: parsedJson['payment_type'],
     );
   }
 }

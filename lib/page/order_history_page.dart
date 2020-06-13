@@ -5,6 +5,7 @@ import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/bloc/orderhistory/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/page/order_detail_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/order_history_widget.dart';
 
@@ -147,11 +148,22 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                 slivers: <Widget>[
                                   SliverList(
                                       delegate: SliverChildBuilderDelegate(
-                                              (context, i) {
-                                            return OrderHistoryWidget(
-                                              order: state.listOrder[i],
-                                            );
-                                          }, childCount: state.listOrder.length))
+                                          (context, i) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return DetailOrderPage(
+                                            order: state.listOrder[i],
+                                          );
+                                        }));
+                                      },
+                                      child: OrderHistoryWidget(
+                                        order: state.listOrder[i],
+                                      ),
+                                    );
+                                  }, childCount: state.listOrder.length))
                                 ],
                               );
                             }

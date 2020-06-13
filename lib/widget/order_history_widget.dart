@@ -101,6 +101,20 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
           Container(
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
+              widget.order.title,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Divider(
+              height: 0.5,
+              color: Colors.black12,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Text(
               "Dosa x 1, Idly x 1",
               style: TextStyle(fontSize: 16, color: Colors.black45),
             ),

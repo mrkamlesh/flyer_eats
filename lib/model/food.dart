@@ -1,3 +1,5 @@
+import 'package:flyereats/model/menu_category.dart';
+
 class Food {
   final String id;
   final String title;
@@ -8,7 +10,7 @@ class Food {
   final double discount;
   final String formattedPrice;
   final String formattedDiscountPrice;
-  final String categoryId;
+  final MenuCategory category;
 
   Food({
     this.id,
@@ -20,7 +22,7 @@ class Food {
     this.discount,
     this.formattedPrice,
     this.formattedDiscountPrice,
-    this.categoryId,
+    this.category,
   });
 
   factory Food.fromJson(Map<String, dynamic> parsedJson) {
@@ -39,6 +41,7 @@ class Food {
         formattedPrice: parsedJson['prices'][0]['formatted_price'],
         formattedDiscountPrice: parsedJson['prices'][0]
             ['price_discount_pretty'],
-        categoryId: parsedJson['cat_id']);
+        category:
+            MenuCategory(parsedJson['cat_id'], parsedJson['category_name']));
   }
 }

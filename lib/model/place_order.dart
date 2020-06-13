@@ -95,7 +95,7 @@ class PlaceOrder {
       cartItem['ingredients'] = [];
       cartItem['order_notes'] = '';
       cartItem['discount'] = item.food.discount.toString();
-      cartItem['category_id'] = item.food.categoryId;
+      cartItem['category_id'] = item.food.category.id;
 
       list.add(cartItem);
     });

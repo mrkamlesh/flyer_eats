@@ -1,4 +1,5 @@
 import 'package:flyereats/classes/data_provider.dart';
+import 'package:flyereats/model/detail_order.dart';
 import 'package:flyereats/model/filter.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/location.dart';
@@ -144,6 +145,19 @@ class DataRepository {
     } else {
       return List();
     }
+  }
+
+  Future<DetailOrder> getDetailOrder(String orderId, String token) async {
+    final response = await _provider.getOrderDetail(orderId, token);
+    int i = 0;
+    /*if (response['code'] == 1) {
+      var detailOrderResponse = response['details'];
+      DetailOrder detailOrder =
+
+      return restaurants;
+    } else {
+      return List();
+    }*/
   }
 
   Future<Map<String, dynamic>> getFirstDataRestaurantList(String address,

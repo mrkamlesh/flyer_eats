@@ -126,7 +126,8 @@ class DataProvider {
         "&app_version=4.0.1"
         "&device_id=f3HrzBaFgJ4:APA91bHHMPLgAKBBkrgvu0imCQuGET7gehNQHtzqWM3G4kaUQRZV4UgrEBRBq805-nniR0eDZS0SMTt7j36kuNhgnrTWW3kYadHxotBcpTdRfWCEt9OlP45GjedIUB0bxRGNFf2V55vt"
         "&device_platform=Android"
-        "&client_state_city=Tamilnadu/Mettupalayam"*/;
+        "&client_state_city=Tamilnadu/Mettupalayam"*/
+        ;
 
     String url =
         "${productionServerUrl}mobileapp/apinew/placeOrder?json=true&$paramsUrl";
@@ -144,6 +145,37 @@ class DataProvider {
   Future<dynamic> getPromos(String restaurantId, String token) async {
     String url =
         "${productionServerUrl}mobileapp/apinew/loadPromos?json=true&merchant_id=$restaurantId"
+        "&api_key=flyereats&client_token=$token";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getOrderHistory(String token) async {
+    String url =
+        "${productionServerUrl}mobileapp/apinew/getOrderHistory?json=true"
+        "&api_key=flyereats&client_token=$token";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getReview(String restaurantId, String token) async {
+    String url =
+        "${productionServerUrl}mobileapp/apinew/merchantReviews?json=true"
+        "&merchant_id=$restaurantId"
         "&api_key=flyereats&client_token=$token";
 
     var responseJson;

@@ -3,8 +3,10 @@ import 'package:flyereats/model/filter.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/menu_category.dart';
+import 'package:flyereats/model/order.dart';
 import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
+import 'package:flyereats/model/review.dart';
 import 'package:flyereats/model/sort_by.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
@@ -40,6 +42,32 @@ class DataRepository {
       return placeOrder;
     } else {
       return PlaceOrder(isValid: false, message: response['msg']);
+    }
+  }
+
+  Future<List<Order>> getOrderHistory(String token) async {
+    final response = await _provider.getOrderHistory(token);
+    if (response['code'] == 1) {
+      var orderHistory = response['details'] as List;
+      List<Order> list = orderHistory.map((i) {
+        return Order.fromJson(i);
+      }).toList();
+      return list;
+    } else {
+      return List();
+    }
+  }
+
+  Future<List<Review>> getReview(String restaurantId, String token) async {
+    final response = await _provider.getReview(restaurantId, token);
+    if (response['code'] == 1) {
+      var listResponse = response['details'] as List;
+      List<Review> list = listResponse.map((i) {
+        return Review.fromJson(i);
+      }).toList();
+      return list;
+    } else {
+      return List();
     }
   }
 

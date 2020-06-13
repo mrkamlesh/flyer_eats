@@ -43,6 +43,7 @@ dependencies:
   pin_code_fields: ^3.0.1
   flutter_html: ^1.0.0
   shared_preferences: ^0.5.7+3
+  smooth_star_rating: 1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -107,6 +108,10 @@ flutter:
     - assets/singapore_flag.svg
     - assets/onlinepayment.svg
     - assets/cod.svg
+    - assets/coming soon.svg
+    - assets/coming soon 2.svg
+    - assets/ordersuccess icon.png
+    - assets/order success icon 2.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

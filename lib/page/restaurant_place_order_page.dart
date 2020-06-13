@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/address/address_repository.dart';
 import 'package:flyereats/bloc/address/bloc.dart';
@@ -16,6 +17,7 @@ import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/voucher.dart';
 import 'package:flyereats/page/address_page.dart';
 import 'package:flyereats/page/apply_coupon_page.dart';
+import 'package:flyereats/page/placed_order_success.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
@@ -673,6 +675,61 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                           ),
                         ],
                       ),
+                    ),
+                    BlocConsumer<FoodOrderBloc, FoodOrderState>(
+                      listener: (context, state) {
+                        if (state is SuccessPlaceOrder) {
+                          if (state.placeOrder.paymentList == "cod") {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return PlacedOrderSuccessPage(
+                                placeOrderId: state.placeOrder.id,
+                              );
+                            }));
+                          } else {}
+                        } else if (state is ErrorPlaceOrder) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    "Place Order Error",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  content: Text(state.message),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              });
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is LoadingPlaceOrder) {
+                          return Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5)),
+                            child: Center(
+                              child: SpinKitCircle(
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
                     )
                   ],
                 );

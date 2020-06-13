@@ -5,6 +5,7 @@ import 'package:flyereats/bloc/login/login_bloc.dart';
 import 'package:flyereats/bloc/login/login_event.dart';
 import 'package:flyereats/page/home.dart';
 import 'package:flyereats/page/login/login_facebook_gmail.dart';
+import 'package:flyereats/page/order_history_page.dart';
 
 import 'bloc/location/location_bloc.dart';
 
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           routes: {
             "/": (context) => LoginFacebookGmail(),
             "/home": (context) => Home(),
+            "/orderHistory": (context) => OrderHistoryPage(),
           },
         ));
   }

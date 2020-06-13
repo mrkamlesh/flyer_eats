@@ -17,6 +17,7 @@ import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/menu_category.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/page/restaurant_place_order_page.dart';
+import 'package:flyereats/page/review_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/food_list.dart';
@@ -245,39 +246,50 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                       SizedBox(
                                         width: 15,
                                       ),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 3),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Colors.black38,
-                                                  offset: Offset(1, 1),
-                                                  spreadRadius: -1,
-                                                  blurRadius: 4)
-                                            ],
-                                            border: Border.all(
-                                                color: Colors.orange)),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.star,
-                                              size: 14,
-                                              color: Colors.orange,
-                                            ),
-                                            Text(
-                                              widget.restaurant.review,
-                                              style: TextStyle(
-                                                fontSize: 12,
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                            return ReviewPage(
+                                              restaurant: widget.restaurant,
+                                            );
+                                          }));
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 3),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.black38,
+                                                    offset: Offset(1, 1),
+                                                    spreadRadius: -1,
+                                                    blurRadius: 4)
+                                              ],
+                                              border: Border.all(
+                                                  color: Colors.orange)),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.star,
+                                                size: 14,
                                                 color: Colors.orange,
                                               ),
-                                            ),
-                                          ],
+                                              Text(
+                                                widget.restaurant.review,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.orange,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],

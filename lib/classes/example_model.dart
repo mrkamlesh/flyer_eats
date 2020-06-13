@@ -2,7 +2,6 @@ import 'package:flyereats/model/banner.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/food_category.dart';
-import 'package:flyereats/model/order.dart';
 import 'package:flyereats/model/promo.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/shop_category.dart';
@@ -378,7 +377,7 @@ class ExampleModel {
     return list;
   }
 
-  static List<Order> getOrderHistory() {
+/*  static List<Order> getOrderHistory() {
     List<Order> listOrder = List();
 
     listOrder.add(Order(ExampleModel.getRestaurants()[0],
@@ -389,7 +388,7 @@ class ExampleModel {
         ExampleModel.getFoodCart(), "1 June 2020", "Delivered"));
 
     return listOrder;
-  }
+  }*/
 
   static List<String> getLoyatyRewards() {
     List<String> list = List();

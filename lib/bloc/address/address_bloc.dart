@@ -116,13 +116,22 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
           .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
 
       Address newAddress = address.copyWith(
-          address: placeMark[0].name +
+          address: placeMark[0].thoroughfare +
+              " " +
+              placeMark[0].subThoroughfare +
+              " " +
+              placeMark[0].subLocality +
               " " +
               placeMark[0].locality +
               " " +
               placeMark[0].subAdministrativeArea +
               " " +
-              placeMark[0].administrativeArea,
+              placeMark[0].administrativeArea +
+              " " +
+              placeMark[0].postalCode,
+          state: placeMark[0].administrativeArea,
+          city: placeMark[0].locality,
+          zipCode: placeMark[0].postalCode,
           latitude: placeMark[0].position.latitude.toString(),
           longitude: placeMark[0].position.longitude.toString());
       address = newAddress;

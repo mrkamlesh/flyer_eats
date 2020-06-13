@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/location/location_bloc.dart';
 import 'package:flyereats/bloc/location/location_event.dart';
 import 'package:flyereats/bloc/location/location_state.dart';
@@ -79,48 +81,61 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             child: child,
           );
         },
-        child: BottomAppBar(
-          elevation: 8,
-          clipBehavior: Clip.antiAlias,
-          child: AnimatedBuilder(
-            animation: _navBarAnimation,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: _navBarAnimation.value,
-                child: child,
+        child: BlocBuilder<LocationBloc, LocationState>(
+          builder: (context, state) {
+            if (state is LocationSelected) {
+              return BottomAppBar(
+                elevation: 8,
+                clipBehavior: Clip.antiAlias,
+                child: AnimatedBuilder(
+                  animation: _navBarAnimation,
+                  builder: (context, child) {
+                    return Transform.translate(
+                      offset: _navBarAnimation.value,
+                      child: child,
+                    );
+                  },
+                  child: CustomBottomNavBar(
+                    animationDuration: Duration(milliseconds: 300),
+                    items: [
+                      BottomNavyBarItem(
+                          icon: "assets/2.svg", title: "Flyer Eats"),
+                      BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
+                      BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
+                      BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
+                    ],
+                    onItemSelected: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                        if (index == 2) {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return SearchPage();
+                          }));
+                        } else if (index == 3) {
+                          Navigator.pushNamed(context, "/orderHistory");
+                        }
+                      });
+                    },
+                    selectedIndex: _currentIndex,
+                    selectedColor: Colors.orange[700],
+                    unselectedColor: Colors.black26,
+                  ),
+                ),
               );
-            },
-            child: CustomBottomNavBar(
-              animationDuration: Duration(milliseconds: 300),
-              items: [
-                BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
-                BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
-                BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
-                BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
-              ],
-              onItemSelected: (index) {
-                setState(() {
-                  _currentIndex = index;
-                  if (index == 2) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return SearchPage();
-                    }));
-                  }
-                });
-              },
-              selectedIndex: _currentIndex,
-              selectedColor: Colors.orange[700],
-              unselectedColor: Colors.black26,
-            ),
-          ),
+            }
+            return Container();
+          },
         ),
       ),
       body: Stack(
         children: <Widget>[
           BlocBuilder<LocationBloc, LocationState>(
               condition: (oldState, state) {
-            if (state is LocationSelected) {
+            if (state is LocationSelected ||
+                state is NoLocationsAvailable ||
+                state is LoadingLocationError ||
+                state is LoadingLocation) {
               return true;
             } else {
               return false;
@@ -134,6 +149,36 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   child: BannerListWidget(
                     bannerList: ExampleModel.getBanners(),
                   ),
+                ),
+              );
+            } else if (state is NoLocationsAvailable ||
+                state is LoadingLocationError ||
+                state is LoadingLocation) {
+              return Container(
+                height: AppUtil.getScreenHeight(context) -
+                    AppUtil.getDraggableHeight(context) +
+                    100,
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(color: Colors.black),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: Image.asset(
+                            "assets/flyereatslogo.png",
+                            alignment: Alignment.center,
+                            width: AppUtil.getScreenWidth(context) - 140,
+                            height:
+                                0.46 * (AppUtil.getScreenWidth(context) - 140),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             }
@@ -271,7 +316,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               } else if (state is LoadingLocationError) {
                 return Center(child: HomeErrorWidget("Can Not Get Location"));
               } else if (state is NoLocationsAvailable) {
-                return Center(child: HomeErrorWidget("No Available Location"));
+                return HomeErrorWidget("No Available Location");
               } else if (state is LocationSelected) {
                 return DraggableScrollableSheet(
                   initialChildSize: AppUtil.getDraggableHeight(context) /
@@ -751,8 +796,46 @@ class _HomeActionWidgetState extends State<HomeActionWidget>
 class HomeLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text("loading"),
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        IgnorePointer(
+          child: Container(
+            height: AppUtil.getScreenHeight(context) -
+                AppUtil.getDraggableHeight(context),
+            color: Colors.transparent,
+          ),
+        ),
+        Container(
+          height: AppUtil.getDraggableHeight(context),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+          padding: EdgeInsets.only(
+              top: 20,
+              left: horizontalPaddingDraggable,
+              right: horizontalPaddingDraggable),
+          alignment: Alignment.center,
+          child: Container(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SpinKitCircle(
+                    color: Colors.black38,
+                    size: 30,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text("Loading Locations..."),
+                ],
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 }
@@ -764,8 +847,111 @@ class HomeErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text(message),
+    return BlocBuilder<LocationBloc, LocationState>(
+      condition: (context, state) {
+        if (state is NoLocationsAvailable || state is LoadingLocationError) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      builder: (context, state) {
+        if (state is NoLocationsAvailable) {
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              IgnorePointer(
+                child: Container(
+                  height: AppUtil.getScreenHeight(context) -
+                      AppUtil.getDraggableHeight(context),
+                  color: Colors.transparent,
+                ),
+              ),
+              Container(
+                height: AppUtil.getDraggableHeight(context),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(32),
+                        topLeft: Radius.circular(32))),
+                padding: EdgeInsets.only(
+                    top: 20,
+                    left: horizontalPaddingDraggable,
+                    right: horizontalPaddingDraggable),
+                alignment: Alignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SvgPicture.asset("assets/coming soon.svg",
+                        height: AppUtil.getDraggableHeight(context) / 2.5),
+                    Text(
+                      "IN YOUR LOCATION",
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: primary3,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Wish to start at your town?",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text("info@flyereats.in",
+                        style: TextStyle(
+                            fontSize: 20,
+                            decoration: TextDecoration.underline,
+                            color: Colors.lightBlueAccent)),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SvgPicture.asset(
+                      "assets/coming soon 2.svg",
+                      height: 0.23 * AppUtil.getDraggableHeight(context),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        } else if (state is LoadingLocationError) {
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              IgnorePointer(
+                child: Container(
+                  height: AppUtil.getScreenHeight(context) -
+                      AppUtil.getDraggableHeight(context),
+                  color: Colors.transparent,
+                ),
+              ),
+              Container(
+                height: AppUtil.getDraggableHeight(context),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(32),
+                        topLeft: Radius.circular(32))),
+                padding: EdgeInsets.only(
+                    top: 20,
+                    left: horizontalPaddingDraggable,
+                    right: horizontalPaddingDraggable),
+                alignment: Alignment.center,
+                child: Container(
+                  child: Center(
+                    child: Text("Error Get Your Location"),
+                  ),
+                ),
+              )
+            ],
+          );
+        }
+        return SizedBox();
+      },
     );
   }
 }

@@ -35,6 +35,9 @@ class User {
             parsedJson['default_address']['location_name'],
             parsedJson['default_address']['address'],
             AddressType.home,
+            zipCode: parsedJson['default_address']['zipcode'],
+            city: parsedJson['default_address']['city'],
+            state: parsedJson['default_address']['state'],
             latitude: parsedJson['default_address']['delivery_latitude'],
             longitude: parsedJson['default_address']['delivery_longitude'],
             mapAddress: parsedJson['default_address']['address']));

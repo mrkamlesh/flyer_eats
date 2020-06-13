@@ -80,7 +80,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
                         height: 5,
                       ),
                       Text(
-                        widget.order.restaurant.deliveryEstimation,
+                        widget.order.restaurant.address,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 12, color: Colors.black26),
@@ -114,27 +114,9 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
           ),
           Container(
             margin: EdgeInsets.only(bottom: 10),
-            child: Row(
-              children: <Widget>[
-                SizedBox(
-                  width: 7,
-                  height: 7,
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    child: SvgPicture.asset(
-                      "assets/rupee.svg",
-                      color: Colors.black38,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 7,
-                ),
-                Text(
-                  "230",
-                  style: TextStyle(fontSize: 13, color: Colors.black38),
-                )
-              ],
+            child: Text(
+              widget.order.total,
+              style: TextStyle(fontSize: 13, color: Colors.black38),
             ),
           ),
           Container(
@@ -159,7 +141,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
                     width: 10,
                   ),
                   Text(
-                    "Delivered",
+                    widget.order.status,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   )
                 ],

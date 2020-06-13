@@ -29,6 +29,8 @@ class _OtpPageState extends State<OtpPage> {
                         "assets/flyereatslogo.png",
                         alignment: Alignment.center,
                         width: AppUtil.getScreenWidth(context) - 140,
+                        height:
+                        0.46 * (AppUtil.getScreenWidth(context) - 140),
                       )),
                 ),
               ),

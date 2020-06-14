@@ -47,10 +47,12 @@ class CalculatePrice extends AddressEvent {
 class AddAddress extends AddressEvent {
   final Address address;
 
-  const AddAddress(this.address);
+  final String token;
+
+  const AddAddress(this.address, this.token);
 
   @override
-  List<Object> get props => [address];
+  List<Object> get props => [address, token];
 }
 
 class UpdateAddress extends AddressEvent {

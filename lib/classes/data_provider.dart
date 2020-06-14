@@ -4,7 +4,6 @@ import 'package:flyereats/classes/app_exceptions.dart';
 import 'package:flyereats/model/place_order.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataProvider {
@@ -174,44 +173,25 @@ class DataProvider {
   }
 
   Future<dynamic> getOrderHistory(String token) async {
-    /*String url =
-        "${productionServerUrl}mobileapp/apinew/getOrderHistory?json=true"
-        "&api_key=flyereats&client_token=$token";*/
 
     String url =
-        "${productionServerUrl}mobileapp/apinew/getOrderHistory?json=true&api_key=flyereats";
+        "${productionServerUrl}mobileapp/apiRest/getOrderHistory?json=true&api_key=flyereats";
 
-/*    var bodyJson = jsonEncode({
+    var formData = {
       "client_token": token,
-    });
+    };
 
     var responseJson;
     try {
       final response = await http.post(
         url,
-        body: bodyJson,
+        body: formData,
       );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
-    }*/
-
-    var bodyJson = {
-      "client_token": token,
-    };
-
-    var responseJson;
-    Dio dio = Dio();
-    try {
-      final response = await dio.post(
-        url,
-        data: bodyJson,
-      );
-      int i = 0;
-      //responseJson = _returnResponse(response);
-    } on SocketException {
-      throw FetchDataException('No Internet connection');
     }
+
     return responseJson;
   }
 

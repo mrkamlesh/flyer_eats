@@ -62,23 +62,6 @@ class AddressDBProvider {
     }
   }
 
-  addAddress(Address address) async {
-    final db = await database;
-    var raw = await db.rawInsert(
-        "INSERT Into address (title, address, description, type, longitude, latitude, mapAddress)"
-        " VALUES (?,?,?,?,?,?,?)",
-        [
-          address.title,
-          address.address,
-          address.address,
-          address.type.toString(),
-          address.longitude,
-          address.latitude,
-          address.mapAddress
-        ]);
-    return raw;
-  }
-
   Future<Address> getDefaultAddress() async {
     final db = await database;
     List<Map<String, dynamic>> addresses = await db.query("address");
@@ -103,13 +86,69 @@ class AddressDBProvider {
     return responseJson;
   }
 
-  Future<dynamic> updateAddress(Address address, String token) async {
+  Future<dynamic> addAddress(Address address, String token) async {
     String url =
-        "${baseUrl}mobileapp/apinew/saveAddressBook?json=true&id=${address.id}&action=edit&street=${address.address}&location_name=${address.title}"
-        "&client_token=$token&api_key=flyereats";
+        "${baseUrl}mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";
+
+    /* String url =
+        "https://www.pollachiarea.com/flyereats/mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";*/
+
+    var formData = {
+      "client_token": token,
+      "street": address.address,
+      "city": address.city,
+      "state": address.state,
+      "zipcode": address.zipCode,
+      "location_name": address.title,
+      "as_default": "1", //1 not default, 2 default
+      "action": "add",
+      "latitude": address.latitude,
+      "longitude": address.longitude,
+      "type": address.getType()
+    };
+
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await http.post(
+        url,
+        body: formData,
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> updateAddress(Address address, String token) async {
+    String url =
+        "${baseUrl}mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";
+
+/*     String url =
+        "https://www.pollachiarea.com/flyereats/mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";*/
+
+    var formData = {
+      "client_token": token,
+      "street": address.address,
+      "city": address.city,
+      "state": address.state,
+      "zipcode": address.zipCode,
+      "location_name": address.title,
+      "as_default": "1", //1 not default, 2 default
+      "action": "update",
+      "id": address.id,
+      "latitude": address.latitude,
+      "longitude": address.longitude,
+      "type": address.getType()
+    };
+
+    var responseJson;
+    try {
+      final response = await http.post(
+        url,
+        body: formData,
+      );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');

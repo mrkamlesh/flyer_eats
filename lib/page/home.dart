@@ -365,7 +365,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: horizontalPaddingDraggable - 5),
                                 margin: EdgeInsets.only(
-                                    bottom: distanceSectionContent),
+                                    bottom: distanceSectionContent - 10),
                                 height: 110,
                                 child: ShopCategoryListWidget(
                                   onTap: (i) {
@@ -385,7 +385,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                       ExampleModel.getShopCategories(),
                                 ),
                               ),
-                              HomeActionWidget(),
+                              Container(
+                                  margin: EdgeInsets.only(
+                                      left: horizontalPaddingDraggable,
+                                      right: horizontalPaddingDraggable,
+                                      bottom: distanceSectionContent,
+                                      top: 5),
+                                  child: HomeActionWidget()),
                               BlocProvider<RestaurantTopBloc>(
                                 create: (context) {
                                   return _topRestaurantBloc;
@@ -401,7 +407,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                 horizontal:
                                                     horizontalPaddingDraggable),
                                             margin: EdgeInsets.only(
-                                                bottom: distanceSectionContent),
+                                                bottom: distanceSectionContent - 10),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -469,7 +475,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: horizontalPaddingDraggable),
                                 margin: EdgeInsets.only(
-                                    bottom: distanceSectionContent),
+                                    bottom: distanceSectionContent - 10),
                                 child: Text(
                                   "Food Categories",
                                   style: TextStyle(
@@ -479,7 +485,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               ),
                               Container(
                                 margin: EdgeInsets.only(
-                                    bottom: distanceBetweenSection),
+                                    bottom: distanceBetweenSection - 10),
                                 height: 130,
                                 decoration: BoxDecoration(
                                     color: Colors.white,
@@ -539,7 +545,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.only(bottom: 20),
+                                margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                 height: 135,
                                 child: RestaurantListWidget(
                                   type: RestaurantViewType.orderAgainRestaurant,
@@ -549,8 +555,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               ),
                               Container(
                                 margin: EdgeInsets.only(
-                                    bottom: distanceBetweenSection),
-                                height: 130,
+                                    bottom: distanceBetweenSection - 10),
+                                height: 120,
                                 width: AppUtil.getScreenWidth(context),
                                 child: CachedNetworkImage(
                                   imageUrl:
@@ -574,8 +580,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               ),
                               Container(
                                 margin: EdgeInsets.only(
-                                    bottom: distanceBetweenSection),
-                                height: 150,
+                                    bottom: distanceBetweenSection - 10),
+                                height: 140,
                                 child: PromoListWidget(
                                   promoList: ExampleModel.getPromos(),
                                 ),
@@ -584,7 +590,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: horizontalPaddingDraggable),
                                 margin: EdgeInsets.only(
-                                    bottom: distanceSectionContent),
+                                    bottom: distanceSectionContent - 10),
                                 child: Text(
                                   "It's Dinner Time",
                                   style: TextStyle(
@@ -672,11 +678,6 @@ class _HomeActionWidgetState extends State<HomeActionWidget>
               blurRadius: 5),
         ],
       ),
-      margin: EdgeInsets.only(
-          left: horizontalPaddingDraggable,
-          right: horizontalPaddingDraggable,
-          bottom: distanceSectionContent + 10,
-          top: 5),
       child: Stack(
         overflow: Overflow.clip,
         children: <Widget>[
@@ -881,6 +882,7 @@ class HomeErrorWidget extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SvgPicture.asset("assets/coming soon.svg",
                         height: AppUtil.getDraggableHeight(context) / 2.5),

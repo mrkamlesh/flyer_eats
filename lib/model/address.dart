@@ -99,4 +99,14 @@ class Address {
         latitude: parsedJson['delivery_latitude'],
         mapAddress: parsedJson['address']);
   }
+
+  String getType() {
+    if (type == AddressType.home) {
+      return "home";
+    } else if (type == AddressType.office) {
+      return "office";
+    } else {
+      return "other";
+    }
+  }
 }

@@ -31,7 +31,9 @@ class _AddressPageState extends State<AddressPage> {
   final double initLng = 77.227515;
 
   TextEditingController _titleController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
+
+  /*TextEditingController _addressController = TextEditingController();*/
+  String _addressString = "";
 
   @override
   void initState() {
@@ -107,6 +109,7 @@ class _AddressPageState extends State<AddressPage> {
                 Stack(
                   children: <Widget>[
                     Container(
+                      height: AppUtil.getScreenHeight(context) * 0.5,
                       width: AppUtil.getScreenWidth(context),
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -123,7 +126,8 @@ class _AddressPageState extends State<AddressPage> {
                         listener: (oldState, state) {
                           if (state is LoadingTemporaryAddressSuccess) {
                             if (state.isFromMap != null) {
-                              _addressController.text = state.address.address;
+                              _addressString = state.address.address;
+                              /*_addressController.text = state.address.address;*/
                               _titleController.text = state.address.title;
                             }
                           } else if (state is AddressUpdated) {
@@ -190,7 +194,23 @@ class _AddressPageState extends State<AddressPage> {
                                       UpdateAddressInformation(title: title));
                                 },
                               ),
-                              CustomTextField(
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 15),
+                                  margin: EdgeInsets.only(bottom: 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.black12),
+                                  ),
+                                  child: Text(
+                                    _addressString,
+                                    maxLines: 3,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                              /*CustomTextField(
                                 controller: _addressController,
                                 lines: 3,
                                 hint: "Address",
@@ -199,7 +219,7 @@ class _AddressPageState extends State<AddressPage> {
                                       UpdateAddressInformation(
                                           address: address));
                                 },
-                              ),
+                              ),*/
                               Container(
                                 margin: EdgeInsets.only(bottom: 20),
                                 child: Row(
@@ -245,7 +265,8 @@ class _AddressPageState extends State<AddressPage> {
                                             widget.address == null
                                                 ? BlocProvider.of<AddressBloc>(
                                                         context)
-                                                    .add(AddAddress(address))
+                                                    .add(AddAddress(address,
+                                                        loginState.user.token))
                                                 : BlocProvider.of<AddressBloc>(
                                                         context)
                                                     .add(UpdateAddress(address,

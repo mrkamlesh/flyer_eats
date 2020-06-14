@@ -35,7 +35,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     } else if (event is UpdateAddressInformation) {
       yield* mapUpdateAddressInformationToState(event);
     } else if (event is AddAddress) {
-      yield* mapAddAddressToState(event.address);
+      yield* mapAddAddressToState(event.address, event.token);
     } else if (event is AddressUpdatePageOpen) {
       yield* mapAddressUpdatePageOpenToState(event.address);
     } else if (event is UpdateAddress) {
@@ -115,20 +115,44 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       List<Placemark> placeMark = await Geolocator()
           .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
 
+      String thoroughfare =
+          (placeMark[0].thoroughfare != "" && placeMark[0].thoroughfare != null)
+              ? placeMark[0].thoroughfare + " "
+              : "";
+      String subThoroughfare = (placeMark[0].subThoroughfare != "" &&
+              placeMark[0].subThoroughfare != null)
+          ? placeMark[0].subThoroughfare + " "
+          : "";
+      String subLocality =
+          (placeMark[0].subLocality != "" && placeMark[0].subLocality != null)
+              ? placeMark[0].subLocality + " "
+              : "";
+      String locality =
+          (placeMark[0].locality != "" && placeMark[0].locality != null)
+              ? placeMark[0].locality + " "
+              : "";
+      String subAdministrativeArea =
+          (placeMark[0].subAdministrativeArea != "" &&
+                  placeMark[0].subAdministrativeArea != null)
+              ? placeMark[0].subAdministrativeArea + " "
+              : "";
+      String administrativeArea = (placeMark[0].administrativeArea != "" &&
+              placeMark[0].administrativeArea != null)
+          ? placeMark[0].administrativeArea + " "
+          : "";
+      String postalCode =
+          (placeMark[0].postalCode != "" && placeMark[0].postalCode != null)
+              ? placeMark[0].postalCode + " "
+              : "";
+
       Address newAddress = address.copyWith(
-          address: placeMark[0].thoroughfare +
-              " " +
-              placeMark[0].subThoroughfare +
-              " " +
-              placeMark[0].subLocality +
-              " " +
-              placeMark[0].locality +
-              " " +
-              placeMark[0].subAdministrativeArea +
-              " " +
-              placeMark[0].administrativeArea +
-              " " +
-              placeMark[0].postalCode,
+          address: thoroughfare +
+              subThoroughfare +
+              subLocality +
+              locality +
+              subAdministrativeArea +
+              administrativeArea +
+              postalCode,
           state: placeMark[0].administrativeArea,
           city: placeMark[0].locality,
           zipCode: placeMark[0].postalCode,
@@ -149,10 +173,11 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     yield LoadingTemporaryAddressSuccess(newAddress);
   }
 
-  Stream<AddressState> mapAddAddressToState(Address address) async* {
+  Stream<AddressState> mapAddAddressToState(
+      Address address, String token) async* {
     yield LoadingAddressInformation();
     try {
-      await addressRepository.addAddress(address);
+      await addressRepository.addAddress(address, token);
       yield AddressAdded();
     } catch (e) {
       yield ErrorLoadingListAddress(e.toString());

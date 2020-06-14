@@ -5,16 +5,11 @@ import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/order.dart';
 import 'package:shimmer/shimmer.dart';
 
-class OrderHistoryWidget extends StatefulWidget {
+class OrderHistoryWidget extends StatelessWidget {
   final Order order;
 
   const OrderHistoryWidget({Key key, this.order}) : super(key: key);
 
-  @override
-  _OrderHistoryWidgetState createState() => _OrderHistoryWidgetState();
-}
-
-class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -47,7 +42,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(6),
                     child: CachedNetworkImage(
-                      imageUrl: widget.order.restaurant.image,
+                      imageUrl: order.restaurant.image,
                       height: 50,
                       width: 50,
                       fit: BoxFit.cover,
@@ -70,7 +65,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        widget.order.restaurant.name,
+                        order.restaurant.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -80,7 +75,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
                         height: 5,
                       ),
                       Text(
-                        widget.order.restaurant.address,
+                        order.restaurant.address,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 12, color: Colors.black26),
@@ -101,7 +96,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
           Container(
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
-              widget.order.title,
+              order.title,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
@@ -115,21 +110,22 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
           Container(
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
-              "Dosa x 1, Idly x 1",
-              style: TextStyle(fontSize: 16, color: Colors.black45),
+              order.itemsString,
+              style:
+                  TextStyle(fontSize: 16, color: Colors.black45, height: 1.3),
             ),
           ),
           Container(
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
-              widget.order.date,
+              order.date,
               style: TextStyle(fontSize: 13, color: Colors.black38),
             ),
           ),
           Container(
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
-              widget.order.total,
+              order.total,
               style: TextStyle(fontSize: 13, color: Colors.black38),
             ),
           ),
@@ -155,7 +151,7 @@ class _OrderHistoryWidgetState extends State<OrderHistoryWidget> {
                     width: 10,
                   ),
                   Text(
-                    widget.order.status,
+                    order.status,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   )
                 ],

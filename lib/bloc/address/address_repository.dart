@@ -4,16 +4,21 @@ import 'package:flyereats/model/address.dart';
 class AddressRepository {
   AddressDBProvider provider = AddressDBProvider.db;
 
-  Future addAddress(Address address) {
-    return provider.addAddress(address);
-  }
-
   Future<Address> getDefaultAddress() {
     return provider.getDefaultAddress();
   }
 
   Future<bool> deleteAddress(String id, String token) async {
     final response = await provider.deleteAddress(id, token);
+    if (response['code'] == 1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> addAddress(Address address, String token) async {
+    final response = await provider.addAddress(address, token);
     if (response['code'] == 1) {
       return true;
     } else {

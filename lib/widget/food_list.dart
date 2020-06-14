@@ -416,20 +416,19 @@ class FoodList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.all(10),
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     child: CachedNetworkImage(
                       imageUrl: food.image,
-                      height: 80,
-                      width: 100,
+                      height: 100,
+                      width: 120,
                       fit: BoxFit.cover,
                       alignment: Alignment.center,
                       placeholder: (context, url) {
                         return Shimmer.fromColors(
                             child: Container(
-                              height: 80,
-                              width: 100,
+                              height: 100,
+                              width: 120,
                               color: Colors.black,
                             ),
                             baseColor: Colors.grey[300],

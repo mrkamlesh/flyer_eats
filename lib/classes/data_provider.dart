@@ -15,6 +15,112 @@ class DataProvider {
   String developmentServerUrl = "https://www.pollachiarea.com/flyereats/";
   String productionServerUrl = "http://flyereats.in/";
 
+  Future<dynamic> checkPhoneExist(String contactPhone) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/checkMobileExist?json=true&api_key=flyereats";
+
+    var formData = {
+      "contact_phone": contactPhone,
+    };
+
+    var responseJson;
+    try {
+      final response = await http.post(
+        url,
+        body: formData,
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> register(
+      {String contactPhone,
+      String email,
+      String referralCode,
+      String fullName,
+      String countryCode,
+      String locationName,
+      String deviceId,
+      String appVersion,
+      String devicePlatform}) async {
+    String url =
+        "${productionServerUrl}flyereats/mobileapp/apiRest/register?json=true&api_key=flyereats";
+
+    var formData = {
+      "email_address": email,
+      "contact_phone": contactPhone,
+      "referral_code": referralCode,
+      "full_name": fullName,
+      "country_code": countryCode,
+      "loc_name": locationName,
+      "device_id": deviceId,
+      "app_version": appVersion,
+      "device_platform": devicePlatform,
+    };
+
+    var responseJson;
+    try {
+      final response = await http.post(
+        url,
+        body: formData,
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> checkEmailExist(String email) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/checkEmailExist?json=true&api_key=flyereats";
+
+    var formData = {
+      "email": email,
+    };
+
+    var responseJson;
+    try {
+      final response = await http.post(
+        url,
+        body: formData,
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> verifyOtp(String contactPhone, String otp) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/verifyOtp?json=true&api_key=flyereats";
+
+    var formData = {
+      "contact_phone": contactPhone,
+      "code": otp,
+    };
+
+    var responseJson;
+    try {
+      final response = await http.post(
+        url,
+        body: formData,
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> getPaymentOptions(PlaceOrder order) async {
     String paramsUrl = "next_step=payment_option&id=${order.address.id}"
         "&formatted_address=${order.address.address}"
@@ -173,7 +279,6 @@ class DataProvider {
   }
 
   Future<dynamic> getOrderHistory(String token) async {
-
     String url =
         "${productionServerUrl}mobileapp/apiRest/getOrderHistory?json=true&api_key=flyereats";
 
@@ -227,7 +332,7 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> loginWithEmail(String email, String password) async {
+/*  Future<dynamic> loginWithEmail(String email, String password) async {
     String url =
         "${productionServerUrl}mobileapp/apinew/login?json=true&next_steps=account&email_address=$email&password=$password&api_key=flyereats";
 
@@ -239,7 +344,7 @@ class DataProvider {
       throw FetchDataException('No Internet connection');
     }
     return responseJson;
-  }
+  }*/
 
   Future<bool> saveLoginInformation(String email, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -28,15 +28,15 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
     _passwordController = TextEditingController();
 
     _emailController.addListener(() {
-      BlocProvider.of<LoginBloc>(context).add(ValidateInput(
+      /*BlocProvider.of<LoginBloc>(context).add(ValidateInput(
           _emailController.text.toString(),
-          _passwordController.text.toString()));
+          _passwordController.text.toString()));*/
     });
 
     _passwordController.addListener(() {
-      BlocProvider.of<LoginBloc>(context).add(ValidateInput(
+      /*BlocProvider.of<LoginBloc>(context).add(ValidateInput(
           _emailController.text.toString(),
-          _passwordController.text.toString()));
+          _passwordController.text.toString()));*/
     });
   }
 
@@ -209,7 +209,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                 onTap: () {
                                   if (!(state is Loading) && state.isValid) {
                                     BlocProvider.of<LoginBloc>(context).add(
-                                        LoginEventWithEmail(
+                                        VerifyOtp(
                                             _emailController.text.toString(),
                                             _passwordController.text
                                                 .toString()));

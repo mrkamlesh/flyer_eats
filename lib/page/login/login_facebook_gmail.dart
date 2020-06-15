@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
+import 'package:flyereats/bloc/login/checkemailexist/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/page/home.dart';
-import 'package:flyereats/page/login/login_email_page.dart';
+import 'package:flyereats/page/login/otp_page.dart';
+import 'package:flyereats/page/login/register_page.dart';
 
 class LoginFacebookGmail extends StatefulWidget {
+  final String phoneNumber;
+
+  const LoginFacebookGmail({Key key, this.phoneNumber}) : super(key: key);
+
   @override
   _LoginFacebookGmailState createState() => _LoginFacebookGmailState();
 }
@@ -16,16 +20,19 @@ class LoginFacebookGmail extends StatefulWidget {
 class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
   ScrollController _controller;
   TextEditingController _emailController;
+  LoginEmailBloc _loginEmailBloc;
 
   @override
   void initState() {
     super.initState();
     _controller = ScrollController();
     _emailController = TextEditingController();
+    _loginEmailBloc = LoginEmailBloc();
   }
 
   @override
   void dispose() {
+    _loginEmailBloc.close();
     super.dispose();
   }
 
@@ -37,17 +44,27 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
           duration: Duration(milliseconds: 200), curve: Curves.ease);
     }
 
-    return BlocConsumer<LoginBloc, LoginState>(
-      listener: (context, state) {
-        if (state is LoggedIn) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) {
-            return Home();
-          }));
-        }
-      },
-      builder: (context, state) {
-        if (state is NotLoggedIn) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<LoginEmailBloc>(
+          create: (context) {
+            return _loginEmailBloc;
+          },
+        ),
+      ],
+      child: BlocConsumer<LoginEmailBloc, LoginEmailState>(
+        listener: (context, state) {
+          if (state is SuccessCheckEmailExist) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return OtpPage(phoneNumber: widget.phoneNumber);
+            }));
+          } else if (state is ErrorCheckEmailExist) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return RegisterPage(phoneNumber: widget.phoneNumber);
+            }));
+          }
+        },
+        builder: (context, state) {
           return Scaffold(
             body: Stack(
               children: <Widget>[
@@ -71,6 +88,8 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                   "assets/flyereatslogo.png",
                                   alignment: Alignment.center,
                                   width: AppUtil.getScreenWidth(context) - 140,
+                                  height: 0.46 *
+                                      (AppUtil.getScreenWidth(context) - 140),
                                 )),
                           ),
                         ),
@@ -142,12 +161,8 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (builder) {
-                                      return LoginEmailPage(
-                                        email: _emailController.text.toString(),
-                                      );
-                                    }));
+                                    _loginEmailBloc.add(
+                                        CheckEmailExist(_emailController.text));
                                   },
                                   child: Stack(
                                     children: <Widget>[
@@ -183,31 +198,31 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                     ),
                   ),
                 ),
+                BlocBuilder<LoginEmailBloc, LoginEmailState>(
+                  bloc: _loginEmailBloc,
+                  builder: (context, state) {
+                    if (state is LoadingCheckEmailExist) {
+                      return Container(
+                        decoration:
+                            BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                        child: Center(
+                          child: SpinKitCircle(
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                      );
+                    }
+                    return IgnorePointer(
+                      child: Container(),
+                    );
+                  },
+                )
               ],
             ),
           );
-        }
-        return Scaffold(
-          body: Container(
-            decoration: BoxDecoration(color: Colors.white),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SpinKitCircle(
-                    color: Colors.grey,
-                    size: 30,
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text("Configure Session..."),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 }

@@ -105,11 +105,17 @@ class UpdateAddressInformation extends AddressEvent {
   final String title;
   final String address;
   final AddressType type;
+  final bool isDefault;
 
-  const UpdateAddressInformation({this.title, this.address, this.type});
+  const UpdateAddressInformation({
+    this.title,
+    this.address,
+    this.type,
+    this.isDefault,
+  });
 
   @override
-  List<Object> get props => [title, address, type];
+  List<Object> get props => [title, address, type, isDefault];
 }
 
 class AddressUpdatePageOpen extends AddressEvent {

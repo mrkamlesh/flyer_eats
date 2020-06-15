@@ -15,8 +15,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AddressPage extends StatefulWidget {
   final Address address;
+  final forcedDefault;
 
-  const AddressPage({Key key, this.address}) : super(key: key);
+  const AddressPage({Key key, this.address, this.forcedDefault = false})
+      : super(key: key);
 
   @override
   _AddressPageState createState() => _AddressPageState();
@@ -109,7 +111,7 @@ class _AddressPageState extends State<AddressPage> {
                 Stack(
                   children: <Widget>[
                     Container(
-                      height: AppUtil.getScreenHeight(context) * 0.5,
+                      height: AppUtil.getScreenHeight(context) * 0.6,
                       width: AppUtil.getScreenWidth(context),
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -179,7 +181,8 @@ class _AddressPageState extends State<AddressPage> {
                           }
                         },
                         builder: (context, state) {
-                          Address address = Address(null, null, null, null);
+                          Address address =
+                              Address(null, null, null, null, isDefault: false);
                           if (state is LoadingTemporaryAddressSuccess) {
                             address = state.address;
                           }
@@ -196,9 +199,11 @@ class _AddressPageState extends State<AddressPage> {
                               ),
                               Expanded(
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 15),
-                                  margin: EdgeInsets.only(bottom: 20),
+                                  padding: EdgeInsets.only(
+                                      left: horizontalPaddingDraggable,
+                                      right: horizontalPaddingDraggable,
+                                      top: 15),
+                                  margin: EdgeInsets.only(bottom: 10),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(color: Colors.black12),
@@ -210,16 +215,24 @@ class _AddressPageState extends State<AddressPage> {
                                   ),
                                 ),
                               ),
-                              /*CustomTextField(
-                                controller: _addressController,
-                                lines: 3,
-                                hint: "Address",
-                                onChange: (address) {
-                                  BlocProvider.of<AddressBloc>(context).add(
-                                      UpdateAddressInformation(
-                                          address: address));
-                                },
-                              ),*/
+                              Container(
+                                margin: EdgeInsets.only(bottom: 10),
+                                child: Row(
+                                  children: <Widget>[
+                                    Checkbox(
+                                      visualDensity: VisualDensity(
+                                          horizontal: -4, vertical: -4),
+                                      value: address.isDefault,
+                                      onChanged: (value) {
+                                        BlocProvider.of<AddressBloc>(context)
+                                            .add(UpdateAddressInformation(
+                                                isDefault: value));
+                                      },
+                                    ),
+                                    Text("Set as default address"),
+                                  ],
+                                ),
+                              ),
                               Container(
                                 margin: EdgeInsets.only(bottom: 20),
                                 child: Row(

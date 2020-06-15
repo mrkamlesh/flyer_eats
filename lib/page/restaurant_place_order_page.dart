@@ -1265,427 +1265,504 @@ class _FoodListDeliveryInformationState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 140,
-      width: AppUtil.getScreenWidth(context),
-      padding: EdgeInsets.symmetric(
-          vertical: horizontalPaddingDraggable - 5,
-          horizontal: horizontalPaddingDraggable),
-      decoration: BoxDecoration(color: Colors.white, boxShadow: [
-        BoxShadow(
-            color: Colors.orange[100],
-            blurRadius: 5,
-            spreadRadius: 0,
-            offset: Offset(0, -1)),
-      ]),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text("Delivery To"),
-              SizedBox(
-                width: 10,
+    return widget.address == null
+        ? Container(
+            height: 90,
+            width: AppUtil.getScreenWidth(context),
+            padding: EdgeInsets.symmetric(
+                vertical: horizontalPaddingDraggable - 5,
+                horizontal: horizontalPaddingDraggable),
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                  color: Colors.orange[100],
+                  blurRadius: 5,
+                  spreadRadius: 0,
+                  offset: Offset(0, -1)),
+            ]),
+            child: GestureDetector(
+              onTap: () async {
+                await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) {
+                  return AddressPage(
+                    forcedDefault: true,
+                  );
+                }));
+                //widget.addressBloc.add(InitDefaultAddress());
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("Delivery to:"),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(right: 20),
+                        child: Icon(
+                          Icons.add,
+                          size: 20,
+                          color: Colors.orange,
+                        ),
+                      ),
+                      Text(
+                        "ADD NEW ADDRESS",
+                        style: TextStyle(
+                            color: Colors.orange,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                    color: Colors.yellow[600],
-                    borderRadius: BorderRadius.circular(2)),
-                child: Text(widget.address.title),
-              ),
-              Expanded(child: Container()),
-              GestureDetector(
-                onTap: () {
-                  BlocProvider.of<AddressBloc>(context)
-                      .add(OpenListAddress(widget.token));
+            ),
+          )
+        : Container(
+            height: 140,
+            width: AppUtil.getScreenWidth(context),
+            padding: EdgeInsets.symmetric(
+                vertical: horizontalPaddingDraggable - 5,
+                horizontal: horizontalPaddingDraggable),
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                  color: Colors.orange[100],
+                  blurRadius: 5,
+                  spreadRadius: 0,
+                  offset: Offset(0, -1)),
+            ]),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Text("Delivery To"),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                          color: Colors.yellow[600],
+                          borderRadius: BorderRadius.circular(2)),
+                      child: Text(widget.address.title),
+                    ),
+                    Expanded(child: Container()),
+                    GestureDetector(
+                      onTap: () {
+                        BlocProvider.of<AddressBloc>(context)
+                            .add(OpenListAddress(widget.token));
 
-                  showModalBottomSheet(
-                      isScrollControlled: false,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(32),
-                              topRight: Radius.circular(32))),
-                      context: context,
-                      builder: (context) {
-                        return BlocBuilder<AddressBloc, AddressState>(
-                          bloc: widget.addressBloc,
-                          builder: (context, state) {
-                            if (state is ListAddressLoaded) {
-                              List<Address> list = state.list;
-                              List<Widget> address = [];
-                              for (int i = 0; i < list.length; i++) {
-                                address.add(AddressItemWidget(
-                                  address: list[i],
-                                  foodOrderBloc: widget.foodOrderBloc,
-                                ));
-                              }
+                        showModalBottomSheet(
+                            isScrollControlled: false,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(32),
+                                    topRight: Radius.circular(32))),
+                            context: context,
+                            builder: (context) {
+                              return BlocBuilder<AddressBloc, AddressState>(
+                                bloc: widget.addressBloc,
+                                builder: (context, state) {
+                                  if (state is ListAddressLoaded) {
+                                    List<Address> list = state.list;
+                                    List<Widget> address = [];
+                                    for (int i = 0; i < list.length; i++) {
+                                      address.add(AddressItemWidget(
+                                        address: list[i],
+                                        foodOrderBloc: widget.foodOrderBloc,
+                                      ));
+                                    }
 
-                              return Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(32),
-                                        topRight: Radius.circular(32))),
-                                child: Stack(
-                                  children: <Widget>[
-                                    SingleChildScrollView(
-                                      child: Container(
-                                        padding: EdgeInsets.only(
-                                            left: 20,
-                                            right: 20,
-                                            bottom: kBottomNavigationBarHeight,
-                                            top: 20),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(32)),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Container(
-                                              margin:
-                                                  EdgeInsets.only(bottom: 52),
-                                            ),
-                                            Container(
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(32),
+                                              topRight: Radius.circular(32))),
+                                      child: Stack(
+                                        children: <Widget>[
+                                          SingleChildScrollView(
+                                            child: Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 20,
+                                                  right: 20,
+                                                  bottom:
+                                                      kBottomNavigationBarHeight,
+                                                  top: 20),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          32)),
                                               child: Column(
-                                                children: address,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 52),
+                                                  ),
+                                                  Container(
+                                                    child: Column(
+                                                      children: address,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 0,
-                                      left: 0,
-                                      child: Container(
-                                          width:
-                                              AppUtil.getScreenWidth(context),
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(32),
-                                                  topRight:
-                                                      Radius.circular(32)),
-                                              color: Colors.white),
-                                          padding: EdgeInsets.only(
-                                              top: 20, left: 20, bottom: 20),
-                                          child: Text(
-                                            "SELECT ADDRESS",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
-                                          )),
-                                    ),
-                                    Positioned(
-                                        bottom: 0,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            Navigator.push(context,
-                                                MaterialPageRoute(
-                                                    builder: (context) {
-                                              return AddressPage();
-                                            }));
-                                          },
-                                          child: Container(
-                                            width:
-                                                AppUtil.getScreenWidth(context),
-                                            height: kBottomNavigationBarHeight,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 20),
-                                                  child: Icon(
-                                                    Icons.add,
-                                                    size: 20,
-                                                    color: Colors.orange,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "ADD NEW ADDRESS",
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            left: 0,
+                                            child: Container(
+                                                width: AppUtil.getScreenWidth(
+                                                    context),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topLeft: Radius
+                                                                .circular(32),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    32)),
+                                                    color: Colors.white),
+                                                padding: EdgeInsets.only(
+                                                    top: 20,
+                                                    left: 20,
+                                                    bottom: 20),
+                                                child: Text(
+                                                  "SELECT ADDRESS",
                                                   style: TextStyle(
-                                                      color: Colors.orange,
                                                       fontSize: 18,
                                                       fontWeight:
                                                           FontWeight.bold),
-                                                )
-                                              ],
-                                            ),
+                                                )),
                                           ),
-                                        )),
-                                    Positioned(
-                                        top: 5,
-                                        right: 0,
-                                        child: IconButton(
-                                            icon: Icon(Icons.clear),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            }))
-                                  ],
-                                ),
+                                          Positioned(
+                                              bottom: 0,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return AddressPage();
+                                                  }));
+                                                },
+                                                child: Container(
+                                                  width: AppUtil.getScreenWidth(
+                                                      context),
+                                                  height:
+                                                      kBottomNavigationBarHeight,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        margin: EdgeInsets.only(
+                                                            right: 20),
+                                                        child: Icon(
+                                                          Icons.add,
+                                                          size: 20,
+                                                          color: Colors.orange,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "ADD NEW ADDRESS",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.orange,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              )),
+                                          Positioned(
+                                              top: 5,
+                                              right: 0,
+                                              child: IconButton(
+                                                  icon: Icon(Icons.clear),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  }))
+                                        ],
+                                      ),
+                                    );
+                                  } else if (state is LoadingListAddress) {
+                                    return Container(
+                                      child: Center(
+                                          child: CircularProgressIndicator()),
+                                    );
+                                  } else if (state is ErrorLoadingListAddress) {
+                                    return Text("Fail load addresses");
+                                  }
+                                  return Container();
+                                },
                               );
-                            } else if (state is LoadingListAddress) {
-                              return Container(
-                                child:
-                                    Center(child: CircularProgressIndicator()),
-                              );
-                            } else if (state is ErrorLoadingListAddress) {
-                              return Text("Fail load addresses");
-                            }
-                            return Container();
-                          },
-                        );
-                      });
-                },
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  height: 30,
-                  width: 60,
-                  child: Text(
-                    "Change",
-                    textAlign: TextAlign.end,
-                    style: TextStyle(color: Colors.orange),
+                            });
+                      },
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        height: 30,
+                        width: 60,
+                        child: Text(
+                          "Change",
+                          textAlign: TextAlign.end,
+                          style: TextStyle(color: Colors.orange),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 7,
+                      child: Text(
+                        widget.address.address,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        widget.deliveryEstimation,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                ),
+                Container(
+                  child: Divider(
+                    color: Colors.black12,
                   ),
                 ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                flex: 7,
-                child: Text(
-                  widget.address.address,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Text(
-                  widget.deliveryEstimation,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              )
-            ],
-          ),
-          Container(
-            child: Divider(
-              color: Colors.black12,
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: RichText(
-                  text: TextSpan(
-                      text: "Contact Number: ",
-                      style: TextStyle(color: Colors.black),
-                      children: [
-                        TextSpan(
-                            text: widget.contact,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black))
-                      ]),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  showModalBottomSheet(
-                      isScrollControlled: false,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(32),
-                              topRight: Radius.circular(32))),
-                      context: context,
-                      builder: (context) {
-                        return Column(
-                          children: <Widget>[
-                            Container(
-                                width: AppUtil.getScreenWidth(context),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(32),
-                                        topRight: Radius.circular(32)),
-                                    color: Colors.white),
-                                padding: EdgeInsets.only(
-                                    top: 20, left: 20, bottom: 20),
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Text(
-                                        "ENTER NUMBER",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    IconButton(
-                                        icon: Icon(Icons.clear),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        }),
-                                  ],
-                                )),
-                            Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: horizontalPaddingDraggable),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                      color: Colors.black12, width: 2)),
-                              child: Row(
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                            text: "Contact Number: ",
+                            style: TextStyle(color: Colors.black),
+                            children: [
+                              TextSpan(
+                                  text: widget.contact,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black))
+                            ]),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                            isScrollControlled: false,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(32),
+                                    topRight: Radius.circular(32))),
+                            context: context,
+                            builder: (context) {
+                              return Column(
                                 children: <Widget>[
                                   Container(
-                                    width: 100,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    child: DropdownButton<int>(
-                                      underline: Container(),
-                                      isExpanded: false,
-                                      isDense: true,
-                                      iconSize: 0,
-                                      value: _countrySelected,
-                                      items: [
-                                        DropdownMenuItem(
-                                          value: 0,
-                                          child: Container(
-                                            width: 80,
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Expanded(
-                                                  child: Container(
-                                                    height: 20,
-                                                    child: SvgPicture.asset(
-                                                        "assets/india_flag.svg"),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    "+91",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                )
-                                              ],
+                                      width: AppUtil.getScreenWidth(context),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(32),
+                                              topRight: Radius.circular(32)),
+                                          color: Colors.white),
+                                      padding: EdgeInsets.only(
+                                          top: 20, left: 20, bottom: 20),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Text(
+                                              "ENTER NUMBER",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
+                                          IconButton(
+                                              icon: Icon(Icons.clear),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              }),
+                                        ],
+                                      )),
+                                  Container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: horizontalPaddingDraggable),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                            color: Colors.black12, width: 2)),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(
+                                          width: 100,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: DropdownButton<int>(
+                                            underline: Container(),
+                                            isExpanded: false,
+                                            isDense: true,
+                                            iconSize: 0,
+                                            value: _countrySelected,
+                                            items: [
+                                              DropdownMenuItem(
+                                                value: 0,
+                                                child: Container(
+                                                  width: 80,
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        child: Container(
+                                                          height: 20,
+                                                          child: SvgPicture.asset(
+                                                              "assets/india_flag.svg"),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          "+91",
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              DropdownMenuItem(
+                                                value: 1,
+                                                child: Container(
+                                                  width: 80,
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        child: Container(
+                                                          height: 20,
+                                                          child: SvgPicture.asset(
+                                                              "assets/singapore_flag.svg"),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          "+65",
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                            onChanged: (i) {
+                                              setState(() {
+                                                _countrySelected = i;
+                                                contactPredicate =
+                                                    i == 0 ? "+91" : "+65";
+                                              });
+                                            },
+                                          ),
                                         ),
-                                        DropdownMenuItem(
-                                          value: 1,
+                                        Expanded(
                                           child: Container(
-                                            width: 80,
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Expanded(
-                                                  child: Container(
-                                                    height: 20,
-                                                    child: SvgPicture.asset(
-                                                        "assets/singapore_flag.svg"),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    "+65",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                )
-                                              ],
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    left: BorderSide(
+                                                        color: Colors.black12,
+                                                        width: 2))),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 20),
+                                            child: TextField(
+                                              onSubmitted: (value) {
+                                                if (value != "") {
+                                                  widget.foodOrderBloc.add(
+                                                      ChangeContactPhone(
+                                                          contactPredicate +
+                                                              value));
+                                                  Navigator.pop(context);
+                                                }
+                                              },
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              decoration: InputDecoration(
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 15),
+                                                border: InputBorder.none,
+                                                hintText: "Enter phone number",
+                                                hintStyle: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black38),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ],
-                                      onChanged: (i) {
-                                        setState(() {
-                                          _countrySelected = i;
-                                          contactPredicate =
-                                              i == 0 ? "+91" : "+65";
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              left: BorderSide(
-                                                  color: Colors.black12,
-                                                  width: 2))),
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 20),
-                                      child: TextField(
-                                        onSubmitted: (value) {
-                                          if (value != "") {
-                                            widget.foodOrderBloc.add(
-                                                ChangeContactPhone(
-                                                    contactPredicate + value));
-                                            Navigator.pop(context);
-                                          }
-                                        },
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 15),
-                                          border: InputBorder.none,
-                                          hintText: "Enter phone number",
-                                          hintStyle: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black38),
-                                        ),
-                                      ),
                                     ),
                                   ),
                                 ],
-                              ),
-                            ),
-                          ],
-                        );
-                      });
-                },
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  height: 30,
-                  width: 60,
-                  child: Text(
-                    "Change",
-                    textAlign: TextAlign.end,
-                    style: TextStyle(color: Colors.orange),
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
+                              );
+                            });
+                      },
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        height: 30,
+                        width: 60,
+                        child: Text(
+                          "Change",
+                          textAlign: TextAlign.end,
+                          style: TextStyle(color: Colors.orange),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          );
   }
 }
 

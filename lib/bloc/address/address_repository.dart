@@ -2,11 +2,7 @@ import 'package:flyereats/bloc/address/address_provider.dart';
 import 'package:flyereats/model/address.dart';
 
 class AddressRepository {
-  AddressDBProvider provider = AddressDBProvider.db;
-
-  Future<Address> getDefaultAddress() {
-    return provider.getDefaultAddress();
-  }
+  AddressProvider provider = AddressProvider();
 
   Future<bool> deleteAddress(String id, String token) async {
     final response = await provider.deleteAddress(id, token);
@@ -57,9 +53,5 @@ class AddressRepository {
     } else {
       return List();
     }
-  }
-
-  Future addExampleAddress() {
-    return provider.addExampleAddress();
   }
 }

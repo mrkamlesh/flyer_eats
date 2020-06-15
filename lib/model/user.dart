@@ -2,35 +2,26 @@ import 'package:flyereats/model/address.dart';
 
 class User {
   final String name;
-  final String username;
   final String phone;
   final bool hasAddress;
   final String token;
   final String avatar;
-  final String password;
   final Address defaultAddress;
+  final String username;
 
   User(
-      {this.password,
-      this.avatar,
+      {this.avatar,
       this.name,
-      this.username,
       this.phone,
       this.hasAddress,
       this.token,
-      this.defaultAddress});
+      this.defaultAddress,
+      this.username});
 
-  factory User.fromJson(
-      Map<String, dynamic> parsedJson, String username, String password) {
-    return User(
-        name: parsedJson['client_name_cookie'],
-        phone: parsedJson['contact_phone'],
-        username: username,
-        password: password,
-        avatar: parsedJson['avatar'],
-        hasAddress: parsedJson['has_addressbook'] == '2' ? true : false,
-        token: parsedJson['token'],
-        defaultAddress: Address(
+  factory User.fromJson(Map<String, dynamic> parsedJson) {
+    Address defaultAddress = parsedJson['default_address'] == false
+        ? null
+        : Address(
             parsedJson['default_address']['id'],
             parsedJson['default_address']['location_name'],
             parsedJson['default_address']['address'],
@@ -40,6 +31,15 @@ class User {
             state: parsedJson['default_address']['state'],
             latitude: parsedJson['default_address']['delivery_latitude'],
             longitude: parsedJson['default_address']['delivery_longitude'],
-            mapAddress: parsedJson['default_address']['address']));
+            mapAddress: parsedJson['default_address']['address'],);
+
+    return User(
+        name: parsedJson['client_name_cookie'],
+        phone: parsedJson['contact_phone'],
+        avatar: parsedJson['avatar'],
+        hasAddress: parsedJson['has_addressbook'] == '2' ? true : false,
+        token: parsedJson['token'],
+        username: parsedJson['email'],
+        defaultAddress: defaultAddress);
   }
 }

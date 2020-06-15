@@ -3,6 +3,7 @@ import 'package:flyereats/model/detail_order.dart';
 import 'package:flyereats/model/filter.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/location.dart';
+import 'package:flyereats/model/login_status.dart';
 import 'package:flyereats/model/menu_category.dart';
 import 'package:flyereats/model/order.dart';
 import 'package:flyereats/model/place_order.dart';
@@ -46,6 +47,69 @@ class DataRepository {
     }
   }
 
+  Future<LoginStatus> checkPhoneExist(String contactPhone) async {
+    final response = await _provider.checkPhoneExist(contactPhone);
+    if (response['code'] == 1) {
+      if (response['details']['is_exist'])
+        return LoginStatus(response['msg'], true);
+      else {
+        return LoginStatus(response['msg'], false);
+      }
+    } else {
+      return LoginStatus(response['msg'], false);
+    }
+  }
+
+  Future<LoginStatus> checkEmailExist(String email) async {
+    final response = await _provider.checkEmailExist(email);
+    if (response['code'] == 1) {
+      if (response['details']['is_exist'])
+        return LoginStatus(response['msg'], true);
+      else {
+        return LoginStatus(response['msg'], false);
+      }
+    } else {
+      return LoginStatus(response['msg'], false);
+    }
+  }
+
+  Future<dynamic> verifyOtp(String contactPhone, String otp) async {
+    final response = await _provider.verifyOtp(contactPhone, otp);
+    if (response['code'] == 1) {
+      User user = User.fromJson(response['details']);
+      return user;
+    } else {
+      return response['msg'];
+    }
+  }
+
+  Future<LoginStatus> register(
+      {String contactPhone,
+      String email,
+      String referralCode,
+      String fullName,
+      String countryCode,
+      String locationName,
+      String deviceId,
+      String appVersion,
+      String devicePlatform}) async {
+    final response = await _provider.register(
+        email: email,
+        appVersion: appVersion,
+        contactPhone: contactPhone,
+        countryCode: countryCode,
+        deviceId: deviceId,
+        devicePlatform: devicePlatform,
+        fullName: fullName,
+        locationName: locationName,
+        referralCode: referralCode);
+    if (response['code'] == 1) {
+      return LoginStatus(response['msg'], true);
+    } else {
+      return LoginStatus(response['msg'], false);
+    }
+  }
+
   Future<List<Order>> getOrderHistory(String token) async {
     final response = await _provider.getOrderHistory(token);
     if (response['code'] == 1) {
@@ -72,14 +136,14 @@ class DataRepository {
     }
   }
 
-  Future<User> loginWithEmail(String email, String password) async {
+/*  Future<User> loginWithEmail(String email, String password) async {
     final response = await _provider.loginWithEmail(email, password);
     if (response['code'] == 1) {
       return User.fromJson(response['details'], email, password);
     } else {
       return null;
     }
-  }
+  }*/
 
   Future<bool> saveLoginInformation(String email, String password) async {
     await _provider.saveLoginInformation(email, password);

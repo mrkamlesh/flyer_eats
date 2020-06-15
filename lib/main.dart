@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
-import 'package:flyereats/bloc/login/login_bloc.dart';
-import 'package:flyereats/bloc/login/login_event.dart';
+import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/page/home.dart';
-import 'package:flyereats/page/login/login_facebook_gmail.dart';
+import 'package:flyereats/page/login/login_number_page.dart';
 import 'package:flyereats/page/order_history_page.dart';
 
 import 'bloc/location/location_bloc.dart';
@@ -27,7 +26,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<LoginBloc>(
             create: (context) {
-              return LoginBloc()..add(InitLoginEvent());
+              return LoginBloc();
             },
           )
         ],
@@ -38,7 +37,7 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: "/",
           routes: {
-            "/": (context) => LoginFacebookGmail(),
+            "/": (context) => LoginNumberPage(),
             "/home": (context) => Home(),
             "/orderHistory": (context) => OrderHistoryPage(),
           },

@@ -10,6 +10,7 @@ class Address {
   final String mapAddress;
   final String latitude;
   final String longitude;
+  final bool isDefault;
   final AddressType type;
 
   Address(
@@ -23,6 +24,7 @@ class Address {
     this.latitude,
     this.longitude,
     this.mapAddress,
+    this.isDefault,
   });
 
   Address copyWith(
@@ -35,7 +37,8 @@ class Address {
       AddressType type,
       String latitude,
       String longitude,
-      String mapAddress}) {
+      String mapAddress,
+      bool isDefault}) {
     return Address(
       id ?? this.id,
       title ?? this.title,
@@ -47,36 +50,8 @@ class Address {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       mapAddress: mapAddress ?? this.mapAddress,
+      isDefault: isDefault ?? this.isDefault,
     );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'title': title,
-      'address': address,
-      'description': address,
-      'latitude': latitude,
-      'longitude': longitude,
-      'mapAddress': mapAddress,
-      'type': type.toString(),
-    };
-  }
-
-  static Address fromMap(Map<String, dynamic> map) {
-    AddressType type;
-    if (map['type'] == AddressType.home.toString()) {
-      type = AddressType.home;
-    } else if (map['type'] == AddressType.office.toString()) {
-      type = AddressType.office;
-    } else {
-      type = AddressType.other;
-    }
-
-    return Address(map['id'], map['title'], map['address'], type,
-        longitude: map['longitude'],
-        latitude: map['latitude'],
-        mapAddress: map['mapAddress']);
   }
 
   bool isValid() {
@@ -95,6 +70,7 @@ class Address {
         city: parsedJson['city'],
         zipCode: parsedJson['zipcode'],
         state: parsedJson['state'],
+        isDefault: parsedJson['as_default'] == "1" ? false : true,
         longitude: parsedJson['delivery_longitude'],
         latitude: parsedJson['delivery_latitude'],
         mapAddress: parsedJson['address']);

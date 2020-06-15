@@ -2,11 +2,11 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-abstract class LoginEvent extends Equatable {
-  const LoginEvent();
+abstract class OtpEvent extends Equatable {
+  const OtpEvent();
 }
 
-class VerifyOtp extends LoginEvent {
+class VerifyOtp extends OtpEvent {
   final String contactPhone;
   final String otpCode;
 

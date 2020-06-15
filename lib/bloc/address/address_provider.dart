@@ -3,74 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flyereats/classes/app_exceptions.dart';
-import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/model/address.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart' as http;
 
-class AddressDBProvider {
+class AddressProvider {
   var client = http.Client();
-  String baseUrl = "http://flyereats.in/";
 
-  AddressDBProvider._();
-
-  static final AddressDBProvider db = AddressDBProvider._();
-
-  Database _database;
-
-  Future<Database> get database async {
-    if (_database != null) return _database;
-    _database = await initDB();
-    return _database;
-  }
-
-  initDB() async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "flyereats.db");
-    return await openDatabase(path, version: 1, onOpen: (db) {},
-        onCreate: (Database db, int version) async {
-      await db.execute("CREATE TABLE address ("
-          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-          "title VARCHAR(500),"
-          "address TEXT,"
-          "description TEXT,"
-          "type VARCHAR(30),"
-          "longitude TEXT,"
-          "latitude TEXT,"
-          "mapAddress TEXT"
-          ")");
-    });
-  }
-
-  addExampleAddress() async {
-    final db = await database;
-    for (int i = 0; i < ExampleModel.getAddresses().length; i++) {
-      await db.rawInsert(
-          "INSERT Into address (title, address, description, type, longitude, latitude, mapAddress)"
-          " VALUES (?,?,?,?,?,?)",
-          [
-            ExampleModel.getAddresses()[i].title,
-            ExampleModel.getAddresses()[i].address,
-            ExampleModel.getAddresses()[i].address,
-            ExampleModel.getAddresses()[i].type.toString(),
-            ExampleModel.getAddresses()[i].longitude,
-            ExampleModel.getAddresses()[i].latitude,
-            ExampleModel.getAddresses()[i].mapAddress
-          ]);
-    }
-  }
-
-  Future<Address> getDefaultAddress() async {
-    final db = await database;
-    List<Map<String, dynamic>> addresses = await db.query("address");
-    if (addresses.isEmpty) {
-      return null;
-    } else {
-      return Address.fromMap(addresses[0]);
-    }
-  }
+  /*String baseUrl = "http://flyereats.in/";*/
+  String baseUrl = "https://www.pollachiarea.com/flyereats/";
 
   Future<dynamic> deleteAddress(String id, String token) async {
     String url =

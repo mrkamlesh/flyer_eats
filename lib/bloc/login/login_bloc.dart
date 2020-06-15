@@ -13,51 +13,25 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   @override
   Stream<LoginState> mapEventToState(
-    LoginEvent event,
-  ) async* {
-    if (event is LoginEventWithEmail) {
-      yield* mapLoginEventWithEmailToState(event.email, event.password);
-    } else if (event is ValidateInput) {
-      yield* mapValidateInputToState(event.email, event.password);
-    } else if (event is InitLoginEvent) {
-      yield* mapInitLoginEventToState();
+      LoginEvent event,
+      ) async* {
+    if (event is VerifyOtp) {
+      yield* mapVerifyOtpToState(event.contactPhone, event.otpCode);
     }
   }
 
-  Stream<LoginState> mapLoginEventWithEmailToState(
-      String email, String password) async* {
+  Stream<LoginState> mapVerifyOtpToState(
+      String contactPhone, String otpCode) async* {
     yield Loading(user: state.user, isValid: state.isValid);
     try {
-      User user = await _repository.loginWithEmail(email, password);
-      if (user != null) {
-        _repository.saveLoginInformation(email, password);
-        yield Success(user: user, isValid: state.isValid);
+      var result = await _repository.verifyOtp(contactPhone, otpCode);
+      if (result is User) {
+        yield Success(user: result, isValid: true);
       } else {
-        yield Error("Login Failed. Either username or password is incorrect",
-            user: state.user, isValid: state.isValid);
+        yield Error(result as String);
       }
     } catch (e) {
       yield Error(e.toString(), user: state.user, isValid: state.isValid);
-    }
-  }
-
-  Stream<LoginState> mapValidateInputToState(
-      String email, String password) async* {
-    if (email != null && email != "" && password != null && password != "") {
-      yield state.copyWith(user: state.user, isValid: true);
-    } else {
-      yield state.copyWith(user: state.user, isValid: false);
-    }
-  }
-
-  Stream<LoginState> mapInitLoginEventToState() async* {
-    Map<String, String> map = await _repository.getLoginInformation();
-    if (map['email'] != null && map['password'] != null) {
-      User user =
-          await _repository.loginWithEmail(map['email'], map['password']);
-      yield LoggedIn(user: user, isValid: state.isValid);
-    } else {
-      yield NotLoggedIn(isValid: false);
     }
   }
 }

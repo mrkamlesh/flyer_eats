@@ -20,9 +20,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   Stream<AddressState> mapEventToState(
     AddressEvent event,
   ) async* {
-    if (event is InitDefaultAddress) {
-      yield* mapInitDefaultAddressToState();
-    } else if (event is OpenListAddress) {
+    if (event is OpenListAddress) {
       yield* mapOpenListAddressToState(event.token);
     } else if (event is OpenAddress) {
       yield* mapOpenAddressToState(event.id, event.token);
@@ -42,21 +40,6 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       yield* mapUpdateAddressToState(event.address, event.token);
     } else if (event is RemoveAddress) {
       yield* mapRemoveAddressToState(event.id, event.token);
-    }
-  }
-
-  Stream<AddressState> mapInitDefaultAddressToState() async* {
-    yield LoadingAddressInformation();
-    try {
-      //addressRepository.addExampleAddress();
-      Address address = await addressRepository.getDefaultAddress();
-      if (address == null) {
-        yield NoAddressLoaded();
-      } else {
-        yield AddressLoaded(address);
-      }
-    } catch (e) {
-      yield ErrorLoadingAddressInformation(e.toString());
     }
   }
 
@@ -168,7 +151,10 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   Stream<AddressState> mapUpdateAddressInformationToState(
       UpdateAddressInformation event) async* {
     Address newAddress = address.copyWith(
-        type: event.type, address: event.address, title: event.title);
+        type: event.type,
+        address: event.address,
+        title: event.title,
+        isDefault: event.isDefault);
     address = newAddress;
     yield LoadingTemporaryAddressSuccess(newAddress);
   }

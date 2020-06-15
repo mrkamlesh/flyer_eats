@@ -8,6 +8,11 @@ import 'package:flyereats/page/login/otp_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RegisterPage extends StatefulWidget {
+
+  final String phoneNumber;
+
+  const RegisterPage({Key key, this.phoneNumber}) : super(key: key);
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }

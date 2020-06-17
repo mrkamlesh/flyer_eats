@@ -13,10 +13,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   @override
   Stream<LoginState> mapEventToState(
-      LoginEvent event,
-      ) async* {
+    LoginEvent event,
+  ) async* {
     if (event is VerifyOtp) {
       yield* mapVerifyOtpToState(event.contactPhone, event.otpCode);
+    } else if (event is InitLoginEvent) {
+      yield* mapInitLoginEventToState();
     }
   }
 
@@ -26,12 +28,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       var result = await _repository.verifyOtp(contactPhone, otpCode);
       if (result is User) {
+        _repository.saveToken(result.token);
         yield Success(user: result, isValid: true);
       } else {
         yield Error(result as String);
       }
     } catch (e) {
       yield Error(e.toString(), user: state.user, isValid: state.isValid);
+    }
+  }
+
+  Stream<LoginState> mapInitLoginEventToState() async* {
+    try {
+      String token = await _repository.getSavedToken();
+      if (token != null) {
+        User user = await _repository.checkTokenValid(token);
+        yield LoggedIn(user: user, isValid: state.isValid);
+      } else {
+        yield NotLoggedIn(isValid: false);
+      }
+    } catch (e) {
+      yield NotLoggedIn(isValid: false);
     }
   }
 }

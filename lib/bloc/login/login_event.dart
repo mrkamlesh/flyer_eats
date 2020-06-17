@@ -15,3 +15,10 @@ class VerifyOtp extends LoginEvent {
   @override
   List<Object> get props => [contactPhone, otpCode];
 }
+
+class InitLoginEvent extends LoginEvent {
+  const InitLoginEvent();
+
+  @override
+  List<Object> get props => [];
+}

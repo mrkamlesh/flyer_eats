@@ -86,6 +86,7 @@ class ValidatingAddress extends AddressEvent {
 }
 
 class AddressAddPageOpen extends AddressEvent {
+
   const AddressAddPageOpen();
 
   @override

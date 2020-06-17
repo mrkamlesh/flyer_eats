@@ -99,7 +99,10 @@ class AddressUpdated extends AddressState {
 }
 
 class AddressAdded extends AddressState {
-  const AddressAdded();
+
+  final bool isAdded;
+
+  const AddressAdded(this.isAdded);
 
   @override
   List<Object> get props => [];

@@ -50,7 +50,9 @@ class _AddressPageState extends State<AddressPage> {
           return AddressBloc(AddressRepository())
             ..add(AddressUpdatePageOpen(widget.address));
         } else {
-          return AddressBloc(AddressRepository())..add(AddressAddPageOpen());
+          return AddressBloc(AddressRepository())
+            ..add(AddressAddPageOpen())
+            ..add(UpdateAddressInformation(isDefault: widget.forcedDefault));
         }
       },
       child: Scaffold(
@@ -145,6 +147,52 @@ class _AddressPageState extends State<AddressPage> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       content: Text("successfully updated"),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("OK"))
+                                      ],
+                                    );
+                                  });
+                            } else {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        "Error",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text(
+                                          "Something went wrong during processing your request"),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("OK"))
+                                      ],
+                                    );
+                                  });
+                            }
+                          } else if (state is AddressAdded) {
+                            if (state.isAdded) {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        "Success",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text("successfully added"),
                                       actions: <Widget>[
                                         FlatButton(
                                             onPressed: () {

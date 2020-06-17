@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<LoginBloc>(
             create: (context) {
-              return LoginBloc();
+              return LoginBloc()..add(InitLoginEvent());
             },
           )
         ],

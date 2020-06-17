@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flyereats/classes/data_provider.dart';
 import 'package:flyereats/model/detail_order.dart';
 import 'package:flyereats/model/filter.dart';
@@ -92,7 +94,8 @@ class DataRepository {
       String locationName,
       String deviceId,
       String appVersion,
-      String devicePlatform}) async {
+      String devicePlatform,
+      File avatar}) async {
     final response = await _provider.register(
         email: email,
         appVersion: appVersion,
@@ -102,7 +105,8 @@ class DataRepository {
         devicePlatform: devicePlatform,
         fullName: fullName,
         locationName: locationName,
-        referralCode: referralCode);
+        referralCode: referralCode,
+        avatar: avatar);
     if (response['code'] == 1) {
       return LoginStatus(response['msg'], true);
     } else {
@@ -145,13 +149,37 @@ class DataRepository {
     }
   }*/
 
-  Future<bool> saveLoginInformation(String email, String password) async {
-    await _provider.saveLoginInformation(email, password);
+  Future<List<String>> getRegisterLocations() async {
+    final response = await _provider.getRegisterLocations();
+    if (response['code'] == 1) {
+      List<String> list = List();
+      Map<String, dynamic> responseList = response['details']['locations'];
+      responseList.keys.forEach((element) {
+        list.add(element);
+      });
+      return list;
+    } else {
+      return List();
+    }
+  }
+
+  Future<dynamic> checkTokenValid(String token) async {
+    final response = await _provider.checkTokenValid(token);
+    if (response['details']['is_exist']) {
+      User user = User.fromJson(response['details']);
+      return user;
+    } else {
+      return response['msg'];
+    }
+  }
+
+  Future<bool> saveToken(String token) async {
+    await _provider.saveToken(token);
     return true;
   }
 
-  Future<Map<String, String>> getLoginInformation() async {
-    return await _provider.getLoginInformation();
+  Future<String> getSavedToken() async {
+    return await _provider.getSavedToken();
   }
 
   Future<List<Location>> getLocations(String countryId) async {

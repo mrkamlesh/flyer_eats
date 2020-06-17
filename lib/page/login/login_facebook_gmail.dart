@@ -60,7 +60,10 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
             }));
           } else if (state is ErrorCheckEmailExist) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return RegisterPage(phoneNumber: widget.phoneNumber);
+              return RegisterPage(
+                phoneNumber: widget.phoneNumber,
+                email: _emailController.text,
+              );
             }));
           }
         },

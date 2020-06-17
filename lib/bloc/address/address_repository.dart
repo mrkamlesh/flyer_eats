@@ -45,11 +45,15 @@ class AddressRepository {
   Future<List<Address>> getAllAddress(String token) async {
     final response = await provider.getAllAddress(token);
     if (response['code'] == 1) {
-      var listAddresses = response['details'] as List;
-      List<Address> addresses = listAddresses.map((i) {
-        return Address.fromJson(i);
-      }).toList();
-      return addresses;
+      if (response['details'] != "") {
+        var listAddresses = response['details'] as List;
+        List<Address> addresses = listAddresses.map((i) {
+          return Address.fromJson(i);
+        }).toList();
+        return addresses;
+      } else {
+        return List();
+      }
     } else {
       return List();
     }

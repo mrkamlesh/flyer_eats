@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -16,6 +18,7 @@ class Register extends RegisterEvent {
   final String deviceId;
   final String appVersion;
   final String devicePlatform;
+  final File avatar;
 
   const Register(
       {this.contactPhone,
@@ -26,7 +29,8 @@ class Register extends RegisterEvent {
       this.locationName,
       this.deviceId,
       this.appVersion,
-      this.devicePlatform});
+      this.devicePlatform,
+      this.avatar});
 
   @override
   List<Object> get props => [
@@ -38,7 +42,8 @@ class Register extends RegisterEvent {
         locationName,
         deviceId,
         appVersion,
-        devicePlatform
+        devicePlatform,
+        avatar
       ];
 }
 

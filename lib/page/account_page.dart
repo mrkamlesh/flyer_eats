@@ -224,9 +224,16 @@ class _AccountPageState extends State<AccountPage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
-                                            Column(
-                                              children: address,
-                                            ),
+                                            address.isNotEmpty
+                                                ? Column(
+                                                    children: address,
+                                                  )
+                                                : Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 50),
+                                                    child: Center(
+                                                        child: Text(
+                                                            "No Address Available"))),
                                             GestureDetector(
                                               onTap: () async {
                                                 await Navigator.push(context,
@@ -287,11 +294,60 @@ class _AccountPageState extends State<AccountPage> {
                                                     CircularProgressIndicator())));
                                   } else if (state is ErrorLoadingListAddress) {
                                     return SliverToBoxAdapter(
-                                        child: Container(
+                                        child: Column(
+                                      children: <Widget>[
+                                        Container(
                                             margin: EdgeInsets.only(top: 50),
                                             child: Center(
                                                 child: Text(
-                                                    "Fail load addresses"))));
+                                                    "Fail load addresses"))),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            await Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return AddressPage();
+                                            }));
+                                            _bloc.add(OpenListAddress(
+                                                loginState.user.token));
+                                          },
+                                          child: Container(
+                                            width:
+                                                AppUtil.getScreenWidth(context),
+                                            height: kBottomNavigationBarHeight,
+                                            margin: EdgeInsets.only(bottom: 30),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      right: 20),
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    size: 20,
+                                                    color: Colors.orange,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "ADD NEW ADDRESS",
+                                                  style: TextStyle(
+                                                      color: primary3,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ));
                                   }
                                   return SliverToBoxAdapter(child: Container());
                                 })

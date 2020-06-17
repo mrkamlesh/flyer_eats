@@ -16,31 +16,45 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   ) async* {
     if (event is Register) {
       yield* mapRegisterToState(event);
+    } else if (event is GetLocations) {
+      yield* mapGetLocationsToState();
     }
   }
 
   Stream<RegisterState> mapRegisterToState(Register event) async* {
-
-    yield LoadingRegister();
+    yield LoadingRegister(listLocations: state.listLocations);
 
     try {
       LoginStatus status = await repository.register(
-          referralCode: event.referralCode,
-          locationName: event.locationName,
-          fullName: event.fullName,
-          devicePlatform: event.devicePlatform,
-          deviceId: event.deviceId,
-          countryCode: event.countryCode,
-          contactPhone: event.contactPhone,
-          appVersion: event.appVersion,
-          email: event.email);
+        referralCode: event.referralCode,
+        locationName: event.locationName,
+        fullName: event.fullName,
+        devicePlatform: event.devicePlatform,
+        deviceId: event.deviceId,
+        countryCode: event.countryCode,
+        contactPhone: event.contactPhone,
+        appVersion: event.appVersion,
+        email: event.email,
+        avatar: event.avatar,
+      );
       if (status.status) {
-        yield SuccessRegister(status);
+        yield SuccessRegister(status, listLocations: state.listLocations);
       } else {
-        yield ErrorRegister(status.message);
+        yield ErrorRegister(status.message, listLocations: state.listLocations);
       }
     } catch (e) {
       yield ErrorRegister(e.toString());
+    }
+  }
+
+  Stream<RegisterState> mapGetLocationsToState() async* {
+    yield LoadingLocations(listLocations: state.listLocations);
+
+    try {
+      List<String> list = await repository.getRegisterLocations();
+      yield SuccessLocations(list);
+    } catch (e) {
+      yield ErrorLocations(e.toString(), listLocations: state.listLocations);
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flyereats/classes/app_exceptions.dart';
 import 'package:flyereats/model/place_order.dart';
 import 'dart:convert';
@@ -46,9 +47,10 @@ class DataProvider {
       String locationName,
       String deviceId,
       String appVersion,
-      String devicePlatform}) async {
+      String devicePlatform,
+      File avatar}) async {
     String url =
-        "${productionServerUrl}flyereats/mobileapp/apiRest/register?json=true&api_key=flyereats";
+        "${developmentServerUrl}mobileapp/apiRest/register?json=true&api_key=flyereats";
 
     var formData = {
       "email_address": email,
@@ -60,14 +62,17 @@ class DataProvider {
       "device_id": deviceId,
       "app_version": appVersion,
       "device_platform": devicePlatform,
+      "file": await MultipartFile.fromFile(avatar.path),
     };
+
+    Dio dio = new Dio();
 
     var responseJson;
     try {
-      final response = await http.post(
-        url,
-        body: formData,
-      );
+      final response = await dio.post(url,
+          data: FormData.fromMap(formData),
+          options: Options(contentType: 'JSON'));
+
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -118,6 +123,20 @@ class DataProvider {
       throw FetchDataException('No Internet connection');
     }
 
+    return responseJson;
+  }
+
+  Future<dynamic> getRegisterLocations() async {
+    String url =
+        "${productionServerUrl}mobileapp/apinew/getCustomFields?json=true&api_key=flyereats";
+
+    var responseJson;
+    try {
+      final response = await client.get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
     return responseJson;
   }
 
@@ -346,19 +365,38 @@ class DataProvider {
     return responseJson;
   }*/
 
-  Future<bool> saveLoginInformation(String email, String password) async {
+  Future<dynamic> checkTokenValid(String token) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/check?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+    };
+
+    var responseJson;
+    try {
+      final response = await http.post(
+        url,
+        body: formData,
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<bool> saveToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(emailKey, email);
-    prefs.setString(passwordKey, password);
+    prefs.setString("TOKEN", token);
     return true;
   }
 
-  Future<Map<String, String>> getLoginInformation() async {
-    Map<String, String> map = Map();
+  Future<String> getSavedToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    map['email'] = prefs.getString(emailKey);
-    map['password'] = prefs.getString(passwordKey);
-    return map;
+    String token = prefs.getString("TOKEN");
+    return token;
   }
 
   Future<dynamic> getLocations(String countryId) async {
@@ -448,10 +486,15 @@ class DataProvider {
     return responseJson;
   }
 
-  dynamic _returnResponse(http.Response response) {
+  dynamic _returnResponse(var response) {
     switch (response.statusCode) {
       case 200:
-        var responseJson = json.decode(response.body.toString());
+        var responseJson;
+        if (response is Response) {
+          responseJson = json.decode(response.data);
+        } else {
+          responseJson = json.decode(response.body.toString());
+        }
         return responseJson;
       case 400:
         throw BadRequestException(response.body.toString());

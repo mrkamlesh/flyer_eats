@@ -1,27 +1,33 @@
-import 'package:flyereats/model/login_status.dart';
-
 class LoginPhoneState {
-  LoginPhoneState();
+  final String countryCode;
+  final String number;
+
+  LoginPhoneState({this.countryCode, this.number});
 }
 
 class InitialLoginPhoneState extends LoginPhoneState {
-  InitialLoginPhoneState() : super();
+  InitialLoginPhoneState() : super(countryCode: "+91", number: "");
 }
 
 class LoadingCheckPhoneExist extends LoginPhoneState {
-  LoadingCheckPhoneExist() : super();
+  LoadingCheckPhoneExist({String countryCode, String number})
+      : super(countryCode: countryCode, number: number);
 }
 
-class SuccessCheckPhoneExist extends LoginPhoneState {
-  final String phoneNumber;
-  final LoginStatus status;
+class PhoneIsExist extends LoginPhoneState {
+  PhoneIsExist({String countryCode, String number})
+      : super(countryCode: countryCode, number: number);
+}
 
-  SuccessCheckPhoneExist(this.status, this.phoneNumber) : super();
+class PhoneIsNotExist extends LoginPhoneState {
+
+  PhoneIsNotExist({String countryCode, String number})
+      : super(countryCode: countryCode, number: number);
 }
 
 class ErrorCheckPhoneExist extends LoginPhoneState {
   final String message;
-  final String phoneNumber;
 
-  ErrorCheckPhoneExist(this.message, this.phoneNumber) : super();
+  ErrorCheckPhoneExist(this.message, {String countryCode, String number})
+      : super(countryCode: countryCode, number: number);
 }

@@ -25,9 +25,12 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
   @override
   void initState() {
     super.initState();
+    _loginEmailBloc = LoginEmailBloc();
     _controller = ScrollController();
     _emailController = TextEditingController();
-    _loginEmailBloc = LoginEmailBloc();
+    _emailController.addListener(() {
+      _loginEmailBloc.add(ChangeEmail(_emailController.text));
+    });
   }
 
   @override
@@ -54,17 +57,39 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
       ],
       child: BlocConsumer<LoginEmailBloc, LoginEmailState>(
         listener: (context, state) {
-          if (state is SuccessCheckEmailExist) {
+          if (state is EmailIsExist) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return OtpPage(phoneNumber: widget.phoneNumber);
             }));
-          } else if (state is ErrorCheckEmailExist) {
+          } else if (state is EmailIsNotExist) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return RegisterPage(
                 phoneNumber: widget.phoneNumber,
-                email: _emailController.text,
+                email: state.email,
+                imageUrl: state.avatar,
+                name: state.name,
               );
             }));
+          } else if (state is ErrorCheckEmailExist) {
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(
+                      "Error",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    content: Text(state.message),
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("OK"))
+                    ],
+                  );
+                });
           }
         },
         builder: (context, state) {
@@ -154,19 +179,33 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      SvgPicture.asset("assets/facebook.svg"),
+                                      GestureDetector(
+                                          child: SvgPicture.asset(
+                                              "assets/facebook.svg"),
+                                          onTap: () {
+                                            _loginEmailBloc
+                                                .add(LoginByFacebook());
+                                          }),
                                       SizedBox(
                                         width: 30,
                                       ),
-                                      SvgPicture.asset("assets/gmail.svg")
+                                      GestureDetector(
+                                          onTap: () {
+                                            _loginEmailBloc.add(LoginByGmail());
+                                          },
+                                          child: SvgPicture.asset(
+                                              "assets/gmail.svg")),
                                     ],
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () {
-                                    _loginEmailBloc.add(
-                                        CheckEmailExist(_emailController.text));
-                                  },
+                                  onTap:
+                                      state.email != null && state.email != ""
+                                          ? () {
+                                              _loginEmailBloc
+                                                  .add(CheckEmailExist());
+                                            }
+                                          : () {},
                                   child: Stack(
                                     children: <Widget>[
                                       Container(
@@ -183,7 +222,10 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                         ),
                                       ),
                                       AnimatedOpacity(
-                                        opacity: 0.0,
+                                        opacity: state.email != null &&
+                                                state.email != ""
+                                            ? 0.0
+                                            : 0.5,
                                         child: Container(
                                           height: 50,
                                           color: Colors.white,

@@ -8,48 +8,66 @@ abstract class RegisterEvent extends Equatable {
   const RegisterEvent();
 }
 
-class Register extends RegisterEvent {
-  final String contactPhone;
+class InitRegisterEvent extends RegisterEvent {
   final String email;
-  final String referralCode;
-  final String fullName;
-  final String countryCode;
-  final String locationName;
-  final String deviceId;
-  final String appVersion;
-  final String devicePlatform;
-  final File avatar;
+  final String phoneNumber;
+  final String name;
+  final String imageUrl;
 
-  const Register(
-      {this.contactPhone,
-      this.email,
-      this.referralCode,
-      this.fullName,
-      this.countryCode,
-      this.locationName,
-      this.deviceId,
-      this.appVersion,
-      this.devicePlatform,
-      this.avatar});
+  const InitRegisterEvent(
+      {this.email, this.phoneNumber, this.name, this.imageUrl});
 
   @override
-  List<Object> get props => [
-        contactPhone,
-        email,
-        referralCode,
-        fullName,
-        countryCode,
-        locationName,
-        deviceId,
-        appVersion,
-        devicePlatform,
-        avatar
-      ];
+  List<Object> get props => [email, phoneNumber, name, imageUrl];
 }
 
-class GetLocations extends RegisterEvent {
-  const GetLocations();
+class Register extends RegisterEvent {
+  const Register();
 
   @override
   List<Object> get props => [];
+}
+
+class ChangeName extends RegisterEvent {
+  final String name;
+
+  const ChangeName(
+    this.name,
+  );
+
+  @override
+  List<Object> get props => [name];
+}
+
+class ChangeAvatar extends RegisterEvent {
+  final File file;
+
+  const ChangeAvatar(
+    this.file,
+  );
+
+  @override
+  List<Object> get props => [file];
+}
+
+class ChangeLocation extends RegisterEvent {
+  final String location;
+
+  const ChangeLocation(
+    this.location,
+  );
+
+  @override
+  List<Object> get props => [location];
+}
+
+class ChangeReferral extends RegisterEvent {
+  final String referral;
+
+  const ChangeReferral(
+    this.referral,
+  );
+
+  @override
+  List<Object> get props => [referral];
 }

@@ -15,25 +15,40 @@ class LoginPhoneBloc extends Bloc<LoginPhoneEvent, LoginPhoneState> {
     LoginPhoneEvent event,
   ) async* {
     if (event is CheckPhoneExist) {
-      yield* mapCheckPhoneExistToState(event.contactPhone);
+      yield* mapCheckPhoneExistToState();
+    } else if (event is ChangeCountryCode) {
+      yield* mapChangeCountryCodeToState(event.countryCode);
+    } else if (event is ChangeNumber) {
+      yield* mapChangeNumberToState(event.number);
     }
   }
 
-  Stream<LoginPhoneState> mapCheckPhoneExistToState(
-      String contactPhone) async* {
-
-    yield LoadingCheckPhoneExist();
+  Stream<LoginPhoneState> mapCheckPhoneExistToState() async* {
+    yield LoadingCheckPhoneExist(
+        countryCode: state.countryCode, number: state.number);
 
     try {
-      LoginStatus status = await repository.checkPhoneExist(contactPhone);
-
+      LoginStatus status =
+          await repository.checkPhoneExist(state.countryCode + state.number);
       if (status.status) {
-        yield SuccessCheckPhoneExist(status, contactPhone);
+        yield PhoneIsExist(
+            countryCode: state.countryCode, number: state.number);
       } else {
-        yield ErrorCheckPhoneExist(status.message, contactPhone);
+        yield PhoneIsNotExist(
+            countryCode: state.countryCode, number: state.number);
       }
     } catch (e) {
-      yield ErrorCheckPhoneExist(e.toString(), contactPhone);
+      yield ErrorCheckPhoneExist(e.toString(),
+          countryCode: state.countryCode, number: state.number);
     }
+  }
+
+  Stream<LoginPhoneState> mapChangeCountryCodeToState(
+      String countryCode) async* {
+    yield LoginPhoneState(countryCode: countryCode, number: state.number);
+  }
+
+  Stream<LoginPhoneState> mapChangeNumberToState(String number) async* {
+    yield LoginPhoneState(countryCode: state.countryCode, number: number);
   }
 }

@@ -6,6 +6,7 @@ import 'package:flyereats/model/place_order.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flyereats/model/register_post.dart';
 
 class DataProvider {
   static String emailKey = "EMAIL";
@@ -38,32 +39,29 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> register(
-      {String contactPhone,
-      String email,
-      String referralCode,
-      String fullName,
-      String countryCode,
-      String locationName,
-      String deviceId,
-      String appVersion,
-      String devicePlatform,
-      File avatar}) async {
+  Future<dynamic> register(RegisterPost registerPost) async {
     String url =
         "${developmentServerUrl}mobileapp/apiRest/register?json=true&api_key=flyereats";
 
-    var formData = {
-      "email_address": email,
-      "contact_phone": contactPhone,
-      "referral_code": referralCode,
-      "full_name": fullName,
-      "country_code": countryCode,
-      "loc_name": locationName,
-      "device_id": deviceId,
-      "app_version": appVersion,
-      "device_platform": devicePlatform,
-      "file": await MultipartFile.fromFile(avatar.path),
+    Map<String, dynamic> formData = {
+      "email_address": registerPost.email,
+      "contact_phone": registerPost.contactPhone,
+      "referral_code": registerPost.referral,
+      "full_name": registerPost.name,
+      "country_code": registerPost.countryId,
+      "loc_name": registerPost.location,
+      "device_id": registerPost.deviceId,
+      "app_version": registerPost.appVersion,
+      "device_platform": registerPost.devicePlatform,
     };
+
+    if (registerPost.avatar != null) {
+      formData['file'] = await MultipartFile.fromFile(registerPost.avatar.path);
+    } else {
+      if (registerPost.imageUrl != null && registerPost.imageUrl != "") {
+        formData['image_url'] = registerPost.imageUrl;
+      }
+    }
 
     Dio dio = new Dio();
 
@@ -73,6 +71,45 @@ class DataProvider {
           data: FormData.fromMap(formData),
           options: Options(contentType: 'JSON'));
 
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> loginWithSocialMedia(
+      {String userId,
+      String email,
+      String provider,
+      String fullName,
+      String imageUrl,
+      String deviceId,
+      String devicePlatform,
+      String appVersion,
+      String contactPhone}) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/socialLogin?json=true&api_key=flyereats";
+
+    var formData = {
+      "userid": userId,
+      "email": email,
+      "provider": provider,
+      "full_name": fullName,
+      "imageurl": imageUrl,
+      "device_id": deviceId,
+      "device_platform": devicePlatform,
+      "app_version": appVersion,
+      "contact_phone": contactPhone,
+    };
+
+    var responseJson;
+    try {
+      final response = await http.post(
+        url,
+        body: formData,
+      );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');

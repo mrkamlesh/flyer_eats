@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1032844025192",
+    "firebase_url": "https://flyer-eats.firebaseio.com",
+    "project_id": "flyer-eats",
+    "storage_bucket": "flyer-eats.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1032844025192:android:c375dad25812d423544add",
+        "android_client_info": {
+          "package_name": "com.example.flyereats"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1032844025192-i0odqmu8gdjr8ihpli2jcfce7191umoi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flyereats",
+            "certificate_hash": "30785b06280e7b8b2adaa3d34574b3195e1525d1"
+          }
+        },
+        {
+          "client_id": "1032844025192-3h8f1uknlt2eqk0925pjopr7sd7r2mjc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9CAEU9QgAbMWpVivOxOwAbHQp6FNWEno"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1032844025192-3h8f1uknlt2eqk0925pjopr7sd7r2mjc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

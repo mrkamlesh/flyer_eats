@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flyereats/classes/data_provider.dart';
 import 'package:flyereats/model/detail_order.dart';
 import 'package:flyereats/model/filter.dart';
@@ -14,6 +12,7 @@ import 'package:flyereats/model/review.dart';
 import 'package:flyereats/model/sort_by.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
+import 'package:flyereats/model/register_post.dart';
 
 class DataRepository {
   DataProvider _provider = DataProvider();
@@ -58,7 +57,7 @@ class DataRepository {
         return LoginStatus(response['msg'], false);
       }
     } else {
-      return LoginStatus(response['msg'], false);
+      throw Exception(response['msg']);
     }
   }
 
@@ -67,11 +66,10 @@ class DataRepository {
     if (response['code'] == 1) {
       if (response['details']['is_exist'])
         return LoginStatus(response['msg'], true);
-      else {
+      else
         return LoginStatus(response['msg'], false);
-      }
     } else {
-      return LoginStatus(response['msg'], false);
+      throw Exception(response['msg']);
     }
   }
 
@@ -85,28 +83,35 @@ class DataRepository {
     }
   }
 
-  Future<LoginStatus> register(
-      {String contactPhone,
+  Future<LoginStatus> register(RegisterPost registerPost) async {
+    final response = await _provider.register(registerPost);
+    if (response['code'] == 1) {
+      return LoginStatus(response['msg'], true);
+    } else {
+      return LoginStatus(response['msg'], false);
+    }
+  }
+
+  Future<LoginStatus> loginWithSocialMedia(
+      {String userId,
       String email,
-      String referralCode,
+      String provider,
       String fullName,
-      String countryCode,
-      String locationName,
+      String imageUrl,
       String deviceId,
-      String appVersion,
       String devicePlatform,
-      File avatar}) async {
-    final response = await _provider.register(
+      String appVersion,
+      String contactPhone}) async {
+    final response = await _provider.loginWithSocialMedia(
         email: email,
         appVersion: appVersion,
         contactPhone: contactPhone,
-        countryCode: countryCode,
         deviceId: deviceId,
         devicePlatform: devicePlatform,
         fullName: fullName,
-        locationName: locationName,
-        referralCode: referralCode,
-        avatar: avatar);
+        imageUrl: imageUrl,
+        provider: provider,
+        userId: userId);
     if (response['code'] == 1) {
       return LoginStatus(response['msg'], true);
     } else {

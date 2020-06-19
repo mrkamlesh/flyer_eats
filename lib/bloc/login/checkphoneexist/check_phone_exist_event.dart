@@ -7,10 +7,27 @@ abstract class LoginPhoneEvent extends Equatable {
 }
 
 class CheckPhoneExist extends LoginPhoneEvent {
-  final String contactPhone;
 
-  const CheckPhoneExist(this.contactPhone);
+  const CheckPhoneExist();
 
   @override
-  List<Object> get props => [contactPhone];
+  List<Object> get props => [];
+}
+
+class ChangeCountryCode extends LoginPhoneEvent {
+  final String countryCode;
+
+  const ChangeCountryCode(this.countryCode);
+
+  @override
+  List<Object> get props => [countryCode];
+}
+
+class ChangeNumber extends LoginPhoneEvent {
+  final String number;
+
+  const ChangeNumber(this.number);
+
+  @override
+  List<Object> get props => [number];
 }

@@ -47,6 +47,9 @@ dependencies:
   package_info: ^0.4.1
   device_info: ^0.4.2+4
   dio: ^3.0.9
+  firebase_auth: ^0.16.1
+  google_sign_in: ^4.5.1
+  flutter_facebook_login: 3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -63,8 +66,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
+ # To add assets to your application, add an assets section, like this:
   assets:
     - assets/banner1.jpg
     - assets/banner2.png

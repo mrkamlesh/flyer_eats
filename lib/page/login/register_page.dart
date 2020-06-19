@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -10,11 +9,12 @@ import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/page/login/otp_page.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io' show Platform;
 
 class RegisterPage extends StatefulWidget {
   final String email;
   final String phoneNumber;
+  final String name;
+  final String imageUrl;
 
 /*  email: widget.email,
   contactPhone: widget.phoneNumber,
@@ -27,30 +27,28 @@ class RegisterPage extends StatefulWidget {
   deviceId: "DASDASDA",
   avatar: _photo*/
 
-  const RegisterPage({Key key, this.phoneNumber, this.email}) : super(key: key);
+  const RegisterPage(
+      {Key key, this.phoneNumber, this.email, this.name, this.imageUrl})
+      : super(key: key);
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  File _photo;
-  String _selectedLocation;
   ScrollController _controller;
   TextEditingController _nameController;
-  RegisterBloc _bloc = RegisterBloc();
-  String _countryId = "IN";
-  String _appVersion = "5.0";
-  String _devicePlatform;
-  String _deviceId = "";
+  RegisterBloc _bloc;
 
   @override
   void initState() {
     super.initState();
+    _bloc = RegisterBloc();
     _controller = ScrollController();
-    _nameController = TextEditingController();
-
-    initRegisterInfo();
+    _nameController = TextEditingController(text: widget.name);
+    _nameController.addListener(() {
+      _bloc.add(ChangeName(_nameController.text));
+    });
   }
 
   @override
@@ -69,7 +67,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return BlocProvider<RegisterBloc>(
       create: (context) {
-        return _bloc..add(GetLocations());
+        return _bloc
+          ..add(InitRegisterEvent(
+              email: widget.email,
+              name: widget.name,
+              imageUrl: widget.imageUrl,
+              phoneNumber: widget.phoneNumber));
       },
       child: BlocConsumer<RegisterBloc, RegisterState>(
         listener: (context, state) {
@@ -175,26 +178,40 @@ class _RegisterPageState extends State<RegisterPage> {
                                                     color: Colors.black12)),
                                             width: 100,
                                             height: 100,
-                                            child: _photo != null
+                                            child: state.registerPost.avatar !=
+                                                    null
                                                 ? ClipOval(
                                                     child: FittedBox(
                                                         alignment:
                                                             Alignment.center,
                                                         fit: BoxFit.cover,
-                                                        child:
-                                                            Image.file(_photo)),
+                                                        child: Image.file(state
+                                                            .registerPost
+                                                            .avatar)),
                                                   )
-                                                : FittedBox(
-                                                    fit: BoxFit.none,
-                                                    child: SizedBox(
-                                                      width: 40,
-                                                      height: 40,
-                                                      child: SvgPicture.asset(
-                                                        "assets/account.svg",
-                                                        color: Colors.black38,
+                                                : widget.imageUrl != null
+                                                    ? ClipOval(
+                                                        child: FittedBox(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            fit: BoxFit.cover,
+                                                            child: Image
+                                                                .network(widget
+                                                                    .imageUrl)),
+                                                      )
+                                                    : FittedBox(
+                                                        fit: BoxFit.none,
+                                                        child: SizedBox(
+                                                          width: 40,
+                                                          height: 40,
+                                                          child:
+                                                              SvgPicture.asset(
+                                                            "assets/account.svg",
+                                                            color:
+                                                                Colors.black38,
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
                                           ),
                                           Icon(
                                             Icons.camera_alt,
@@ -260,7 +277,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     underline: Container(),
                                     isExpanded: true,
                                     hint: Text("Select Your Location"),
-                                    value: _selectedLocation,
+                                    value: state.registerPost.location,
                                     icon: Icon(Icons.expand_more),
                                     items: state.listLocations
                                         .map<DropdownMenuItem<String>>(
@@ -277,26 +294,16 @@ class _RegisterPageState extends State<RegisterPage> {
                                                 ))
                                         .toList(),
                                     onChanged: (i) {
-                                      setState(() {
-                                        _selectedLocation = i;
-                                      });
+                                      _bloc.add(ChangeLocation(i));
                                     },
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () {
-                                    _bloc.add(Register(
-                                        email: widget.email,
-                                        contactPhone: widget.phoneNumber,
-                                        locationName: _selectedLocation,
-                                        fullName: _nameController.text,
-                                        referralCode: "FE010421",
-                                        devicePlatform: _devicePlatform,
-                                        appVersion: "5.0",
-                                        countryCode: _countryId,
-                                        deviceId: _deviceId,
-                                        avatar: _photo));
-                                  },
+                                  onTap: state.registerPost.isValid()
+                                      ? () {
+                                          _bloc.add(Register());
+                                        }
+                                      : () {},
                                   child: Stack(
                                     children: <Widget>[
                                       Container(
@@ -313,7 +320,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                         ),
                                       ),
                                       AnimatedOpacity(
-                                        opacity: 0.0,
+                                        opacity: state.registerPost.isValid()
+                                            ? 0.0
+                                            : 0.5,
                                         child: Container(
                                           height: 50,
                                           color: Colors.white,
@@ -369,9 +378,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       PickedFile file = await ImagePicker().getImage(
                           source: ImageSource.camera, imageQuality: 20);
                       if (file != null) {
-                        setState(() {
-                          _photo = File(file.path);
-                        });
+                        _bloc.add(ChangeAvatar(File(file.path)));
                       }
                     },
                     splashColor: Colors.black12,
@@ -388,9 +395,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       PickedFile file = await ImagePicker()
                           .getImage(source: ImageSource.gallery);
                       if (file != null) {
-                        setState(() {
-                          _photo = File(file.path);
-                        });
+                        _bloc.add(ChangeAvatar(File(file.path)));
                       }
                     },
                     splashColor: Colors.black12,
@@ -406,32 +411,5 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           );
         });
-  }
-
-  Future<void> initRegisterInfo() async {
-    if (widget.phoneNumber.substring(0, 2) == "+95") {
-      _countryId = "IN";
-    } else {
-      _countryId = "SG";
-    }
-
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Platform.isAndroid) {
-      _devicePlatform = "Android";
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      _deviceId = androidInfo.id;
-    } else if (Platform.isIOS) {
-      _devicePlatform = "IOs";
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      _deviceId = iosInfo.identifierForVendor;
-    } else {
-      _devicePlatform = "Other";
-      _deviceId = "Device ID Other Platform";
-    }
-
-    if (_photo == null){
-      String dir = (await getApplicationDocumentsDirectory()).path;
-      _photo = new File('$dir/$filename');
-    }
   }
 }

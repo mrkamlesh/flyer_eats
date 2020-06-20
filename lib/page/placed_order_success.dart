@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/widget/promo_list.dart';
 
 class PlacedOrderSuccessPage extends StatefulWidget {
 
@@ -227,12 +225,12 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                             ],
                           ),
                         ),
-                        Container(
+                        /*Container(
                           height: 0.18 * AppUtil.getScreenHeight(context),
                           child: PromoListWidget(
                             promoList: ExampleModel.getPromos(),
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),

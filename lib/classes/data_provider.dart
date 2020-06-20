@@ -356,6 +356,48 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> getHomePageData(
+      {String token,
+      String address,
+      double lat,
+      double long,
+      int topRestaurantPage,
+      int dblPage,
+      int foodCategoryPage,
+      int adsPage}) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/homePage?json=true&api_key=flyereats";
+
+    Map<String, dynamic> formData = {
+      "client_token": token,
+      "sponsor_page": topRestaurantPage.toString(),
+      "time_page": dblPage.toString(),
+      "category_page": foodCategoryPage.toString(),
+      "ads_page": adsPage.toString()
+    };
+
+    if (lat != null && long != null) {
+      formData["sslatlong"] = lat.toString() + "," + long.toString();
+    }
+
+    if (address != null && address != "") {
+      formData["address"] = address;
+    }
+
+    var responseJson;
+    try {
+      final response = await http.post(
+        url,
+        body: formData,
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> getReview(String restaurantId, String token) async {
     String url =
         "${productionServerUrl}mobileapp/apinew/merchantReviews?json=true"

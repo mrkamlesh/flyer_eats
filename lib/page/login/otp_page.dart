@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
@@ -29,6 +30,8 @@ class _OtpPageState extends State<OtpPage> {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is Success) {
+          BlocProvider.of<LocationBloc>(context)
+              .add(GetCurrentLocation(state.user.token));
           Navigator.pushReplacementNamed(context, "/home");
         } else if (state is Error) {
           showDialog(
@@ -112,7 +115,7 @@ class _OtpPageState extends State<OtpPage> {
                             child: PinCodeTextField(
                               controller: _otpController,
                               length: 6,
-                              onChanged: (code){},
+                              onChanged: (code) {},
                               textInputType: TextInputType.number,
                               pinTheme: PinTheme(
                                   shape: PinCodeFieldShape.box,
@@ -123,8 +126,7 @@ class _OtpPageState extends State<OtpPage> {
                           GestureDetector(
                             onTap: () {
                               BlocProvider.of<LoginBloc>(context).add(VerifyOtp(
-                                  widget.phoneNumber,
-                                  _otpController.text));
+                                  widget.phoneNumber, _otpController.text));
                             },
                             child: Stack(
                               children: <Widget>[

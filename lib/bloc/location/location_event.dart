@@ -16,12 +16,12 @@ class InitDefaultAddress extends LocationEvent {
 }
 
 class GetCurrentLocation extends LocationEvent {
-  final LocationEvent followedBy;
+  final String token;
 
-  const GetCurrentLocation({this.followedBy});
+  const GetCurrentLocation(this.token);
 
   @override
-  List<Object> get props => [followedBy];
+  List<Object> get props => [token];
 }
 
 class UpdateLocation extends LocationEvent {
@@ -51,13 +51,15 @@ class GetPredefinedLocations extends LocationEvent {
   List<Object> get props => [countryId];
 }
 
-class SelectLocation extends LocationEvent {
+class GetHomeDataByLocation extends LocationEvent {
   final Location location;
 
-  const SelectLocation(this.location);
+  final String token;
+
+  const GetHomeDataByLocation(this.location, this.token);
 
   @override
-  List<Object> get props => [location];
+  List<Object> get props => [location, token];
 }
 
 class FilterLocations extends LocationEvent {
@@ -76,12 +78,13 @@ class GetPreviousLocation extends LocationEvent {
   List<Object> get props => [];
 }
 
-class GetLocationByLatLng extends LocationEvent {
+class GetHomeDataByLatLng extends LocationEvent {
   final double lat;
   final double lng;
+  final String token;
 
-  const GetLocationByLatLng(this.lat, this.lng);
+  const GetHomeDataByLatLng(this.token, this.lat, this.lng);
 
   @override
-  List<Object> get props => [lat, lng];
+  List<Object> get props => [token, lat, lng];
 }

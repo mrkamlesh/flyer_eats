@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider<LocationBloc>(
             create: (context) {
-              return LocationBloc()..add(GetCurrentLocation());
+              return LocationBloc();
             },
           ),
           BlocProvider<LoginBloc>(

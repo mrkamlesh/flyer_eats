@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
+import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/location.dart';
@@ -128,38 +129,44 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                             ),
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return SelectCurrentLocationPage();
-                            }));
+                        BlocBuilder<LoginBloc, LoginState>(
+                          builder: (context, loginState) {
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return SelectCurrentLocationPage(
+                                    token: loginState.user.token,
+                                  );
+                                }));
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: horizontalPaddingDraggable,
+                                ),
+                                margin: EdgeInsets.only(bottom: 20),
+                                child: Row(
+                                  children: <Widget>[
+                                    SizedBox(
+                                        width: 25,
+                                        height: 25,
+                                        child: SvgPicture.asset(
+                                          "assets/currentloc.svg",
+                                          color: primary3,
+                                        )),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      "CURRENT LOCATION",
+                                      style: TextStyle(
+                                          color: primary3, fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
                           },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPaddingDraggable,
-                            ),
-                            margin: EdgeInsets.only(bottom: 20),
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(
-                                    width: 25,
-                                    height: 25,
-                                    child: SvgPicture.asset(
-                                      "assets/currentloc.svg",
-                                      color: primary3,
-                                    )),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "CURRENT LOCATION",
-                                  style:
-                                      TextStyle(color: primary3, fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
                         Container(
                           padding: EdgeInsets.symmetric(
@@ -334,32 +341,45 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                           padding: EdgeInsets.symmetric(
                                               horizontal:
                                                   horizontalPaddingDraggable),
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              _onTap(i, list[i]);
+                                          child: BlocBuilder<LoginBloc,
+                                              LoginState>(
+                                            builder: (context, loginState) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  _onTap(
+                                                    i,
+                                                    loginState.user.token,
+                                                    list[i],
+                                                  );
+                                                },
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Radio(
+                                                      activeColor: Colors.green,
+                                                      value: i,
+                                                      groupValue: _groupValue,
+                                                      onChanged: (i) {
+                                                        _onTap(
+                                                            i,
+                                                            loginState
+                                                                .user.token,
+                                                            list[i]);
+                                                      },
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        list[i].address,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 14),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
                                             },
-                                            child: Row(
-                                              children: <Widget>[
-                                                Radio(
-                                                  activeColor: Colors.green,
-                                                  value: i,
-                                                  groupValue: _groupValue,
-                                                  onChanged: (i) {
-                                                    _onTap(i, list[i]);
-                                                  },
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    list[i].address,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
                                           ),
                                         );
                                       }, childCount: list.length))
@@ -383,10 +403,11 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
     );
   }
 
-  void _onTap(i, Location list) {
+  void _onTap(i, String token, Location location) {
     setState(() {
       _groupValue = i;
-      BlocProvider.of<LocationBloc>(context).add(SelectLocation(list));
+      BlocProvider.of<LocationBloc>(context)
+          .add(GetHomeDataByLocation(location, token));
       Navigator.pushReplacementNamed(context, "/home");
     });
   }

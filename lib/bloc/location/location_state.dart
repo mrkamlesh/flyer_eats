@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flyereats/model/home_page_data.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
@@ -97,13 +98,13 @@ class LoadingPredefinedLocationsError extends LocationState {
   List<Object> get props => [message];
 }
 
-class LocationSelected extends LocationState {
-  final Location location;
+class HomePageDataLoaded extends LocationState {
+  final HomePageData data;
 
-  const LocationSelected(this.location);
+  const HomePageDataLoaded(this.data);
 
   @override
-  List<Object> get props => [location];
+  List<Object> get props => [data];
 }
 
 class NoLocationsAvailable extends LocationState {

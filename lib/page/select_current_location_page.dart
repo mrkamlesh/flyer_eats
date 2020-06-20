@@ -6,11 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/bloc/location/location_bloc.dart';
+import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SelectCurrentLocationPage extends StatefulWidget {
+  final String token;
+
+  const SelectCurrentLocationPage({Key key, this.token}) : super(key: key);
+
   @override
   _SelectCurrentLocationPageState createState() =>
       _SelectCurrentLocationPageState();
@@ -28,7 +33,8 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
   void initState() {
     super.initState();
     AppUtil.checkLocationServiceAndPermission();
-    BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation());
+    BlocProvider.of<LocationBloc>(context)
+        .add(GetCurrentLocation(widget.token));
   }
 
   @override
@@ -200,44 +206,52 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
                               }
                             },
                             builder: (context, state) {
-                              return GestureDetector(
-                                onTap: state is UpdatingLocationSuccess
-                                    ? () {
-                                        //Navigator pop
-                                        BlocProvider.of<LocationBloc>(context)
-                                            .add(GetLocationByLatLng(
-                                                state.location.latitude,
-                                                state.location.longitude));
-                                        Navigator.pushReplacementNamed(
-                                            context, "/home");
-                                      }
-                                    : () {},
-                                child: Stack(
-                                  children: <Widget>[
-                                    Container(
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFFFB531),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        "CONFIRM LOCATION",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
+                              return BlocBuilder<LoginBloc, LoginState>(
+                                builder: (context, loginState) {
+                                  return GestureDetector(
+                                    onTap: state is UpdatingLocationSuccess
+                                        ? () {
+                                            //Navigator pop
+                                            BlocProvider.of<LocationBloc>(
+                                                    context)
+                                                .add(GetHomeDataByLatLng(
+                                                    loginState.user.token,
+                                                    state.location.latitude,
+                                                    state.location.longitude));
+                                            Navigator.pushReplacementNamed(
+                                                context, "/home");
+                                          }
+                                        : () {},
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xFFFFB531),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "CONFIRM LOCATION",
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ),
+                                        AnimatedOpacity(
+                                          opacity:
+                                              state is UpdatingLocationSuccess
+                                                  ? 0.0
+                                                  : 0.5,
+                                          child: Container(
+                                            height: 50,
+                                            color: Colors.white,
+                                          ),
+                                          duration: Duration(milliseconds: 300),
+                                        )
+                                      ],
                                     ),
-                                    AnimatedOpacity(
-                                      opacity: state is UpdatingLocationSuccess
-                                          ? 0.0
-                                          : 0.5,
-                                      child: Container(
-                                        height: 50,
-                                        color: Colors.white,
-                                      ),
-                                      duration: Duration(milliseconds: 300),
-                                    )
-                                  ],
-                                ),
+                                  );
+                                },
                               );
                             },
                           ),

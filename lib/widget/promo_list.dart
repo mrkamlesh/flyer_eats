@@ -4,11 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/promo.dart';
+import 'package:flyereats/model/ads.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PromoListWidget extends StatefulWidget {
-  final List<Promo> promoList;
+  final List<Ads> promoList;
 
   const PromoListWidget({Key key, this.promoList}) : super(key: key);
 
@@ -57,7 +57,7 @@ class _PromoListWidgetState extends State<PromoListWidget> {
           return Transform.translate(
             offset: Offset(_promoOffset, 0),
             child: PromoWidget(
-              promo: widget.promoList[i],
+              ads: widget.promoList[i],
             ),
           );
         });
@@ -65,9 +65,9 @@ class _PromoListWidgetState extends State<PromoListWidget> {
 }
 
 class PromoWidget extends StatelessWidget {
-  final Promo promo;
+  final Ads ads;
 
-  const PromoWidget({Key key, this.promo}) : super(key: key);
+  const PromoWidget({Key key, this.ads}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class PromoWidget extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: CachedNetworkImage(
-          imageUrl: promo.image,
+          imageUrl: ads.thumbnail,
           height: 60,
           fit: BoxFit.cover,
           alignment: Alignment.center,

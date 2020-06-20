@@ -4,7 +4,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/page/home.dart';
 
 class LoginEmailPage extends StatefulWidget {
   final String email;
@@ -172,11 +171,11 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                         actions: <Widget>[
                                           FlatButton(
                                               onPressed: () {
-                                                Navigator.pushReplacement(
+                                                /*Navigator.pushReplacement(
                                                     context, MaterialPageRoute(
                                                         builder: (context) {
                                                   return Home();
-                                                }));
+                                                }));*/
                                               },
                                               child: Text("OK"))
                                         ],

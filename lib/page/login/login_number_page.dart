@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/bloc/login/checkphoneexist/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
@@ -39,10 +40,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery
-        .of(context)
-        .viewInsets
-        .bottom > 0.0 &&
+    if (MediaQuery.of(context).viewInsets.bottom > 0.0 &&
         _controller.hasClients) {
       _controller.animateTo(30,
           duration: Duration(milliseconds: 200), curve: Curves.ease);
@@ -55,6 +53,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
       child: BlocConsumer<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoggedIn) {
+            BlocProvider.of<LocationBloc>(context)
+                .add(GetCurrentLocation(state.user.token));
             Navigator.pushReplacementNamed(context, "/home");
           }
         },
@@ -169,7 +169,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                             ],
                                             color: Colors.white,
                                             borderRadius:
-                                            BorderRadius.circular(8),
+                                                BorderRadius.circular(8),
                                             border: Border.all(
                                                 color: primary2, width: 2)),
                                         margin: EdgeInsets.only(bottom: 20),
@@ -192,14 +192,14 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                       width: 80,
                                                       child: Row(
                                                         mainAxisSize:
-                                                        MainAxisSize.min,
+                                                            MainAxisSize.min,
                                                         children: <Widget>[
                                                           Expanded(
                                                             child: Container(
                                                               height: 20,
                                                               child: SvgPicture
                                                                   .asset(
-                                                                  "assets/india_flag.svg"),
+                                                                      "assets/india_flag.svg"),
                                                             ),
                                                           ),
                                                           SizedBox(
@@ -211,8 +211,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                               style: TextStyle(
                                                                   fontSize: 16,
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                                      FontWeight
+                                                                          .bold),
                                                             ),
                                                           )
                                                         ],
@@ -225,14 +225,14 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                       width: 80,
                                                       child: Row(
                                                         mainAxisSize:
-                                                        MainAxisSize.min,
+                                                            MainAxisSize.min,
                                                         children: <Widget>[
                                                           Expanded(
                                                             child: Container(
                                                               height: 20,
                                                               child: SvgPicture
                                                                   .asset(
-                                                                  "assets/singapore_flag.svg"),
+                                                                      "assets/singapore_flag.svg"),
                                                             ),
                                                           ),
                                                           SizedBox(
@@ -244,8 +244,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                               style: TextStyle(
                                                                   fontSize: 16,
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                                      FontWeight
+                                                                          .bold),
                                                             ),
                                                           )
                                                         ],
@@ -271,16 +271,16 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                 child: TextField(
                                                   autofocus: true,
                                                   controller:
-                                                  _textEditingController,
+                                                      _textEditingController,
                                                   keyboardType:
-                                                  TextInputType.number,
+                                                      TextInputType.number,
                                                   decoration: InputDecoration(
                                                     contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        vertical: 15),
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 15),
                                                     border: InputBorder.none,
                                                     hintText:
-                                                    "Enter phone number",
+                                                        "Enter phone number",
                                                     hintStyle: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.black38),
@@ -293,10 +293,10 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                       ),
                                       GestureDetector(
                                         onTap: state.number != "" &&
-                                            state.number != null
+                                                state.number != null
                                             ? () {
-                                          _bloc.add(CheckPhoneExist());
-                                        }
+                                                _bloc.add(CheckPhoneExist());
+                                              }
                                             : () {},
                                         child: Stack(
                                           children: <Widget>[
@@ -305,7 +305,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                               decoration: BoxDecoration(
                                                 color: Color(0xFFFFB531),
                                                 borderRadius:
-                                                BorderRadius.circular(8),
+                                                    BorderRadius.circular(8),
                                               ),
                                               alignment: Alignment.center,
                                               child: Text(
@@ -315,7 +315,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                             ),
                                             AnimatedOpacity(
                                               opacity: state.number != "" &&
-                                                  state.number != null
+                                                      state.number != null
                                                   ? 0.0
                                                   : 0.5,
                                               child: Container(
@@ -323,7 +323,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                 color: Colors.white,
                                               ),
                                               duration:
-                                              Duration(milliseconds: 300),
+                                                  Duration(milliseconds: 300),
                                             )
                                           ],
                                         ),
@@ -338,15 +338,15 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                       ),
                       state is LoadingCheckPhoneExist
                           ? Container(
-                        decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5)),
-                        child: Center(
-                          child: SpinKitCircle(
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                        ),
-                      )
+                              decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.5)),
+                              child: Center(
+                                child: SpinKitCircle(
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                            )
                           : IgnorePointer(child: Container()),
                     ],
                   ),

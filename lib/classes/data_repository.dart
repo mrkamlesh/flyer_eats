@@ -2,6 +2,7 @@ import 'package:flyereats/classes/data_provider.dart';
 import 'package:flyereats/model/detail_order.dart';
 import 'package:flyereats/model/filter.dart';
 import 'package:flyereats/model/food.dart';
+import 'package:flyereats/model/home_page_data.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/login_status.dart';
 import 'package:flyereats/model/menu_category.dart';
@@ -228,6 +229,33 @@ class DataRepository {
       return location;
     } else {
       return null;
+    }
+  }
+
+  Future<dynamic> getHomePageData(
+      {String token,
+      String address,
+      double lat,
+      double long,
+      int topRestaurantPage,
+      int dblPage,
+      int foodCategoryPage,
+      int adsPage}) async {
+    final response = await _provider.getHomePageData(
+        address: address,
+        adsPage: adsPage,
+        dblPage: dblPage,
+        foodCategoryPage: foodCategoryPage,
+        lat: lat,
+        long: long,
+        token: token,
+        topRestaurantPage: topRestaurantPage);
+    if (response['code'] == 1) {
+      var homePageMap = response['details'];
+      HomePageData data = HomePageData.fromJson(homePageMap);
+      return data;
+    } else {
+      return response['msg'];
     }
   }
 

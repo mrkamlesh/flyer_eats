@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flyereats/classes/data_repository.dart';
+import 'package:flyereats/model/home_page_data.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -19,26 +20,25 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     LocationEvent event,
   ) async* {
     if (event is GetCurrentLocation) {
-      yield* mapGetCurrentLocationToState(event.followedBy);
+      yield* mapGetCurrentLocationToState(event.token);
     } else if (event is UpdateLocation) {
       yield* mapUpdateLocationToState(event.latLng);
     } else if (event is MoveLocation) {
       yield* mapMoveLocationToState(event.latLng);
     } else if (event is GetPredefinedLocations) {
       yield* mapGetPredefinedLocationsToState(event.countryId);
-    } else if (event is SelectLocation) {
-      yield* mapSelectLocationToState(event.location);
+    } else if (event is GetHomeDataByLocation) {
+      yield* mapGetHomeDataByLocationToState(event.token, event.location);
     } else if (event is FilterLocations) {
       yield* mapFilterLocationsToState(event.filter);
     } else if (event is GetPreviousLocation) {
       yield* mapGetPreviousLocationToState();
-    } else if (event is GetLocationByLatLng) {
-      yield* mapGetLocationByLatLngToState(event.lat, event.lng);
+    } else if (event is GetHomeDataByLatLng) {
+      yield* mapGetHomeDataByLatLngToState(event.token, event.lat, event.lng);
     }
   }
 
-  Stream<LocationState> mapGetCurrentLocationToState(
-      LocationEvent followedBy) async* {
+  Stream<LocationState> mapGetCurrentLocationToState(String token) async* {
     yield LoadingLocation();
     try {
       Position position = await Geolocator()
@@ -51,6 +51,8 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         latitude: position.latitude,
         longitude: position.longitude,
       ));
+
+      add(GetHomeDataByLatLng(token, position.latitude, position.longitude));
     } catch (e) {
       yield LoadingLocationError("Can not get location");
     }
@@ -96,11 +98,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     }
   }
 
-  Stream<LocationState> mapSelectLocationToState(Location location) async* {
-    selectedLocation = location;
-    yield LocationSelected(location);
-  }
-
   Stream<LocationState> mapFilterLocationsToState(String filter) async* {
     List<Location> filteredList = savedPredefinedLocations.where((location) {
       return location.location.toLowerCase().contains(filter) ||
@@ -111,16 +108,52 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   }
 
   Stream<LocationState> mapGetPreviousLocationToState() async* {
-    yield LocationSelected(selectedLocation);
+    yield HomePageDataLoaded(HomePageData());
   }
 
-  Stream<LocationState> mapGetLocationByLatLngToState(
-      double lat, double lng) async* {
-    Location location = await repository.getLocationByLatLng(lat, lng);
-    if (location != null) {
-      yield LocationSelected(location);
-    } else {
-      yield NoLocationsAvailable();
+  Stream<LocationState> mapGetHomeDataByLatLngToState(
+      String token, double lat, double lng) async* {
+    yield LoadingLocation();
+    try {
+      HomePageData data = await repository.getHomePageData(
+          token: token,
+          lat: lat,
+          long: lng,
+          topRestaurantPage: 0,
+          foodCategoryPage: 0,
+          dblPage: 0,
+          adsPage: 0);
+      if (data is HomePageData) {
+        yield HomePageDataLoaded(data);
+      } else {
+        yield NoLocationsAvailable();
+      }
+    } catch (e) {
+      yield LoadingLocationError("Can not get location");
+    }
+  }
+
+  Stream<LocationState> mapGetHomeDataByLocationToState(
+      String token, Location location) async* {
+    yield LoadingLocation();
+
+    try {
+      HomePageData data = await repository.getHomePageData(
+          token: token,
+          address: location.address,
+          topRestaurantPage: 0,
+          foodCategoryPage: 0,
+          dblPage: 0,
+          adsPage: 0);
+
+      selectedLocation = location;
+      if (data is HomePageData) {
+        yield HomePageDataLoaded(data);
+      } else {
+        yield NoLocationsAvailable();
+      }
+    } catch (e) {
+      yield LoadingLocationError("Can not get location");
     }
   }
 }

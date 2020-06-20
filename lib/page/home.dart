@@ -7,10 +7,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/location/location_bloc.dart';
 import 'package:flyereats/bloc/location/location_event.dart';
 import 'package:flyereats/bloc/location/location_state.dart';
-import 'package:flyereats/bloc/restauranttop/bloc.dart';
+import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flyereats/model/home_page_data.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:flyereats/page/delivery_process_order_page.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
@@ -28,6 +29,7 @@ import 'package:flyereats/classes/example_model.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Home extends StatefulWidget {
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -38,9 +40,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
 
-  Location _selectedLocation;
-
-  RestaurantTopBloc _topRestaurantBloc;
+  HomePageData _homePageData;
 
   @override
   initState() {
@@ -56,14 +56,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
         .animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
-
-    _topRestaurantBloc = RestaurantTopBloc();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-    _topRestaurantBloc.close();
     super.dispose();
   }
 
@@ -83,7 +80,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         },
         child: BlocBuilder<LocationBloc, LocationState>(
           builder: (context, state) {
-            if (state is LocationSelected) {
+            if (state is HomePageDataLoaded) {
               return BottomAppBar(
                 elevation: 8,
                 clipBehavior: Clip.antiAlias,
@@ -132,7 +129,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         children: <Widget>[
           BlocBuilder<LocationBloc, LocationState>(
               condition: (oldState, state) {
-            if (state is LocationSelected ||
+            if (state is HomePageDataLoaded ||
                 state is NoLocationsAvailable ||
                 state is LoadingLocationError ||
                 state is LoadingLocation) {
@@ -141,13 +138,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               return false;
             }
           }, builder: (context, state) {
-            if (state is LocationSelected) {
+            if (state is HomePageDataLoaded) {
               return Positioned(
                 top: 0,
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: BannerListWidget(
-                    bannerList: ExampleModel.getBanners(),
+                    bannerList: _homePageData.promos,
                   ),
                 ),
               );
@@ -186,111 +183,108 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           }),
           Align(
             alignment: Alignment.topCenter,
-            child: BlocConsumer<LocationBloc, LocationState>(
-              buildWhen: (oldState, state) {
-                if (state is LoadingLocation ||
-                    state is LoadingLocationSuccess ||
-                    state is LoadingLocationError ||
-                    state is NoLocationsAvailable ||
-                    state is LocationSelected) {
-                  return true;
-                } else {
-                  return false;
-                }
-              },
-              listenWhen: (oldState, state) {
-                if (state is NoLocationsAvailable ||
-                    state is LoadingLocationError ||
-                    state is LoadingLocationSuccess ||
-                    state is LocationSelected) {
-                  return true;
-                } else {
-                  return false;
-                }
-              },
-              listener: (context, state) {
-                if (state is LoadingLocationError) {
-                  final snackBar = SnackBar(
-                    content: Text(state.message),
-                    duration: Duration(days: 365),
-                    action: SnackBarAction(
-                      label: "Retry",
-                      onPressed: () {
-                        BlocProvider.of<LocationBloc>(context)
-                            .add(GetCurrentLocation());
-                      },
-                    ),
-                  );
-                  Scaffold.of(context).showSnackBar(snackBar);
-                } else if (state is NoLocationsAvailable) {
-                  final snackBar = SnackBar(
-                    content: Text(state.message),
-                  );
-                  Scaffold.of(context).showSnackBar(snackBar);
-                } else if (state is LoadingLocationSuccess) {
-                  BlocProvider.of<LocationBloc>(context).add(
-                      GetLocationByLatLng(
-                          state.location.latitude, state.location.longitude));
-                } else if (state is LocationSelected) {
-                  _topRestaurantBloc
-                      .add(GetRestaurantTop(state.location.address));
-                }
-              },
-              builder: (context, state) {
-                String titleText = "Choose Location Here";
-                String leading;
-                bool isLoading = false;
-                bool isFlag = false;
-                if (state is LoadingLocationSuccess) {
-                  titleText = "Loading Location...";
-                  isLoading = true;
-                } else if (state is NoLocationsAvailable) {
-                  titleText = "No Locations Available";
-                  isLoading = false;
-                } else if (state is LoadingLocationError) {
-                  titleText = "Click Here to Choose Location";
-                  isLoading = false;
-                } else if (state is LocationSelected) {
-                  titleText = state.location.address;
-                  isLoading = false;
-                  switch (state.location.country) {
-                    case "101":
-                      leading = "assets/india_flag.svg";
-                      break;
-                    case "196":
-                      leading = "assets/singapore_flag.svg";
-                      break;
-                  }
-                  _selectedLocation = state.location;
-                  isFlag = true;
-                } else if (state is LoadingLocation) {
-                  titleText = "Loading Location...";
-                  isLoading = true;
-                }
+            child: BlocBuilder<LoginBloc, LoginState>(
+              builder: (context, loginState) {
+                return BlocConsumer<LocationBloc, LocationState>(
+                  buildWhen: (oldState, state) {
+                    if (state is LoadingLocation ||
+                        state is LoadingLocationSuccess ||
+                        state is LoadingLocationError ||
+                        state is NoLocationsAvailable ||
+                        state is HomePageDataLoaded) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  },
+                  listenWhen: (oldState, state) {
+                    if (state is NoLocationsAvailable ||
+                        state is LoadingLocationError ||
+                        state is LoadingLocationSuccess ||
+                        state is HomePageDataLoaded) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  },
+                  listener: (context, state) {
+                    if (state is LoadingLocationError) {
+                      final snackBar = SnackBar(
+                        content: Text(state.message),
+                        duration: Duration(days: 365),
+                        action: SnackBarAction(
+                          label: "Retry",
+                          onPressed: () {
+                            BlocProvider.of<LocationBloc>(context)
+                                .add(GetCurrentLocation(loginState.user.token));
+                          },
+                        ),
+                      );
+                      Scaffold.of(context).showSnackBar(snackBar);
+                    } else if (state is NoLocationsAvailable) {
+                      final snackBar = SnackBar(
+                        content: Text(state.message),
+                      );
+                      Scaffold.of(context).showSnackBar(snackBar);
+                    } else if (state is HomePageDataLoaded) {}
+                  },
+                  builder: (context, state) {
+                    String titleText = "Choose Location Here";
+                    String leading;
+                    bool isLoading = false;
+                    bool isFlag = false;
+                    if (state is LoadingLocationSuccess) {
+                      titleText = "Loading Location...";
+                      isLoading = true;
+                    } else if (state is NoLocationsAvailable) {
+                      titleText = "No Locations Available";
+                      isLoading = false;
+                    } else if (state is LoadingLocationError) {
+                      titleText = "Click Here to Choose Location";
+                      isLoading = false;
+                    } else if (state is HomePageDataLoaded) {
+                      titleText = state.data.location;
+                      isLoading = false;
+                      switch (state.data.countryId) {
+                        case "101":
+                          leading = "assets/india_flag.svg";
+                          break;
+                        case "196":
+                          leading = "assets/singapore_flag.svg";
+                          break;
+                      }
+                      _homePageData = state.data;
+                      isFlag = true;
+                    } else if (state is LoadingLocation) {
+                      titleText = "Loading Location...";
+                      isLoading = true;
+                    }
 
-                return Builder(
-                  builder: (context) {
-                    return CustomAppBar(
-                      leading: leading,
-                      isFlag: isFlag,
-                      drawer: "assets/drawer.svg",
-                      title: titleText,
-                      isLoading: isLoading,
-                      onTapTitle: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return SelectLocationPage();
-                        }));
-                      },
-                      onTapLeading: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return SelectLocationPage();
-                        }));
-                      },
-                      onTapDrawer: () {
-                        Scaffold.of(context).openEndDrawer();
-                        //Scaffold.of(context).openDrawer();
+                    return Builder(
+                      builder: (context) {
+                        return CustomAppBar(
+                          leading: leading,
+                          isFlag: isFlag,
+                          drawer: "assets/drawer.svg",
+                          title: titleText,
+                          isLoading: isLoading,
+                          onTapTitle: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return SelectLocationPage();
+                            }));
+                          },
+                          onTapLeading: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return SelectLocationPage();
+                            }));
+                          },
+                          onTapDrawer: () {
+                            Scaffold.of(context).openEndDrawer();
+                            //Scaffold.of(context).openDrawer();
+                          },
+                        );
                       },
                     );
                   },
@@ -304,7 +298,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   state is LoadingLocationSuccess ||
                   state is LoadingLocationError ||
                   state is NoLocationsAvailable ||
-                  state is LocationSelected) {
+                  state is HomePageDataLoaded) {
                 return true;
               } else {
                 return false;
@@ -317,7 +311,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 return Center(child: HomeErrorWidget("Can Not Get Location"));
               } else if (state is NoLocationsAvailable) {
                 return HomeErrorWidget("No Available Location");
-              } else if (state is LocationSelected) {
+              } else if (state is HomePageDataLoaded) {
                 return DraggableScrollableSheet(
                   initialChildSize: AppUtil.getDraggableHeight(context) /
                       AppUtil.getScreenHeight(context),
@@ -376,7 +370,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           image: "assets/allrestaurant.png",
                                           isExternalImage: false,
                                           title: "All Restaurants",
-                                          location: _selectedLocation,
+                                          location: Location(
+                                              address: _homePageData.location),
                                         );
                                       }));
                                     }
@@ -392,84 +387,64 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                       bottom: distanceSectionContent,
                                       top: 5),
                                   child: HomeActionWidget()),
-                              BlocProvider<RestaurantTopBloc>(
-                                create: (context) {
-                                  return _topRestaurantBloc;
-                                },
-                                child: BlocBuilder<RestaurantTopBloc,
-                                    RestaurantTopState>(
-                                  builder: (context, state) {
-                                    if (state is SuccessRestaurantTop) {
-                                      return Column(
-                                        children: <Widget>[
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal:
-                                                    horizontalPaddingDraggable),
-                                            margin: EdgeInsets.only(
-                                                bottom: distanceSectionContent - 10),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text(
-                                                  "Top Restaurants",
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.push(context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) {
-                                                      return RestaurantListPage(
-                                                        title:
-                                                            "Top Restaurants",
-                                                        isExternalImage: false,
-                                                        image:
-                                                            "assets/allrestaurant.png",
-                                                      );
-                                                    }));
-                                                  },
-                                                  child: Container(
-                                                    width: 70,
-                                                    height: 20,
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: Text(
-                                                      "See All",
-                                                      textAlign: TextAlign.end,
-                                                      style: TextStyle(
-                                                          color: primary3,
-                                                          fontSize: 14),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
+                              Column(
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: horizontalPaddingDraggable),
+                                    margin: EdgeInsets.only(
+                                        bottom: distanceSectionContent - 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "Top Restaurants",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return RestaurantListPage(
+                                                title: "Top Restaurants",
+                                                isExternalImage: false,
+                                                image:
+                                                    "assets/allrestaurant.png",
+                                              );
+                                            }));
+                                          },
+                                          child: Container(
+                                            width: 70,
+                                            height: 20,
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                              "See All",
+                                              textAlign: TextAlign.end,
+                                              style: TextStyle(
+                                                  color: primary3,
+                                                  fontSize: 14),
                                             ),
                                           ),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                                bottom: distanceBetweenSection -
-                                                    10),
-                                            height: 160,
-                                            child: RestaurantListWidget(
-                                              type: RestaurantViewType
-                                                  .topRestaurant,
-                                              restaurants: state.restaurants,
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    }
-                                    return Container();
-                                  },
-                                ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        bottom: distanceBetweenSection - 10),
+                                    height: 160,
+                                    child: RestaurantListWidget(
+                                      type: RestaurantViewType.topRestaurant,
+                                      restaurants: _homePageData.topRestaurants,
+                                    ),
+                                  ),
+                                ],
                               ),
                               Container(
                                 padding: EdgeInsets.symmetric(
@@ -498,7 +473,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                     ]),
                                 child: FoodCategoryListWidget(
                                   foodCategoryList:
-                                      ExampleModel.getFoodCategories(),
+                                      _homePageData.categories,
                                 ),
                               ),
                               Container(
@@ -545,11 +520,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
+                                margin: EdgeInsets.only(
+                                    bottom: distanceSectionContent - 10),
                                 height: 135,
                                 child: RestaurantListWidget(
                                   type: RestaurantViewType.orderAgainRestaurant,
-                                  restaurants: ExampleModel.getRestaurants(),
+                                  restaurants: _homePageData.orderAgainRestaurants,
                                   isExpand: true,
                                 ),
                               ),
@@ -583,7 +559,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                     bottom: distanceBetweenSection - 10),
                                 height: 140,
                                 child: PromoListWidget(
-                                  promoList: ExampleModel.getPromos(),
+                                  promoList: _homePageData.ads,
                                 ),
                               ),
                               Container(

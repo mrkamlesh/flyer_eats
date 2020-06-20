@@ -141,21 +141,21 @@ class ExampleModel {
 
   static List<FoodCategory> getFoodCategories() {
     List<FoodCategory> _listFoodCategory = [];
-    _listFoodCategory.add(FoodCategory("Pizza",
+    _listFoodCategory.add(FoodCategory("1", "Pizza",
         "https://www.biggerbolderbaking.com/wp-content/uploads/2019/07/15-Minute-Pizza-WS-Thumbnail.png"));
-    _listFoodCategory.add(FoodCategory("North Indian",
+    _listFoodCategory.add(FoodCategory("2", "North Indian",
         "https://restaurantindia.s3.ap-south-1.amazonaws.com/s3fs-public/content6079.jpg"));
-    _listFoodCategory.add(FoodCategory("South Indian",
+    _listFoodCategory.add(FoodCategory("3", "South Indian",
         "https://i.pinimg.com/originals/9b/58/33/9b58338873b60ec0d32cf74cf9ff8cc0.jpg"));
-    _listFoodCategory.add(FoodCategory("Thandoories",
+    _listFoodCategory.add(FoodCategory("4", "Thandoories",
         "https://tasteasianfood.com/wp-content/uploads/2019/11/Tandoori-chicken-featured-image.jpeg"));
-    _listFoodCategory.add(FoodCategory("Chinese",
+    _listFoodCategory.add(FoodCategory("5", "Chinese",
         "https://asset.kompas.com/crops/pvHZPuSw1hJ6b290QZjCMEQXQG4=/0x5:1750x1171/750x500/data/photo/2017/02/28/3675196636.jpg"));
-    _listFoodCategory.add(FoodCategory("Japanese",
+    _listFoodCategory.add(FoodCategory("6", "Japanese",
         "https://jpninfo.com/wp-content/uploads/2018/03/sushi-platter.jpg"));
-    _listFoodCategory.add(FoodCategory("Italian Cuisine",
+    _listFoodCategory.add(FoodCategory("7", "Italian Cuisine",
         "https://www.discoverparramatta.com/sites/discoverparra/files/styles/style_803x454/public/header-images/1362522%20Italian%20pasta%20.jpg?itok=3vq9422F"));
-    _listFoodCategory.add(FoodCategory("Snack",
+    _listFoodCategory.add(FoodCategory("8", "Snack",
         "https://www.sensoryvalue.com/wp-content/uploads/2018/04/24_04-768x512.png"));
     return _listFoodCategory;
   }

@@ -111,7 +111,7 @@ class AddressProvider {
 
   Future<dynamic> getAllAddress(String token) async {
     String url =
-        "${baseUrl}mobileapp/apinew/getAddressBook?json=true&client_token=$token&json=true&lang_id=en&lang=en&api_key=flyereats";
+        "${baseUrl}mobileapp/apiRest/getAddressBook?json=true&client_token=$token&json=true&lang_id=en&lang=en&api_key=flyereats";
     var responseJson;
     try {
       final response = await client.get(url);

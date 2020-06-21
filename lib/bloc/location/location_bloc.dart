@@ -115,7 +115,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       String token, double lat, double lng) async* {
     yield LoadingLocation();
     try {
-      HomePageData data = await repository.getHomePageData(
+      var data = await repository.getHomePageData(
           token: token,
           lat: lat,
           long: lng,
@@ -138,7 +138,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     yield LoadingLocation();
 
     try {
-      HomePageData data = await repository.getHomePageData(
+      var data = await repository.getHomePageData(
           token: token,
           address: location.address,
           topRestaurantPage: 0,

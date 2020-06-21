@@ -40,7 +40,7 @@ class Order {
       id: parsedJson['order_id'],
       title: parsedJson['title_new'],
       restaurant: Restaurant("", parsedJson['merchant_name'], "", "",
-          parsedJson['marchant_logo'], "", ""),
+          parsedJson['marchant_logo'], "", "", true),
       date: parsedJson['place_on'],
       status: parsedJson['status'],
       total: parsedJson['total'],

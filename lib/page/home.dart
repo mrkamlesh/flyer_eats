@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,10 +25,8 @@ import 'package:flyereats/widget/promo_list.dart';
 import 'package:flyereats/widget/restaurant_list.dart';
 import 'package:flyereats/widget/shop_category_list.dart';
 import 'package:flyereats/classes/example_model.dart';
-import 'package:shimmer/shimmer.dart';
 
 class Home extends StatefulWidget {
-
   @override
   _HomeState createState() => _HomeState();
 }
@@ -121,7 +118,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               );
             }
-            return Container();
+            return SizedBox(
+              height: 0,
+            );
           },
         ),
       ),
@@ -139,47 +138,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             }
           }, builder: (context, state) {
             if (state is HomePageDataLoaded) {
-              return Positioned(
-                top: 0,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: BannerListWidget(
-                    bannerList: _homePageData.promos,
+              _homePageData = state.data;
+              if (_homePageData.promos.isNotEmpty) {
+                return Positioned(
+                  top: 0,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: BannerListWidget(
+                      bannerList: _homePageData.promos,
+                    ),
                   ),
-                ),
-              );
-            } else if (state is NoLocationsAvailable ||
-                state is LoadingLocationError ||
-                state is LoadingLocation) {
-              return Container(
-                height: AppUtil.getScreenHeight(context) -
-                    AppUtil.getDraggableHeight(context) +
-                    100,
-                child: Stack(
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(color: Colors.black),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        child: FittedBox(
-                          fit: BoxFit.cover,
-                          child: Image.asset(
-                            "assets/flyereatslogo.png",
-                            alignment: Alignment.center,
-                            width: AppUtil.getScreenWidth(context) - 140,
-                            height:
-                                0.46 * (AppUtil.getScreenWidth(context) - 140),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
+                );
+              } else {
+                return DefaultBanner();
+              }
             }
-            return Container();
+            return DefaultBanner();
           }),
           Align(
             alignment: Alignment.topCenter,
@@ -246,12 +220,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       titleText = state.data.location;
                       isLoading = false;
                       switch (state.data.countryId) {
-                        case "101":
+                        case "IN":
                           leading = "assets/india_flag.svg";
                           break;
-                        case "196":
+                        case "SG":
                           leading = "assets/singapore_flag.svg";
                           break;
+                        default:
+                          leading = "";
                       }
                       _homePageData = state.data;
                       isFlag = true;
@@ -368,6 +344,43 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           MaterialPageRoute(builder: (context) {
                                         return RestaurantListPage(
                                           image: "assets/allrestaurant.png",
+                                          merchantType: MerchantType.restaurant,
+                                          isExternalImage: false,
+                                          title: "All Restaurants",
+                                          location: Location(
+                                              address: _homePageData.location),
+                                        );
+                                      }));
+                                    } else if (i == 1) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return RestaurantListPage(
+                                          image: "assets/allrestaurant.png",
+                                          merchantType: MerchantType.grocery,
+                                          isExternalImage: false,
+                                          title: "All Restaurants",
+                                          location: Location(
+                                              address: _homePageData.location),
+                                        );
+                                      }));
+                                    } else if (i == 2) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return RestaurantListPage(
+                                          image: "assets/allrestaurant.png",
+                                          merchantType: MerchantType.vegFruits,
+                                          isExternalImage: false,
+                                          title: "All Restaurants",
+                                          location: Location(
+                                              address: _homePageData.location),
+                                        );
+                                      }));
+                                    } else if (i == 3) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return RestaurantListPage(
+                                          image: "assets/allrestaurant.png",
+                                          merchantType: MerchantType.meat,
                                           isExternalImage: false,
                                           title: "All Restaurants",
                                           location: Location(
@@ -387,216 +400,459 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                       bottom: distanceSectionContent,
                                       top: 5),
                                   child: HomeActionWidget()),
-                              Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: horizontalPaddingDraggable),
-                                    margin: EdgeInsets.only(
-                                        bottom: distanceSectionContent - 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                              _homePageData.topRestaurants.isNotEmpty
+                                  ? Column(
                                       children: <Widget>[
-                                        Text(
-                                          "Top Restaurants",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(context,
-                                                MaterialPageRoute(
-                                                    builder: (context) {
-                                              return RestaurantListPage(
-                                                title: "Top Restaurants",
-                                                isExternalImage: false,
-                                                image:
-                                                    "assets/allrestaurant.png",
-                                              );
-                                            }));
-                                          },
-                                          child: Container(
-                                            width: 70,
-                                            height: 20,
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                              "See All",
-                                              textAlign: TextAlign.end,
-                                              style: TextStyle(
-                                                  color: primary3,
-                                                  fontSize: 14),
-                                            ),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                                  horizontalPaddingDraggable),
+                                          margin: EdgeInsets.only(
+                                              bottom:
+                                                  distanceSectionContent - 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                "Top Restaurants",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return RestaurantListPage(
+                                                      title: "Top Restaurants",
+                                                      location: Location(
+                                                          address: _homePageData
+                                                              .location),
+                                                      type: RestaurantListType
+                                                          .top,
+                                                      merchantType: MerchantType
+                                                          .restaurant,
+                                                      isExternalImage: false,
+                                                      image:
+                                                          "assets/allrestaurant.png",
+                                                    );
+                                                  }));
+                                                },
+                                                child: Container(
+                                                  width: 70,
+                                                  height: 20,
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text(
+                                                    "See All",
+                                                    textAlign: TextAlign.end,
+                                                    style: TextStyle(
+                                                        color: primary3,
+                                                        fontSize: 14),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                        )
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              bottom:
+                                                  distanceBetweenSection - 10),
+                                          height: 160,
+                                          child: RestaurantListWidget(
+                                            type: RestaurantViewType
+                                                .topRestaurant,
+                                            restaurants:
+                                                _homePageData.topRestaurants,
+                                          ),
+                                        ),
                                       ],
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: distanceSectionContent - 10),
                                     ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        bottom: distanceBetweenSection - 10),
-                                    height: 160,
-                                    child: RestaurantListWidget(
-                                      type: RestaurantViewType.topRestaurant,
-                                      restaurants: _homePageData.topRestaurants,
+                              _homePageData.categories.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                                  horizontalPaddingDraggable),
+                                          margin: EdgeInsets.only(
+                                              bottom:
+                                                  distanceSectionContent - 10),
+                                          child: Text(
+                                            "Food Categories",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              bottom:
+                                                  distanceBetweenSection - 10),
+                                          height: 130,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    offset: Offset(2, 2),
+                                                    color: Colors.black26,
+                                                    spreadRadius: 0,
+                                                    blurRadius: 5)
+                                              ]),
+                                          child: FoodCategoryListWidget(
+                                            onTap: (category) {
+                                              Navigator.push(context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) {
+                                                return RestaurantListPage(
+                                                  title: category.name,
+                                                  image: category.image,
+                                                  merchantType:
+                                                      MerchantType.restaurant,
+                                                  category: category.id,
+                                                  isExternalImage: true,
+                                                  location: Location(
+                                                      address: _homePageData
+                                                          .location),
+                                                );
+                                              }));
+                                            },
+                                            foodCategoryList:
+                                                _homePageData.categories,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: distanceBetweenSection - 10),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: horizontalPaddingDraggable),
-                                margin: EdgeInsets.only(
-                                    bottom: distanceSectionContent - 10),
-                                child: Text(
-                                  "Food Categories",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
+                              _homePageData.orderAgainRestaurants.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                                  horizontalPaddingDraggable),
+                                          margin: EdgeInsets.only(
+                                              bottom:
+                                                  distanceSectionContent - 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                "Order Again",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return RestaurantListPage(
+                                                      title: "Order Again",
+                                                      merchantType: MerchantType
+                                                          .restaurant,
+                                                      type: RestaurantListType
+                                                          .orderAgain,
+                                                      location: Location(
+                                                          address: _homePageData
+                                                              .location),
+                                                      isExternalImage: false,
+                                                      image:
+                                                          "assets/allrestaurant.png",
+                                                    );
+                                                  }));
+                                                },
+                                                child: Container(
+                                                  height: 20,
+                                                  width: 70,
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text(
+                                                    "See All",
+                                                    textAlign: TextAlign.end,
+                                                    style: TextStyle(
+                                                        color: primary3,
+                                                        fontSize: 14),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              bottom:
+                                                  distanceSectionContent - 10),
+                                          height: 135,
+                                          child: RestaurantListWidget(
+                                            type: RestaurantViewType
+                                                .orderAgainRestaurant,
+                                            restaurants: _homePageData
+                                                .orderAgainRestaurants,
+                                            isExpand: true,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: distanceSectionContent - 10),
+                                    ),
                               Container(
                                 margin: EdgeInsets.only(
                                     bottom: distanceBetweenSection - 10),
-                                height: 130,
+                                height: 0.20 * AppUtil.getScreenHeight(context),
                                 decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                          offset: Offset(2, 2),
-                                          color: Colors.black26,
-                                          spreadRadius: 0,
-                                          blurRadius: 5)
-                                    ]),
-                                child: FoodCategoryListWidget(
-                                  foodCategoryList:
-                                      _homePageData.categories,
+                                  color: Color(0xFFFFC94B),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 10,
+                                        spreadRadius: 5)
+                                  ],
                                 ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: horizontalPaddingDraggable),
-                                margin: EdgeInsets.only(
-                                    bottom: distanceSectionContent - 10),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                    Text(
-                                      "Order Again",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return RestaurantListPage(
-                                            title: "Order Again",
-                                            isExternalImage: false,
-                                            image: "assets/allrestaurant.png",
-                                          );
-                                        }));
-                                      },
-                                      child: Container(
-                                        height: 20,
-                                        width: 70,
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          "See All",
-                                          textAlign: TextAlign.end,
-                                          style: TextStyle(
-                                              color: primary3, fontSize: 14),
-                                        ),
+                                    Container(
+                                      width: 0.20 *
+                                              AppUtil.getScreenHeight(context) -
+                                          20,
+                                      height: 0.20 *
+                                              AppUtil.getScreenHeight(context) -
+                                          20,
+                                      margin: EdgeInsets.all(10),
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.3),
                                       ),
-                                    )
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          SvgPicture.asset(
+                                            "assets/order success icon 2.svg",
+                                            height: 60,
+                                            width: 60,
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            "Refer Now",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                        child: Container(
+                                      padding: EdgeInsets.all(15),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text(
+                                            "REFER A FRIEND AND EARN",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                "Get a coupon worth",
+                                                style: TextStyle(fontSize: 14),
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              SvgPicture.asset(
+                                                "assets/rupee.svg",
+                                              ),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                "100",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          FittedBox(
+                                            fit: BoxFit.none,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 3.5, horizontal: 5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                    "Use Referal Code: ",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    "HHHHHH",
+                                                    style: TextStyle(
+                                                      color: primary3,
+                                                      fontSize: 12,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ))
                                   ],
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    bottom: distanceSectionContent - 10),
-                                height: 135,
-                                child: RestaurantListWidget(
-                                  type: RestaurantViewType.orderAgainRestaurant,
-                                  restaurants: _homePageData.orderAgainRestaurants,
-                                  isExpand: true,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    bottom: distanceBetweenSection - 10),
-                                height: 120,
-                                width: AppUtil.getScreenWidth(context),
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      "https://cdn6.f-cdn.com/contestentries/1146228/26247298/59d210472a379_thumb900.jpg",
-                                  height: 130,
-                                  width: AppUtil.getScreenWidth(context),
-                                  fit: BoxFit.cover,
-                                  alignment: Alignment.center,
-                                  placeholder: (context, url) {
-                                    return Shimmer.fromColors(
-                                        child: Container(
-                                          height: 130,
-                                          width:
-                                              AppUtil.getScreenWidth(context),
-                                          color: Colors.black,
+                              _homePageData.ads.isNotEmpty
+                                  ? Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: distanceBetweenSection - 10),
+                                      height: 140,
+                                      child: PromoListWidget(
+                                        promoList: _homePageData.ads,
+                                      ),
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: distanceBetweenSection - 10),
+                                    ),
+                              _homePageData.dblRestaurants.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              "Top Restaurants",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return RestaurantListPage(
+                                                    title: "It's Dinner Time",
+                                                    merchantType:
+                                                        MerchantType.restaurant,
+                                                    location: Location(
+                                                        address: _homePageData
+                                                            .location),
+                                                    type:
+                                                        RestaurantListType.dbl,
+                                                    isExternalImage: false,
+                                                    image:
+                                                        "assets/allrestaurant.png",
+                                                  );
+                                                }));
+                                              },
+                                              child: Container(
+                                                width: 70,
+                                                height: 20,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  "See All",
+                                                  textAlign: TextAlign.end,
+                                                  style: TextStyle(
+                                                      color: primary3,
+                                                      fontSize: 14),
+                                                ),
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                        baseColor: Colors.grey[300],
-                                        highlightColor: Colors.grey[100]);
-                                  },
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    bottom: distanceBetweenSection - 10),
-                                height: 140,
-                                child: PromoListWidget(
-                                  promoList: _homePageData.ads,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: horizontalPaddingDraggable),
-                                margin: EdgeInsets.only(
-                                    bottom: distanceSectionContent - 10),
-                                child: Text(
-                                  "It's Dinner Time",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Container(
-                                height: 190,
-                                padding: EdgeInsets.only(
-                                    top: distanceSectionContent,
-                                    bottom: distanceSectionContent),
-                                margin: EdgeInsets.only(
-                                    bottom: distanceBetweenSection +
-                                        distanceSectionContent),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                          offset: Offset(2, 2),
-                                          color: Colors.black26,
-                                          spreadRadius: 0,
-                                          blurRadius: 5)
-                                    ]),
-                                alignment: Alignment.center,
-                                child: RestaurantListWidget(
-                                  type: RestaurantViewType.topRestaurant,
-                                  restaurants: ExampleModel.getRestaurants(),
-                                ),
-                              ),
+                                        Container(
+                                          height: 190,
+                                          padding: EdgeInsets.only(
+                                              top: distanceSectionContent,
+                                              bottom: distanceSectionContent),
+                                          margin: EdgeInsets.only(
+                                              bottom: distanceBetweenSection +
+                                                  distanceSectionContent),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    offset: Offset(2, 2),
+                                                    color: Colors.black26,
+                                                    spreadRadius: 0,
+                                                    blurRadius: 5)
+                                              ]),
+                                          alignment: Alignment.center,
+                                          child: RestaurantListWidget(
+                                            type: RestaurantViewType
+                                                .topRestaurant,
+                                            restaurants:
+                                                _homePageData.dblRestaurants,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: distanceBetweenSection +
+                                              distanceSectionContent),
+                                    ),
                             ],
                           ),
                         ));
@@ -783,31 +1039,34 @@ class HomeLoadingWidget extends StatelessWidget {
             color: Colors.transparent,
           ),
         ),
-        Container(
-          height: AppUtil.getDraggableHeight(context),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-          padding: EdgeInsets.only(
-              top: 20,
-              left: horizontalPaddingDraggable,
-              right: horizontalPaddingDraggable),
-          alignment: Alignment.center,
+        Expanded(
           child: Container(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SpinKitCircle(
-                    color: Colors.black38,
-                    size: 30,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text("Loading Locations..."),
-                ],
+            height: AppUtil.getDraggableHeight(context),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(32),
+                    topLeft: Radius.circular(32))),
+            padding: EdgeInsets.only(
+                top: 20,
+                left: horizontalPaddingDraggable,
+                right: horizontalPaddingDraggable),
+            alignment: Alignment.center,
+            child: Container(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SpinKitCircle(
+                      color: Colors.black38,
+                      size: 30,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text("Loading Locations..."),
+                  ],
+                ),
               ),
             ),
           ),
@@ -930,6 +1189,38 @@ class HomeErrorWidget extends StatelessWidget {
         }
         return SizedBox();
       },
+    );
+  }
+}
+
+class DefaultBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: AppUtil.getScreenHeight(context) -
+          AppUtil.getDraggableHeight(context) +
+          100,
+      child: Stack(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(color: Colors.black),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: Image.asset(
+                  "assets/flyereatslogo.png",
+                  alignment: Alignment.center,
+                  width: AppUtil.getScreenWidth(context) - 140,
+                  height: 0.46 * (AppUtil.getScreenWidth(context) - 140),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

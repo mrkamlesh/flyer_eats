@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/bloc/restaurantlist/restaurantlist_bloc.dart';
 import 'package:flyereats/bloc/restaurantlist/restaurantlist_event.dart';
 import 'package:flyereats/bloc/restaurantlist/restaurantlist_state.dart';
@@ -21,13 +22,19 @@ class RestaurantListPage extends StatefulWidget {
   final String image;
   final bool isExternalImage;
   final Location location;
+  final RestaurantListType type;
+  final MerchantType merchantType;
+  final String category;
 
   const RestaurantListPage(
       {Key key,
       this.title,
       this.image,
       this.isExternalImage = false,
-      this.location})
+      this.location,
+      this.type,
+      this.category,
+      this.merchantType})
       : super(key: key);
 
   @override
@@ -71,26 +78,23 @@ class _RestaurantListPageState extends State<RestaurantListPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<RestaurantListBloc>(
-      create: (context) {
-        return _bloc..add(GetFirstDataRestaurantList(widget.location.address));
-      },
-      child: Scaffold(
-        extendBody: true,
-        extendBodyBehindAppBar: true,
-        endDrawer: EndDrawer(),
-        bottomNavigationBar: AnimatedBuilder(
-          animation: _navBarAnimation,
-          builder: (context, child) {
-            return Transform.translate(
-              offset: _navBarAnimation.value,
-              child: child,
-            );
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, loginState) {
+        return BlocProvider<RestaurantListBloc>(
+          create: (context) {
+            return _bloc
+              ..add(GetFirstDataRestaurantList(
+                  loginState.user.token,
+                  widget.location.address,
+                  widget.merchantType,
+                  widget.type,
+                  widget.category));
           },
-          child: BottomAppBar(
-            elevation: 8,
-            clipBehavior: Clip.antiAlias,
-            child: AnimatedBuilder(
+          child: Scaffold(
+            extendBody: true,
+            extendBodyBehindAppBar: true,
+            endDrawer: EndDrawer(),
+            bottomNavigationBar: AnimatedBuilder(
               animation: _navBarAnimation,
               builder: (context, child) {
                 return Transform.translate(
@@ -98,175 +102,194 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                   child: child,
                 );
               },
-              child: CustomBottomNavBar(
-                animationDuration: Duration(milliseconds: 300),
-                items: [
-                  BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
-                  BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
-                  BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
-                  BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
-                ],
-                onItemSelected: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                selectedIndex: _currentIndex,
-                selectedColor: Colors.orange[700],
-                unselectedColor: Colors.black26,
-              ),
-            ),
-          ),
-        ),
-        body: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 0,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  width: AppUtil.getScreenWidth(context),
-                  height: AppUtil.getBannerHeight(context),
-                  child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: widget.isExternalImage
-                          ? CachedNetworkImage(
-                              imageUrl: widget.image,
-                              fit: BoxFit.cover,
-                              alignment: Alignment.center,
-                            )
-                          : Image.asset(
-                              widget.image,
-                              fit: BoxFit.cover,
-                              alignment: Alignment.center,
-                            )),
+              child: BottomAppBar(
+                elevation: 8,
+                clipBehavior: Clip.antiAlias,
+                child: AnimatedBuilder(
+                  animation: _navBarAnimation,
+                  builder: (context, child) {
+                    return Transform.translate(
+                      offset: _navBarAnimation.value,
+                      child: child,
+                    );
+                  },
+                  child: CustomBottomNavBar(
+                    animationDuration: Duration(milliseconds: 300),
+                    items: [
+                      BottomNavyBarItem(
+                          icon: "assets/2.svg", title: "Flyer Eats"),
+                      BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
+                      BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
+                      BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
+                    ],
+                    onItemSelected: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    selectedIndex: _currentIndex,
+                    selectedColor: Colors.orange[700],
+                    unselectedColor: Colors.black26,
+                  ),
                 ),
               ),
             ),
-            Container(
-              decoration: BoxDecoration(color: Colors.black54),
-              width: AppUtil.getScreenWidth(context),
-              height: AppUtil.getBannerHeight(context),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Builder(
-                builder: (context) {
-                  return CustomAppBar(
-                    leading: "assets/back.svg",
-                    drawer: "assets/drawer.svg",
-                    title: widget.location.address,
-                    onTapLeading: () {
-                      Navigator.pop(context);
-                    },
-                    onTapDrawer: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                    backgroundColor: Colors.transparent,
-                  );
-                },
-              ),
-            ),
-            DraggableScrollableSheet(
-              initialChildSize: (AppUtil.getScreenHeight(context) -
-                      AppUtil.getToolbarHeight(context)) /
-                  AppUtil.getScreenHeight(context),
-              minChildSize: (AppUtil.getScreenHeight(context) -
-                      AppUtil.getToolbarHeight(context)) /
-                  AppUtil.getScreenHeight(context),
-              maxChildSize: 1.0,
-              builder: (context, controller) {
-                if (!controller.hasListeners) {
-                  controller.addListener(() {
-                    double maxScroll = controller.position.maxScrollExtent;
-                    double currentScroll = controller.position.pixels;
-
-                    if (currentScroll == maxScroll)
-                      _bloc.add(LoadMore(widget.location.address));
-
-                    if (controller.position.userScrollDirection ==
-                        ScrollDirection.reverse) {
-                      if (!_isScrollingDown) {
-                        _isScrollingDown = true;
-                        setState(() {
-                          _animationController.forward().orCancel;
-                        });
-                      }
-                    }
-                    if ((controller.position.userScrollDirection ==
-                            ScrollDirection.forward) |
-                        (controller.offset >=
-                                controller.position.maxScrollExtent -
-                                    kBottomNavigationBarHeight &&
-                            !controller.position.outOfRange)) {
-                      if (_isScrollingDown) {
-                        _isScrollingDown = false;
-                        setState(() {
-                          _animationController.reverse().orCancel;
-                        });
-                      }
-                    }
-                  });
-                }
-
-                return Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(32),
-                          topLeft: Radius.circular(32))),
-                  child: CustomScrollView(
-                    controller: controller,
-                    slivers: <Widget>[
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: ListRestaurantFilterWidget(
-                          onTap: _onTapFilter,
-                          title: widget.title,
-                          isListSelected: _isListMode,
-                          onListButtonTap: () {
-                            setState(
-                              () {
-                                if (!_isListMode) {
-                                  _isListMode = true;
-                                }
-                              },
-                            );
-                          },
-                          onGridButtonTap: () {
-                            setState(
-                              () {
-                                if (_isListMode) {
-                                  _isListMode = false;
-                                }
-                              },
-                            );
-                          },
-                          size: 27,
-                        ),
-                      ),
-                      BlocBuilder<RestaurantListBloc, RestaurantListState>(
-                        bloc: _bloc,
-                        builder: (c, s) {
-                          return RestaurantListWidget(
-                            restaurants: s.restaurants,
-                            location: widget.location,
-                            fade: 0.4,
-                            scale: 0.95,
-                            type: _isListMode
-                                ? RestaurantViewType.detailList
-                                : RestaurantViewType.detailGrid,
-                          );
-                        },
-                      ),
-                    ],
+            body: Stack(
+              children: <Widget>[
+                Positioned(
+                  top: 0,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: AppUtil.getScreenWidth(context),
+                      height: AppUtil.getBannerHeight(context),
+                      child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: widget.isExternalImage
+                              ? CachedNetworkImage(
+                                  imageUrl: widget.image,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.center,
+                                )
+                              : Image.asset(
+                                  widget.image,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.center,
+                                )),
+                    ),
                   ),
-                );
-              },
+                ),
+                Container(
+                  decoration: BoxDecoration(color: Colors.black54),
+                  width: AppUtil.getScreenWidth(context),
+                  height: AppUtil.getBannerHeight(context),
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Builder(
+                    builder: (context) {
+                      return CustomAppBar(
+                        leading: "assets/back.svg",
+                        drawer: "assets/drawer.svg",
+                        title: widget.location.address,
+                        onTapLeading: () {
+                          Navigator.pop(context);
+                        },
+                        onTapDrawer: () {
+                          Scaffold.of(context).openEndDrawer();
+                        },
+                        backgroundColor: Colors.transparent,
+                      );
+                    },
+                  ),
+                ),
+                DraggableScrollableSheet(
+                  initialChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
+                      AppUtil.getScreenHeight(context),
+                  minChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
+                      AppUtil.getScreenHeight(context),
+                  maxChildSize: 1.0,
+                  builder: (context, controller) {
+                    if (!controller.hasListeners) {
+                      controller.addListener(() {
+                        double maxScroll = controller.position.maxScrollExtent;
+                        double currentScroll = controller.position.pixels;
+
+                        if (currentScroll == maxScroll)
+                          _bloc.add(LoadMore(
+                              loginState.user.token,
+                              widget.location.address,
+                              widget.merchantType,
+                              widget.type,
+                              widget.category));
+
+                        if (controller.position.userScrollDirection ==
+                            ScrollDirection.reverse) {
+                          if (!_isScrollingDown) {
+                            _isScrollingDown = true;
+                            setState(() {
+                              _animationController.forward().orCancel;
+                            });
+                          }
+                        }
+                        if ((controller.position.userScrollDirection ==
+                                ScrollDirection.forward) |
+                            (controller.offset >=
+                                    controller.position.maxScrollExtent -
+                                        kBottomNavigationBarHeight &&
+                                !controller.position.outOfRange)) {
+                          if (_isScrollingDown) {
+                            _isScrollingDown = false;
+                            setState(() {
+                              _animationController.reverse().orCancel;
+                            });
+                          }
+                        }
+                      });
+                    }
+
+                    return Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(32),
+                              topLeft: Radius.circular(32))),
+                      child: CustomScrollView(
+                        controller: controller,
+                        slivers: <Widget>[
+                          SliverPersistentHeader(
+                            pinned: true,
+                            delegate: ListRestaurantFilterWidget(
+                              onTap: _onTapFilter,
+                              title: widget.title,
+                              isListSelected: _isListMode,
+                              onListButtonTap: () {
+                                setState(
+                                  () {
+                                    if (!_isListMode) {
+                                      _isListMode = true;
+                                    }
+                                  },
+                                );
+                              },
+                              onGridButtonTap: () {
+                                setState(
+                                  () {
+                                    if (_isListMode) {
+                                      _isListMode = false;
+                                    }
+                                  },
+                                );
+                              },
+                              size: 27,
+                            ),
+                          ),
+                          BlocBuilder<RestaurantListBloc, RestaurantListState>(
+                            bloc: _bloc,
+                            builder: (context, state) {
+                              return RestaurantListWidget(
+                                restaurants: state.restaurants,
+                                location: widget.location,
+                                fade: 0.4,
+                                scale: 0.95,
+                                type: _isListMode
+                                    ? RestaurantViewType.detailList
+                                    : RestaurantViewType.detailGrid,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -283,216 +306,249 @@ class _RestaurantListPageState extends State<RestaurantListPage>
             builder: (context, currentState) {
               return StatefulBuilder(
                 builder: (context, state) {
-                  return Stack(
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(32)),
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(
-                                left: horizontalPaddingDraggable,
-                                right: horizontalPaddingDraggable,
-                                top: 25,
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text(
-                                      "FILTERS (${currentState.selectedFilter.length})",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
+                  return BlocBuilder<LoginBloc, LoginState>(
+                    builder: (context, loginState) {
+                      return Stack(
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(32)),
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    left: horizontalPaddingDraggable,
+                                    right: horizontalPaddingDraggable,
+                                    top: 25,
                                   ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      _bloc.add(
-                                          ClearFilter(widget.location.address));
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(10),
-                                      child: Text(
-                                        "Clear Filter",
-                                        style: TextStyle(
-                                            color: primary3, fontSize: 14),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  GestureDetector(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child:
-                                          Container(child: Icon(Icons.clear))),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 15, bottom: 0),
-                              child: Divider(
-                                color: Colors.black12,
-                                endIndent: 0,
-                                indent: 0,
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Expanded(
-                                      flex: 3,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey[100]),
-                                        child: ListView(
-                                          children: <Widget>[
-                                            FilterItem(
-                                              text: "SORT",
-                                              index: 0,
-                                              selectedIndex: _selectedFilter,
-                                              onTap: () {
-                                                state(() {
-                                                  _selectedFilter = 0;
-                                                });
-                                              },
-                                            ),
-                                            FilterItem(
-                                              text: "CUISINES",
-                                              index: 1,
-                                              selectedIndex: _selectedFilter,
-                                              onTap: () {
-                                                state(() {
-                                                  _selectedFilter = 1;
-                                                });
-                                              },
-                                            ),
-                                            FilterItem(
-                                              text: "OTHERS",
-                                              index: 2,
-                                              selectedIndex: _selectedFilter,
-                                              onTap: () {
-                                                state(() {
-                                                  _selectedFilter = 2;
-                                                });
-                                              },
-                                            )
-                                          ],
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Text(
+                                          "FILTERS (${currentState.selectedFilter.length})",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 7,
-                                      child: Container(
-                                        padding: EdgeInsets.only(
-                                            left: horizontalPaddingDraggable,
-                                            right: horizontalPaddingDraggable,
-                                            bottom: horizontalPaddingDraggable),
-                                        child: IndexedStack(
-                                          index: _selectedFilter,
-                                          children: <Widget>[
-                                            ListView.builder(
-                                              itemBuilder: (context, i) {
-                                                return RadioListTile(
-                                                    controlAffinity:
-                                                        ListTileControlAffinity
-                                                            .leading,
-                                                    isThreeLine: false,
-                                                    dense: false,
-                                                    value: i,
-                                                    title: Text(currentState
-                                                        .sortBy[i].title),
-                                                    groupValue:
-                                                        _radioFilterGroup,
-                                                    onChanged: (value) {
-                                                      state(() {
-                                                        _radioFilterGroup = i;
-                                                      });
-                                                      _bloc.add(SelectSortBy(
-                                                          currentState
-                                                              .sortBy[i].key));
-                                                    });
-                                              },
-                                              itemCount:
-                                                  currentState.sortBy.length,
-                                            ),
-                                            ListView.builder(
-                                              itemBuilder: (context, i) {
-                                                bool value = false;
-                                                for (int j = 0;
-                                                    j <
-                                                        currentState
-                                                            .selectedFilter
-                                                            .length;
-                                                    j++) {
-                                                  if (currentState
-                                                          .filters[i].id ==
-                                                      currentState
-                                                          .selectedFilter[j]) {
-                                                    value = true;
-                                                    break;
-                                                  }
-                                                }
-
-                                                return CheckboxListTile(
-                                                  value: value,
-                                                  dense: false,
-                                                  controlAffinity:
-                                                      ListTileControlAffinity
-                                                          .leading,
-                                                  onChanged: (value) {
-                                                    if (value) {
-                                                      _bloc.add(AddFilter(
-                                                          currentState
-                                                              .filters[i].id));
-                                                    } else {
-                                                      _bloc.add(RemoveFilter(
-                                                          currentState
-                                                              .filters[i].id));
-                                                    }
-                                                  },
-                                                  isThreeLine: false,
-                                                  title: Text(currentState
-                                                      .filters[i].title),
-                                                );
-                                              },
-                                              itemCount:
-                                                  currentState.filters.length,
-                                            ),
-                                            Text("3"),
-                                          ],
+                                      GestureDetector(
+                                        onTap: () {
+                                          _bloc.add(ClearFilter(
+                                              loginState.user.token,
+                                              widget.location.address,
+                                              widget.merchantType,
+                                              widget.type,
+                                              widget.category));
+                                          Navigator.pop(context);
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(10),
+                                          child: Text(
+                                            "Clear Filter",
+                                            style: TextStyle(
+                                                color: primary3, fontSize: 14),
+                                          ),
                                         ),
                                       ),
-                                    )
-                                  ],
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      GestureDetector(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Container(
+                                              child: Icon(Icons.clear))),
+                                    ],
+                                  ),
                                 ),
+                                Container(
+                                  margin: EdgeInsets.only(top: 15, bottom: 0),
+                                  child: Divider(
+                                    color: Colors.black12,
+                                    endIndent: 0,
+                                    indent: 0,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex: 3,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey[100]),
+                                            child: ListView(
+                                              children: <Widget>[
+                                                FilterItem(
+                                                  text: "SORT",
+                                                  index: 0,
+                                                  selectedIndex:
+                                                      _selectedFilter,
+                                                  onTap: () {
+                                                    state(() {
+                                                      _selectedFilter = 0;
+                                                    });
+                                                  },
+                                                ),
+                                                currentState.filters.isNotEmpty
+                                                    ? FilterItem(
+                                                        text: "CUISINES",
+                                                        index: 1,
+                                                        selectedIndex:
+                                                            _selectedFilter,
+                                                        onTap: () {
+                                                          state(() {
+                                                            _selectedFilter = 1;
+                                                          });
+                                                        },
+                                                      )
+                                                    : Container(
+                                                        height: 0,
+                                                        width: 0,
+                                                      ),
+                                                /*FilterItem(
+                                                  text: "OTHERS",
+                                                  index: 2,
+                                                  selectedIndex:
+                                                      _selectedFilter,
+                                                  onTap: () {
+                                                    state(() {
+                                                      _selectedFilter = 2;
+                                                    });
+                                                  },
+                                                )*/
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 7,
+                                          child: Container(
+                                            padding: EdgeInsets.only(
+                                                left:
+                                                    horizontalPaddingDraggable,
+                                                right:
+                                                    horizontalPaddingDraggable,
+                                                bottom:
+                                                    horizontalPaddingDraggable),
+                                            child: IndexedStack(
+                                              index: _selectedFilter,
+                                              children: <Widget>[
+                                                ListView.builder(
+                                                  itemBuilder: (context, i) {
+                                                    return RadioListTile(
+                                                        controlAffinity:
+                                                            ListTileControlAffinity
+                                                                .leading,
+                                                        isThreeLine: false,
+                                                        dense: false,
+                                                        value: i,
+                                                        title: Text(currentState
+                                                            .sortBy[i].title),
+                                                        groupValue:
+                                                            _radioFilterGroup,
+                                                        onChanged: (value) {
+                                                          state(() {
+                                                            _radioFilterGroup =
+                                                                i;
+                                                          });
+                                                          _bloc.add(
+                                                              SelectSortBy(
+                                                                  currentState
+                                                                      .sortBy[i]
+                                                                      .key));
+                                                        });
+                                                  },
+                                                  itemCount: currentState
+                                                      .sortBy.length,
+                                                ),
+                                                ListView.builder(
+                                                  itemBuilder: (context, i) {
+                                                    bool value = false;
+                                                    for (int j = 0;
+                                                        j <
+                                                            currentState
+                                                                .selectedFilter
+                                                                .length;
+                                                        j++) {
+                                                      if (currentState
+                                                              .filters[i].id ==
+                                                          currentState
+                                                                  .selectedFilter[
+                                                              j]) {
+                                                        value = true;
+                                                        break;
+                                                      }
+                                                    }
+
+                                                    return CheckboxListTile(
+                                                      value: value,
+                                                      dense: false,
+                                                      controlAffinity:
+                                                          ListTileControlAffinity
+                                                              .leading,
+                                                      onChanged: (value) {
+                                                        if (value) {
+                                                          _bloc.add(AddFilter(
+                                                              currentState
+                                                                  .filters[i]
+                                                                  .id));
+                                                        } else {
+                                                          _bloc.add(
+                                                              RemoveFilter(
+                                                                  currentState
+                                                                      .filters[
+                                                                          i]
+                                                                      .id));
+                                                        }
+                                                      },
+                                                      isThreeLine: false,
+                                                      title: Text(currentState
+                                                          .filters[i].title),
+                                                    );
+                                                  },
+                                                  itemCount: currentState
+                                                      .filters.length,
+                                                ),
+                                                Text("3"),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: GestureDetector(
+                              onTap: () {
+                                _bloc.add(ApplyFilter(
+                                    loginState.user.token,
+                                    widget.location.address,
+                                    widget.merchantType,
+                                    widget.type,
+                                    widget.category));
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 10),
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(color: primary1),
+                                child: Text("APPLY FILTER"),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: GestureDetector(
-                          onTap: () {
-                            _bloc.add(ApplyFilter(widget.location.address));
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: 10),
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(color: primary1),
-                            child: Text("APPLY FILTER"),
-                          ),
-                        ),
-                      )
-                    ],
+                          )
+                        ],
+                      );
+                    },
                   );
                 },
               );
@@ -654,3 +710,7 @@ class FilterItem extends StatelessWidget {
     );
   }
 }
+
+enum RestaurantListType { top, dbl, orderAgain }
+
+enum MerchantType { restaurant, grocery, vegFruits, meat }

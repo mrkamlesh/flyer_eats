@@ -14,6 +14,7 @@ import 'package:flyereats/model/sort_by.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
 import 'package:flyereats/model/register_post.dart';
+import 'package:flyereats/page/restaurants_list_page.dart';
 
 class DataRepository {
   DataProvider _provider = DataProvider();
@@ -259,19 +260,6 @@ class DataRepository {
     }
   }
 
-  Future<List<Restaurant>> getRestaurantList(String address, int page) async {
-    final response = await _provider.getRestaurantList(address, page);
-    if (response['code'] == 1) {
-      var listLocations = response['details']['data'] as List;
-      List<Restaurant> restaurants = listLocations.map((i) {
-        return Restaurant.fromJson(i);
-      }).toList();
-      return restaurants;
-    } else {
-      return List();
-    }
-  }
-
   Future<DetailOrder> getDetailOrder(String orderId, String token) async {
     final response = await _provider.getOrderDetail(orderId, token);
     int i = 0;
@@ -285,14 +273,21 @@ class DataRepository {
     }*/
   }
 
-  Future<Map<String, dynamic>> getFirstDataRestaurantList(String address,
-      {String cuisineType, String sortBy}) async {
+  Future<Map<String, dynamic>> getFirstDataRestaurantList(
+      String token,
+      String address,
+      MerchantType merchantType,
+      RestaurantListType type,
+      String category,
+      {String cuisineType,
+      String sortBy}) async {
     Map<String, dynamic> map = Map();
 
-    final response = await _provider.getRestaurantList(address, 0,
+    final response = await _provider.getRestaurantList(
+        token, address, merchantType, type, category, 0,
         sortBy: sortBy, cuisineType: cuisineType);
     if (response['code'] == 1) {
-      var listLocations = response['details']['data'] as List;
+      var listLocations = response['details']['restaurants'] as List;
       List<Restaurant> restaurants = listLocations.map((i) {
         return Restaurant.fromJson(i);
       }).toList();
@@ -312,12 +307,16 @@ class DataRepository {
           title: listSortBY['sort_distance']['title']));
       map['sortBy'] = sortBy;
 
-      var listFilter = response['details']['filteroptions']['cuisine_type']
-          ['options'] as List;
-      List<Filter> filters = listFilter.map((i) {
-        return Filter.fromJson(i);
-      }).toList();
-      map['filters'] = filters;
+      if ((response['details']['filteroptions'] is Map)) {
+        var listFilter = response['details']['filteroptions']['cuisine_type']
+            ['options'] as List;
+        List<Filter> filters = listFilter.map((i) {
+          return Filter.fromJson(i);
+        }).toList();
+        map['filters'] = filters;
+      } else {
+        map['filters'] = List<Filter>();
+      }
 
       return map;
     } else {
@@ -325,10 +324,17 @@ class DataRepository {
     }
   }
 
-  Future<List<Restaurant>> getRestaurantTop(String address) async {
-    final response = await _provider.getRestaurantTop(address);
+  Future<List<Restaurant>> getRestaurantList(
+      String token,
+      String address,
+      MerchantType merchantType,
+      RestaurantListType type,
+      String category,
+      int page) async {
+    final response = await _provider.getRestaurantList(
+        token, address, merchantType, type, category, page);
     if (response['code'] == 1) {
-      var listLocations = response['details']['data'] as List;
+      var listLocations = response['details']['restaurants'] as List;
       List<Restaurant> restaurants = listLocations.map((i) {
         return Restaurant.fromJson(i);
       }).toList();

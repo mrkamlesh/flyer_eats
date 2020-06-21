@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flyereats/page/restaurants_list_page.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -7,21 +8,31 @@ abstract class RestaurantListEvent extends Equatable {
 }
 
 class GetFirstDataRestaurantList extends RestaurantListEvent {
+  final String token;
   final String address;
+  final MerchantType merchantType;
+  final RestaurantListType type;
+  final String category;
 
-  const GetFirstDataRestaurantList(this.address);
+  const GetFirstDataRestaurantList(
+      this.token, this.address, this.merchantType, this.type, this.category);
 
   @override
-  List<Object> get props => [address];
+  List<Object> get props => [token, address, merchantType, type, category];
 }
 
 class LoadMore extends RestaurantListEvent {
+  final String token;
   final String address;
+  final MerchantType merchantType;
+  final RestaurantListType type;
+  final String category;
 
-  const LoadMore(this.address);
+  const LoadMore(
+      this.token, this.address, this.merchantType, this.type, this.category);
 
   @override
-  List<Object> get props => [address];
+  List<Object> get props => [token, address, merchantType, type, category];
 }
 
 class SelectSortBy extends RestaurantListEvent {
@@ -52,19 +63,29 @@ class RemoveFilter extends RestaurantListEvent {
 }
 
 class ApplyFilter extends RestaurantListEvent {
+  final String token;
   final String address;
+  final MerchantType merchantType;
+  final RestaurantListType type;
+  final String category;
 
-  const ApplyFilter(this.address);
+  const ApplyFilter(
+      this.token, this.address, this.merchantType, this.type, this.category);
 
   @override
-  List<Object> get props => [address];
+  List<Object> get props => [token, address, merchantType, type, category];
 }
 
 class ClearFilter extends RestaurantListEvent {
+  final String token;
   final String address;
+  final MerchantType merchantType;
+  final RestaurantListType type;
+  final String category;
 
-  const ClearFilter(this.address);
+  const ClearFilter(
+      this.token, this.address, this.merchantType, this.type, this.category);
 
   @override
-  List<Object> get props => [address];
+  List<Object> get props => [token, address, merchantType, type, category];
 }

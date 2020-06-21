@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flyereats/classes/app_exceptions.dart';
 import 'package:flyereats/model/place_order.dart';
+import 'package:flyereats/page/restaurants_list_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -306,7 +307,7 @@ class DataProvider {
 
   Future<dynamic> getOrderDetail(String orderId, String token) async {
     String url =
-        "${productionServerUrl}mobileapp/apinew/getReceipt?json=true&order_id=$orderId"
+        "${developmentServerUrl}mobileapp/apinew/getReceipt?json=true&order_id=$orderId"
         "&api_key=flyereats&client_token=$token";
 
     var responseJson;
@@ -336,7 +337,7 @@ class DataProvider {
 
   Future<dynamic> getOrderHistory(String token) async {
     String url =
-        "${productionServerUrl}mobileapp/apiRest/getOrderHistory?json=true&api_key=flyereats";
+        "${developmentServerUrl}mobileapp/apiRest/getOrderHistory?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -506,36 +507,70 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getRestaurantList(String address, int page,
-      {String cuisineType, String sortBy}) async {
-    String addressUrl = Uri.encodeComponent(address);
-    String cuisineTypeParam =
-        cuisineType != null ? "&cuisine_type=$cuisineType" : "";
-    String sortByParam = sortBy != null ? "&sortby=$sortBy" : "";
+  Future<dynamic> getRestaurantList(
+      String token,
+      String address,
+      MerchantType merchantType,
+      RestaurantListType type,
+      String category,
+      int page,
+      {String cuisineType,
+      String sortBy}) async {
     String url =
-        "${productionServerUrl}mobileapp/apinew/search?json=true&cusinetype=food&page=$page&isgetoffer=1&address=$addressUrl&api_key=flyereats$cuisineTypeParam$sortByParam";
+        "${developmentServerUrl}mobileapp/apiRest/restaurantList?json=true&api_key=flyereats";
+
+    String merchantTypeParams;
+    if (merchantType == MerchantType.restaurant) {
+      merchantTypeParams = "food";
+    } else if (merchantType == MerchantType.grocery) {
+      merchantTypeParams = "grocery";
+    } else if (merchantType == MerchantType.vegFruits) {
+      merchantTypeParams = "fruits";
+    } else if (merchantType == MerchantType.meat) {
+      merchantTypeParams = "meat";
+    }
+
+    Map<String, dynamic> formData = {
+      "client_token": token,
+      "address": address,
+      "page": page.toString(),
+      "merchant_type": merchantTypeParams,
+    };
+
+    if (type != null) {
+      if (type == RestaurantListType.top) {
+        formData['type'] = "sponsored";
+      } else if (type == RestaurantListType.dbl) {
+        formData['type'] = "time";
+      } else if (type == RestaurantListType.orderAgain) {
+        formData['type'] = "previous";
+      }
+    }
+
+    if (sortBy != null) {
+      formData['sortby'] = sortBy;
+    }
+
+    if (cuisineType != null) {
+      formData['cuisinetype'] = cuisineType;
+    }
+
+    if (category != null) {
+      formData['food_category_id'] = category;
+    }
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await http.post(
+        url,
+        body: formData,
+      );
+
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
-    return responseJson;
-  }
 
-  Future<dynamic> getRestaurantTop(String address) async {
-    String addressUrl = Uri.encodeComponent(address);
-    String url =
-        "${productionServerUrl}mobileapp/apinew/GetTopMerchentList?json=true&address=$addressUrl&api_key=flyereats";
-    var responseJson;
-    try {
-      final response = await client.get(url);
-      responseJson = _returnResponse(response);
-    } on SocketException {
-      throw FetchDataException('No Internet connection');
-    }
     return responseJson;
   }
 
@@ -554,7 +589,7 @@ class DataProvider {
 
   Future<dynamic> getFoods(String restaurantId, String categoryId) async {
     String url =
-        "${productionServerUrl}mobileapp/apinew/getItem?json=true&api_key=flyereats&merchant_id=$restaurantId&cat_id=$categoryId";
+        "${productionServerUrl}mobileapp/apiRest/getItem?json=true&api_key=flyereats&merchant_id=$restaurantId&cat_id=$categoryId";
     var responseJson;
     try {
       final response = await client.get(url);

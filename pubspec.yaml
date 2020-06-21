@@ -117,6 +117,8 @@ flutter:
     - assets/coming soon 2.svg
     - assets/ordersuccess icon.png
     - assets/order success icon 2.svg
+    - assets/no food.svg
+    - assets/no merchant.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

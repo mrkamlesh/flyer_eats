@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flyereats/classes/example_model.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/widget/custom_bottom_navigation_bar.dart';
 import 'package:flyereats/widget/restaurant_list.dart';
@@ -161,7 +160,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 return CustomScrollView(
                   slivers: <Widget>[
                     RestaurantListWidget(
-                      restaurants: ExampleModel.getRestaurants(),
+                      restaurants: [],
                       fade: 0.4,
                       scale: 0.95,
                       type: RestaurantViewType.detailGrid,
@@ -175,7 +174,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 return CustomScrollView(
                   slivers: <Widget>[
                     RestaurantListWidget(
-                      restaurants: ExampleModel.getRestaurants(),
+                      restaurants: [],
                       fade: 0.4,
                       scale: 0.95,
                       type: RestaurantViewType.detailGrid,

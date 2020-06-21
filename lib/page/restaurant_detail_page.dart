@@ -470,7 +470,34 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                             }
                             if (state is NoFoodAvailable) {
                               return SliverToBoxAdapter(
-                                child: Text("No food avaliable"),
+                                child: Container(
+                                    padding: EdgeInsets.all(
+                                        horizontalPaddingDraggable),
+                                    child: Column(
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        SvgPicture.asset(
+                                          "assets/no food.svg",
+                                          height:
+                                              AppUtil.getScreenHeight(context) /
+                                                  5,
+                                          width:
+                                              AppUtil.getScreenHeight(context) /
+                                                  5,
+                                        ),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        Text(
+                                          "No Food Available",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      ],
+                                    )),
                               );
                             }
                             return FoodListWidget(

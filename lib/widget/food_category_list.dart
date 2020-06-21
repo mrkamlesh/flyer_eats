@@ -3,17 +3,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/food_category.dart';
-import 'package:flyereats/page/restaurants_list_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FoodCategoryListWidget extends StatefulWidget {
   final List<FoodCategory> foodCategoryList;
   final double scale;
+  final Function(FoodCategory) onTap;
 
   const FoodCategoryListWidget({
     Key key,
     this.foodCategoryList,
     this.scale = 0.9,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -36,7 +37,6 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
-
   }
 
   @override
@@ -65,8 +65,7 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
                             .reverse()
                             .orCancel
                             .whenComplete(() {
-                          _navigateToRestaurantList(
-                              widget.foodCategoryList[i - 1]);
+                          widget.onTap(widget.foodCategoryList[i - 1]);
                         });
                       });
                     });
@@ -76,16 +75,6 @@ class _FoodCategoryListWidgetState extends State<FoodCategoryListWidget>
                   scale: _scaleAnimation,
                 );
         });
-  }
-
-  void _navigateToRestaurantList(FoodCategory foodCategory) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return RestaurantListPage(
-        title: foodCategory.name,
-        image: foodCategory.image,
-        isExternalImage: true,
-      );
-    }));
   }
 }
 

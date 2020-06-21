@@ -3,7 +3,6 @@ import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/food_category.dart';
 import 'package:flyereats/model/promo.dart';
-import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/shop_category.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/model/location.dart';
@@ -30,7 +29,7 @@ class ExampleModel {
     return _promos;
   }
 
-  static List<Restaurant> getRestaurants() {
+/*  static List<Restaurant> getRestaurants() {
     List<Restaurant> _topRestaurants = [];
     _topRestaurants.add(Restaurant(
         "1",
@@ -126,7 +125,7 @@ class ExampleModel {
       "Pollachi",
     ));
     return _topRestaurants;
-  }
+  }*/
 
   static List<ShopCategory> getShopCategories() {
     List<ShopCategory> _listShopCategory = [];

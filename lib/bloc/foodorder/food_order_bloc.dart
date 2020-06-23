@@ -82,18 +82,22 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       Restaurant restaurant, FoodCart foodCart, User user) async* {
     yield FoodOrderState(
       placeOrder: PlaceOrder(
-        isValid: true,
-        restaurant: restaurant,
-        foodCart: foodCart,
-        user: user,
-        address: user.defaultAddress,
-        contact: user.phone,
-        transactionType: 'delivery',
-        deliveryInstruction: '',
-        deliveryCharges: 0,
-        voucher: Voucher(amount: 0),
-        paymentList: "",
-      ),
+          isValid: true,
+          restaurant: restaurant,
+          foodCart: foodCart,
+          user: user,
+          address: user.defaultAddress,
+          contact: user.phone,
+          transactionType: 'delivery',
+          deliveryInstruction: '',
+          deliveryCharges: 0,
+          voucher: Voucher(amount: 0),
+          paymentList: "",
+          discountOrder: 0,
+          discountOrderPrettyString: "DISCOUNT ORDER",
+          taxCharges: 0,
+          packagingCharges: 0,
+          taxPrettyString: "Tax"),
     );
 
     add(GetPaymentOptions(state.placeOrder));
@@ -119,6 +123,11 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
                 message: result.message,
                 razorKey: result.razorKey,
                 razorSecret: result.razorSecret,
+                taxCharges: result.taxCharges,
+                packagingCharges: result.packagingCharges,
+                taxPrettyString: result.taxPrettyString,
+                discountOrder: result.discountOrder,
+                discountPrettyString: result.discountOrderPrettyString,
                 deliveryCharges: result.deliveryCharges));
       } else {
         yield FoodOrderState(

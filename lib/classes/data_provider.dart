@@ -5,15 +5,12 @@ import 'package:flyereats/classes/app_exceptions.dart';
 import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flyereats/model/register_post.dart';
 
 class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
-
-  var client = http.Client();
 
   String developmentServerUrl = "https://www.pollachiarea.com/flyereats/";
   String productionServerUrl = "http://flyereats.in/";
@@ -28,9 +25,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -64,11 +61,9 @@ class DataProvider {
       }
     }
 
-    Dio dio = new Dio();
-
     var responseJson;
     try {
-      final response = await dio.post(url,
+      final response = await Dio().post(url,
           data: FormData.fromMap(formData),
           options: Options(contentType: 'JSON'));
 
@@ -107,9 +102,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -129,9 +124,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -152,9 +147,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -170,7 +165,7 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -223,11 +218,11 @@ class DataProvider {
         ;
 
     String url =
-        "${productionServerUrl}mobileapp/apinew/getPaymentOptions?json=true&$paramsUrl";
+        "${developmentServerUrl}mobileapp/apinew/getPaymentOptions?json=true&$paramsUrl";
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -293,11 +288,11 @@ class DataProvider {
         ;
 
     String url =
-        "${productionServerUrl}mobileapp/apinew/placeOrder?json=true&$paramsUrl";
+        "${developmentServerUrl}mobileapp/apinew/placeOrder?json=true&$paramsUrl";
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -307,27 +302,35 @@ class DataProvider {
 
   Future<dynamic> getOrderDetail(String orderId, String token) async {
     String url =
-        "${developmentServerUrl}mobileapp/apinew/getReceipt?json=true&order_id=$orderId"
-        "&api_key=flyereats&client_token=$token";
+        "${developmentServerUrl}mobileapp/apiRest/getReceipt?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "order_id": orderId,
+    };
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+
     return responseJson;
   }
 
   Future<dynamic> getPromos(String restaurantId, String token) async {
     String url =
-        "${productionServerUrl}mobileapp/apinew/loadPromos?json=true&merchant_id=$restaurantId"
+        "${developmentServerUrl}mobileapp/apinew/loadPromos?json=true&merchant_id=$restaurantId"
         "&api_key=flyereats&client_token=$token";
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -345,9 +348,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -387,9 +390,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -407,7 +410,7 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -417,13 +420,14 @@ class DataProvider {
 
   Future<dynamic> applyCoupon(String restaurantId, String voucherCode,
       double totalOrder, String token) async {
-    String url = "${productionServerUrl}mobileapp/apinew/applyVoucher?json=true"
+    String url =
+        "${developmentServerUrl}mobileapp/apinew/applyVoucher?json=true"
         "&merchant_id=$restaurantId&voucher_code=$voucherCode"
         "&cart_sub_total=$totalOrder&api_key=flyereats&client_token=$token";
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -455,9 +459,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -485,7 +489,7 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -499,7 +503,7 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -561,9 +565,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
 
       responseJson = _returnResponse(response);
@@ -576,10 +580,10 @@ class DataProvider {
 
   Future<dynamic> getCategory(String restaurantId) async {
     String url =
-        "${productionServerUrl}mobileapp/apinew/MenuCategory?json=true&merchant_id=$restaurantId&api_key=flyereats";
+        "${developmentServerUrl}mobileapp/apinew/MenuCategory?json=true&merchant_id=$restaurantId&api_key=flyereats";
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -589,14 +593,18 @@ class DataProvider {
 
   Future<dynamic> getFoods(String restaurantId, String categoryId) async {
     String url =
-        "${productionServerUrl}mobileapp/apiRest/getItem?json=true&api_key=flyereats&merchant_id=$restaurantId&cat_id=$categoryId";
+        "${developmentServerUrl}mobileapp/apiRest/getItem?json=true&api_key=flyereats&merchant_id=$restaurantId&cat_id=$categoryId&page=all";
+
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response =
+          await Dio().get(url, options: Options(contentType: 'JSON'));
+
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+
     return responseJson;
   }
 
@@ -604,11 +612,7 @@ class DataProvider {
     switch (response.statusCode) {
       case 200:
         var responseJson;
-        if (response is Response) {
-          responseJson = json.decode(response.data);
-        } else {
-          responseJson = json.decode(response.body.toString());
-        }
+        responseJson = json.decode(response.data);
         return responseJson;
       case 400:
         throw BadRequestException(response.body.toString());

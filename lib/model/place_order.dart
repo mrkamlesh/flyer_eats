@@ -22,6 +22,11 @@ class PlaceOrder {
   final String deliveryInstruction;
   final String contact;
   final double deliveryCharges;
+  final double packagingCharges;
+  final double taxCharges;
+  final String taxPrettyString;
+  final double discountOrder;
+  final String discountOrderPrettyString;
 
   PlaceOrder({
     this.id,
@@ -39,6 +44,11 @@ class PlaceOrder {
     this.deliveryInstruction,
     this.contact,
     this.deliveryCharges,
+    this.packagingCharges,
+    this.taxCharges,
+    this.taxPrettyString,
+    this.discountOrder,
+    this.discountOrderPrettyString,
   });
 
   PlaceOrder copyWith({
@@ -57,6 +67,11 @@ class PlaceOrder {
     String deliveryInstruction,
     String contact,
     double deliveryCharges,
+    double packagingCharges,
+    double taxCharges,
+    String taxPrettyString,
+    double discountOrder,
+    String discountPrettyString,
   }) {
     return PlaceOrder(
         id: id ?? this.id,
@@ -73,7 +88,13 @@ class PlaceOrder {
         razorKey: razorKey ?? this.razorKey,
         razorSecret: razorSecret ?? this.razorSecret,
         voucher: voucher ?? this.voucher,
-        deliveryCharges: deliveryCharges ?? this.deliveryCharges);
+        deliveryCharges: deliveryCharges ?? this.deliveryCharges,
+        packagingCharges: packagingCharges ?? this.packagingCharges,
+        taxCharges: taxCharges ?? this.taxCharges,
+        taxPrettyString: taxPrettyString ?? this.taxPrettyString,
+        discountOrder: discountOrder ?? this.discountOrder,
+        discountOrderPrettyString:
+            discountPrettyString ?? this.discountOrderPrettyString);
   }
 
   String cartToString() {
@@ -116,7 +137,7 @@ class PlaceOrder {
     return subTotal;
   }
 
-  double getDiscountTotal() {
+  double getDiscountFoodTotal() {
     double discountTotal = 0;
 
     foodCart.cart.forEach((key, item) {
@@ -139,8 +160,13 @@ class PlaceOrder {
   double getTotal() {
     double total = 0;
 
-    total =
-        getOrderTotal() - getDiscountTotal() + deliveryCharges - voucher.amount;
+    total = getOrderTotal() -
+        getDiscountFoodTotal() +
+        deliveryCharges +
+        packagingCharges +
+        taxCharges -
+        discountOrder -
+        voucher.amount;
 
     return total;
   }

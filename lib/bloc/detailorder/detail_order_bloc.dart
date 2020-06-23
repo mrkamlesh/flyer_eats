@@ -23,8 +23,12 @@ class DetailOrderBloc extends Bloc<DetailOrderEvent, DetailOrderState> {
       String orderId, String token) async* {
     yield LoadingDetailOrderState();
     try {
-      DetailOrder orderDetail = await repository.getDetailOrder(orderId, token);
-      yield SuccessDetailOrderState(orderDetail);
+      var result = await repository.getDetailOrder(orderId, token);
+      if (result is DetailOrder) {
+        yield SuccessDetailOrderState(result);
+      } else {
+        yield ErrorDetailOrderState(result as String);
+      }
     } catch (e) {
       yield ErrorDetailOrderState(e.toString());
     }

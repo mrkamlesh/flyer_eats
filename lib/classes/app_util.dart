@@ -58,6 +58,9 @@ class AppUtil {
   }
 
   static String doubleRemoveZeroTrailing(double value) {
-    return value.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+    return value
+        .toStringAsFixed(2)
+        .toString()
+        .replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
   }
 }

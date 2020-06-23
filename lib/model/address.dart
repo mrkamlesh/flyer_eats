@@ -65,8 +65,17 @@ class Address {
   }
 
   factory Address.fromJson(Map<String, dynamic> parsedJson) {
+    AddressType type;
+    if (parsedJson['type'] == "home") {
+      type = AddressType.home;
+    } else if (parsedJson['type'] == "office") {
+      type = AddressType.office;
+    } else {
+      type = AddressType.other;
+    }
+
     return Address(parsedJson['id'], parsedJson['location_name'],
-        parsedJson['address'], AddressType.home,
+        parsedJson['address'], type,
         city: parsedJson['city'],
         zipCode: parsedJson['zipcode'],
         state: parsedJson['state'],

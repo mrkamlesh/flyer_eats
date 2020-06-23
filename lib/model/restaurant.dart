@@ -25,7 +25,7 @@ class Restaurant {
         parsedJson['ratings']['ratings'].toString(),
         parsedJson['logo'],
         parsedJson['cuisine'],
-        "dssd",
+        parsedJson['address'],
         parsedJson['is_open'] == "open" ? true : false,
         discountTitle: offers.isNotEmpty ? offers[0] : null,
         discountDescription: offers.isNotEmpty ? offers[0] : null);

@@ -6,6 +6,7 @@ import 'package:flyereats/bloc/detailorder/bloc.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/order.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:shimmer/shimmer.dart';
@@ -118,7 +119,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                               alignment: Alignment.center,
                               child: Container(
                                 child: Center(
-                                  child: Text("Error Get Order History"),
+                                  child: Text(state.message),
                                 ),
                               ),
                             );
@@ -143,8 +144,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               child: CachedNetworkImage(
-                                                imageUrl: widget
-                                                    .order.restaurant.image,
+                                                imageUrl: state.detailOrder
+                                                    .restaurant.image,
                                                 height: 50,
                                                 width: 50,
                                                 fit: BoxFit.cover,
@@ -170,7 +171,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  widget.order.restaurant.name,
+                                                  state.detailOrder.restaurant
+                                                      .name,
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -183,8 +185,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                   height: 5,
                                                 ),
                                                 Text(
-                                                  widget
-                                                      .order.restaurant.address,
+                                                  state.detailOrder.restaurant
+                                                      .address,
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -207,20 +209,49 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                     ),
                                     Container(
                                       margin: EdgeInsets.only(bottom: 10),
-                                      child: Text(
-                                        widget.order.title,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Text(
+                                              "ORDER NO - " +
+                                                  state.detailOrder.id,
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.calendar_today,
+                                            size: 14,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            state.detailOrder.createdDate,
+                                            style: TextStyle(fontSize: 12),
+                                          )
+                                        ],
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(bottom: 10),
+                                      margin: EdgeInsets.only(bottom: 20),
                                       child: Divider(
                                         height: 0.5,
                                         color: Colors.black12,
                                       ),
                                     ),
+                                    Container(
+                                      margin: EdgeInsets.only(bottom: 15),
+                                      child: Text(
+                                        "Order Detail",
+                                        style: TextStyle(color: Colors.black45),
+                                      ),
+                                    ),
+                                    Column(
+                                      children: _foodCartWidgets(
+                                          state.detailOrder.foodCart),
+                                    )
                                   ],
                                 ),
                               ),
@@ -237,6 +268,75 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
           ),
         );
       },
+    );
+  }
+
+  List<Widget> _foodCartWidgets(FoodCart cart) {
+    List<Widget> widgets = List();
+
+    cart.cart.forEach((key, value) {
+      widgets.add(FoodCartItemWidget(
+        item: value,
+      ));
+    });
+
+    return widgets;
+  }
+
+  //List<Widget> _feeWidgets()
+}
+
+class FoodCartItemWidget extends StatelessWidget {
+  final FoodCartItem item;
+
+  const FoodCartItemWidget({Key key, this.item}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          item.food.category.name,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              flex: 7,
+              child: Text(
+                item.food.title +
+                    " ( " +
+                    item.quantity.toString() +
+                    " X \u20b9 " +
+                    item.food.price.toString() +
+                    " )",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
+            ),
+            Expanded(
+                flex: 3,
+                child: Text(
+                  "\u20b9 " + (item.quantity * item.food.price).toString(),
+                  textAlign: TextAlign.end,
+                ))
+          ],
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          margin: EdgeInsets.only(bottom: 10),
+          child: Divider(
+            height: 0.5,
+            color: Colors.black12,
+          ),
+        ),
+      ],
     );
   }
 }

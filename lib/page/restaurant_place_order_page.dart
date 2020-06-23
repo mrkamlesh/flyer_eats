@@ -469,14 +469,21 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                           .getOrderTotal()),
                                             ),
                                             OrderRowItem(
-                                              title: "TAX",
+                                              title: state
+                                                  .placeOrder.taxPrettyString,
                                               color: Colors.black,
-                                              amount: "0",
+                                              amount: AppUtil
+                                                  .doubleRemoveZeroTrailing(
+                                                      state.placeOrder
+                                                          .taxCharges),
                                             ),
                                             OrderRowItem(
                                               title: "PACKAGING",
                                               color: Colors.black,
-                                              amount: "0",
+                                              amount: AppUtil
+                                                  .doubleRemoveZeroTrailing(
+                                                      state.placeOrder
+                                                          .packagingCharges),
                                             ),
                                             OrderRowItem(
                                               title: "DELIVERY FEE",
@@ -487,12 +494,21 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                           .deliveryCharges),
                                             ),
                                             OrderRowItem(
-                                              title: "DISCOUNT",
+                                              title: "DISCOUNT FOOD",
+                                              color: Colors.green,
+                                              amount: AppUtil
+                                                  .doubleRemoveZeroTrailing(state
+                                                      .placeOrder
+                                                      .getDiscountFoodTotal()),
+                                            ),
+                                            OrderRowItem(
+                                              title: state.placeOrder
+                                                  .discountOrderPrettyString,
                                               color: Colors.green,
                                               amount: AppUtil
                                                   .doubleRemoveZeroTrailing(
                                                       state.placeOrder
-                                                          .getDiscountTotal()),
+                                                          .discountOrder),
                                             ),
                                             OrderRowItem(
                                               title: "OFFER/COUPON",
@@ -1508,7 +1524,12 @@ class _FoodListDeliveryInformationState
                                           child: CircularProgressIndicator()),
                                     );
                                   } else if (state is ErrorLoadingListAddress) {
-                                    return Text("Fail load addresses");
+                                    return Container(
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 20),
+                                        child: Center(
+                                            child:
+                                                Text("Fail load addresses")));
                                   }
                                   return Container();
                                 },

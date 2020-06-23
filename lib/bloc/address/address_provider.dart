@@ -2,13 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flyereats/classes/app_exceptions.dart';
 import 'package:flyereats/model/address.dart';
-import 'package:http/http.dart' as http;
 
 class AddressProvider {
-  var client = http.Client();
-
   /*String baseUrl = "http://flyereats.in/";*/
   String baseUrl = "https://www.pollachiarea.com/flyereats/";
 
@@ -18,7 +16,7 @@ class AddressProvider {
 
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -49,9 +47,9 @@ class AddressProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -85,9 +83,9 @@ class AddressProvider {
 
     var responseJson;
     try {
-      final response = await http.post(
+      final response = await Dio().post(
         url,
-        body: formData,
+        data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -101,7 +99,7 @@ class AddressProvider {
         "${baseUrl}mobileapp/apinew/getAddressBookDetails?json=true&client_token=$token&id=$id&lang_id=en&lang=en&api_key=flyereats";
     var responseJson;
     try {
-      final response = await client.get(url);
+      final response = await Dio().get(url);
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
@@ -111,21 +109,32 @@ class AddressProvider {
 
   Future<dynamic> getAllAddress(String token) async {
     String url =
-        "${baseUrl}mobileapp/apiRest/getAddressBook?json=true&client_token=$token&json=true&lang_id=en&lang=en&api_key=flyereats";
+        "${baseUrl}mobileapp/apiRest/getAddressBook?json=true&api_key=flyereats";
+
+    Map<String, dynamic> formData = {
+      "client_token": token,
+    };
+
     var responseJson;
     try {
-      final response = await client.get(url);
-      responseJson = _returnResponse(response);
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+
+      responseJson =   _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+
     return responseJson;
   }
 
-  dynamic _returnResponse(http.Response response) {
+  dynamic _returnResponse(var response) {
     switch (response.statusCode) {
       case 200:
-        var responseJson = json.decode(response.body.toString());
+        var responseJson;
+        responseJson = json.decode(response.data);
         return responseJson;
       case 400:
         throw BadRequestException(response.body.toString());

@@ -717,7 +717,9 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                       width: 5,
                                     ),
                                     Text(
-                                      restaurant.deliveryEstimation,
+                                      restaurant.deliveryEstimation != null
+                                          ? restaurant.deliveryEstimation
+                                          : "",
                                       style: TextStyle(
                                           fontSize: 12, color: Colors.black),
                                     ),

@@ -25,7 +25,7 @@ class AddressPage extends StatefulWidget {
 }
 
 class _AddressPageState extends State<AddressPage> {
-  List<bool> _selections = [true, false, false];
+  List<bool> _selections = [false, false, false];
 
   Completer<GoogleMapController> _controller = Completer();
 
@@ -40,6 +40,18 @@ class _AddressPageState extends State<AddressPage> {
   @override
   void initState() {
     super.initState();
+
+    switch (widget.address.type) {
+      case AddressType.home:
+        _toggle(0);
+        break;
+      case AddressType.office:
+        _toggle(1);
+        break;
+      default:
+        _toggle(2);
+        break;
+    }
   }
 
   @override

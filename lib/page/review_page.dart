@@ -82,7 +82,9 @@ class _ReviewPageState extends State<ReviewPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
                                   child: Container(
                                     height: kToolbarHeight,
                                     width: 28,

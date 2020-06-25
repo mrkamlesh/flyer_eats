@@ -15,3 +15,30 @@ class GetDetailOrder extends DetailOrderEvent {
   @override
   List<Object> get props => [token];
 }
+
+class UpdateReviewRating extends DetailOrderEvent {
+  final double rating;
+
+  UpdateReviewRating(this.rating);
+
+  @override
+  List<Object> get props => [rating];
+}
+
+class UpdateReviewComment extends DetailOrderEvent {
+  final String comment;
+
+  UpdateReviewComment(this.comment);
+
+  @override
+  List<Object> get props => [comment];
+}
+
+class AddReview extends DetailOrderEvent {
+  final String token;
+
+  AddReview(this.token);
+
+  @override
+  List<Object> get props => [token];
+}

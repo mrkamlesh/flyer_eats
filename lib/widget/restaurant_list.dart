@@ -978,6 +978,7 @@ class DinnerRestaurantHomeWidget extends StatelessWidget {
                   margin: EdgeInsets.all(10),
                   alignment: Alignment.centerLeft,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Container(
                         margin: EdgeInsets.only(bottom: 7),
@@ -1000,13 +1001,15 @@ class DinnerRestaurantHomeWidget extends StatelessWidget {
                                 SizedBox(
                                   width: 5,
                                 ),
-                                Text(
-                                  restaurant.discountDescription,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: primary3,
-                                    fontSize: 12,
+                                Expanded(
+                                  child: Text(
+                                    restaurant.discountDescription,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: primary3,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 )
                               ],

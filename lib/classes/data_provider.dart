@@ -449,6 +449,32 @@ class DataProvider {
     return responseJson;
   }*/
 
+  Future<dynamic> addReview(
+      String token, String orderId, String review, double rating) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/addReview?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "order_id": orderId,
+      "rating": rating.toString(),
+      "review": review,
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> checkTokenValid(String token) async {
     String url =
         "${developmentServerUrl}mobileapp/apiRest/check?json=true&api_key=flyereats";
@@ -588,6 +614,28 @@ class DataProvider {
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+    return responseJson;
+  }
+
+  Future<dynamic> getActiveOrder(String token) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getActiveOrder?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
     return responseJson;
   }
 

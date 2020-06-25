@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyereats/bloc/currentorder/current_order_bloc.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/page/home.dart';
@@ -27,6 +28,11 @@ class MyApp extends StatelessWidget {
           BlocProvider<LoginBloc>(
             create: (context) {
               return LoginBloc()..add(InitLoginEvent());
+            },
+          ),
+          BlocProvider<CurrentOrderBloc>(
+            create: (context) {
+              return CurrentOrderBloc();
             },
           )
         ],

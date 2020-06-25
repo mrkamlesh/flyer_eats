@@ -2,6 +2,7 @@ import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/menu_category.dart';
 import 'package:flyereats/model/restaurant.dart';
+import 'package:flyereats/model/status_order.dart';
 
 class DetailOrder {
   final String id;
@@ -12,14 +13,16 @@ class DetailOrder {
   final String transferDate;
   final String createdDate;
   final String deliveryDate;
+
   //final String deliveryTime;
   final String deliveryAddress;
   final String deliveryAddressName;
   final String deliveryContact;
   final String restaurantContactNumber;
-  final String status;
   final FoodCart foodCart;
-  final double total;
+
+  //this is field fee
+  final double grandTotal;
   final double subtotal;
   final double deliveryCharges;
   final double packagingFee;
@@ -27,10 +30,19 @@ class DetailOrder {
   final double discountOrder;
   final double discountFood;
   final double voucherAmount;
+  final double total;
+
+  //this is status field
+  final List<StatusOrder> statusHistory;
+  final StatusOrder currentStatus;
+
+  //review
+  final bool isReviewAdded;
 
   DetailOrder({
     this.id,
-    this.status,
+    this.total,
+    this.currentStatus,
     this.foodCart,
     this.username,
     this.restaurant,
@@ -44,7 +56,7 @@ class DetailOrder {
     this.deliveryContact,
     this.orderInstruction,
     this.restaurantContactNumber,
-    this.total,
+    this.grandTotal,
     this.subtotal,
     this.deliveryCharges,
     this.packagingFee,
@@ -52,23 +64,44 @@ class DetailOrder {
     this.discountOrder,
     this.discountFood,
     this.voucherAmount,
+    this.statusHistory,
+    this.isReviewAdded,
   });
+
+  StatusOrder getCurrentStatus(){
+    return statusHistory.last;
+  }
 
   factory DetailOrder.fromJson(Map<String, dynamic> parsedJson) {
     FoodCart foodCart = new FoodCart(Map<String, FoodCartItem>());
     var foodCartItemJson = parsedJson['html']['item'] as List;
     for (int i = 0; i < foodCartItemJson.length; i++) {
       foodCart.addFoodToCart(
-          foodCartItemJson[i]['item_id'],
+          foodCartItemJson[i]['item_id'] + i.toString(),
           Food(
               id: foodCartItemJson[i]['id'],
               title: foodCartItemJson[i]['item_name'],
               category: MenuCategory(foodCartItemJson[i]['category_id'],
                   foodCartItemJson[i]['category_name']),
+              discount:
+                  double.parse(foodCartItemJson[i]['discount'].toString()),
               price:
                   double.parse(foodCartItemJson[i]['normal_price'].toString())),
-          foodCartItemJson[i]['qty']);
+          int.parse(foodCartItemJson[i]['qty'].toString()));
     }
+
+    double discountTotal = 0;
+    double totalOrder = 0;
+    foodCart.cart.forEach((key, item) {
+      discountTotal = discountTotal + item.quantity * item.food.discount;
+      totalOrder = totalOrder + item.quantity * item.food.price;
+    });
+    double subTotalOrder = totalOrder - discountTotal;
+
+    var statusHistoryJson = parsedJson['order_history'] as List;
+    List<StatusOrder> statusHistory = statusHistoryJson.map((e) {
+      return StatusOrder.fromJson(e);
+    }).toList();
 
     return DetailOrder(
         id: parsedJson['order_id'],
@@ -93,7 +126,26 @@ class DetailOrder {
         deliveryDate: parsedJson['info']['Delivery Date'],
         //deliveryTime: parsedJson['info']['Delivery Time'],
         restaurantContactNumber: parsedJson['info']['Telephone'],
-        status: parsedJson['status_raw'],
-    );
+        currentStatus: StatusOrder(status: "On the way"),
+        grandTotal:
+            double.parse(parsedJson['html']['total']['total'].toString()),
+        tax: double.parse(
+            parsedJson['html']['total']['taxable_total'].toString()),
+        deliveryCharges: double.parse(
+            parsedJson['html']['total']['delivery_charges'].toString()),
+        packagingFee: double.parse(parsedJson['html']['total']
+                ['merchant_packaging_charge']
+            .toString()),
+        voucherAmount: double.parse(
+            parsedJson['html']['total']['voucher_amount'].toString()),
+        discountOrder: double.parse(
+            parsedJson['html']['total']['discounted_amount'].toString()),
+        discountFood: discountTotal,
+        subtotal: subTotalOrder,
+        total: totalOrder,
+        statusHistory: statusHistory,
+        isReviewAdded: parsedJson['is_rating_added']);
   }
+
+
 }

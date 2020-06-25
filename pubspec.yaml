@@ -119,6 +119,15 @@ flutter:
     - assets/order success icon 2.svg
     - assets/no food.svg
     - assets/no merchant.svg
+    - assets/add review icon.svg
+    - assets/delivered signature.svg
+    - assets/delivered signature.png
+    - assets/cancelled icon.svg
+    - assets/separator icon.svg
+    - assets/delivered icon.svg
+    - assets/on the way icon.svg
+    - assets/food preparing icon.svg
+    - assets/order placed icon.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

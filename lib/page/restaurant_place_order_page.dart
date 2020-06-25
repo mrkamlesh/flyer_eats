@@ -511,7 +511,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                           .discountOrder),
                                             ),
                                             OrderRowItem(
-                                              title: "OFFER/COUPON",
+                                              title: "COUPON/VOUCHER",
                                               color: Colors.green,
                                               amount: AppUtil
                                                   .doubleRemoveZeroTrailing(

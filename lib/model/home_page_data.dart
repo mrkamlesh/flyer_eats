@@ -31,7 +31,7 @@ class HomePageData {
 
     var listTopRestaurant = parsedJson['top_restaurants'] as List;
     List<Restaurant> top = listTopRestaurant.map((i) {
-      return Restaurant.fromJsonTopRestaurant(i);
+      return Restaurant.fromJson(i);
     }).toList();
 
     var listFoodCategories = parsedJson['foodCategories'] as List;
@@ -41,12 +41,12 @@ class HomePageData {
 
     var listDBLRestaurant = parsedJson['dblRestaurants'] as List;
     List<Restaurant> dblRestaurant = listDBLRestaurant.map((i) {
-      return Restaurant.fromJsonDblRestaurant(i);
+      return Restaurant.fromJson(i);
     }).toList();
 
     var listOrderAgainRestaurant = parsedJson['previousOrders'] as List;
     List<Restaurant> orderAgainRestaurant = listOrderAgainRestaurant.map((i) {
-      return Restaurant.fromJsonOrderAgain(i);
+      return Restaurant.fromJson(i);
     }).toList();
 
     var listAds = parsedJson['ads'] as List;

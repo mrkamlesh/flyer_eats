@@ -11,6 +11,7 @@ import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/review.dart';
 import 'package:flyereats/model/sort_by.dart';
+import 'package:flyereats/model/status_order.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
 import 'package:flyereats/model/register_post.dart';
@@ -201,6 +202,16 @@ class DataRepository {
     }
   }
 
+  Future<bool> addReview(
+      String token, String orderId, String review, double rating) async {
+    final response = await _provider.addReview(token, orderId, review, rating);
+    if (response['code'] == 1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<bool> saveToken(String token) async {
     await _provider.saveToken(token);
     return true;
@@ -386,5 +397,16 @@ class DataRepository {
     } else {
       return List();
     }
+  }
+
+  Future<StatusOrder> getActiveOrder(String token) async {
+
+    final response = await _provider.getActiveOrder(token);
+    if (response['code'] == 1) {
+      return StatusOrder();
+    } else {
+      return null;
+    }
+
   }
 }

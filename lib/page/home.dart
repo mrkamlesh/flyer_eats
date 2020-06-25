@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/currentorder/current_order_bloc.dart';
+import 'package:flyereats/bloc/currentorder/current_order_event.dart';
+import 'package:flyereats/bloc/currentorder/current_order_state.dart';
 import 'package:flyereats/bloc/location/location_bloc.dart';
 import 'package:flyereats/bloc/location/location_event.dart';
 import 'package:flyereats/bloc/location/location_state.dart';
@@ -36,8 +41,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool _isScrollingDown = false;
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
+  Animation<double> _orderInformationAnimation;
 
   HomePageData _homePageData;
+
+  Timer _timer;
 
   @override
   initState() {
@@ -53,11 +61,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
         .animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _orderInformationAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    //_timer.cancel();
     super.dispose();
   }
 
@@ -77,49 +92,52 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         },
         child: BlocBuilder<LocationBloc, LocationState>(
           builder: (context, state) {
-            if (state is HomePageDataLoaded) {
-              return BottomAppBar(
-                elevation: 8,
-                clipBehavior: Clip.antiAlias,
-                child: AnimatedBuilder(
-                  animation: _navBarAnimation,
-                  builder: (context, child) {
-                    return Transform.translate(
-                      offset: _navBarAnimation.value,
-                      child: child,
-                    );
-                  },
-                  child: CustomBottomNavBar(
-                    animationDuration: Duration(milliseconds: 300),
-                    items: [
-                      BottomNavyBarItem(
-                          icon: "assets/2.svg", title: "Flyer Eats"),
-                      BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
-                      BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
-                      BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
-                    ],
-                    onItemSelected: (index) {
-                      setState(() {
-                        _currentIndex = index;
-                        if (index == 2) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return SearchPage();
-                          }));
-                        } else if (index == 3) {
-                          Navigator.pushNamed(context, "/orderHistory");
-                        }
-                      });
-                    },
-                    selectedIndex: _currentIndex,
-                    selectedColor: Colors.orange[700],
-                    unselectedColor: Colors.black26,
-                  ),
-                ),
+            if (state is LoadingLocation ||
+                state is LoadingLocationSuccess ||
+                state is LoadingLocationError ||
+                state is NoLocationsAvailable) {
+              return SizedBox(
+                height: 0,
               );
             }
-            return SizedBox(
-              height: 0,
+            return BottomAppBar(
+              elevation: 8,
+              clipBehavior: Clip.antiAlias,
+              child: AnimatedBuilder(
+                animation: _navBarAnimation,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: _navBarAnimation.value,
+                    child: child,
+                  );
+                },
+                child: CustomBottomNavBar(
+                  animationDuration: Duration(milliseconds: 300),
+                  items: [
+                    BottomNavyBarItem(
+                        icon: "assets/2.svg", title: "Flyer Eats"),
+                    BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
+                    BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
+                    BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
+                  ],
+                  onItemSelected: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                      if (index == 2) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return SearchPage();
+                        }));
+                      } else if (index == 3) {
+                        Navigator.pushNamed(context, "/orderHistory");
+                      }
+                    });
+                  },
+                  selectedIndex: _currentIndex,
+                  selectedColor: Colors.orange[700],
+                  unselectedColor: Colors.black26,
+                ),
+              ),
             );
           },
         ),
@@ -159,6 +177,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             alignment: Alignment.topCenter,
             child: BlocBuilder<LoginBloc, LoginState>(
               builder: (context, loginState) {
+                BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(loginState.user.token));
                 return BlocConsumer<LocationBloc, LocationState>(
                   buildWhen: (oldState, state) {
                     if (state is LoadingLocation ||
@@ -463,7 +482,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                         Container(
                                           margin: EdgeInsets.only(
                                               bottom:
-                                                  distanceBetweenSection - 10),
+                                                  distanceBetweenSection - 20),
                                           height: 160,
                                           child: RestaurantListWidget(
                                             type: RestaurantViewType
@@ -612,6 +631,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                             restaurants: _homePageData
                                                 .orderAgainRestaurants,
                                             isExpand: true,
+                                            location: Location(
+                                                address: state.data.location),
                                           ),
                                         ),
                                       ],
@@ -769,84 +790,104 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           bottom: distanceBetweenSection - 10),
                                     ),
                               _homePageData.dblRestaurants.isNotEmpty
-                                  ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              "Top Restaurants",
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) {
-                                                  return RestaurantListPage(
-                                                    title: "It's Dinner Time",
-                                                    merchantType:
-                                                        MerchantType.restaurant,
-                                                    location: Location(
-                                                        address: _homePageData
-                                                            .location),
-                                                    type:
-                                                        RestaurantListType.dbl,
-                                                    isExternalImage: false,
-                                                    image:
-                                                        "assets/allrestaurant.png",
-                                                  );
-                                                }));
-                                              },
-                                              child: Container(
-                                                width: 70,
-                                                height: 20,
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Text(
-                                                  "See All",
-                                                  textAlign: TextAlign.end,
+                                  ? Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: distanceBetweenSection +
+                                              distanceSectionContent),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                bottom:
+                                                    distanceSectionContent - 10,
+                                                right:
+                                                    horizontalPaddingDraggable,
+                                                left:
+                                                    horizontalPaddingDraggable),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(
+                                                  "It's Dinner Time",
                                                   style: TextStyle(
-                                                      color: primary3,
-                                                      fontSize: 14),
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        Container(
-                                          height: 190,
-                                          padding: EdgeInsets.only(
-                                              top: distanceSectionContent,
-                                              bottom: distanceSectionContent),
-                                          margin: EdgeInsets.only(
-                                              bottom: distanceBetweenSection +
-                                                  distanceSectionContent),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    offset: Offset(2, 2),
-                                                    color: Colors.black26,
-                                                    spreadRadius: 0,
-                                                    blurRadius: 5)
-                                              ]),
-                                          alignment: Alignment.center,
-                                          child: RestaurantListWidget(
-                                            type: RestaurantViewType
-                                                .topRestaurant,
-                                            restaurants:
-                                                _homePageData.dblRestaurants,
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) {
+                                                      return RestaurantListPage(
+                                                        title:
+                                                            "It's Dinner Time",
+                                                        merchantType:
+                                                            MerchantType
+                                                                .restaurant,
+                                                        location: Location(
+                                                            address:
+                                                                _homePageData
+                                                                    .location),
+                                                        type: RestaurantListType
+                                                            .dbl,
+                                                        isExternalImage: false,
+                                                        image:
+                                                            "assets/allrestaurant.png",
+                                                      );
+                                                    }));
+                                                  },
+                                                  child: Container(
+                                                    width: 70,
+                                                    height: 20,
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: Text(
+                                                      "See All",
+                                                      textAlign: TextAlign.end,
+                                                      style: TextStyle(
+                                                          color: primary3,
+                                                          fontSize: 14),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                          Container(
+                                            height: 210,
+                                            padding: EdgeInsets.only(
+                                                top: distanceSectionContent,
+                                                bottom: distanceSectionContent),
+                                            margin: EdgeInsets.only(
+                                                bottom: distanceSectionContent),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      offset: Offset(2, 2),
+                                                      color: Colors.black26,
+                                                      spreadRadius: 0,
+                                                      blurRadius: 5)
+                                                ]),
+                                            alignment: Alignment.center,
+                                            child: RestaurantListWidget(
+                                              type: RestaurantViewType
+                                                  .dinnerTimeRestaurant,
+                                              restaurants:
+                                                  _homePageData.dblRestaurants,
+                                              location: Location(
+                                                  address: state.data.location),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     )
                                   : Container(
                                       margin: EdgeInsets.only(
@@ -861,7 +902,90 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               }
               return Container();
             },
-          )
+          ),
+          Positioned(
+            bottom: kBottomNavigationBarHeight,
+            child: BlocBuilder<CurrentOrderBloc, CurrentOrderState>(
+              builder: (context, state) {
+                if (state.statusOrder == null) {
+                  return SizedBox();
+                }
+                return AnimatedBuilder(
+                  animation: _orderInformationAnimation,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _orderInformationAnimation.value,
+                      child: child,
+                    );
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        height: 90,
+                        width: AppUtil.getScreenWidth(context),
+                        decoration:
+                            BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                        padding: EdgeInsets.only(top: 20, bottom: 20),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 40,
+                            ),
+                            SvgPicture.asset(
+                              state.statusOrder.getIconAssets(),
+                              width: 45,
+                              height: 45,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    "ORDER NO - 12345",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    height: 7,
+                                  ),
+                                  Text(
+                                    state.statusOrder.status,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                "Track Order",
+                                style: TextStyle(color: primary3),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                          padding: EdgeInsets.all(5),
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Icon(
+                              Icons.clear,
+                              color: Colors.white,
+                            ),
+                          ))
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

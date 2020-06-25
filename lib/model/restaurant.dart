@@ -16,7 +16,6 @@ class Restaurant {
 
   factory Restaurant.fromJson(Map<String, dynamic> parsedJson) {
     var offers = parsedJson['offers'] as List;
-    String s = offers.isNotEmpty ? offers[0] : null;
 
     return Restaurant(
         parsedJson['merchant_id'],

@@ -16,7 +16,7 @@ class PlaceOrder {
   final FoodCart foodCart;
   final Address address;
   final Voucher voucher;
-  final String paymentList;
+  final String paymentMethod;
   final String razorKey;
   final String razorSecret;
   final String deliveryInstruction;
@@ -27,6 +27,8 @@ class PlaceOrder {
   final String taxPrettyString;
   final double discountOrder;
   final String discountOrderPrettyString;
+  final bool isUseWallet;
+  final double walletAmount;
 
   PlaceOrder({
     this.id,
@@ -38,7 +40,7 @@ class PlaceOrder {
     this.foodCart,
     this.address,
     this.voucher,
-    this.paymentList,
+    this.paymentMethod,
     this.razorKey,
     this.razorSecret,
     this.deliveryInstruction,
@@ -49,7 +51,46 @@ class PlaceOrder {
     this.taxPrettyString,
     this.discountOrder,
     this.discountOrderPrettyString,
+    this.walletAmount,
+    this.isUseWallet,
   });
+
+  factory PlaceOrder.fromJson(Map<String, dynamic> parsedJson) {
+    return PlaceOrder(
+      isValid: true,
+      message: parsedJson['msg'],
+      discountOrder: (parsedJson['details']['cart'] as Map)
+              .containsKey('discount')
+          ? double.parse(
+              parsedJson['details']['cart']['discount']['amount'].toString())
+          : 0,
+      discountOrderPrettyString:
+          (parsedJson['details']['cart'] as Map).containsKey('discount')
+              ? parsedJson['details']['cart']['discount']['display'].toString()
+              : "DISCOUNT ORDER",
+      deliveryCharges:
+          (parsedJson['details']['cart'] as Map).containsKey('delivery_charges')
+              ? double.parse(parsedJson['details']['cart']['delivery_charges']
+                      ['amount']
+                  .toString())
+              : 0,
+      packagingCharges: (parsedJson['details']['cart'] as Map)
+              .containsKey('packaging')
+          ? double.parse(
+              parsedJson['details']['cart']['packaging']['amount'].toString())
+          : 0,
+      taxCharges: (parsedJson['details']['cart'] as Map).containsKey('tax')
+          ? double.parse(parsedJson['details']['cart']['tax']['tax'].toString())
+          : 0,
+      taxPrettyString: (parsedJson['details']['cart'] as Map).containsKey('tax')
+          ? parsedJson['details']['cart']['tax']['tax_pretty']
+          : "Tax",
+      razorKey: parsedJson['details']['razorpay']['razor_key'],
+      razorSecret: parsedJson['details']['razorpay']['razor_secret'],
+      walletAmount:
+          double.parse(parsedJson['details']['wallet_amount'].toString()),
+    );
+  }
 
   PlaceOrder copyWith({
     String id,
@@ -61,7 +102,7 @@ class PlaceOrder {
     FoodCart foodCart,
     Address address,
     Voucher voucher,
-    String paymentList,
+    String paymentMethod,
     String razorKey,
     String razorSecret,
     String deliveryInstruction,
@@ -72,6 +113,8 @@ class PlaceOrder {
     String taxPrettyString,
     double discountOrder,
     String discountPrettyString,
+    double walletAmount,
+    bool isUseWallet,
   }) {
     return PlaceOrder(
         id: id ?? this.id,
@@ -84,7 +127,7 @@ class PlaceOrder {
         contact: contact ?? this.contact,
         deliveryInstruction: deliveryInstruction ?? this.deliveryInstruction,
         foodCart: foodCart ?? this.foodCart,
-        paymentList: paymentList ?? this.paymentList,
+        paymentMethod: paymentMethod ?? this.paymentMethod,
         razorKey: razorKey ?? this.razorKey,
         razorSecret: razorSecret ?? this.razorSecret,
         voucher: voucher ?? this.voucher,
@@ -94,7 +137,9 @@ class PlaceOrder {
         taxPrettyString: taxPrettyString ?? this.taxPrettyString,
         discountOrder: discountOrder ?? this.discountOrder,
         discountOrderPrettyString:
-            discountPrettyString ?? this.discountOrderPrettyString);
+            discountPrettyString ?? this.discountOrderPrettyString,
+        walletAmount: walletAmount ?? this.walletAmount,
+        isUseWallet: isUseWallet ?? this.isUseWallet);
   }
 
   String cartToString() {

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flyereats/bloc/currentorder/current_order_bloc.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
+import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/page/home.dart';
 import 'package:flyereats/page/login/login_number_page.dart';
 import 'package:flyereats/page/order_history_page.dart';
@@ -18,6 +19,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppUtil.checkLocationServiceAndPermission();
+
     return MultiBlocProvider(
         providers: [
           BlocProvider<LocationBloc>(

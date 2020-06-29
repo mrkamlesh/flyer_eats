@@ -13,6 +13,7 @@ import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
+import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/voucher.dart';
 import 'package:flyereats/page/address_page.dart';
@@ -21,32 +22,34 @@ import 'package:flyereats/page/placed_order_success.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 
 class RestaurantPlaceOrderPage extends StatefulWidget {
   final Restaurant restaurant;
   final FoodCart foodCart;
 
-  const RestaurantPlaceOrderPage({Key key, this.restaurant, this.foodCart})
-      : super(key: key);
+  const RestaurantPlaceOrderPage({Key key, this.restaurant, this.foodCart}) : super(key: key);
 
   @override
-  _RestaurantPlaceOrderPageState createState() =>
-      _RestaurantPlaceOrderPageState();
+  _RestaurantPlaceOrderPageState createState() => _RestaurantPlaceOrderPageState();
 }
 
-class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
-    with SingleTickerProviderStateMixin {
-  bool _isUseWallet = false;
+class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> with SingleTickerProviderStateMixin {
   AddressBloc _addressBloc;
   FoodOrderBloc _foodOrderBloc;
-  String _paymentList = "";
+
+  Razorpay _razorpay;
 
   @override
   void initState() {
     super.initState();
     _addressBloc = AddressBloc(AddressRepository());
     _foodOrderBloc = FoodOrderBloc();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerPaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handlerExternalWallet);
   }
 
   @override
@@ -54,6 +57,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
     super.dispose();
     _addressBloc.close();
     _foodOrderBloc.close();
+    _razorpay.clear();
   }
 
   @override
@@ -64,9 +68,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
           providers: [
             BlocProvider<FoodOrderBloc>(
               create: (context) {
-                return _foodOrderBloc
-                  ..add(InitPlaceOrder(
-                      widget.restaurant, widget.foodCart, loginState.user));
+                return _foodOrderBloc..add(InitPlaceOrder(widget.restaurant, widget.foodCart, loginState.user));
               },
             ),
             BlocProvider<AddressBloc>(
@@ -82,8 +84,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                 if (state is InitialFoodOrderState) {
                   return Container();
                 } else if (state is NoItemsInCart) {
-                  return Container(
-                      child: Center(child: Text("No Items in cart")));
+                  return Container(child: Center(child: Text("No Items in cart")));
                 }
                 return Stack(
                   children: <Widget>[
@@ -119,8 +120,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                 leading: "assets/back.svg",
                                 title: widget.restaurant.name +
                                     " (" +
-                                    state.placeOrder.foodCart.cart.length
-                                        .toString() +
+                                    state.placeOrder.foodCart.cart.length.toString() +
                                     ")",
                                 onTapLeading: () {
                                   Navigator.pop(context);
@@ -133,20 +133,17 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                       ],
                     ),
                     DraggableScrollableSheet(
-                      initialChildSize: (AppUtil.getScreenHeight(context) -
-                              AppUtil.getToolbarHeight(context)) /
+                      initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                           AppUtil.getScreenHeight(context),
-                      minChildSize: (AppUtil.getScreenHeight(context) -
-                              AppUtil.getToolbarHeight(context)) /
+                      minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                           AppUtil.getScreenHeight(context),
                       maxChildSize: 1.0,
                       builder: (context, controller) {
                         return Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(32),
-                                  topLeft: Radius.circular(32))),
+                              borderRadius:
+                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                           child: CustomScrollView(
                             controller: controller,
                             slivers: <Widget>[
@@ -155,242 +152,6 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                 pinned: true,
                               ),
                               FoodListPlaceOrder(),
-                              SliverToBoxAdapter(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: horizontalPaddingDraggable,
-                                      horizontal: horizontalPaddingDraggable),
-                                  margin: EdgeInsets.only(
-                                      left: horizontalPaddingDraggable,
-                                      right: horizontalPaddingDraggable,
-                                      bottom: 20),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(18),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: shadow,
-                                        blurRadius: 7,
-                                        spreadRadius: -3,
-                                      )
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        "DELIVERY INSTRUCTION",
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Divider(
-                                        color: Colors.black12,
-                                      ),
-                                      TextField(
-                                        onChanged: (value) {
-                                          _foodOrderBloc
-                                              .add(ChangeInstruction(value));
-                                        },
-                                        maxLines: 2,
-                                        decoration: InputDecoration(
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 0, horizontal: 0),
-                                            hintText:
-                                                "Enter your instruction here",
-                                            hintStyle: TextStyle(fontSize: 12),
-                                            border: InputBorder.none),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: state.placeOrder.voucher.id == null
-                                    ? GestureDetector(
-                                        onTap: () async {
-                                          Voucher result = await Navigator.push(
-                                              context, MaterialPageRoute(
-                                                  builder: (context) {
-                                            return ApplyCouponPage(
-                                              restaurant: widget.restaurant,
-                                              totalOrder:
-                                                  state.placeOrder.getTotal(),
-                                            );
-                                          }));
-
-                                          _foodOrderBloc
-                                              .add(ApplyVoucher(result));
-                                        },
-                                        child: Container(
-                                          height: 55,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 17,
-                                              horizontal:
-                                                  horizontalPaddingDraggable),
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  horizontalPaddingDraggable),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: shadow,
-                                                blurRadius: 7,
-                                                spreadRadius: -3,
-                                              )
-                                            ],
-                                          ),
-                                          child: Row(
-                                            children: <Widget>[
-                                              SvgPicture.asset(
-                                                "assets/discount.svg",
-                                                height: 24,
-                                                width: 24,
-                                                color: Colors.black,
-                                              ),
-                                              SizedBox(
-                                                width: 17,
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  "APPLY COUPON",
-                                                  style:
-                                                      TextStyle(fontSize: 16),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : Container(
-                                        height: 55,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 17,
-                                            horizontal:
-                                                horizontalPaddingDraggable),
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal:
-                                                horizontalPaddingDraggable),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: shadow,
-                                              blurRadius: 7,
-                                              spreadRadius: -3,
-                                            )
-                                          ],
-                                        ),
-                                        child: Row(
-                                          children: <Widget>[
-                                            SvgPicture.asset(
-                                              "assets/check.svg",
-                                              height: 24,
-                                              width: 24,
-                                            ),
-                                            SizedBox(
-                                              width: 17,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                state.placeOrder.voucher.name,
-                                                style: TextStyle(fontSize: 16),
-                                              ),
-                                            ),
-                                            /*Row(
-                                        children: <Widget>[
-                                          SvgPicture.asset(
-                                            "assets/rupee.svg",
-                                            height: 12,
-                                            width: 12,
-                                          ),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            "30",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18),
-                                          )
-                                        ],
-                                      )*/
-                                          ],
-                                        ),
-                                      ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: Container(
-                                  height: 55,
-                                  margin: EdgeInsets.only(
-                                      top: 20,
-                                      left: horizontalPaddingDraggable,
-                                      right: horizontalPaddingDraggable),
-                                  padding: EdgeInsets.only(
-                                      top: 17, bottom: 17, left: 17, right: 17),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: shadow,
-                                        blurRadius: 7,
-                                        spreadRadius: -3,
-                                      )
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: <Widget>[
-                                      SizedBox(
-                                        width: 25,
-                                        child: Checkbox(
-                                            activeColor: Colors.green,
-                                            value: _isUseWallet,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _isUseWallet = value;
-                                              });
-                                            }),
-                                      ),
-                                      SizedBox(
-                                        width: 17,
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          "WALLET AMOUNT",
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          SvgPicture.asset(
-                                            "assets/rupee.svg",
-                                            height: 12,
-                                            width: 12,
-                                          ),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            "30",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
                               BlocBuilder<FoodOrderBloc, FoodOrderState>(
                                 bloc: _foodOrderBloc,
                                 builder: (context, state) {
@@ -401,11 +162,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                           top: 20,
                                           left: horizontalPaddingDraggable,
                                           right: horizontalPaddingDraggable,
-                                          bottom:
-                                              kBottomNavigationBarHeight + 160),
+                                          bottom: kBottomNavigationBarHeight + 160),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: <Widget>[
                                           Center(
                                             child: CircularProgressIndicator(),
@@ -418,7 +177,6 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                       ),
                                     ));
                                   }
-
                                   if (!state.placeOrder.isValid) {
                                     return SliverToBoxAdapter(
                                         child: Container(
@@ -426,115 +184,285 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                           top: 20,
                                           left: horizontalPaddingDraggable,
                                           right: horizontalPaddingDraggable,
-                                          bottom:
-                                              kBottomNavigationBarHeight + 160),
+                                          bottom: kBottomNavigationBarHeight + 160),
                                       child: Container(
                                         child: Text(state.placeOrder.message),
                                       ),
                                     ));
                                   } else {
                                     return SliverToBoxAdapter(
-                                      child: Container(
-                                        margin: EdgeInsets.only(
-                                            top: 20,
-                                            left: horizontalPaddingDraggable,
-                                            right: horizontalPaddingDraggable,
-                                            bottom: kBottomNavigationBarHeight +
-                                                160),
-                                        padding: EdgeInsets.only(
-                                            left: horizontalPaddingDraggable,
-                                            right: horizontalPaddingDraggable,
-                                            top: horizontalPaddingDraggable,
-                                            bottom: 7),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: shadow,
-                                              blurRadius: 7,
-                                              spreadRadius: -3,
-                                            )
-                                          ],
-                                        ),
-                                        child: Column(
-                                          children: <Widget>[
-                                            OrderRowItem(
-                                              title: "ORDER",
-                                              color: Colors.black,
-                                              amount: AppUtil
-                                                  .doubleRemoveZeroTrailing(
-                                                      state.placeOrder
-                                                          .getOrderTotal()),
+                                      child: Column(
+                                        children: <Widget>[
+                                          state.placeOrder.voucher.id == null
+                                              ? GestureDetector(
+                                                  onTap: () async {
+                                                    Voucher result = await Navigator.push(context,
+                                                        MaterialPageRoute(builder: (context) {
+                                                      return ApplyCouponPage(
+                                                        restaurant: widget.restaurant,
+                                                        totalOrder: state.placeOrder.getTotal(),
+                                                      );
+                                                    }));
+
+                                                    _foodOrderBloc.add(ApplyVoucher(result));
+                                                  },
+                                                  child: Container(
+                                                    height: 55,
+                                                    padding: EdgeInsets.symmetric(
+                                                        vertical: 17, horizontal: horizontalPaddingDraggable),
+                                                    margin:
+                                                        EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: shadow,
+                                                          blurRadius: 7,
+                                                          spreadRadius: -3,
+                                                        )
+                                                      ],
+                                                    ),
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        SvgPicture.asset(
+                                                          "assets/discount.svg",
+                                                          height: 24,
+                                                          width: 24,
+                                                          color: Colors.black,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 17,
+                                                        ),
+                                                        Expanded(
+                                                          child: Text(
+                                                            "APPLY COUPON",
+                                                            style: TextStyle(fontSize: 16),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  height: 55,
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 17, horizontal: horizontalPaddingDraggable),
+                                                  margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: shadow,
+                                                        blurRadius: 7,
+                                                        spreadRadius: -3,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      SvgPicture.asset(
+                                                        "assets/check.svg",
+                                                        height: 24,
+                                                        width: 24,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 17,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          state.placeOrder.voucher.name,
+                                                          style: TextStyle(fontSize: 16),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                          Container(
+                                            height: 55,
+                                            margin: EdgeInsets.only(
+                                                top: 20,
+                                                left: horizontalPaddingDraggable,
+                                                right: horizontalPaddingDraggable),
+                                            padding: EdgeInsets.only(top: 17, bottom: 17, left: 17, right: 17),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: shadow,
+                                                  blurRadius: 7,
+                                                  spreadRadius: -3,
+                                                )
+                                              ],
                                             ),
-                                            OrderRowItem(
-                                              title: state
-                                                  .placeOrder.taxPrettyString,
-                                              color: Colors.black,
-                                              amount: AppUtil
-                                                  .doubleRemoveZeroTrailing(
-                                                      state.placeOrder
-                                                          .taxCharges),
+                                            child: Row(
+                                              children: <Widget>[
+                                                SizedBox(
+                                                  width: 25,
+                                                  child: Checkbox(
+                                                      activeColor: Colors.green,
+                                                      value: state.placeOrder.isUseWallet,
+                                                      onChanged: (value) {
+                                                        _foodOrderBloc.add(ChangeWalletUsage(value));
+                                                      }),
+                                                ),
+                                                SizedBox(
+                                                  width: 17,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    "WALLET AMOUNT",
+                                                    style: TextStyle(fontSize: 16),
+                                                  ),
+                                                ),
+                                                Row(
+                                                  children: <Widget>[
+                                                    SvgPicture.asset(
+                                                      "assets/rupee.svg",
+                                                      height: 12,
+                                                      width: 12,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Text(
+                                                      AppUtil.doubleRemoveZeroTrailing(state.placeOrder.walletAmount),
+                                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
                                             ),
-                                            OrderRowItem(
-                                              title: "PACKAGING",
-                                              color: Colors.black,
-                                              amount: AppUtil
-                                                  .doubleRemoveZeroTrailing(
-                                                      state.placeOrder
-                                                          .packagingCharges),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                top: 20,
+                                                left: horizontalPaddingDraggable,
+                                                right: horizontalPaddingDraggable,
+                                                bottom: 20),
+                                            padding: EdgeInsets.only(
+                                                left: horizontalPaddingDraggable,
+                                                right: horizontalPaddingDraggable,
+                                                top: horizontalPaddingDraggable,
+                                                bottom: 7),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: shadow,
+                                                  blurRadius: 7,
+                                                  spreadRadius: -3,
+                                                )
+                                              ],
                                             ),
-                                            OrderRowItem(
-                                              title: "DELIVERY FEE",
-                                              color: Colors.black,
-                                              amount: AppUtil
-                                                  .doubleRemoveZeroTrailing(
-                                                      state.placeOrder
-                                                          .deliveryCharges),
+                                            child: Column(
+                                              children: <Widget>[
+                                                OrderRowItem(
+                                                  title: "ORDER",
+                                                  color: Colors.black,
+                                                  amount: AppUtil.doubleRemoveZeroTrailing(
+                                                      state.placeOrder.getOrderTotal()),
+                                                ),
+                                                OrderRowItem(
+                                                  title: state.placeOrder.taxPrettyString,
+                                                  color: Colors.black,
+                                                  amount: AppUtil.doubleRemoveZeroTrailing(state.placeOrder.taxCharges),
+                                                ),
+                                                OrderRowItem(
+                                                  title: "PACKAGING",
+                                                  color: Colors.black,
+                                                  amount: AppUtil.doubleRemoveZeroTrailing(
+                                                      state.placeOrder.packagingCharges),
+                                                ),
+                                                OrderRowItem(
+                                                  title: "DELIVERY FEE",
+                                                  color: Colors.black,
+                                                  amount: AppUtil.doubleRemoveZeroTrailing(
+                                                      state.placeOrder.deliveryCharges),
+                                                ),
+                                                OrderRowItem(
+                                                  title: "DISCOUNT FOOD",
+                                                  color: Colors.green,
+                                                  amount: AppUtil.doubleRemoveZeroTrailing(
+                                                      state.placeOrder.getDiscountFoodTotal()),
+                                                ),
+                                                OrderRowItem(
+                                                  title: state.placeOrder.discountOrderPrettyString,
+                                                  color: Colors.green,
+                                                  amount:
+                                                      AppUtil.doubleRemoveZeroTrailing(state.placeOrder.discountOrder),
+                                                ),
+                                                OrderRowItem(
+                                                  title: "COUPON/VOUCHER",
+                                                  color: Colors.green,
+                                                  amount:
+                                                      AppUtil.doubleRemoveZeroTrailing(state.placeOrder.voucher.amount),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(bottom: 13),
+                                                  child: Divider(
+                                                    height: 1,
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                                OrderRowItem(
+                                                    title: "TOTAL",
+                                                    color: Colors.black,
+                                                    amount:
+                                                        AppUtil.doubleRemoveZeroTrailing(state.placeOrder.getTotal())),
+                                              ],
                                             ),
-                                            OrderRowItem(
-                                              title: "DISCOUNT FOOD",
-                                              color: Colors.green,
-                                              amount: AppUtil
-                                                  .doubleRemoveZeroTrailing(state
-                                                      .placeOrder
-                                                      .getDiscountFoodTotal()),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: horizontalPaddingDraggable,
+                                                horizontal: horizontalPaddingDraggable),
+                                            margin: EdgeInsets.only(
+                                                left: horizontalPaddingDraggable,
+                                                right: horizontalPaddingDraggable,
+                                                bottom: kBottomNavigationBarHeight + 160),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(18),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: shadow,
+                                                  blurRadius: 7,
+                                                  spreadRadius: -3,
+                                                )
+                                              ],
                                             ),
-                                            OrderRowItem(
-                                              title: state.placeOrder
-                                                  .discountOrderPrettyString,
-                                              color: Colors.green,
-                                              amount: AppUtil
-                                                  .doubleRemoveZeroTrailing(
-                                                      state.placeOrder
-                                                          .discountOrder),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  "DELIVERY INSTRUCTION",
+                                                  style: TextStyle(fontSize: 16),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Divider(
+                                                  color: Colors.black12,
+                                                ),
+                                                TextField(
+                                                  onChanged: (value) {
+                                                    _foodOrderBloc.add(ChangeInstruction(value));
+                                                  },
+                                                  maxLines: 2,
+                                                  decoration: InputDecoration(
+                                                      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                                                      hintText: "Enter your instruction here",
+                                                      hintStyle: TextStyle(fontSize: 12),
+                                                      border: InputBorder.none),
+                                                ),
+                                              ],
                                             ),
-                                            OrderRowItem(
-                                              title: "COUPON/VOUCHER",
-                                              color: Colors.green,
-                                              amount: AppUtil
-                                                  .doubleRemoveZeroTrailing(
-                                                      state.placeOrder.voucher
-                                                          .amount),
-                                            ),
-                                            Container(
-                                              margin:
-                                                  EdgeInsets.only(bottom: 13),
-                                              child: Divider(
-                                                height: 1,
-                                                color: Colors.black54,
-                                              ),
-                                            ),
-                                            OrderRowItem(
-                                                title: "TOTAL",
-                                                color: Colors.black,
-                                                amount: AppUtil
-                                                    .doubleRemoveZeroTrailing(
-                                                        state.placeOrder
-                                                            .getTotal())),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     );
                                   }
@@ -555,8 +483,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                             foodOrderBloc: _foodOrderBloc,
                             addressBloc: _addressBloc,
                             contact: state.placeOrder.contact,
-                            deliveryEstimation:
-                                widget.restaurant.deliveryEstimation,
+                            deliveryEstimation: widget.restaurant.deliveryEstimation,
                           ),
                           OrderBottomNavBar(
                             isValid: state.placeOrder.isValid,
@@ -567,46 +494,32 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                         backgroundColor: Colors.white,
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(32),
-                                                topRight: Radius.circular(32))),
+                                                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
                                         builder: (context) {
                                           return StatefulBuilder(
                                             builder: (context, newState) {
                                               return Container(
                                                 margin: EdgeInsets.symmetric(
-                                                    vertical: 40,
-                                                    horizontal:
-                                                        horizontalPaddingDraggable -
-                                                            10),
+                                                    vertical: 40, horizontal: horizontalPaddingDraggable - 10),
                                                 decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(32),
-                                                    topRight:
-                                                        Radius.circular(32),
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(32),
+                                                    topRight: Radius.circular(32),
                                                   ),
                                                 ),
                                                 child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
+                                                  mainAxisSize: MainAxisSize.min,
                                                   children: <Widget>[
                                                     RadioListTile(
                                                       value: "rzr",
                                                       dense: true,
-                                                      groupValue: _paymentList,
+                                                      groupValue: state.placeOrder.paymentMethod,
                                                       onChanged: (value) {
-                                                        newState(() {
-                                                          _paymentList = value;
-                                                        });
-                                                        _foodOrderBloc.add(
-                                                            ChangePaymentList(
-                                                                value));
+                                                        _foodOrderBloc.add(ChangePaymentMethod(value));
+                                                        openCheckOut(state.placeOrder);
                                                         Navigator.pop(context);
                                                       },
-                                                      controlAffinity:
-                                                          ListTileControlAffinity
-                                                              .leading,
+                                                      controlAffinity: ListTileControlAffinity.leading,
                                                       isThreeLine: false,
                                                       title: Row(
                                                         children: <Widget>[
@@ -620,11 +533,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                           ),
                                                           Text(
                                                             "Online Payment",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 20),
+                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                                                           )
                                                         ],
                                                       ),
@@ -635,19 +544,13 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                     RadioListTile(
                                                       value: "cod",
                                                       dense: true,
-                                                      groupValue: _paymentList,
+                                                      groupValue: state.placeOrder.paymentMethod,
                                                       onChanged: (value) {
-                                                        newState(() {
-                                                          _paymentList = value;
-                                                        });
-                                                        _foodOrderBloc.add(
-                                                            ChangePaymentList(
-                                                                value));
+                                                        _foodOrderBloc.add(ChangePaymentMethod(value));
+                                                        _foodOrderBloc.add(PlaceOrderEvent());
                                                         Navigator.pop(context);
                                                       },
-                                                      controlAffinity:
-                                                          ListTileControlAffinity
-                                                              .leading,
+                                                      controlAffinity: ListTileControlAffinity.leading,
                                                       isThreeLine: false,
                                                       title: Row(
                                                         children: <Widget>[
@@ -661,11 +564,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                           ),
                                                           Text(
                                                             "Cash On Delivey",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 20),
+                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                                                           )
                                                         ],
                                                       ),
@@ -678,16 +577,12 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                         });
                                   }
                                 : () {},
-                            showRupee:
-                                (state is LoadingGetPayments) ? false : true,
+                            showRupee: (state is LoadingGetPayments) ? false : true,
                             amount: (state is LoadingGetPayments)
                                 ? "..."
-                                : AppUtil.doubleRemoveZeroTrailing(
-                                    state.placeOrder.getTotal()),
+                                : AppUtil.doubleRemoveZeroTrailing(state.placeOrder.getTotal()),
                             buttonText: "PLACE ORDER",
-                            description: (state is LoadingGetPayments)
-                                ? "Calculating..."
-                                : "Total Amount",
+                            description: (state is LoadingGetPayments) ? "Calculating..." : "Total Amount",
                           ),
                         ],
                       ),
@@ -695,9 +590,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                     BlocConsumer<FoodOrderBloc, FoodOrderState>(
                       listener: (context, state) {
                         if (state is SuccessPlaceOrder) {
-                          if (state.placeOrder.paymentList == "cod") {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
+                          if (state.placeOrder.paymentMethod == "cod") {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
                               return PlacedOrderSuccessPage(
                                 placeOrderId: state.placeOrder.id,
                               );
@@ -710,8 +604,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                 return AlertDialog(
                                   title: Text(
                                     "Place Order Error",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   content: Text(state.message),
                                   actions: <Widget>[
@@ -721,8 +614,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                       },
                                       child: Text(
                                         "OK",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],
@@ -733,8 +625,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                       builder: (context, state) {
                         if (state is LoadingPlaceOrder) {
                           return Container(
-                            decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.5)),
+                            decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
                             child: Center(
                               child: SpinKitCircle(
                                 color: Colors.white,
@@ -756,19 +647,69 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
       },
     );
   }
+
+  openCheckOut(PlaceOrder placeOrder) {
+    var options = {
+      "key": "rzp_test_shynWbWngI8JsA", // change to placeOrder.razorKey
+      "amount": (placeOrder.getTotal() * 100.0).ceil().toString(),
+      "name": "Flyer Eats",
+      "description": "Payment for Flyer Eats",
+      "prefill": {
+        "contact": placeOrder.contact,
+        "email": placeOrder.user.username,
+      },
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void handlerPaymentSuccess(PaymentSuccessResponse response) {
+    _foodOrderBloc.add(PlaceOrderEvent());
+  }
+
+  void handlerPaymentError(PaymentFailureResponse response) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              "Error",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              response.message,
+              style: TextStyle(color: Colors.black54),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("OK")),
+            ],
+          );
+        },
+        barrierDismissible: true);
+  }
+
+  void handlerExternalWallet(ExternalWalletResponse response) {
+
+  }
 }
 
 class DeliveryOptions extends SliverPersistentHeaderDelegate {
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return BlocBuilder<FoodOrderBloc, FoodOrderState>(
       builder: (context, state) {
         return Container(
           decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+              borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
           padding: EdgeInsets.only(
               top: 10 + MediaQuery.of(context).padding.top,
               right: horizontalPaddingDraggable,
@@ -779,14 +720,12 @@ class DeliveryOptions extends SliverPersistentHeaderDelegate {
               Expanded(
                 child: RadioCustom(
                   radio: Radio(
-                      visualDensity:
-                          VisualDensity(vertical: -4, horizontal: -4),
+                      visualDensity: VisualDensity(vertical: -4, horizontal: -4),
                       activeColor: Colors.green,
                       value: "delivery",
                       groupValue: state.placeOrder.transactionType,
                       onChanged: (value) {
-                        BlocProvider.of<FoodOrderBloc>(context)
-                            .add(ChangeTransactionType(value));
+                        BlocProvider.of<FoodOrderBloc>(context).add(ChangeTransactionType(value));
                       }),
                   icon: "assets/delivery.svg",
                   title: "Delivery",
@@ -796,14 +735,12 @@ class DeliveryOptions extends SliverPersistentHeaderDelegate {
               Expanded(
                 child: RadioCustom(
                   radio: Radio(
-                      visualDensity:
-                          VisualDensity(vertical: -4, horizontal: -4),
+                      visualDensity: VisualDensity(vertical: -4, horizontal: -4),
                       activeColor: Colors.green,
                       value: "self-pickup",
                       groupValue: state.placeOrder.transactionType,
                       onChanged: (value) {
-                        BlocProvider.of<FoodOrderBloc>(context)
-                            .add(ChangeTransactionType(value));
+                        BlocProvider.of<FoodOrderBloc>(context).add(ChangeTransactionType(value));
                       }),
                   icon: "assets/selfpickup.svg",
                   title: "Self Pickup",
@@ -835,8 +772,7 @@ class RadioCustom extends StatelessWidget {
   final String title;
   final String subtitle;
 
-  const RadioCustom({Key key, this.radio, this.icon, this.title, this.subtitle})
-      : super(key: key);
+  const RadioCustom({Key key, this.radio, this.icon, this.title, this.subtitle}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -862,8 +798,7 @@ class RadioCustom extends StatelessWidget {
                     Text(
                       title,
                       overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -890,8 +825,7 @@ class OrderRowItem extends StatelessWidget {
   final Color color;
   final String amount;
 
-  const OrderRowItem({Key key, this.title, this.color, this.amount})
-      : super(key: key);
+  const OrderRowItem({Key key, this.title, this.color, this.amount}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -915,8 +849,7 @@ class OrderRowItem extends StatelessWidget {
           ),
           Text(
             "$amount",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: color, fontSize: 16),
+            style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 16),
           ),
         ],
       ),
@@ -929,8 +862,7 @@ class FoodListPlaceOrder extends StatefulWidget {
   _FoodListPlaceOrderState createState() => _FoodListPlaceOrderState();
 }
 
-class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
-    with SingleTickerProviderStateMixin {
+class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTickerProviderStateMixin {
   int _selectedFood = -1;
   AnimationController _animationController;
   Animation<double> _scaleAnimation;
@@ -944,8 +876,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
       duration: itemClickedDuration,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _scaleAnimation =
+        Tween<double>(begin: 1.0, end: 0.9).animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
   }
 
   @override
@@ -953,14 +885,10 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
     return BlocBuilder<FoodOrderBloc, FoodOrderState>(
       builder: (context, state) {
         List<Food> foodList = List();
-        state.placeOrder.foodCart.cart
-            .forEach((id, food) => foodList.add(food.food));
+        state.placeOrder.foodCart.cart.forEach((id, food) => foodList.add(food.food));
         return SliverPadding(
           padding: EdgeInsets.only(
-              top: 20,
-              bottom: 10,
-              right: horizontalPaddingDraggable - 5,
-              left: horizontalPaddingDraggable - 5),
+              top: 20, bottom: 10, right: horizontalPaddingDraggable - 5, left: horizontalPaddingDraggable - 5),
           sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
             (context, i) {
@@ -976,13 +904,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                   });
                   _animationController.forward().orCancel.whenComplete(() {
                     _animationController.reverse().orCancel.whenComplete(() {
-                      BlocProvider.of<FoodOrderBloc>(context).add(
-                          ChangeQuantityFoodCart(
-                              foodList[i].id,
-                              foodList[i],
-                              (state.placeOrder.foodCart
-                                      .getQuantity(foodList[i].id) -
-                                  1)));
+                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityFoodCart(
+                          foodList[i].id, foodList[i], (state.placeOrder.foodCart.getQuantity(foodList[i].id) - 1)));
                     });
                   });
                 },
@@ -992,13 +915,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                   });
                   _animationController.forward().orCancel.whenComplete(() {
                     _animationController.reverse().orCancel.whenComplete(() {
-                      BlocProvider.of<FoodOrderBloc>(context).add(
-                          ChangeQuantityFoodCart(
-                              foodList[i].id,
-                              foodList[i],
-                              (state.placeOrder.foodCart
-                                      .getQuantity(foodList[i].id) +
-                                  1)));
+                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityFoodCart(
+                          foodList[i].id, foodList[i], (state.placeOrder.foodCart.getQuantity(foodList[i].id) + 1)));
                     });
                   });
                 },
@@ -1052,9 +970,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                       color: Colors.yellow[600],
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10))),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[Icon(Icons.add), Text("Add")],
@@ -1069,9 +985,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: Colors.yellow[600],
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10))),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[Icon(Icons.add), Text("Add")],
@@ -1084,8 +998,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
           color: Colors.yellow[600],
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -1094,22 +1007,16 @@ class FoodItemPlaceOrder extends StatelessWidget {
             onTap: onTapRemove,
             child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.yellow[700],
-                    borderRadius:
-                        BorderRadius.only(topLeft: Radius.circular(10))),
+                    color: Colors.yellow[700], borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
                 child: Icon(Icons.remove)),
           )),
-          Expanded(
-              child: Container(
-                  alignment: Alignment.center, child: Text("$quantity"))),
+          Expanded(child: Container(alignment: Alignment.center, child: Text("$quantity"))),
           Expanded(
               child: GestureDetector(
             onTap: onTapAdd,
             child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.yellow[700],
-                    borderRadius:
-                        BorderRadius.only(bottomRight: Radius.circular(10))),
+                    color: Colors.yellow[700], borderRadius: BorderRadius.only(bottomRight: Radius.circular(10))),
                 child: Icon(Icons.add)),
           ))
         ],
@@ -1186,8 +1093,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
                         food.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Container(
@@ -1223,9 +1129,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
                                     "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -1260,22 +1164,14 @@ class FoodListDeliveryInformation extends StatefulWidget {
   final FoodOrderBloc foodOrderBloc;
 
   const FoodListDeliveryInformation(
-      {Key key,
-      this.address,
-      this.token,
-      this.addressBloc,
-      this.foodOrderBloc,
-      this.contact,
-      this.deliveryEstimation})
+      {Key key, this.address, this.token, this.addressBloc, this.foodOrderBloc, this.contact, this.deliveryEstimation})
       : super(key: key);
 
   @override
-  _FoodListDeliveryInformationState createState() =>
-      _FoodListDeliveryInformationState();
+  _FoodListDeliveryInformationState createState() => _FoodListDeliveryInformationState();
 }
 
-class _FoodListDeliveryInformationState
-    extends State<FoodListDeliveryInformation> {
+class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformation> {
   int _countrySelected = 0;
   String contactPredicate = "+91";
 
@@ -1285,20 +1181,14 @@ class _FoodListDeliveryInformationState
         ? Container(
             height: 90,
             width: AppUtil.getScreenWidth(context),
-            padding: EdgeInsets.symmetric(
-                vertical: horizontalPaddingDraggable - 5,
-                horizontal: horizontalPaddingDraggable),
+            padding:
+                EdgeInsets.symmetric(vertical: horizontalPaddingDraggable - 5, horizontal: horizontalPaddingDraggable),
             decoration: BoxDecoration(color: Colors.white, boxShadow: [
-              BoxShadow(
-                  color: Colors.orange[100],
-                  blurRadius: 5,
-                  spreadRadius: 0,
-                  offset: Offset(0, -1)),
+              BoxShadow(color: Colors.orange[100], blurRadius: 5, spreadRadius: 0, offset: Offset(0, -1)),
             ]),
             child: GestureDetector(
               onTap: () async {
-                await Navigator.push(context,
-                    MaterialPageRoute(builder: (context) {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return AddressPage(
                     forcedDefault: true,
                   );
@@ -1326,10 +1216,7 @@ class _FoodListDeliveryInformationState
                       ),
                       Text(
                         "ADD NEW ADDRESS",
-                        style: TextStyle(
-                            color: Colors.orange,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
@@ -1340,15 +1227,10 @@ class _FoodListDeliveryInformationState
         : Container(
             height: 140,
             width: AppUtil.getScreenWidth(context),
-            padding: EdgeInsets.symmetric(
-                vertical: horizontalPaddingDraggable - 5,
-                horizontal: horizontalPaddingDraggable),
+            padding:
+                EdgeInsets.symmetric(vertical: horizontalPaddingDraggable - 5, horizontal: horizontalPaddingDraggable),
             decoration: BoxDecoration(color: Colors.white, boxShadow: [
-              BoxShadow(
-                  color: Colors.orange[100],
-                  blurRadius: 5,
-                  spreadRadius: 0,
-                  offset: Offset(0, -1)),
+              BoxShadow(color: Colors.orange[100], blurRadius: 5, spreadRadius: 0, offset: Offset(0, -1)),
             ]),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1361,23 +1243,19 @@ class _FoodListDeliveryInformationState
                     ),
                     Container(
                       padding: EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                          color: Colors.yellow[600],
-                          borderRadius: BorderRadius.circular(2)),
+                      decoration: BoxDecoration(color: Colors.yellow[600], borderRadius: BorderRadius.circular(2)),
                       child: Text(widget.address.title),
                     ),
                     Expanded(child: Container()),
                     GestureDetector(
                       onTap: () {
-                        BlocProvider.of<AddressBloc>(context)
-                            .add(OpenListAddress(widget.token));
+                        BlocProvider.of<AddressBloc>(context).add(OpenListAddress(widget.token));
 
                         showModalBottomSheet(
                             isScrollControlled: false,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(32),
-                                    topRight: Radius.circular(32))),
+                                borderRadius:
+                                    BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
                             context: context,
                             builder: (context) {
                               return BlocBuilder<AddressBloc, AddressState>(
@@ -1397,29 +1275,19 @@ class _FoodListDeliveryInformationState
                                       decoration: BoxDecoration(
                                           color: Colors.white,
                                           borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(32),
-                                              topRight: Radius.circular(32))),
+                                              topLeft: Radius.circular(32), topRight: Radius.circular(32))),
                                       child: Stack(
                                         children: <Widget>[
                                           SingleChildScrollView(
                                             child: Container(
                                               padding: EdgeInsets.only(
-                                                  left: 20,
-                                                  right: 20,
-                                                  bottom:
-                                                      kBottomNavigationBarHeight,
-                                                  top: 20),
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          32)),
+                                                  left: 20, right: 20, bottom: kBottomNavigationBarHeight, top: 20),
+                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
                                               child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: <Widget>[
                                                   Container(
-                                                    margin: EdgeInsets.only(
-                                                        bottom: 52),
+                                                    margin: EdgeInsets.only(bottom: 52),
                                                   ),
                                                   Container(
                                                     child: Column(
@@ -1434,27 +1302,15 @@ class _FoodListDeliveryInformationState
                                             top: 0,
                                             left: 0,
                                             child: Container(
-                                                width: AppUtil.getScreenWidth(
-                                                    context),
+                                                width: AppUtil.getScreenWidth(context),
                                                 decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                            topLeft: Radius
-                                                                .circular(32),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    32)),
+                                                    borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(32), topRight: Radius.circular(32)),
                                                     color: Colors.white),
-                                                padding: EdgeInsets.only(
-                                                    top: 20,
-                                                    left: 20,
-                                                    bottom: 20),
+                                                padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
                                                 child: Text(
                                                   "SELECT ADDRESS",
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                                 )),
                                           ),
                                           Positioned(
@@ -1462,31 +1318,22 @@ class _FoodListDeliveryInformationState
                                               child: GestureDetector(
                                                 onTap: () {
                                                   Navigator.pop(context);
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
                                                     return AddressPage();
                                                   }));
                                                 },
                                                 child: Container(
-                                                  width: AppUtil.getScreenWidth(
-                                                      context),
-                                                  height:
-                                                      kBottomNavigationBarHeight,
+                                                  width: AppUtil.getScreenWidth(context),
+                                                  height: kBottomNavigationBarHeight,
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
                                                   ),
                                                   child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
                                                     children: <Widget>[
                                                       Container(
-                                                        margin: EdgeInsets.only(
-                                                            right: 20),
+                                                        margin: EdgeInsets.only(right: 20),
                                                         child: Icon(
                                                           Icons.add,
                                                           size: 20,
@@ -1496,12 +1343,9 @@ class _FoodListDeliveryInformationState
                                                       Text(
                                                         "ADD NEW ADDRESS",
                                                         style: TextStyle(
-                                                            color:
-                                                                Colors.orange,
+                                                            color: Colors.orange,
                                                             fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                            fontWeight: FontWeight.bold),
                                                       )
                                                     ],
                                                   ),
@@ -1520,16 +1364,12 @@ class _FoodListDeliveryInformationState
                                     );
                                   } else if (state is LoadingListAddress) {
                                     return Container(
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
+                                      child: Center(child: CircularProgressIndicator()),
                                     );
                                   } else if (state is ErrorLoadingListAddress) {
                                     return Container(
-                                        margin:
-                                            EdgeInsets.symmetric(vertical: 20),
-                                        child: Center(
-                                            child:
-                                                Text("Fail load addresses")));
+                                        margin: EdgeInsets.symmetric(vertical: 20),
+                                        child: Center(child: Text("Fail load addresses")));
                                   }
                                   return Container();
                                 },
@@ -1557,8 +1397,7 @@ class _FoodListDeliveryInformationState
                         widget.address.address,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Expanded(
@@ -1582,16 +1421,10 @@ class _FoodListDeliveryInformationState
                   children: <Widget>[
                     Expanded(
                       child: RichText(
-                        text: TextSpan(
-                            text: "Contact Number: ",
-                            style: TextStyle(color: Colors.black),
-                            children: [
-                              TextSpan(
-                                  text: widget.contact,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black))
-                            ]),
+                        text: TextSpan(text: "Contact Number: ", style: TextStyle(color: Colors.black), children: [
+                          TextSpan(
+                              text: widget.contact, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black))
+                        ]),
                       ),
                     ),
                     GestureDetector(
@@ -1599,9 +1432,8 @@ class _FoodListDeliveryInformationState
                         showModalBottomSheet(
                             isScrollControlled: false,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(32),
-                                    topRight: Radius.circular(32))),
+                                borderRadius:
+                                    BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
                             context: context,
                             builder: (context) {
                               return Column(
@@ -1610,19 +1442,15 @@ class _FoodListDeliveryInformationState
                                       width: AppUtil.getScreenWidth(context),
                                       decoration: BoxDecoration(
                                           borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(32),
-                                              topRight: Radius.circular(32)),
+                                              topLeft: Radius.circular(32), topRight: Radius.circular(32)),
                                           color: Colors.white),
-                                      padding: EdgeInsets.only(
-                                          top: 20, left: 20, bottom: 20),
+                                      padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
                                       child: Row(
                                         children: <Widget>[
                                           Expanded(
                                             child: Text(
                                               "ENTER NUMBER",
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           IconButton(
@@ -1633,19 +1461,16 @@ class _FoodListDeliveryInformationState
                                         ],
                                       )),
                                   Container(
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: horizontalPaddingDraggable),
+                                    margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                            color: Colors.black12, width: 2)),
+                                        border: Border.all(color: Colors.black12, width: 2)),
                                     child: Row(
                                       children: <Widget>[
                                         Container(
                                           width: 100,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10),
+                                          padding: EdgeInsets.symmetric(horizontal: 10),
                                           child: DropdownButton<int>(
                                             underline: Container(),
                                             isExpanded: false,
@@ -1658,14 +1483,12 @@ class _FoodListDeliveryInformationState
                                                 child: Container(
                                                   width: 80,
                                                   child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
+                                                    mainAxisSize: MainAxisSize.min,
                                                     children: <Widget>[
                                                       Expanded(
                                                         child: Container(
                                                           height: 20,
-                                                          child: SvgPicture.asset(
-                                                              "assets/india_flag.svg"),
+                                                          child: SvgPicture.asset("assets/india_flag.svg"),
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -1674,11 +1497,7 @@ class _FoodListDeliveryInformationState
                                                       Expanded(
                                                         child: Text(
                                                           "+91",
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                                         ),
                                                       )
                                                     ],
@@ -1690,14 +1509,12 @@ class _FoodListDeliveryInformationState
                                                 child: Container(
                                                   width: 80,
                                                   child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
+                                                    mainAxisSize: MainAxisSize.min,
                                                     children: <Widget>[
                                                       Expanded(
                                                         child: Container(
                                                           height: 20,
-                                                          child: SvgPicture.asset(
-                                                              "assets/singapore_flag.svg"),
+                                                          child: SvgPicture.asset("assets/singapore_flag.svg"),
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -1706,11 +1523,7 @@ class _FoodListDeliveryInformationState
                                                       Expanded(
                                                         child: Text(
                                                           "+65",
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                                         ),
                                                       )
                                                     ],
@@ -1721,8 +1534,7 @@ class _FoodListDeliveryInformationState
                                             onChanged: (i) {
                                               setState(() {
                                                 _countrySelected = i;
-                                                contactPredicate =
-                                                    i == 0 ? "+91" : "+65";
+                                                contactPredicate = i == 0 ? "+91" : "+65";
                                               });
                                             },
                                           ),
@@ -1730,33 +1542,22 @@ class _FoodListDeliveryInformationState
                                         Expanded(
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                border: Border(
-                                                    left: BorderSide(
-                                                        color: Colors.black12,
-                                                        width: 2))),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 20),
+                                                border: Border(left: BorderSide(color: Colors.black12, width: 2))),
+                                            padding: EdgeInsets.symmetric(horizontal: 20),
                                             child: TextField(
                                               onSubmitted: (value) {
                                                 if (value != "") {
-                                                  widget.foodOrderBloc.add(
-                                                      ChangeContactPhone(
-                                                          contactPredicate +
-                                                              value));
+                                                  widget.foodOrderBloc
+                                                      .add(ChangeContactPhone(contactPredicate + value));
                                                   Navigator.pop(context);
                                                 }
                                               },
-                                              keyboardType:
-                                                  TextInputType.number,
+                                              keyboardType: TextInputType.number,
                                               decoration: InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        vertical: 15),
+                                                contentPadding: EdgeInsets.symmetric(vertical: 15),
                                                 border: InputBorder.none,
                                                 hintText: "Enter phone number",
-                                                hintStyle: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.black38),
+                                                hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
                                               ),
                                             ),
                                           ),
@@ -1791,8 +1592,7 @@ class AddressItemWidget extends StatelessWidget {
   final Address address;
   final FoodOrderBloc foodOrderBloc;
 
-  const AddressItemWidget({Key key, this.address, this.foodOrderBloc})
-      : super(key: key);
+  const AddressItemWidget({Key key, this.address, this.foodOrderBloc}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1839,8 +1639,7 @@ class AddressItemWidget extends StatelessWidget {
                           margin: EdgeInsets.only(bottom: 10),
                           child: Text(
                             type,
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Container(
@@ -1849,8 +1648,7 @@ class AddressItemWidget extends StatelessWidget {
                             address.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Text(

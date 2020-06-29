@@ -1,12 +1,12 @@
 import 'package:flyereats/model/ads.dart';
 import 'package:flyereats/model/food_category.dart';
-import 'package:flyereats/model/promo.dart';
+import 'package:flyereats/model/banner.dart';
 import 'package:flyereats/model/restaurant.dart';
 
 class HomePageData {
   final String location;
   final String countryId;
-  final List<Promo> promos;
+  final List<BannerItem> promos;
   final List<Restaurant> topRestaurants;
   final List<FoodCategory> categories;
   final List<Restaurant> dblRestaurants;
@@ -25,8 +25,8 @@ class HomePageData {
 
   factory HomePageData.fromJson(Map<String, dynamic> parsedJson) {
     var listPromos = parsedJson['offers'] as List;
-    List<Promo> promos = listPromos.map((i) {
-      return Promo.fromJson(i);
+    List<BannerItem> promos = listPromos.map((i) {
+      return BannerItem.fromJson(i);
     }).toList();
 
     var listTopRestaurant = parsedJson['top_restaurants'] as List;

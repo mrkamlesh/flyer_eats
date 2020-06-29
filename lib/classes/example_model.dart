@@ -1,26 +1,25 @@
-import 'package:flyereats/model/banner.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/food_category.dart';
-import 'package:flyereats/model/promo.dart';
+import 'package:flyereats/model/banner.dart';
 import 'package:flyereats/model/shop_category.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/model/location.dart';
 
 class ExampleModel {
-  static List<Promo> getPromos() {
-    List<Promo> _promos = [];
+  static List<BannerItem> getPromos() {
+    List<BannerItem> _promos = [];
 /*    _promos.add(Promo(
       "Promo Title",
       "https://lh3.googleusercontent.com/proxy/tC_9v1lUe2qoF2tdzqVDVX9XrCM1JW0JEqudJkR0UWbkaUHZ-2-ARg3E3NVQeX44QYu9Glci0vlE3l0xO-G_AesczDZf1NShZ17zJwRfuEMuGYO0L1LH4vWN1Cglk7F9m9oeCLiqbw-v",
       "On selected beverages",
     ));*/
-    _promos.add(Promo(
+    _promos.add(BannerItem(
       "Promo Title",
       "https://www.bca.co.id/~/media/Images/Default/201904/20190424-sakukupromo-banner",
       "On order above ",
     ));
-    _promos.add(Promo(
+    _promos.add(BannerItem(
       "Promo Title",
       "https://www.bca.co.id/-/media/Images/credit-card/2017/04/20170428-promo-seru-sakuku.ashx",
       "On selected beverages",
@@ -159,7 +158,7 @@ class ExampleModel {
     return _listFoodCategory;
   }
 
-  static List<BannerItem> getBanners() {
+  /*static List<BannerItem> getBanners() {
     List<BannerItem> _listBanner = [];
     _listBanner.add(BannerItem(
         "https://d3awvtnmmsvyot.cloudfront.net/api/file/UGQPOPoiRxu66Pb6KpjV/convert?fit=max&w=1450&quality=60&cache=true&rotate=exif&compress=true",
@@ -174,7 +173,7 @@ class ExampleModel {
         "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/slideshows/powerhouse_vegetables_slideshow/650x350_powerhouse_vegetables_slideshow.jpg",
         ""));
     return _listBanner;
-  }
+  }*/
 
   static List<Food> getFoods() {
     List<Food> _listFoods = [];

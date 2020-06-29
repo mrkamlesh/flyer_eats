@@ -41,16 +41,18 @@ class _AddressPageState extends State<AddressPage> {
   void initState() {
     super.initState();
 
-    switch (widget.address.type) {
-      case AddressType.home:
-        _toggle(0);
-        break;
-      case AddressType.office:
-        _toggle(1);
-        break;
-      default:
-        _toggle(2);
-        break;
+    if (widget.address != null) {
+      switch (widget.address.type) {
+        case AddressType.home:
+          _toggle(0);
+          break;
+        case AddressType.office:
+          _toggle(1);
+          break;
+        default:
+          _toggle(2);
+          break;
+      }
     }
   }
 

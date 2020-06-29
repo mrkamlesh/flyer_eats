@@ -174,7 +174,7 @@ class DataProvider {
   }
 
   Future<dynamic> getPaymentOptions(PlaceOrder order) async {
-    String paramsUrl = "next_step=payment_option&id=${order.address.id}"
+    /*String paramsUrl = "next_step=payment_option&id=${order.address.id}"
         "&formatted_address=${order.address.address}"
         "&google_lat=${order.address.latitude}"
         "&google_lng=${order.address.longitude}"
@@ -187,7 +187,7 @@ class DataProvider {
         "&client_token=${order.user.token}"
         "&transaction_type=${order.transactionType}"
         "&cart=${order.cartToString()}"
-        "&api_key=flyereats"
+        "&api_key=flyereats"*/
 /*        "&shipstreet_latlong="
         "&searchshipaddress="
         "&shipaddressselected="
@@ -215,23 +215,43 @@ class DataProvider {
         "&device_platform=Android"
         "&client_token=3khrihr4isa0fq4b88bd85385b989358685ce1b927d1339"
         "&client_state_city=Tamilnadu/Pollachi"*/
-        ;
 
     String url =
-        "${developmentServerUrl}mobileapp/apinew/getPaymentOptions?json=true&$paramsUrl";
+        "${developmentServerUrl}mobileapp/apiRest/getPaymentOptions?json=true&api_key=flyereats";
+
+    var formData = {
+      "next_step": "payment_option",
+      "id": order.address.id,
+      "formatted_address": order.address.address,
+      "google_lat": order.address.latitude,
+      "google_lng": order.address.longitude,
+      "location_name": order.address.title,
+      "contact_phone": order.contact,
+      "delivery_instruction": order.deliveryInstruction,
+      "address_id": order.address.id,
+      "cart_subtotal": order.subTotal().toString(),
+      "merchant_id": order.restaurant.id,
+      "client_token": order.user.token,
+      "transaction_type": order.transactionType,
+      "cart": order.cartToString(),
+    };
 
     var responseJson;
     try {
-      final response = await Dio().get(url);
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+
     return responseJson;
   }
 
   Future<dynamic> placeOrder(PlaceOrder order) async {
-    String paramsUrl = "merchant_id=${order.restaurant.id}"
+    /*String paramsUrl = "merchant_id=${order.restaurant.id}"
         "&client_token=${order.user.token}"
         "&transaction_type=${order.transactionType}"
         "&cart=${order.cartToString()}"
@@ -257,8 +277,7 @@ class DataProvider {
         "&client_id="
         "&paypal_card_fee="
         "&pts_redeem_points="
-        "&pts_redeem_amount="
-
+        "&pts_redeem_amount="*/
 /*        "&delivery_date=2020-06-09"
         "&delivery_time=10:44 PM"
         "&delivery_asap="
@@ -285,18 +304,52 @@ class DataProvider {
         "&device_id=f3HrzBaFgJ4:APA91bHHMPLgAKBBkrgvu0imCQuGET7gehNQHtzqWM3G4kaUQRZV4UgrEBRBq805-nniR0eDZS0SMTt7j36kuNhgnrTWW3kYadHxotBcpTdRfWCEt9OlP45GjedIUB0bxRGNFf2V55vt"
         "&device_platform=Android"
         "&client_state_city=Tamilnadu/Mettupalayam"*/
-        ;
 
     String url =
-        "${developmentServerUrl}mobileapp/apinew/placeOrder?json=true&$paramsUrl";
+        "${developmentServerUrl}mobileapp/apiRest/placeOrder?json=true&api_key=flyereats";
+
+    var formData = {
+      "merchant_id": order.restaurant.id,
+      "client_token": order.user.token,
+      "transaction_type": order.transactionType,
+      "cart": order.cartToString(),
+      "formatted_address": order.address.address,
+      "google_lat": order.address.latitude,
+      "google_lng": order.address.longitude,
+      "next_step": "payment_option",
+      "id": order.address.id,
+      "location_name": order.address.title,
+      "contact_phone": order.contact,
+      "delivery_instruction": order.deliveryInstruction,
+      "street": order.address.address,
+      "payment_list": order.paymentMethod,
+      "voucher_code": order.voucher.name != null ? order.voucher.name : "",
+      "voucher_amount": order.voucher.amount != 0 ? order.voucher.amount : "",
+      "voucher_type": order.voucher.type != null ? order.voucher.type : "",
+      "voucher_rate": order.voucher.rate != 0 ? order.voucher.rate : "",
+/*          "&api_key=flyereats"
+          "&earned_points=null"
+          "&paypal_flag=2"
+          "&paypal_mode="
+          "&client_id_sandbox="
+          "&client_id_live="
+          "&client_id="
+          "&paypal_card_fee="
+          "&pts_redeem_points="
+          "&pts_redeem_amount="*/
+    };
 
     var responseJson;
     try {
-      final response = await Dio().get(url);
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+
     return responseJson;
   }
 
@@ -325,16 +378,24 @@ class DataProvider {
 
   Future<dynamic> getPromos(String restaurantId, String token) async {
     String url =
-        "${developmentServerUrl}mobileapp/apinew/loadPromos?json=true&merchant_id=$restaurantId"
-        "&api_key=flyereats&client_token=$token";
+        "${developmentServerUrl}mobileapp/apiRest/loadPromos?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "merchant_id": restaurantId,
+    };
 
     var responseJson;
     try {
-      final response = await Dio().get(url);
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+
     return responseJson;
   }
 
@@ -421,17 +482,26 @@ class DataProvider {
   Future<dynamic> applyCoupon(String restaurantId, String voucherCode,
       double totalOrder, String token) async {
     String url =
-        "${developmentServerUrl}mobileapp/apinew/applyVoucher?json=true"
-        "&merchant_id=$restaurantId&voucher_code=$voucherCode"
-        "&cart_sub_total=$totalOrder&api_key=flyereats&client_token=$token";
+        "${developmentServerUrl}mobileapp/apiRest/applyVoucher?json=true&api_key=flyereats";
+
+    var formData = {
+      "merchant_id": restaurantId,
+      "voucher_code": voucherCode,
+      "cart_sub_total": totalOrder.toString(),
+      "client_token": token,
+    };
 
     var responseJson;
     try {
-      final response = await Dio().get(url);
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }
+
     return responseJson;
   }
 
@@ -565,6 +635,7 @@ class DataProvider {
       "address": address,
       "page": page.toString(),
       "merchant_type": merchantTypeParams,
+      //"is_veg": "1",
     };
 
     if (type != null) {

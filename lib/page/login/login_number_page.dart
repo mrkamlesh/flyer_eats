@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flyereats/bloc/currentorder/current_order_bloc.dart';
+import 'package:flyereats/bloc/currentorder/current_order_event.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/bloc/login/checkphoneexist/bloc.dart';
@@ -40,10 +42,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0.0 &&
-        _controller.hasClients) {
-      _controller.animateTo(30,
-          duration: Duration(milliseconds: 200), curve: Curves.ease);
+    if (MediaQuery.of(context).viewInsets.bottom > 0.0 && _controller.hasClients) {
+      _controller.animateTo(30, duration: Duration(milliseconds: 200), curve: Curves.ease);
     }
 
     return BlocProvider<LoginPhoneBloc>(
@@ -53,8 +53,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
       child: BlocConsumer<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoggedIn) {
-            BlocProvider.of<LocationBloc>(context)
-                .add(GetCurrentLocation(state.user.token));
+            BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation(state.user.token));
+            BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(state.user.token));
             Navigator.pushReplacementNamed(context, "/home");
           }
         },
@@ -64,13 +64,11 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
               listener: (context, state) {
                 if (state is PhoneIsExist) {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return OtpPage(
-                        phoneNumber: state.countryCode + state.number);
+                    return OtpPage(phoneNumber: state.countryCode + state.number);
                   }));
                 } else if (state is PhoneIsNotExist) {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return LoginFacebookGmail(
-                        phoneNumber: state.countryCode + state.number);
+                    return LoginFacebookGmail(phoneNumber: state.countryCode + state.number);
                   }));
                 } else if (state is ErrorCheckPhoneExist) {
                   showDialog(
@@ -116,11 +114,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                       child: Image.asset(
                                         "assets/flyereatslogo.png",
                                         alignment: Alignment.center,
-                                        width: AppUtil.getScreenWidth(context) -
-                                            140,
-                                        height: 0.46 *
-                                            (AppUtil.getScreenWidth(context) -
-                                                140),
+                                        width: AppUtil.getScreenWidth(context) - 140,
+                                        height: 0.46 * (AppUtil.getScreenWidth(context) - 140),
                                       )),
                                 ),
                               ),
@@ -130,32 +125,24 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                   decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(32),
-                                          topLeft: Radius.circular(32))),
+                                          topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                                   padding: EdgeInsets.only(
-                                      top: 20,
-                                      left: horizontalPaddingDraggable,
-                                      right: horizontalPaddingDraggable),
+                                      top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                                   alignment: Alignment.center,
                                   child: Column(
                                     children: <Widget>[
                                       Container(
-                                        margin: EdgeInsets.only(
-                                            bottom: 20, top: 40),
+                                        margin: EdgeInsets.only(bottom: 20, top: 40),
                                         child: Text(
                                           "GET STARTED",
-                                          style: TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold),
+                                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(bottom: 20),
                                         child: Text(
                                           "Enter your 10 digit phone number to kick start",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.black38),
+                                          style: TextStyle(fontSize: 18, color: Colors.black38),
                                         ),
                                       ),
                                       Container(
@@ -168,17 +155,14 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                   offset: Offset(-4, 4))
                                             ],
                                             color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                                color: primary2, width: 2)),
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: primary2, width: 2)),
                                         margin: EdgeInsets.only(bottom: 20),
                                         child: Row(
                                           children: <Widget>[
                                             Container(
                                               width: 100,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 10),
+                                              padding: EdgeInsets.symmetric(horizontal: 10),
                                               child: DropdownButton<String>(
                                                 underline: Container(),
                                                 isExpanded: false,
@@ -191,15 +175,12 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                     child: Container(
                                                       width: 80,
                                                       child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
+                                                        mainAxisSize: MainAxisSize.min,
                                                         children: <Widget>[
                                                           Expanded(
                                                             child: Container(
                                                               height: 20,
-                                                              child: SvgPicture
-                                                                  .asset(
-                                                                      "assets/india_flag.svg"),
+                                                              child: SvgPicture.asset("assets/india_flag.svg"),
                                                             ),
                                                           ),
                                                           SizedBox(
@@ -208,11 +189,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                           Expanded(
                                                             child: Text(
                                                               "+91",
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
+                                                              style:
+                                                                  TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                                             ),
                                                           )
                                                         ],
@@ -224,15 +202,12 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                     child: Container(
                                                       width: 80,
                                                       child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
+                                                        mainAxisSize: MainAxisSize.min,
                                                         children: <Widget>[
                                                           Expanded(
                                                             child: Container(
                                                               height: 20,
-                                                              child: SvgPicture
-                                                                  .asset(
-                                                                      "assets/singapore_flag.svg"),
+                                                              child: SvgPicture.asset("assets/singapore_flag.svg"),
                                                             ),
                                                           ),
                                                           SizedBox(
@@ -241,11 +216,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                           Expanded(
                                                             child: Text(
                                                               "+65",
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
+                                                              style:
+                                                                  TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                                             ),
                                                           )
                                                         ],
@@ -254,36 +226,24 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                   ),
                                                 ],
                                                 onChanged: (i) {
-                                                  _bloc.add(
-                                                      ChangeCountryCode(i));
+                                                  _bloc.add(ChangeCountryCode(i));
                                                 },
                                               ),
                                             ),
                                             Expanded(
                                               child: Container(
                                                 decoration: BoxDecoration(
-                                                    border: Border(
-                                                        left: BorderSide(
-                                                            color: primary3,
-                                                            width: 2))),
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 20),
+                                                    border: Border(left: BorderSide(color: primary3, width: 2))),
+                                                padding: EdgeInsets.symmetric(horizontal: 20),
                                                 child: TextField(
                                                   autofocus: true,
-                                                  controller:
-                                                      _textEditingController,
-                                                  keyboardType:
-                                                      TextInputType.number,
+                                                  controller: _textEditingController,
+                                                  keyboardType: TextInputType.number,
                                                   decoration: InputDecoration(
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 15),
+                                                    contentPadding: EdgeInsets.symmetric(vertical: 15),
                                                     border: InputBorder.none,
-                                                    hintText:
-                                                        "Enter phone number",
-                                                    hintStyle: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black38),
+                                                    hintText: "Enter phone number",
+                                                    hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
                                                   ),
                                                 ),
                                               ),
@@ -292,8 +252,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                         ),
                                       ),
                                       GestureDetector(
-                                        onTap: state.number != "" &&
-                                                state.number != null
+                                        onTap: state.number != "" && state.number != null
                                             ? () {
                                                 _bloc.add(CheckPhoneExist());
                                               }
@@ -304,8 +263,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                               height: 50,
                                               decoration: BoxDecoration(
                                                 color: Color(0xFFFFB531),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
+                                                borderRadius: BorderRadius.circular(8),
                                               ),
                                               alignment: Alignment.center,
                                               child: Text(
@@ -314,16 +272,12 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                               ),
                                             ),
                                             AnimatedOpacity(
-                                              opacity: state.number != "" &&
-                                                      state.number != null
-                                                  ? 0.0
-                                                  : 0.5,
+                                              opacity: state.number != "" && state.number != null ? 0.0 : 0.5,
                                               child: Container(
                                                 height: 50,
                                                 color: Colors.white,
                                               ),
-                                              duration:
-                                                  Duration(milliseconds: 300),
+                                              duration: Duration(milliseconds: 300),
                                             )
                                           ],
                                         ),
@@ -338,8 +292,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                       ),
                       state is LoadingCheckPhoneExist
                           ? Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5)),
+                              decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
                               child: Center(
                                 child: SpinKitCircle(
                                   color: Colors.white,

@@ -87,7 +87,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     yield LoadingPredefinedLocations();
     try {
       List<Location> list = await repository.getLocations(countryId);
-      if (list.length == 0) {
+      if (list.isEmpty) {
         yield NoLocationsAvailable();
       } else {
         savedPredefinedLocations = list;
@@ -99,12 +99,24 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   }
 
   Stream<LocationState> mapFilterLocationsToState(String filter) async* {
-    List<Location> filteredList = savedPredefinedLocations.where((location) {
-      return location.location.toLowerCase().contains(filter) ||
-          location.address.toLowerCase().contains(filter);
-    }).toList();
+    yield LoadingPredefinedLocations();
 
-    yield PredefinedLocationsFiltered(filteredList);
+    try{
+
+      List<Location> filteredList = savedPredefinedLocations.where((location) {
+        return location.location.toLowerCase().contains(filter) ||
+            location.address.toLowerCase().contains(filter);
+      }).toList();
+
+      if (filteredList.isNotEmpty){
+        yield PredefinedLocationsFiltered(filteredList);
+      } else {
+        yield NoLocationsAvailable();
+      }
+    }catch(e){
+      yield LoadingPredefinedLocationsError(e.toString());
+    }
+
   }
 
   Stream<LocationState> mapGetPreviousLocationToState() async* {

@@ -4,11 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/model/promo.dart';
+import 'package:flyereats/model/banner.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BannerListWidget extends StatefulWidget {
-  final List<Promo> bannerList;
+  final List<BannerItem> bannerList;
 
   const BannerListWidget({Key key, this.bannerList}) : super(key: key);
 

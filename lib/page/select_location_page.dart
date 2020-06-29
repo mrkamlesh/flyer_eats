@@ -15,7 +15,6 @@ class SelectLocationPage extends StatefulWidget {
 }
 
 class _SelectLocationPageState extends State<SelectLocationPage> {
-  int _groupValue = -1;
   int _selectedCountry = 101;
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController;
@@ -179,109 +178,124 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black12),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                  color: Colors.black12, width: 1.0)),
                           margin: EdgeInsets.only(
                               bottom: 20,
                               left: horizontalPaddingDraggable,
                               right: horizontalPaddingDraggable),
-                          child: DropdownButton<int>(
-                            underline: Container(),
-                            isExpanded: true,
-                            value: _selectedCountry,
-                            icon: Icon(Icons.expand_more),
-                            items: [
-                              DropdownMenuItem(
-                                value: 101,
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      height: 20,
-                                      width: 27,
-                                      child: SvgPicture.asset(
-                                        "assets/india_flag.svg",
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        "India",
-                                        style: TextStyle(
-                                          fontSize: 16,
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                width: 100,
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: DropdownButton<int>(
+                                  underline: Container(),
+                                  isExpanded: false,
+                                  isDense: true,
+                                  iconSize: 0,
+                                  value: _selectedCountry,
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: 101,
+                                      child: Container(
+                                        width: 80,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Container(
+                                                height: 20,
+                                                child: SvgPicture.asset(
+                                                    "assets/india_flag.svg"),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                "IND",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ),
-                                    )
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 196,
+                                      child: Container(
+                                        width: 80,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Container(
+                                                height: 20,
+                                                child: SvgPicture.asset(
+                                                    "assets/singapore_flag.svg"),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                "SNG",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ],
+                                  onChanged: (i) {
+                                    setState(() {
+                                      _selectedCountry = i;
+                                    });
+                                    BlocProvider.of<LocationBloc>(context).add(
+                                        GetPredefinedLocations(
+                                            _selectedCountry.toString()));
+                                  },
                                 ),
                               ),
-                              DropdownMenuItem(
-                                value: 196,
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      height: 20,
-                                      width: 27,
-                                      child: SvgPicture.asset(
-                                        "assets/singapore_flag.svg",
-                                        fit: BoxFit.fill,
-                                      ),
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          left: BorderSide(
+                                              color: Colors.black12,
+                                              width: 1.0))),
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  child: TextField(
+                                    controller: _controller,
+                                    onChanged: (filter) {
+                                      BlocProvider.of<LocationBloc>(context)
+                                          .add(FilterLocations(filter));
+                                    },
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 15),
+                                      border: InputBorder.none,
+                                      hintText: "SELECT LOCATIONS",
+                                      hintStyle: TextStyle(
+                                          fontSize: 16, color: Colors.black38),
                                     ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        "Singapore",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    )
-                                  ],
+                                  ),
                                 ),
                               ),
                             ],
-                            onChanged: (i) {
-                              setState(() {
-                                _selectedCountry = i;
-                              });
-                              BlocProvider.of<LocationBloc>(context).add(
-                                  GetPredefinedLocations(
-                                      _selectedCountry.toString()));
-                            },
-                          ),
-                        ),
-                        Container(
-                          width: AppUtil.getScreenWidth(context),
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          margin: EdgeInsets.only(
-                              bottom: 20,
-                              left: horizontalPaddingDraggable,
-                              right: horizontalPaddingDraggable),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.black12)),
-                          child: TextField(
-                            controller: _controller,
-                            onChanged: (filter) {
-                              BlocProvider.of<LocationBloc>(context)
-                                  .add(FilterLocations(filter));
-                            },
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(vertical: 15),
-                              border: InputBorder.none,
-                              hintText: "SELECT LOCATIONS",
-                              hintStyle: TextStyle(
-                                  fontSize: 16, color: Colors.black38),
-                            ),
                           ),
                         ),
                         Container(
@@ -316,9 +330,17 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                 ));
                               } else if (state
                                   is LoadingPredefinedLocationsError) {
-                                return Center(child: Text("${state.message}"));
+                                return Container(
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: horizontalPaddingDraggable,
+                                        horizontal: horizontalPaddingDraggable),
+                                    child: Text("${state.message}"));
                               } else if (state is NoLocationsAvailable) {
-                                return Center(child: Text(state.message));
+                                return Container(
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: horizontalPaddingDraggable,
+                                        horizontal: horizontalPaddingDraggable),
+                                    child: Text("${state.message}"));
                               } else if (state
                                       is LoadingPredefinedLocationsSuccess ||
                                   state is PredefinedLocationsFiltered) {
@@ -331,60 +353,67 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                   list = state.locations;
                                 }
 
-                                return Container(
-                                  child: CustomScrollView(
-                                    slivers: <Widget>[
-                                      SliverList(
-                                          delegate: SliverChildBuilderDelegate(
-                                              (context, i) {
-                                        return Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  horizontalPaddingDraggable),
-                                          child: BlocBuilder<LoginBloc,
-                                              LoginState>(
-                                            builder: (context, loginState) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  _onTap(
-                                                    i,
-                                                    loginState.user.token,
-                                                    list[i],
-                                                  );
-                                                },
-                                                child: Row(
+                                return BlocBuilder<LoginBloc, LoginState>(
+                                  builder: (context, loginState) {
+                                    return Container(
+                                      child: CustomScrollView(
+                                        slivers: <Widget>[
+                                          SliverList(
+                                              delegate:
+                                                  SliverChildBuilderDelegate(
+                                                      (context, i) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                _onTap(
+                                                  i,
+                                                  loginState.user.token,
+                                                  list[i],
+                                                );
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.only(
+                                                    left:
+                                                        horizontalPaddingDraggable,
+                                                    right:
+                                                        horizontalPaddingDraggable,
+                                                    bottom: 5),
+                                                child: Column(
                                                   children: <Widget>[
-                                                    Radio(
-                                                      activeColor: Colors.green,
-                                                      value: i,
-                                                      groupValue: _groupValue,
-                                                      onChanged: (i) {
-                                                        _onTap(
-                                                            i,
-                                                            loginState
-                                                                .user.token,
-                                                            list[i]);
-                                                      },
+                                                    Row(
+                                                      children: <Widget>[
+                                                        Expanded(
+                                                          child: Text(
+                                                            list[i].address,
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                                fontSize: 14),
+                                                          ),
+                                                        ),
+                                                        Icon(
+                                                          Icons
+                                                              .arrow_forward_ios,
+                                                          size: 18,
+                                                        )
+                                                      ],
                                                     ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        list[i].address,
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 14),
-                                                      ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Divider(
+                                                      color: Colors.black12,
                                                     ),
                                                   ],
                                                 ),
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      }, childCount: list.length))
-                                    ],
-                                  ),
+                                              ),
+                                            );
+                                          }, childCount: list.length))
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 );
                               }
                               return Container();
@@ -405,7 +434,6 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
 
   void _onTap(i, String token, Location location) {
     setState(() {
-      _groupValue = i;
       BlocProvider.of<LocationBloc>(context)
           .add(GetHomeDataByLocation(location, token));
       Navigator.pushReplacementNamed(context, "/home");

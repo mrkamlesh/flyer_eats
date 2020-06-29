@@ -56,47 +56,73 @@ class _AccountPageState extends State<AccountPage> {
                     child: Container(
                         width: AppUtil.getScreenWidth(context),
                         height: AppUtil.getBannerHeight(context),
-                        color: Color(0xFF777777),
-                        child: FittedBox(
-                          fit: BoxFit.fill,
-                          child: BlocBuilder<LoginBloc, LoginState>(
-                            builder: (context, state) {
-                              if (state.user.avatar == null ||
-                                  state.user.avatar == "") {
-                                return SvgPicture.asset(
+                        padding: EdgeInsets.only(
+                            top: AppUtil.getToolbarHeight(context),
+                            bottom: AppUtil.getBannerOffset()),
+                        color: Color(0xFFA4A4A4),
+                        child: BlocBuilder<LoginBloc, LoginState>(
+                          builder: (context, state) {
+                            if (state.user.avatar == null &&
+                                state.user.avatar == "") {
+                              return Center(
+                                child: SvgPicture.asset(
                                   "assets/account.svg",
                                   color: Color(0xFFFFFFFF),
-                                  height: 150,
-                                  width: 150,
-                                );
-                              } else {
-                                return CachedNetworkImage(
-                                  imageUrl: state.user.avatar,
-                                  height: 150,
-                                  width: AppUtil.getScreenWidth(context),
-                                  fit: BoxFit.fill,
-                                  alignment: Alignment.center,
-                                  placeholder: (context, url) {
-                                    return Shimmer.fromColors(
-                                        child: Container(
-                                          height: 150,
-                                          width:
-                                              AppUtil.getScreenWidth(context),
-                                          color: Colors.black,
-                                        ),
-                                        baseColor: Colors.grey[300],
-                                        highlightColor: Colors.grey[100]);
-                                  },
-                                );
-                              }
-                            },
-                          ),
+                                  height: AppUtil.getBannerHeight(context) -
+                                      AppUtil.getToolbarHeight(context) -
+                                      AppUtil.getBannerOffset() -
+                                      20,
+                                  width: AppUtil.getBannerHeight(context) -
+                                      AppUtil.getToolbarHeight(context) -
+                                      AppUtil.getBannerOffset() -
+                                      20,
+                                ),
+                              );
+                            } else {
+                              return Center(
+                                child: Container(
+                                  height: AppUtil.getBannerHeight(context) -
+                                      AppUtil.getToolbarHeight(context) -
+                                      AppUtil.getBannerOffset() - 20,
+                                  width: AppUtil.getBannerHeight(context) -
+                                      AppUtil.getToolbarHeight(context) -
+                                      AppUtil.getBannerOffset() - 20,
+                                  child: ClipOval(
+                                    child: CachedNetworkImage(
+                                      imageUrl: state.user.avatar,
+                                      fit: BoxFit.fill,
+                                      alignment: Alignment.center,
+                                      placeholder: (context, url) {
+                                        return Shimmer.fromColors(
+                                            child: Container(
+                                              height: AppUtil.getBannerHeight(
+                                                      context) -
+                                                  AppUtil.getToolbarHeight(
+                                                      context) -
+                                                  AppUtil.getBannerOffset() - 20,
+                                              width: AppUtil.getBannerHeight(
+                                                      context) -
+                                                  AppUtil.getToolbarHeight(
+                                                      context) -
+                                                  AppUtil.getBannerOffset() - 20,
+                                              color: Colors.black,
+                                            ),
+                                            baseColor: Colors.grey[300],
+                                            highlightColor: Colors.grey[100]);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         )),
                   ),
                 ),
                 Align(
                   alignment: Alignment.topCenter,
                   child: CustomAppBar(
+                    backgroundColor: Colors.transparent,
                     leading: "assets/back.svg",
                     title: "Profile",
                     onTapLeading: () {

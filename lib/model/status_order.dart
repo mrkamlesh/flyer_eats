@@ -12,6 +12,13 @@ class StatusOrder {
         time: parsedJson['time']);
   }
 
+  factory StatusOrder.fromJson2(Map<String, dynamic> parsedJson) {
+    return StatusOrder(
+        status: parsedJson['status'],
+        dateCreated: parsedJson['order_date'],
+        time: parsedJson['order_time']);
+  }
+
   String getSubStatus() {
     switch (this.status) {
       case "Order Placed":

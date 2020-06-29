@@ -68,7 +68,7 @@ class DetailOrder {
     this.isReviewAdded,
   });
 
-  StatusOrder getCurrentStatus(){
+  StatusOrder getCurrentStatus() {
     return statusHistory.last;
   }
 
@@ -137,7 +137,7 @@ class DetailOrder {
                 ['merchant_packaging_charge']
             .toString()),
         voucherAmount: double.parse(
-            parsedJson['html']['total']['voucher_amount'].toString()),
+            parsedJson['html']['total']['voucher_value'].toString()),
         discountOrder: double.parse(
             parsedJson['html']['total']['discounted_amount'].toString()),
         discountFood: discountTotal,
@@ -146,6 +146,4 @@ class DetailOrder {
         statusHistory: statusHistory,
         isReviewAdded: parsedJson['is_rating_added']);
   }
-
-
 }

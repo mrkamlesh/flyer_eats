@@ -38,10 +38,12 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapGetPaymentOptionsToState(event.order);
     } else if (event is ApplyVoucher) {
       yield* mapApplyCouponToState(event.voucher);
-    } else if (event is ChangePaymentList) {
-      yield* mapChangePaymentListToState(event.paymentList);
+    } else if (event is ChangePaymentMethod) {
+      yield* mapChangePaymentMethodToState(event.paymentMethod);
     } else if (event is PlaceOrderEvent) {
       yield* mapPlaceOrderEventToState();
+    } else if (event is ChangeWalletUsage) {
+      yield* mapChangeWalletUsageToState(event.isUseWallet);
     }
   }
 
@@ -82,22 +84,25 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       Restaurant restaurant, FoodCart foodCart, User user) async* {
     yield FoodOrderState(
       placeOrder: PlaceOrder(
-          isValid: true,
-          restaurant: restaurant,
-          foodCart: foodCart,
-          user: user,
-          address: user.defaultAddress,
-          contact: user.phone,
-          transactionType: 'delivery',
-          deliveryInstruction: '',
-          deliveryCharges: 0,
-          voucher: Voucher(amount: 0),
-          paymentList: "",
-          discountOrder: 0,
-          discountOrderPrettyString: "DISCOUNT ORDER",
-          taxCharges: 0,
-          packagingCharges: 0,
-          taxPrettyString: "Tax"),
+        isValid: true,
+        restaurant: restaurant,
+        foodCart: foodCart,
+        user: user,
+        address: user.defaultAddress,
+        contact: user.phone,
+        transactionType: 'delivery',
+        deliveryInstruction: '',
+        deliveryCharges: 0,
+        voucher: Voucher(amount: 0, rate: 0),
+        paymentMethod: "",
+        discountOrder: 0,
+        discountOrderPrettyString: "DISCOUNT ORDER",
+        taxCharges: 0,
+        packagingCharges: 0,
+        taxPrettyString: "Tax",
+        isUseWallet: false,
+        walletAmount: 0,
+      ),
     );
 
     add(GetPaymentOptions(state.placeOrder));
@@ -128,7 +133,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
                 taxPrettyString: result.taxPrettyString,
                 discountOrder: result.discountOrder,
                 discountPrettyString: result.discountOrderPrettyString,
-                deliveryCharges: result.deliveryCharges));
+                deliveryCharges: result.deliveryCharges,
+                walletAmount: result.walletAmount));
       } else {
         yield FoodOrderState(
             placeOrder: state.placeOrder
@@ -146,12 +152,10 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         placeOrder: state.placeOrder.copyWith(voucher: voucher));
   }
 
-  Stream<FoodOrderState> mapChangePaymentListToState(
-      String paymentList) async* {
+  Stream<FoodOrderState> mapChangePaymentMethodToState(
+      String paymentMethod) async* {
     yield FoodOrderState(
-        placeOrder: state.placeOrder.copyWith(paymentList: paymentList));
-
-    add(PlaceOrderEvent());
+        placeOrder: state.placeOrder.copyWith(paymentMethod: paymentMethod));
   }
 
   Stream<FoodOrderState> mapPlaceOrderEventToState() async* {
@@ -172,5 +176,10 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield ErrorPlaceOrder(e.toString(),
           placeOrder: state.placeOrder.copyWith());
     }
+  }
+
+  Stream<FoodOrderState> mapChangeWalletUsageToState(bool isUseWallet) async* {
+    yield FoodOrderState(
+        placeOrder: state.placeOrder.copyWith(isUseWallet: isUseWallet));
   }
 }

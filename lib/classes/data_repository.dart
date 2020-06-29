@@ -23,38 +23,7 @@ class DataRepository {
   Future<PlaceOrder> getPaymentOptions(PlaceOrder placeOrder) async {
     final response = await _provider.getPaymentOptions(placeOrder);
     if (response['code'] == 1) {
-      PlaceOrder placeOrder = PlaceOrder(
-        isValid: true,
-        message: response['msg'],
-        discountOrder: (response['details']['cart'] as Map)
-                .containsKey('discount')
-            ? double.parse(
-                response['details']['cart']['discount']['amount'].toString())
-            : 0,
-        discountOrderPrettyString:
-            (response['details']['cart'] as Map).containsKey('discount')
-                ? response['details']['cart']['discount']['display'].toString()
-                : "DISCOUNT ORDER",
-        deliveryCharges:
-            (response['details']['cart'] as Map).containsKey('delivery_charges')
-                ? double.parse(response['details']['cart']['delivery_charges']
-                        ['amount']
-                    .toString())
-                : 0,
-        packagingCharges: (response['details']['cart'] as Map)
-                .containsKey('packaging')
-            ? double.parse(
-                response['details']['cart']['packaging']['amount'].toString())
-            : 0,
-        taxCharges: (response['details']['cart'] as Map).containsKey('tax')
-            ? double.parse(response['details']['cart']['tax']['tax'].toString())
-            : 0,
-        taxPrettyString: (response['details']['cart'] as Map).containsKey('tax')
-            ? response['details']['cart']['tax']['tax_pretty']
-            : "Tax",
-        razorKey: response['details']['razorpay']['razor_key'],
-        razorSecret: response['details']['razorpay']['razor_secret'],
-      );
+      PlaceOrder placeOrder = PlaceOrder.fromJson(response);
       return placeOrder;
     } else {
       return PlaceOrder(isValid: false, message: response['msg']);
@@ -230,12 +199,14 @@ class DataRepository {
     return locations;
   }
 
-  Future<List<String>> getPromos(String restaurantId, String token) async {
+  Future<List<Voucher>> getPromos(String restaurantId, String token) async {
     final response = await _provider.getPromos(restaurantId, token);
     if (response['code'] == 1) {
-      var listResponse = response['details']['voucher'] as List;
-      List<String> list = listResponse.map((e) => (e as String)).toList();
-      list.add(response['details']['free_delivery']);
+      var listResponse = response['details']['promos'] as List;
+      List<Voucher> list = listResponse.map((e) {
+        return Voucher.fromJson2(e);
+      }).toList();
+      //list.add(response['details']['free_delivery']);
       return list;
     } else {
       return null;
@@ -399,14 +370,16 @@ class DataRepository {
     }
   }
 
-  Future<StatusOrder> getActiveOrder(String token) async {
-
+  Future<Map<String, dynamic>> getActiveOrder(String token) async {
     final response = await _provider.getActiveOrder(token);
     if (response['code'] == 1) {
-      return StatusOrder();
+      Map<String, dynamic> map = Map();
+      map['status_order'] = StatusOrder.fromJson(response['details']);
+      map['active_order'] = response['details']['active_order'];
+      map['order_id'] = response['details']['order_id'];
+      return map;
     } else {
-      return null;
+      return Map<String, dynamic>();
     }
-
   }
 }

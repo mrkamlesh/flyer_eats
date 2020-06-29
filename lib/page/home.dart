@@ -1,12 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/currentorder/current_order_bloc.dart';
-import 'package:flyereats/bloc/currentorder/current_order_event.dart';
 import 'package:flyereats/bloc/currentorder/current_order_state.dart';
 import 'package:flyereats/bloc/location/location_bloc.dart';
 import 'package:flyereats/bloc/location/location_event.dart';
@@ -45,13 +42,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   HomePageData _homePageData;
 
-  Timer _timer;
-
   @override
   initState() {
     super.initState();
-
-    AppUtil.checkLocationServiceAndPermission();
 
     _animationController = AnimationController(
       vsync: this,
@@ -66,7 +59,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       end: 0.0,
     ).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
-
   }
 
   @override
@@ -177,7 +169,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             alignment: Alignment.topCenter,
             child: BlocBuilder<LoginBloc, LoginState>(
               builder: (context, loginState) {
-                BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(loginState.user.token));
                 return BlocConsumer<LocationBloc, LocationState>(
                   buildWhen: (oldState, state) {
                     if (state is LoadingLocation ||
@@ -945,7 +936,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    "ORDER NO - 12345",
+                                    "ORDER NO - " + state.orderId,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   SizedBox(

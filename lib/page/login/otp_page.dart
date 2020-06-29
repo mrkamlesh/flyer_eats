@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flyereats/bloc/currentorder/current_order_bloc.dart';
+import 'package:flyereats/bloc/currentorder/current_order_event.dart';
 import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
@@ -30,8 +32,8 @@ class _OtpPageState extends State<OtpPage> {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is Success) {
-          BlocProvider.of<LocationBloc>(context)
-              .add(GetCurrentLocation(state.user.token));
+          BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation(state.user.token));
+          BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(state.user.token));
           Navigator.pushReplacementNamed(context, "/home");
         } else if (state is Error) {
           showDialog(
@@ -74,8 +76,7 @@ class _OtpPageState extends State<OtpPage> {
                             "assets/flyereatslogo.png",
                             alignment: Alignment.center,
                             width: AppUtil.getScreenWidth(context) - 140,
-                            height:
-                                0.46 * (AppUtil.getScreenWidth(context) - 140),
+                            height: 0.46 * (AppUtil.getScreenWidth(context) - 140),
                           )),
                     ),
                   ),
@@ -84,13 +85,9 @@ class _OtpPageState extends State<OtpPage> {
                       margin: EdgeInsets.only(top: 10),
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(32),
-                              topLeft: Radius.circular(32))),
-                      padding: EdgeInsets.only(
-                          top: 20,
-                          left: horizontalPaddingDraggable,
-                          right: horizontalPaddingDraggable),
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                      padding:
+                          EdgeInsets.only(top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                       alignment: Alignment.center,
                       child: Column(
                         children: <Widget>[
@@ -98,16 +95,14 @@ class _OtpPageState extends State<OtpPage> {
                             margin: EdgeInsets.only(bottom: 20, top: 40),
                             child: Text(
                               "ENTER OTP",
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                             ),
                           ),
                           Container(
                             margin: EdgeInsets.only(bottom: 20),
                             child: Text(
                               "Enter 6 digit OTP to kick start with us",
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.black38),
+                              style: TextStyle(fontSize: 18, color: Colors.black38),
                             ),
                           ),
                           Container(
@@ -125,8 +120,8 @@ class _OtpPageState extends State<OtpPage> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              BlocProvider.of<LoginBloc>(context).add(VerifyOtp(
-                                  widget.phoneNumber, _otpController.text));
+                              BlocProvider.of<LoginBloc>(context)
+                                  .add(VerifyOtp(widget.phoneNumber, _otpController.text));
                             },
                             child: Stack(
                               children: <Widget>[
@@ -161,8 +156,7 @@ class _OtpPageState extends State<OtpPage> {
               ),
               state is Loading
                   ? Container(
-                      decoration:
-                          BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                      decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
                       child: Center(
                         child: SpinKitCircle(
                           color: Colors.white,

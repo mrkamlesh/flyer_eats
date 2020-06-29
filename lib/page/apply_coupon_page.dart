@@ -23,13 +23,32 @@ class ApplyCouponPage extends StatefulWidget {
 }
 
 class _ApplyCouponPageState extends State<ApplyCouponPage> {
+  TextEditingController _couponController;
+  CouponBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _couponController = TextEditingController();
+    _bloc = CouponBloc();
+    _couponController.addListener(() {
+      _bloc.add(UpdateCouponTyped(_couponController.text));
+    });
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
         return BlocProvider<CouponBloc>(
           create: (context) {
-            return CouponBloc()
+            return _bloc
               ..add(GetCouponList(widget.restaurant, loginState.user.token));
           },
           child: Scaffold(
@@ -130,11 +149,8 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                   ),
                                   Expanded(
                                     child: TextField(
+                                      controller: _couponController,
                                       autofocus: true,
-                                      onChanged: (value) {
-                                        BlocProvider.of<CouponBloc>(context)
-                                            .add(UpdateCouponTyped(value));
-                                      },
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: "ENTER COUPON",
@@ -150,12 +166,10 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                         onTap: state.couponTyped != "" &&
                                                 !(state is LoadingApplyCoupon)
                                             ? () {
-                                                BlocProvider.of<CouponBloc>(
-                                                        context)
-                                                    .add(ApplyCoupon(
-                                                        widget.restaurant,
-                                                        widget.totalOrder,
-                                                        loginState.user.token));
+                                                _bloc.add(ApplyCoupon(
+                                                    widget.restaurant,
+                                                    widget.totalOrder,
+                                                    loginState.user.token));
                                               }
                                             : () {},
                                         child: AnimatedOpacity(
@@ -249,27 +263,33 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                               return SliverList(
                                   delegate:
                                       SliverChildBuilderDelegate((context, i) {
-                                return Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10,
-                                      horizontal:
-                                          horizontalPaddingDraggable - 7),
-                                  margin: EdgeInsets.only(
-                                      bottom: horizontalPaddingDraggable,
-                                      left: horizontalPaddingDraggable,
-                                      right: horizontalPaddingDraggable),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: shadow,
-                                        blurRadius: 7,
-                                        spreadRadius: -3,
-                                      )
-                                    ],
+                                return GestureDetector(
+                                  onTap: () {
+                                    _couponController.text =
+                                        state.couponList[i].code;
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10,
+                                        horizontal:
+                                            horizontalPaddingDraggable - 7),
+                                    margin: EdgeInsets.only(
+                                        bottom: horizontalPaddingDraggable,
+                                        left: horizontalPaddingDraggable,
+                                        right: horizontalPaddingDraggable),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: shadow,
+                                          blurRadius: 7,
+                                          spreadRadius: -3,
+                                        )
+                                      ],
+                                    ),
+                                    child: Html(data: state.couponList[i].name),
                                   ),
-                                  child: Html(data: state.couponList[i]),
                                 );
                               }, childCount: state.couponList.length));
                             },

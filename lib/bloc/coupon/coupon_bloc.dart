@@ -32,7 +32,7 @@ class CouponBloc extends Bloc<CouponEvent, CouponState> {
         couponTyped: state.couponTyped);
 
     try {
-      List<String> couponList = await repository.getPromos(restaurantId, token);
+      List<Voucher> couponList = await repository.getPromos(restaurantId, token);
       yield state.copyWith(couponList: couponList);
     } catch (e) {
       yield ErrorCouponList(e.toString(),

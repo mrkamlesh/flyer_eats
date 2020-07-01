@@ -13,6 +13,7 @@ import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
+import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/voucher.dart';
@@ -28,8 +29,9 @@ import 'package:shimmer/shimmer.dart';
 class RestaurantPlaceOrderPage extends StatefulWidget {
   final Restaurant restaurant;
   final FoodCart foodCart;
+  final Location location;
 
-  const RestaurantPlaceOrderPage({Key key, this.restaurant, this.foodCart}) : super(key: key);
+  const RestaurantPlaceOrderPage({Key key, this.restaurant, this.foodCart, this.location}) : super(key: key);
 
   @override
   _RestaurantPlaceOrderPageState createState() => _RestaurantPlaceOrderPageState();
@@ -84,7 +86,100 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                 if (state is InitialFoodOrderState) {
                   return Container();
                 } else if (state is NoItemsInCart) {
-                  return Container(child: Center(child: Text("No Items in cart")));
+                  return Stack(
+                    children: <Widget>[
+                      Positioned(
+                        top: 0,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            width: AppUtil.getScreenWidth(context),
+                            height: AppUtil.getBannerHeight(context),
+                            child: FittedBox(
+                                fit: BoxFit.cover,
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.restaurant.image,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.center,
+                                )),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(color: Colors.black54),
+                        width: AppUtil.getScreenWidth(context),
+                        height: AppUtil.getBannerHeight(context),
+                      ),
+                      Container(
+                        height: AppUtil.getToolbarHeight(context),
+                        child: Column(
+                          children: <Widget>[
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: CustomAppBar(
+                                leading: "assets/back.svg",
+                                title: "",
+                                onTapLeading: () {
+                                  Navigator.pop(context);
+                                },
+                                backgroundColor: Colors.transparent,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      DraggableScrollableSheet(
+                        initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                            AppUtil.getScreenHeight(context),
+                        minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                            AppUtil.getScreenHeight(context),
+                        maxChildSize: 1.0,
+                        builder: (context, controller) {
+                          return Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                              padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SvgPicture.asset(
+                                    "assets/no available items cart.svg",
+                                    height: AppUtil.getScreenWidth(context) - 50,
+                                    width: AppUtil.getScreenWidth(context) - 50,
+                                  ),
+                                  SizedBox(
+                                    height: 50,
+                                  ),
+                                  Text("Start browsing and add item"),
+                                  SizedBox(
+                                    height: 50,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushReplacementNamed(context, "/home");
+                                    },
+                                    child: Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFFFB531),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "BROWSE",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ));
+                        },
+                      )
+                    ],
+                  );
                 }
                 return Stack(
                   children: <Widget>[
@@ -328,7 +423,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                       width: 5,
                                                     ),
                                                     Text(
-                                                      AppUtil.doubleRemoveZeroTrailing(state.placeOrder.walletAmount),
+                                                      AppUtil.doubleRemoveZeroTrailing(state.placeOrder.walletAmount -
+                                                          state.placeOrder.getWalletUsed()),
                                                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                                     )
                                                   ],
@@ -477,110 +573,28 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                       bottom: 0,
                       child: Column(
                         children: <Widget>[
-                          FoodListDeliveryInformation(
-                            address: state.placeOrder.address,
-                            token: state.placeOrder.user.token,
-                            foodOrderBloc: _foodOrderBloc,
-                            addressBloc: _addressBloc,
-                            contact: state.placeOrder.contact,
-                            deliveryEstimation: widget.restaurant.deliveryEstimation,
-                          ),
+                          state.placeOrder.transactionType == "delivery"
+                              ? FoodListDeliveryInformation(
+                                  address: state.placeOrder.address,
+                                  token: state.placeOrder.user.token,
+                                  foodOrderBloc: _foodOrderBloc,
+                                  addressBloc: _addressBloc,
+                                  contact: state.placeOrder.contact,
+                                  deliveryEstimation: widget.restaurant.deliveryEstimation,
+                                )
+                              : Container(),
                           OrderBottomNavBar(
                             isValid: state.placeOrder.isValid,
                             onButtonTap: state.placeOrder.isValid
                                 ? () {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        backgroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-                                        builder: (context) {
-                                          return StatefulBuilder(
-                                            builder: (context, newState) {
-                                              return Container(
-                                                margin: EdgeInsets.symmetric(
-                                                    vertical: 40, horizontal: horizontalPaddingDraggable - 10),
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(32),
-                                                    topRight: Radius.circular(32),
-                                                  ),
-                                                ),
-                                                child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    RadioListTile(
-                                                      value: "rzr",
-                                                      dense: true,
-                                                      groupValue: state.placeOrder.paymentMethod,
-                                                      onChanged: (value) {
-                                                        _foodOrderBloc.add(ChangePaymentMethod(value));
-                                                        openCheckOut(state.placeOrder);
-                                                        Navigator.pop(context);
-                                                      },
-                                                      controlAffinity: ListTileControlAffinity.leading,
-                                                      isThreeLine: false,
-                                                      title: Row(
-                                                        children: <Widget>[
-                                                          SvgPicture.asset(
-                                                            "assets/onlinepayment.svg",
-                                                            height: 36,
-                                                            width: 36,
-                                                          ),
-                                                          SizedBox(
-                                                            width: 15,
-                                                          ),
-                                                          Text(
-                                                            "Online Payment",
-                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    RadioListTile(
-                                                      value: "cod",
-                                                      dense: true,
-                                                      groupValue: state.placeOrder.paymentMethod,
-                                                      onChanged: (value) {
-                                                        _foodOrderBloc.add(ChangePaymentMethod(value));
-                                                        _foodOrderBloc.add(PlaceOrderEvent());
-                                                        Navigator.pop(context);
-                                                      },
-                                                      controlAffinity: ListTileControlAffinity.leading,
-                                                      isThreeLine: false,
-                                                      title: Row(
-                                                        children: <Widget>[
-                                                          SvgPicture.asset(
-                                                            "assets/cod.svg",
-                                                            height: 36,
-                                                            width: 36,
-                                                          ),
-                                                          SizedBox(
-                                                            width: 15,
-                                                          ),
-                                                          Text(
-                                                            "Cash On Delivey",
-                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        });
+                                    placeOrderButtonTap(state.placeOrder);
                                   }
                                 : () {},
                             showRupee: (state is LoadingGetPayments) ? false : true,
                             amount: (state is LoadingGetPayments)
                                 ? "..."
-                                : AppUtil.doubleRemoveZeroTrailing(state.placeOrder.getTotal()),
+                                : AppUtil.doubleRemoveZeroTrailing(
+                                    state.placeOrder.getTotal() - state.placeOrder.getWalletUsed()),
                             buttonText: "PLACE ORDER",
                             description: (state is LoadingGetPayments) ? "Calculating..." : "Total Amount",
                           ),
@@ -590,13 +604,13 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                     BlocConsumer<FoodOrderBloc, FoodOrderState>(
                       listener: (context, state) {
                         if (state is SuccessPlaceOrder) {
-                          if (state.placeOrder.paymentMethod == "cod") {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return PlacedOrderSuccessPage(
-                                placeOrderId: state.placeOrder.id,
-                              );
-                            }));
-                          } else {}
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return PlacedOrderSuccessPage(
+                              placeOrderId: state.placeOrder.id,
+                              token: loginState.user.token,
+                              address: widget.location.address,
+                            );
+                          }));
                         } else if (state is ErrorPlaceOrder) {
                           showDialog(
                               context: context,
@@ -648,9 +662,75 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
     );
   }
 
+  showPaymentMethodOptions(PlaceOrder placeOrder) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, newState) {
+              List<Widget> listWidget = List();
+              for (int i = 0; i < placeOrder.listPaymentMethod.length; i++) {
+                listWidget.add(Column(
+                  children: <Widget>[
+                    RadioListTile(
+                      value: placeOrder.listPaymentMethod[i].value,
+                      dense: true,
+                      groupValue: placeOrder.selectedPaymentMethod,
+                      onChanged: (value) {
+                        _foodOrderBloc.add(ChangePaymentMethod(value));
+                        openCheckOut(placeOrder);
+                        Navigator.pop(context);
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      isThreeLine: false,
+                      title: Row(
+                        children: <Widget>[
+                          SvgPicture.asset(
+                            placeOrder.listPaymentMethod[i].getIcon(),
+                            height: 36,
+                            width: 36,
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Text(
+                            placeOrder.listPaymentMethod[i].label,
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ));
+              }
+
+              return Container(
+                margin: EdgeInsets.symmetric(vertical: 40, horizontal: horizontalPaddingDraggable - 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: listWidget,
+                ),
+              );
+            },
+          );
+        });
+  }
+
   openCheckOut(PlaceOrder placeOrder) {
     var options = {
-      "key": "rzp_test_shynWbWngI8JsA", // change to placeOrder.razorKey
+      "key": placeOrder.razorKey, //"rzp_test_shynWbWngI8JsA", // change to placeOrder.razorKey
       "amount": (placeOrder.getTotal() * 100.0).ceil().toString(),
       "name": "Flyer Eats",
       "description": "Payment for Flyer Eats",
@@ -696,8 +776,15 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
         barrierDismissible: true);
   }
 
-  void handlerExternalWallet(ExternalWalletResponse response) {
+  void handlerExternalWallet(ExternalWalletResponse response) {}
 
+  void placeOrderButtonTap(PlaceOrder placeOrder) {
+    if ((placeOrder.getTotal() - placeOrder.getWalletUsed()) > 0.0) {
+      showPaymentMethodOptions(placeOrder);
+    } else {
+      _foodOrderBloc.add(ChangePaymentMethod("wallet"));
+      _foodOrderBloc.add(PlaceOrderEvent());
+    }
   }
 }
 
@@ -1042,20 +1129,19 @@ class FoodItemPlaceOrder extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.all(10),
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 child: CachedNetworkImage(
                   imageUrl: food.image,
-                  height: 80,
-                  width: 100,
+                  height: 100,
+                  width: 120,
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
                   placeholder: (context, url) {
                     return Shimmer.fromColors(
                         child: Container(
-                          height: 80,
-                          width: 100,
+                          height: 100,
+                          width: 120,
                           color: Colors.black,
                         ),
                         baseColor: Colors.grey[300],
@@ -1087,25 +1173,36 @@ class FoodItemPlaceOrder extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(right: 10),
-                      child: Text(
-                        food.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5, bottom: 10, right: 10),
-                      child: Text(
-                        food.description,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.black54, fontSize: 10),
-                      ),
-                    ),
                     Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(right: 10),
+                            child: Text(
+                              food.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          food.description != null && food.description != ""
+                              ? Container(
+                                  margin: EdgeInsets.only(top: 5, bottom: 10, right: 10),
+                                  child: Text(
+                                    food.description,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: Colors.black54, fontSize: 10),
+                                  ),
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: 43,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1173,7 +1270,14 @@ class FoodListDeliveryInformation extends StatefulWidget {
 
 class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformation> {
   int _countrySelected = 0;
-  String contactPredicate = "+91";
+  String _contactPredicate = "+91";
+  String _number;
+  bool _isChangePrimaryNumber = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1429,145 +1533,7 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                     ),
                     GestureDetector(
                       onTap: () {
-                        showModalBottomSheet(
-                            isScrollControlled: false,
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-                            context: context,
-                            builder: (context) {
-                              return Column(
-                                children: <Widget>[
-                                  Container(
-                                      width: AppUtil.getScreenWidth(context),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(32), topRight: Radius.circular(32)),
-                                          color: Colors.white),
-                                      padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Text(
-                                              "ENTER NUMBER",
-                                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          IconButton(
-                                              icon: Icon(Icons.clear),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              }),
-                                        ],
-                                      )),
-                                  Container(
-                                    margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.black12, width: 2)),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Container(
-                                          width: 100,
-                                          padding: EdgeInsets.symmetric(horizontal: 10),
-                                          child: DropdownButton<int>(
-                                            underline: Container(),
-                                            isExpanded: false,
-                                            isDense: true,
-                                            iconSize: 0,
-                                            value: _countrySelected,
-                                            items: [
-                                              DropdownMenuItem(
-                                                value: 0,
-                                                child: Container(
-                                                  width: 80,
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        child: Container(
-                                                          height: 20,
-                                                          child: SvgPicture.asset("assets/india_flag.svg"),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                          "+91",
-                                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              DropdownMenuItem(
-                                                value: 1,
-                                                child: Container(
-                                                  width: 80,
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        child: Container(
-                                                          height: 20,
-                                                          child: SvgPicture.asset("assets/singapore_flag.svg"),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                          "+65",
-                                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                            onChanged: (i) {
-                                              setState(() {
-                                                _countrySelected = i;
-                                                contactPredicate = i == 0 ? "+91" : "+65";
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                border: Border(left: BorderSide(color: Colors.black12, width: 2))),
-                                            padding: EdgeInsets.symmetric(horizontal: 20),
-                                            child: TextField(
-                                              onSubmitted: (value) {
-                                                if (value != "") {
-                                                  widget.foodOrderBloc
-                                                      .add(ChangeContactPhone(contactPredicate + value));
-                                                  Navigator.pop(context);
-                                                }
-                                              },
-                                              keyboardType: TextInputType.number,
-                                              decoration: InputDecoration(
-                                                contentPadding: EdgeInsets.symmetric(vertical: 15),
-                                                border: InputBorder.none,
-                                                hintText: "Enter phone number",
-                                                hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              );
-                            });
+                        changeContactNumber();
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
@@ -1585,6 +1551,208 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
               ],
             ),
           );
+  }
+
+  void changeContactNumber() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, state) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                        width: AppUtil.getScreenWidth(context),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                            color: Colors.white),
+                        padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                "ENTER NUMBER",
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            IconButton(
+                                icon: Icon(Icons.clear),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          ],
+                        )),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.black12, width: 2)),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 100,
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: DropdownButton<int>(
+                              underline: Container(),
+                              isExpanded: false,
+                              isDense: true,
+                              iconSize: 0,
+                              value: _countrySelected,
+                              items: [
+                                DropdownMenuItem(
+                                  value: 0,
+                                  child: Container(
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            height: 20,
+                                            child: SvgPicture.asset("assets/india_flag.svg"),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            "+91",
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 1,
+                                  child: Container(
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            height: 20,
+                                            child: SvgPicture.asset("assets/singapore_flag.svg"),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            "+65",
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              onChanged: (i) {
+                                state(() {
+                                  _countrySelected = i;
+                                  _contactPredicate = i == 0 ? "+91" : "+65";
+                                });
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              decoration:
+                                  BoxDecoration(border: Border(left: BorderSide(color: Colors.black12, width: 2))),
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: TextField(
+                                onChanged: (value) {
+                                  state(() {
+                                    _number = value;
+                                  });
+                                },
+                                autofocus: true,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                  border: InputBorder.none,
+                                  hintText: "Enter phone number",
+                                  hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable, vertical: 10),
+                      child: Row(
+                        children: <Widget>[
+                          Checkbox(
+                            value: _isChangePrimaryNumber,
+                            onChanged: (value) {
+                              state(() {
+                                _isChangePrimaryNumber = value;
+                              });
+                            },
+                            visualDensity: VisualDensity(vertical: 0, horizontal: 0),
+                          ),
+                          Expanded(child: Text("Do you want to make this number as your primary and login number?"))
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _number != "" && _number != null
+                          ? () {
+                              widget.foodOrderBloc
+                                  .add(ChangeContactPhone(_isChangePrimaryNumber, _contactPredicate + _number));
+                              Navigator.pop(context);
+                            }
+                          : () {},
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            left: horizontalPaddingDraggable,
+                            right: horizontalPaddingDraggable,
+                            bottom: MediaQuery.of(context).viewInsets.bottom + 32),
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFFB531),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                "SELECT",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            AnimatedOpacity(
+                              opacity: _number != "" && _number != null ? 0.0 : 0.5,
+                              child: Container(
+                                height: 50,
+                                color: Colors.white,
+                              ),
+                              duration: Duration(milliseconds: 300),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        });
   }
 }
 

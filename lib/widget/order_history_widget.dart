@@ -14,9 +14,7 @@ class OrderHistoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
-          left: horizontalPaddingDraggable,
-          right: horizontalPaddingDraggable,
-          bottom: horizontalPaddingDraggable),
+          left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: horizontalPaddingDraggable),
       padding: EdgeInsets.only(left: 15, right: 15, top: 15),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -68,8 +66,7 @@ class OrderHistoryWidget extends StatelessWidget {
                         order.restaurant.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
                         height: 5,
@@ -111,8 +108,7 @@ class OrderHistoryWidget extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
               order.itemsString,
-              style:
-                  TextStyle(fontSize: 16, color: Colors.black45, height: 1.3),
+              style: TextStyle(fontSize: 16, color: Colors.black45, height: 1.3),
             ),
           ),
           Container(
@@ -144,14 +140,12 @@ class OrderHistoryWidget extends StatelessWidget {
                   SizedBox(
                       width: 18,
                       height: 18,
-                      child: FittedBox(
-                          fit: BoxFit.fill,
-                          child: SvgPicture.asset("assets/check.svg"))),
+                      child: FittedBox(fit: BoxFit.fill, child: SvgPicture.asset(order.getIcon()))),
                   SizedBox(
                     width: 10,
                   ),
                   Text(
-                    order.status,
+                    order.getMapStatus(),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   )
                 ],
@@ -160,10 +154,7 @@ class OrderHistoryWidget extends StatelessWidget {
                 padding: EdgeInsets.only(top: 5, bottom: 15),
                 child: Text(
                   "REORDER",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: primary3),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: primary3),
                 ),
               )
             ],

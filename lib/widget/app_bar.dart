@@ -14,6 +14,7 @@ class CustomAppBar extends StatelessWidget {
   final Color backgroundColor;
   final bool isLoading;
   final bool isFlag;
+  final bool isDropDownButtonVisible;
 
   const CustomAppBar(
       {Key key,
@@ -25,14 +26,14 @@ class CustomAppBar extends StatelessWidget {
       this.onTapDrawer,
       this.backgroundColor = Colors.black38,
       this.isLoading = false,
-      this.isFlag = false})
+      this.isFlag = false,
+      this.isDropDownButtonVisible = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-          left: 16, right: 16, top: MediaQuery.of(context).padding.top),
+      padding: EdgeInsets.only(left: 16, right: 16, top: MediaQuery.of(context).padding.top),
       height: AppUtil.getToolbarHeight(context),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -89,14 +90,24 @@ class CustomAppBar extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
             ),
           ),
+          isDropDownButtonVisible
+              ? GestureDetector(
+                  onTap: onTapTitle,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 10),
+                    child: SvgPicture.asset(
+                      "assets/dropdown home.svg",
+                      height: 8,
+                      width: 8,
+                    ),
+                  ),
+                )
+              : SizedBox(),
           isLoading
               ? SpinKitCircle(
                   color: Colors.white,

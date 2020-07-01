@@ -1,4 +1,5 @@
 import 'package:flyereats/classes/data_provider.dart';
+import 'package:flyereats/model/ads.dart';
 import 'package:flyereats/model/detail_order.dart';
 import 'package:flyereats/model/filter.dart';
 import 'package:flyereats/model/food.dart';
@@ -6,6 +7,7 @@ import 'package:flyereats/model/home_page_data.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/login_status.dart';
 import 'package:flyereats/model/menu_category.dart';
+import 'package:flyereats/model/notification.dart';
 import 'package:flyereats/model/order.dart';
 import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
@@ -33,8 +35,7 @@ class DataRepository {
   Future<PlaceOrder> placeOrder(PlaceOrder placeOrder) async {
     final response = await _provider.placeOrder(placeOrder);
     if (response['code'] == 1) {
-      PlaceOrder placeOrder = PlaceOrder(
-          id: response['details']['order_id'], message: response['msg']);
+      PlaceOrder placeOrder = PlaceOrder(id: response['details']['order_id'], message: response['msg']);
       return placeOrder;
     } else {
       return PlaceOrder(isValid: false, message: response['msg']);
@@ -125,6 +126,19 @@ class DataRepository {
     }
   }
 
+  Future<List<NotificationItem>> getNotificationList(String token, int page) async {
+    final response = await _provider.getNotificationList(token, page);
+    if (response['code'] == 1) {
+      var listResponse = response['details']['data'] as List;
+      List<NotificationItem> list = listResponse.map((i) {
+        return NotificationItem.fromJson(i);
+      }).toList();
+      return list;
+    } else {
+       return List();
+    }
+  }
+
   Future<List<Review>> getReview(String restaurantId, String token) async {
     final response = await _provider.getReview(restaurantId, token);
     if (response['code'] == 1) {
@@ -171,8 +185,7 @@ class DataRepository {
     }
   }
 
-  Future<bool> addReview(
-      String token, String orderId, String review, double rating) async {
+  Future<bool> addReview(String token, String orderId, String review, double rating) async {
     final response = await _provider.addReview(token, orderId, review, rating);
     if (response['code'] == 1) {
       return true;
@@ -213,10 +226,8 @@ class DataRepository {
     }
   }
 
-  Future<dynamic> applyVoucher(String restaurantId, String voucherCode,
-      double totalOrder, String token) async {
-    final response = await _provider.applyCoupon(
-        restaurantId, voucherCode, totalOrder, token);
+  Future<dynamic> applyVoucher(String restaurantId, String voucherCode, double totalOrder, String token) async {
+    final response = await _provider.applyCoupon(restaurantId, voucherCode, totalOrder, token);
     if (response['code'] == 1) {
       Voucher voucher = Voucher.fromJson(response['details']);
       return voucher;
@@ -263,6 +274,20 @@ class DataRepository {
     }
   }
 
+  Future<dynamic> getAds(String token, String address) async {
+    final response = await _provider.getHomePageData(
+        address: address, adsPage: 0, dblPage: 0, foodCategoryPage: 0, token: token, topRestaurantPage: 0);
+    if (response['code'] == 1) {
+      var listAds = response['details']['ads'] as List;
+      List<Ads> ads = listAds.map((i) {
+        return Ads.fromJson(i);
+      }).toList();
+      return ads;
+    } else {
+      return response['msg'];
+    }
+  }
+
   Future<dynamic> getDetailOrder(String orderId, String token) async {
     final response = await _provider.getOrderDetail(orderId, token);
     if (response['code'] == 1) {
@@ -274,17 +299,11 @@ class DataRepository {
   }
 
   Future<Map<String, dynamic>> getFirstDataRestaurantList(
-      String token,
-      String address,
-      MerchantType merchantType,
-      RestaurantListType type,
-      String category,
-      {String cuisineType,
-      String sortBy}) async {
+      String token, String address, MerchantType merchantType, RestaurantListType type, String category,
+      {String cuisineType, String sortBy}) async {
     Map<String, dynamic> map = Map();
 
-    final response = await _provider.getRestaurantList(
-        token, address, merchantType, type, category, 0,
+    final response = await _provider.getRestaurantList(token, address, merchantType, type, category, 0,
         sortBy: sortBy, cuisineType: cuisineType);
     if (response['code'] == 1) {
       var listLocations = response['details']['restaurants'] as List;
@@ -296,20 +315,13 @@ class DataRepository {
 
       var listSortBY = response['details']['sortoptions'];
       List<SortBy> sortBy = List();
-      sortBy.add(SortBy(
-          key: listSortBY['sort_ratings']['key'],
-          title: listSortBY['sort_ratings']['title']));
-      sortBy.add(SortBy(
-          key: listSortBY['sort_recommended']['key'],
-          title: listSortBY['sort_recommended']['title']));
-      sortBy.add(SortBy(
-          key: listSortBY['sort_distance']['key'],
-          title: listSortBY['sort_distance']['title']));
+      sortBy.add(SortBy(key: listSortBY['sort_ratings']['key'], title: listSortBY['sort_ratings']['title']));
+      sortBy.add(SortBy(key: listSortBY['sort_recommended']['key'], title: listSortBY['sort_recommended']['title']));
+      sortBy.add(SortBy(key: listSortBY['sort_distance']['key'], title: listSortBY['sort_distance']['title']));
       map['sortBy'] = sortBy;
 
       if ((response['details']['filteroptions'] is Map)) {
-        var listFilter = response['details']['filteroptions']['cuisine_type']
-            ['options'] as List;
+        var listFilter = response['details']['filteroptions']['cuisine_type']['options'] as List;
         List<Filter> filters = listFilter.map((i) {
           return Filter.fromJson(i);
         }).toList();
@@ -324,15 +336,9 @@ class DataRepository {
     }
   }
 
-  Future<List<Restaurant>> getRestaurantList(
-      String token,
-      String address,
-      MerchantType merchantType,
-      RestaurantListType type,
-      String category,
-      int page) async {
-    final response = await _provider.getRestaurantList(
-        token, address, merchantType, type, category, page);
+  Future<List<Restaurant>> getRestaurantList(String token, String address, MerchantType merchantType,
+      RestaurantListType type, String category, int page) async {
+    final response = await _provider.getRestaurantList(token, address, merchantType, type, category, page);
     if (response['code'] == 1) {
       var listLocations = response['details']['restaurants'] as List;
       List<Restaurant> restaurants = listLocations.map((i) {

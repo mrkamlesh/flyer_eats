@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flyereats/model/address.dart';
 import 'package:flyereats/model/food_cart.dart';
+import 'package:flyereats/model/payment_method.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
@@ -16,7 +17,7 @@ class PlaceOrder {
   final FoodCart foodCart;
   final Address address;
   final Voucher voucher;
-  final String paymentMethod;
+  final String selectedPaymentMethod;
   final String razorKey;
   final String razorSecret;
   final String deliveryInstruction;
@@ -29,6 +30,8 @@ class PlaceOrder {
   final String discountOrderPrettyString;
   final bool isUseWallet;
   final double walletAmount;
+  final bool isChangePrimaryContact;
+  final List<PaymentMethod> listPaymentMethod;
 
   PlaceOrder({
     this.id,
@@ -40,7 +43,7 @@ class PlaceOrder {
     this.foodCart,
     this.address,
     this.voucher,
-    this.paymentMethod,
+    this.selectedPaymentMethod,
     this.razorKey,
     this.razorSecret,
     this.deliveryInstruction,
@@ -53,31 +56,30 @@ class PlaceOrder {
     this.discountOrderPrettyString,
     this.walletAmount,
     this.isUseWallet,
+    this.isChangePrimaryContact,
+    this.listPaymentMethod,
   });
 
   factory PlaceOrder.fromJson(Map<String, dynamic> parsedJson) {
+    var listPaymentMethod = parsedJson['details']['payment_list'] as List;
+    List<PaymentMethod> listPayment = listPaymentMethod.map((i) {
+      return PaymentMethod.fromJson(i);
+    }).toList();
+
     return PlaceOrder(
       isValid: true,
       message: parsedJson['msg'],
-      discountOrder: (parsedJson['details']['cart'] as Map)
-              .containsKey('discount')
-          ? double.parse(
-              parsedJson['details']['cart']['discount']['amount'].toString())
+      discountOrder: (parsedJson['details']['cart'] as Map).containsKey('discount')
+          ? double.parse(parsedJson['details']['cart']['discount']['amount'].toString())
           : 0,
-      discountOrderPrettyString:
-          (parsedJson['details']['cart'] as Map).containsKey('discount')
-              ? parsedJson['details']['cart']['discount']['display'].toString()
-              : "DISCOUNT ORDER",
-      deliveryCharges:
-          (parsedJson['details']['cart'] as Map).containsKey('delivery_charges')
-              ? double.parse(parsedJson['details']['cart']['delivery_charges']
-                      ['amount']
-                  .toString())
-              : 0,
-      packagingCharges: (parsedJson['details']['cart'] as Map)
-              .containsKey('packaging')
-          ? double.parse(
-              parsedJson['details']['cart']['packaging']['amount'].toString())
+      discountOrderPrettyString: (parsedJson['details']['cart'] as Map).containsKey('discount')
+          ? parsedJson['details']['cart']['discount']['display'].toString()
+          : "DISCOUNT ORDER",
+      deliveryCharges: (parsedJson['details']['cart'] as Map).containsKey('delivery_charges')
+          ? double.parse(parsedJson['details']['cart']['delivery_charges']['amount'].toString())
+          : 0,
+      packagingCharges: (parsedJson['details']['cart'] as Map).containsKey('packaging')
+          ? double.parse(parsedJson['details']['cart']['packaging']['amount'].toString())
           : 0,
       taxCharges: (parsedJson['details']['cart'] as Map).containsKey('tax')
           ? double.parse(parsedJson['details']['cart']['tax']['tax'].toString())
@@ -87,8 +89,10 @@ class PlaceOrder {
           : "Tax",
       razorKey: parsedJson['details']['razorpay']['razor_key'],
       razorSecret: parsedJson['details']['razorpay']['razor_secret'],
-      walletAmount:
-          double.parse(parsedJson['details']['wallet_amount'].toString()),
+      walletAmount: double.parse(
+        parsedJson['details']['wallet_amount'].toString(),
+      ),
+      listPaymentMethod: listPayment,
     );
   }
 
@@ -102,7 +106,7 @@ class PlaceOrder {
     FoodCart foodCart,
     Address address,
     Voucher voucher,
-    String paymentMethod,
+    String selectedPaymentMethod,
     String razorKey,
     String razorSecret,
     String deliveryInstruction,
@@ -115,6 +119,8 @@ class PlaceOrder {
     String discountPrettyString,
     double walletAmount,
     bool isUseWallet,
+    bool isChangePrimaryContact,
+    List<PaymentMethod> listPaymentMethod,
   }) {
     return PlaceOrder(
         id: id ?? this.id,
@@ -127,7 +133,7 @@ class PlaceOrder {
         contact: contact ?? this.contact,
         deliveryInstruction: deliveryInstruction ?? this.deliveryInstruction,
         foodCart: foodCart ?? this.foodCart,
-        paymentMethod: paymentMethod ?? this.paymentMethod,
+        selectedPaymentMethod: selectedPaymentMethod ?? this.selectedPaymentMethod,
         razorKey: razorKey ?? this.razorKey,
         razorSecret: razorSecret ?? this.razorSecret,
         voucher: voucher ?? this.voucher,
@@ -136,10 +142,11 @@ class PlaceOrder {
         taxCharges: taxCharges ?? this.taxCharges,
         taxPrettyString: taxPrettyString ?? this.taxPrettyString,
         discountOrder: discountOrder ?? this.discountOrder,
-        discountOrderPrettyString:
-            discountPrettyString ?? this.discountOrderPrettyString,
+        discountOrderPrettyString: discountPrettyString ?? this.discountOrderPrettyString,
         walletAmount: walletAmount ?? this.walletAmount,
-        isUseWallet: isUseWallet ?? this.isUseWallet);
+        isUseWallet: isUseWallet ?? this.isUseWallet,
+        isChangePrimaryContact: isChangePrimaryContact ?? this.isChangePrimaryContact,
+        listPaymentMethod: listPaymentMethod ?? this.listPaymentMethod);
   }
 
   String cartToString() {
@@ -175,8 +182,7 @@ class PlaceOrder {
     double subTotal = 0;
 
     foodCart.cart.forEach((key, item) {
-      subTotal =
-          subTotal + item.quantity * (item.food.price - item.food.discount);
+      subTotal = subTotal + item.quantity * (item.food.price - item.food.discount);
     });
 
     return subTotal;
@@ -213,6 +219,22 @@ class PlaceOrder {
         discountOrder -
         voucher.amount;
 
+    if (total < 0) {
+      return 0;
+    }
+
     return total;
+  }
+
+  double getWalletUsed() {
+    if (isUseWallet) {
+      if (walletAmount >= getTotal()) {
+        return getTotal();
+      } else {
+        return walletAmount;
+      }
+    } else {
+      return 0;
+    }
   }
 }

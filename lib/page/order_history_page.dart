@@ -68,20 +68,16 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                   ],
                 ),
                 DraggableScrollableSheet(
-                  initialChildSize: (AppUtil.getScreenHeight(context) -
-                          AppUtil.getToolbarHeight(context)) /
+                  initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  minChildSize: (AppUtil.getScreenHeight(context) -
-                          AppUtil.getToolbarHeight(context)) /
+                  minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
                   maxChildSize: 1.0,
                   builder: (context, controller) {
                     return Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(32),
-                              topLeft: Radius.circular(32))),
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                       padding: EdgeInsets.only(top: 20),
                       child: BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
                         builder: (context, state) {
@@ -108,13 +104,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                               height: AppUtil.getDraggableHeight(context),
                               decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(32),
-                                      topLeft: Radius.circular(32))),
+                                  borderRadius:
+                                      BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                               padding: EdgeInsets.only(
-                                  top: 20,
-                                  left: horizontalPaddingDraggable,
-                                  right: horizontalPaddingDraggable),
+                                  top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                               alignment: Alignment.center,
                               child: Container(
                                 child: Center(
@@ -128,13 +121,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                 height: AppUtil.getDraggableHeight(context),
                                 decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(32),
-                                        topLeft: Radius.circular(32))),
+                                    borderRadius:
+                                        BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                                 padding: EdgeInsets.only(
-                                    top: 20,
-                                    left: horizontalPaddingDraggable,
-                                    right: horizontalPaddingDraggable),
+                                    top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                                 alignment: Alignment.center,
                                 child: Container(
                                   child: Center(
@@ -147,15 +137,12 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                 controller: controller,
                                 slivers: <Widget>[
                                   SliverList(
-                                      delegate: SliverChildBuilderDelegate(
-                                          (context, i) {
+                                      delegate: SliverChildBuilderDelegate((context, i) {
                                     return GestureDetector(
                                       onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) {
                                           return DetailOrderPage(
-                                            order: state.listOrder[i],
+                                            orderId: state.listOrder[i].id,
                                           );
                                         }));
                                       },

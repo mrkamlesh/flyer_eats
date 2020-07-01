@@ -18,6 +18,7 @@ import 'package:flyereats/page/delivery_process_order_page.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
 import 'package:flyereats/page/search_page.dart';
 import 'package:flyereats/page/select_location_page.dart';
+import 'package:flyereats/page/track_order_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/banner_list_widget.dart';
 import 'package:flyereats/widget/custom_bottom_navigation_bar.dart';
@@ -50,15 +51,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: Duration(milliseconds: 500),
     );
-    _navBarAnimation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
-        .animate(
-            CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _navBarAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
+        .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
     _orderInformationAnimation = Tween<double>(
       begin: 1.0,
       end: 0.0,
-    ).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
   }
 
   @override
@@ -106,8 +104,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 child: CustomBottomNavBar(
                   animationDuration: Duration(milliseconds: 300),
                   items: [
-                    BottomNavyBarItem(
-                        icon: "assets/2.svg", title: "Flyer Eats"),
+                    BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
                     BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
                     BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
                     BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
@@ -116,8 +113,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     setState(() {
                       _currentIndex = index;
                       if (index == 2) {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
                           return SearchPage();
                         }));
                       } else if (index == 3) {
@@ -136,8 +132,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       body: Stack(
         children: <Widget>[
-          BlocBuilder<LocationBloc, LocationState>(
-              condition: (oldState, state) {
+          BlocBuilder<LocationBloc, LocationState>(condition: (oldState, state) {
             if (state is HomePageDataLoaded ||
                 state is NoLocationsAvailable ||
                 state is LoadingLocationError ||
@@ -199,8 +194,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         action: SnackBarAction(
                           label: "Retry",
                           onPressed: () {
-                            BlocProvider.of<LocationBloc>(context)
-                                .add(GetCurrentLocation(loginState.user.token));
+                            BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation(loginState.user.token));
                           },
                         ),
                       );
@@ -216,19 +210,24 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     String titleText = "Choose Location Here";
                     String leading;
                     bool isLoading = false;
+                    bool isDropdownVisible = false;
                     bool isFlag = false;
                     if (state is LoadingLocationSuccess) {
                       titleText = "Loading Location...";
                       isLoading = true;
+                      isDropdownVisible = false;
                     } else if (state is NoLocationsAvailable) {
                       titleText = "No Locations Available";
                       isLoading = false;
+                      isDropdownVisible = true;
                     } else if (state is LoadingLocationError) {
                       titleText = "Click Here to Choose Location";
                       isLoading = false;
+                      isDropdownVisible = true;
                     } else if (state is HomePageDataLoaded) {
                       titleText = state.data.location;
                       isLoading = false;
+                      isDropdownVisible = true;
                       switch (state.data.countryId) {
                         case "IN":
                           leading = "assets/india_flag.svg";
@@ -244,25 +243,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     } else if (state is LoadingLocation) {
                       titleText = "Loading Location...";
                       isLoading = true;
+                      isDropdownVisible = false;
                     }
 
                     return Builder(
                       builder: (context) {
                         return CustomAppBar(
+                          isDropDownButtonVisible: isDropdownVisible,
                           leading: leading,
                           isFlag: isFlag,
                           drawer: "assets/drawer.svg",
                           title: titleText,
                           isLoading: isLoading,
                           onTapTitle: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
                               return SelectLocationPage();
                             }));
                           },
                           onTapLeading: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
                               return SelectLocationPage();
                             }));
                           },
@@ -299,15 +298,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 return HomeErrorWidget("No Available Location");
               } else if (state is HomePageDataLoaded) {
                 return DraggableScrollableSheet(
-                  initialChildSize: AppUtil.getDraggableHeight(context) /
-                      AppUtil.getScreenHeight(context),
-                  minChildSize: AppUtil.getDraggableHeight(context) /
-                      AppUtil.getScreenHeight(context),
+                  initialChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
+                  minChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
                   maxChildSize: 1.0,
                   builder: (context, controller) {
                     controller.addListener(() {
-                      if (controller.position.userScrollDirection ==
-                          ScrollDirection.reverse) {
+                      if (controller.position.userScrollDirection == ScrollDirection.reverse) {
                         if (!_isScrollingDown) {
                           _isScrollingDown = true;
                           setState(() {
@@ -315,11 +311,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           });
                         }
                       }
-                      if ((controller.position.userScrollDirection ==
-                              ScrollDirection.forward) |
-                          (controller.offset >=
-                                  controller.position.maxScrollExtent -
-                                      kBottomNavigationBarHeight &&
+                      if ((controller.position.userScrollDirection == ScrollDirection.forward) |
+                          (controller.offset >= controller.position.maxScrollExtent - kBottomNavigationBarHeight &&
                               !controller.position.outOfRange)) {
                         if (_isScrollingDown) {
                           _isScrollingDown = false;
@@ -334,73 +327,61 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         child: Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(32),
-                                  topLeft: Radius.circular(32))),
+                              borderRadius:
+                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                           padding: EdgeInsets.only(top: 10, bottom: 32),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
                               Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: horizontalPaddingDraggable - 5),
-                                margin: EdgeInsets.only(
-                                    bottom: distanceSectionContent - 10),
+                                padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable - 5),
+                                margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                 height: 110,
                                 child: ShopCategoryListWidget(
                                   onTap: (i) {
                                     if (i == 0) {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
                                         return RestaurantListPage(
                                           image: "assets/allrestaurant.png",
                                           merchantType: MerchantType.restaurant,
                                           isExternalImage: false,
                                           title: "All Restaurants",
-                                          location: Location(
-                                              address: _homePageData.location),
+                                          location: Location(address: _homePageData.location),
                                         );
                                       }));
                                     } else if (i == 1) {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
                                         return RestaurantListPage(
                                           image: "assets/allrestaurant.png",
                                           merchantType: MerchantType.grocery,
                                           isExternalImage: false,
                                           title: "All Restaurants",
-                                          location: Location(
-                                              address: _homePageData.location),
+                                          location: Location(address: _homePageData.location),
                                         );
                                       }));
                                     } else if (i == 2) {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
                                         return RestaurantListPage(
                                           image: "assets/allrestaurant.png",
                                           merchantType: MerchantType.vegFruits,
                                           isExternalImage: false,
                                           title: "All Restaurants",
-                                          location: Location(
-                                              address: _homePageData.location),
+                                          location: Location(address: _homePageData.location),
                                         );
                                       }));
                                     } else if (i == 3) {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
                                         return RestaurantListPage(
                                           image: "assets/allrestaurant.png",
                                           merchantType: MerchantType.meat,
                                           isExternalImage: false,
                                           title: "All Restaurants",
-                                          location: Location(
-                                              address: _homePageData.location),
+                                          location: Location(address: _homePageData.location),
                                         );
                                       }));
                                     }
                                   },
-                                  shopCategories:
-                                      ExampleModel.getShopCategories(),
+                                  shopCategories: ExampleModel.getShopCategories(),
                                 ),
                               ),
                               Container(
@@ -414,56 +395,37 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                   ? Column(
                                       children: <Widget>[
                                         Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  horizontalPaddingDraggable),
-                                          margin: EdgeInsets.only(
-                                              bottom:
-                                                  distanceSectionContent - 10),
+                                          padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                          margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                           child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             children: <Widget>[
                                               Text(
                                                 "Top Restaurants",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                               ),
                                               GestureDetector(
                                                 onTap: () {
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
                                                     return RestaurantListPage(
                                                       title: "Top Restaurants",
-                                                      location: Location(
-                                                          address: _homePageData
-                                                              .location),
-                                                      type: RestaurantListType
-                                                          .top,
-                                                      merchantType: MerchantType
-                                                          .restaurant,
+                                                      location: Location(address: _homePageData.location),
+                                                      type: RestaurantListType.top,
+                                                      merchantType: MerchantType.restaurant,
                                                       isExternalImage: false,
-                                                      image:
-                                                          "assets/allrestaurant.png",
+                                                      image: "assets/allrestaurant.png",
                                                     );
                                                   }));
                                                 },
                                                 child: Container(
                                                   width: 70,
                                                   height: 20,
-                                                  alignment:
-                                                      Alignment.centerRight,
+                                                  alignment: Alignment.centerRight,
                                                   child: Text(
                                                     "See All",
                                                     textAlign: TextAlign.end,
-                                                    style: TextStyle(
-                                                        color: primary3,
-                                                        fontSize: 14),
+                                                    style: TextStyle(color: primary3, fontSize: 14),
                                                   ),
                                                 ),
                                               )
@@ -471,140 +433,97 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           ),
                                         ),
                                         Container(
-                                          margin: EdgeInsets.only(
-                                              bottom:
-                                                  distanceBetweenSection - 20),
+                                          margin: EdgeInsets.only(bottom: distanceBetweenSection - 20),
                                           height: 160,
                                           child: RestaurantListWidget(
-                                            type: RestaurantViewType
-                                                .topRestaurant,
-                                            restaurants:
-                                                _homePageData.topRestaurants,
+                                            type: RestaurantViewType.topRestaurant,
+                                            restaurants: _homePageData.topRestaurants,
                                           ),
                                         ),
                                       ],
                                     )
                                   : Container(
-                                      margin: EdgeInsets.only(
-                                          bottom: distanceSectionContent - 10),
+                                      margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                     ),
                               _homePageData.categories.isNotEmpty
                                   ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  horizontalPaddingDraggable),
-                                          margin: EdgeInsets.only(
-                                              bottom:
-                                                  distanceSectionContent - 10),
+                                          padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                          margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                           child: Text(
                                             "Food Categories",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
+                                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         Container(
-                                          margin: EdgeInsets.only(
-                                              bottom:
-                                                  distanceBetweenSection - 10),
+                                          margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
                                           height: 130,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    offset: Offset(2, 2),
-                                                    color: Colors.black26,
-                                                    spreadRadius: 0,
-                                                    blurRadius: 5)
-                                              ]),
+                                          decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                                            BoxShadow(
+                                                offset: Offset(2, 2),
+                                                color: Colors.black26,
+                                                spreadRadius: 0,
+                                                blurRadius: 5)
+                                          ]),
                                           child: FoodCategoryListWidget(
                                             onTap: (category) {
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) {
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) {
                                                 return RestaurantListPage(
                                                   title: category.name,
                                                   image: category.image,
-                                                  merchantType:
-                                                      MerchantType.restaurant,
+                                                  merchantType: MerchantType.restaurant,
                                                   category: category.id,
                                                   isExternalImage: true,
-                                                  location: Location(
-                                                      address: _homePageData
-                                                          .location),
+                                                  location: Location(address: _homePageData.location),
                                                 );
                                               }));
                                             },
-                                            foodCategoryList:
-                                                _homePageData.categories,
+                                            foodCategoryList: _homePageData.categories,
                                           ),
                                         ),
                                       ],
                                     )
                                   : Container(
-                                      margin: EdgeInsets.only(
-                                          bottom: distanceBetweenSection - 10),
+                                      margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
                                     ),
                               _homePageData.orderAgainRestaurants.isNotEmpty
                                   ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  horizontalPaddingDraggable),
-                                          margin: EdgeInsets.only(
-                                              bottom:
-                                                  distanceSectionContent - 10),
+                                          padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                          margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                           child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             children: <Widget>[
                                               Text(
                                                 "Order Again",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                               ),
                                               GestureDetector(
                                                 onTap: () {
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
                                                     return RestaurantListPage(
                                                       title: "Order Again",
-                                                      merchantType: MerchantType
-                                                          .restaurant,
-                                                      type: RestaurantListType
-                                                          .orderAgain,
-                                                      location: Location(
-                                                          address: _homePageData
-                                                              .location),
+                                                      merchantType: MerchantType.restaurant,
+                                                      type: RestaurantListType.orderAgain,
+                                                      location: Location(address: _homePageData.location),
                                                       isExternalImage: false,
-                                                      image:
-                                                          "assets/allrestaurant.png",
+                                                      image: "assets/allrestaurant.png",
                                                     );
                                                   }));
                                                 },
                                                 child: Container(
                                                   height: 20,
                                                   width: 70,
-                                                  alignment:
-                                                      Alignment.centerRight,
+                                                  alignment: Alignment.centerRight,
                                                   child: Text(
                                                     "See All",
                                                     textAlign: TextAlign.end,
-                                                    style: TextStyle(
-                                                        color: primary3,
-                                                        fontSize: 14),
+                                                    style: TextStyle(color: primary3, fontSize: 14),
                                                   ),
                                                 ),
                                               )
@@ -612,73 +531,53 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           ),
                                         ),
                                         Container(
-                                          margin: EdgeInsets.only(
-                                              bottom:
-                                                  distanceSectionContent - 10),
+                                          margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                           height: 135,
                                           child: RestaurantListWidget(
-                                            type: RestaurantViewType
-                                                .orderAgainRestaurant,
-                                            restaurants: _homePageData
-                                                .orderAgainRestaurants,
+                                            type: RestaurantViewType.orderAgainRestaurant,
+                                            restaurants: _homePageData.orderAgainRestaurants,
                                             isExpand: true,
-                                            location: Location(
-                                                address: state.data.location),
+                                            location: Location(address: state.data.location),
                                           ),
                                         ),
                                       ],
                                     )
                                   : Container(
-                                      margin: EdgeInsets.only(
-                                          bottom: distanceSectionContent - 10),
+                                      margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                     ),
                               Container(
-                                margin: EdgeInsets.only(
-                                    bottom: distanceBetweenSection - 10),
-                                height: 0.20 * AppUtil.getScreenHeight(context),
+                                margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
+                                height: 0.15 * AppUtil.getScreenHeight(context),
                                 decoration: BoxDecoration(
                                   color: Color(0xFFFFC94B),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black12,
-                                        blurRadius: 10,
-                                        spreadRadius: 5)
-                                  ],
+                                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)],
                                 ),
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                      width: 0.20 *
-                                              AppUtil.getScreenHeight(context) -
-                                          20,
-                                      height: 0.20 *
-                                              AppUtil.getScreenHeight(context) -
-                                          20,
+                                      width: 0.15 * AppUtil.getScreenHeight(context) - 20,
+                                      height: 0.15 * AppUtil.getScreenHeight(context) - 20,
                                       margin: EdgeInsets.all(10),
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.3),
                                       ),
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: <Widget>[
                                           SvgPicture.asset(
                                             "assets/order success icon 2.svg",
-                                            height: 60,
-                                            width: 60,
+                                            height: 40,
+                                            width: 40,
                                           ),
                                           SizedBox(
-                                            height: 10,
+                                            height: 5,
                                           ),
                                           Text(
                                             "Refer Now",
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12),
+                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
                                           )
                                         ],
                                       ),
@@ -687,26 +586,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                         child: Container(
                                       padding: EdgeInsets.all(15),
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: <Widget>[
                                           Text(
                                             "REFER A FRIEND AND EARN",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
+                                            style: TextStyle(fontWeight: FontWeight.bold),
                                           ),
                                           SizedBox(
-                                            height: 10,
+                                            height: 5,
                                           ),
                                           Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: <Widget>[
                                               Text(
                                                 "Get a coupon worth",
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(fontSize: 12),
                                               ),
                                               SizedBox(
                                                 width: 10,
@@ -719,36 +613,27 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                               ),
                                               Text(
                                                 "100",
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                                               ),
                                             ],
                                           ),
                                           SizedBox(
-                                            height: 10,
+                                            height: 5,
                                           ),
                                           FittedBox(
                                             fit: BoxFit.none,
                                             child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 3.5, horizontal: 5),
+                                              padding: EdgeInsets.symmetric(vertical: 3.5, horizontal: 5),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
+                                                borderRadius: BorderRadius.circular(4),
                                               ),
                                               child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.center,
                                                 children: <Widget>[
                                                   Text(
                                                     "Use Referal Code: ",
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                                   ),
                                                   Text(
                                                     "HHHHHH",
@@ -769,82 +654,55 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               ),
                               _homePageData.ads.isNotEmpty
                                   ? Container(
-                                      margin: EdgeInsets.only(
-                                          bottom: distanceBetweenSection - 10),
+                                      margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
                                       height: 140,
                                       child: PromoListWidget(
                                         promoList: _homePageData.ads,
                                       ),
                                     )
                                   : Container(
-                                      margin: EdgeInsets.only(
-                                          bottom: distanceBetweenSection - 10),
+                                      margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
                                     ),
                               _homePageData.dblRestaurants.isNotEmpty
                                   ? Container(
-                                      margin: EdgeInsets.only(
-                                          bottom: distanceBetweenSection +
-                                              distanceSectionContent),
+                                      margin: EdgeInsets.only(bottom: distanceBetweenSection + distanceSectionContent),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: <Widget>[
                                           Container(
                                             padding: EdgeInsets.only(
-                                                bottom:
-                                                    distanceSectionContent - 10,
-                                                right:
-                                                    horizontalPaddingDraggable,
-                                                left:
-                                                    horizontalPaddingDraggable),
+                                                bottom: distanceSectionContent - 10,
+                                                right: horizontalPaddingDraggable,
+                                                left: horizontalPaddingDraggable),
                                             child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Text(
                                                   "It's Dinner Time",
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                                 ),
                                                 GestureDetector(
                                                   onTap: () {
-                                                    Navigator.push(context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) {
+                                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
                                                       return RestaurantListPage(
-                                                        title:
-                                                            "It's Dinner Time",
-                                                        merchantType:
-                                                            MerchantType
-                                                                .restaurant,
-                                                        location: Location(
-                                                            address:
-                                                                _homePageData
-                                                                    .location),
-                                                        type: RestaurantListType
-                                                            .dbl,
+                                                        title: "It's Dinner Time",
+                                                        merchantType: MerchantType.restaurant,
+                                                        location: Location(address: _homePageData.location),
+                                                        type: RestaurantListType.dbl,
                                                         isExternalImage: false,
-                                                        image:
-                                                            "assets/allrestaurant.png",
+                                                        image: "assets/allrestaurant.png",
                                                       );
                                                     }));
                                                   },
                                                   child: Container(
                                                     width: 70,
                                                     height: 20,
-                                                    alignment:
-                                                        Alignment.centerRight,
+                                                    alignment: Alignment.centerRight,
                                                     child: Text(
                                                       "See All",
                                                       textAlign: TextAlign.end,
-                                                      style: TextStyle(
-                                                          color: primary3,
-                                                          fontSize: 14),
+                                                      style: TextStyle(color: primary3, fontSize: 14),
                                                     ),
                                                   ),
                                                 )
@@ -854,36 +712,27 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           Container(
                                             height: 210,
                                             padding: EdgeInsets.only(
-                                                top: distanceSectionContent,
-                                                bottom: distanceSectionContent),
-                                            margin: EdgeInsets.only(
-                                                bottom: distanceSectionContent),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      offset: Offset(2, 2),
-                                                      color: Colors.black26,
-                                                      spreadRadius: 0,
-                                                      blurRadius: 5)
-                                                ]),
+                                                top: distanceSectionContent, bottom: distanceSectionContent),
+                                            margin: EdgeInsets.only(bottom: distanceSectionContent),
+                                            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                                              BoxShadow(
+                                                  offset: Offset(2, 2),
+                                                  color: Colors.black26,
+                                                  spreadRadius: 0,
+                                                  blurRadius: 5)
+                                            ]),
                                             alignment: Alignment.center,
                                             child: RestaurantListWidget(
-                                              type: RestaurantViewType
-                                                  .dinnerTimeRestaurant,
-                                              restaurants:
-                                                  _homePageData.dblRestaurants,
-                                              location: Location(
-                                                  address: state.data.location),
+                                              type: RestaurantViewType.dinnerTimeRestaurant,
+                                              restaurants: _homePageData.dblRestaurants,
+                                              location: Location(address: state.data.location),
                                             ),
                                           ),
                                         ],
                                       ),
                                     )
                                   : Container(
-                                      margin: EdgeInsets.only(
-                                          bottom: distanceBetweenSection +
-                                              distanceSectionContent),
+                                      margin: EdgeInsets.only(bottom: distanceBetweenSection + distanceSectionContent),
                                     ),
                             ],
                           ),
@@ -914,8 +763,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       Container(
                         height: 90,
                         width: AppUtil.getScreenWidth(context),
-                        decoration:
-                            BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                        decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
                         padding: EdgeInsets.only(top: 20, bottom: 20),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -944,16 +792,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                   ),
                                   Text(
                                     state.statusOrder.status,
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18),
+                                    style: TextStyle(color: Colors.white, fontSize: 18),
                                   )
                                 ],
                               ),
                             ),
-                            Container(
-                              child: Text(
-                                "Track Order",
-                                style: TextStyle(color: primary3),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context){
+                                  return TrackOrderPage();
+                                }));
+                              },
+                              child: Container(
+                                child: Text(
+                                  "Track Order",
+                                  style: TextStyle(color: primary3),
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -988,8 +842,7 @@ class HomeActionWidget extends StatefulWidget {
   _HomeActionWidgetState createState() => _HomeActionWidgetState();
 }
 
-class _HomeActionWidgetState extends State<HomeActionWidget>
-    with SingleTickerProviderStateMixin {
+class _HomeActionWidgetState extends State<HomeActionWidget> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<double> _scaleAnimation;
 
@@ -1001,8 +854,8 @@ class _HomeActionWidgetState extends State<HomeActionWidget>
       duration: itemClickedDuration,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.90).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _scaleAnimation =
+        Tween<double>(begin: 1.0, end: 0.90).animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
   }
 
   @override
@@ -1018,11 +871,7 @@ class _HomeActionWidgetState extends State<HomeActionWidget>
         color: primary,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
-          BoxShadow(
-              offset: Offset(2, 2),
-              color: Colors.black38,
-              spreadRadius: 0,
-              blurRadius: 5),
+          BoxShadow(offset: Offset(2, 2), color: Colors.black38, spreadRadius: 0, blurRadius: 5),
         ],
       ),
       child: Stack(
@@ -1054,10 +903,7 @@ class _HomeActionWidgetState extends State<HomeActionWidget>
                     children: <Widget>[
                       Text(
                         "Pickup and Drop",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                            color: Colors.white),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white),
                       ),
                       SizedBox(
                         height: 5,
@@ -1083,43 +929,27 @@ class _HomeActionWidgetState extends State<HomeActionWidget>
                     },
                     child: GestureDetector(
                       onTap: () {
-                        _animationController
-                            .forward()
-                            .orCancel
-                            .whenComplete(() {
-                          _animationController
-                              .reverse()
-                              .orCancel
-                              .whenComplete(() {});
+                        _animationController.forward().orCancel.whenComplete(() {
+                          _animationController.reverse().orCancel.whenComplete(() {});
                         });
                       },
                       child: GestureDetector(
                         onTap: () {
-                          _animationController
-                              .forward()
-                              .orCancel
-                              .whenComplete(() {
+                          _animationController.forward().orCancel.whenComplete(() {
                             _animationController
                                 .reverse()
                                 .orCancel
-                                .whenComplete(() => Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) {
+                                .whenComplete(() => Navigator.push(context, MaterialPageRoute(builder: (context) {
                                       return DeliveryProcessOrderPage();
                                     })));
                           });
                         },
                         child: Container(
                           height: 40,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(60),
-                              boxShadow: [
-                                BoxShadow(
-                                    offset: Offset(2, 2),
-                                    color: Colors.black38,
-                                    spreadRadius: 0,
-                                    blurRadius: 5),
-                              ]),
+                          decoration:
+                              BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(60), boxShadow: [
+                            BoxShadow(offset: Offset(2, 2), color: Colors.black38, spreadRadius: 0, blurRadius: 5),
+                          ]),
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
@@ -1149,8 +979,7 @@ class HomeLoadingWidget extends StatelessWidget {
       children: <Widget>[
         IgnorePointer(
           child: Container(
-            height: AppUtil.getScreenHeight(context) -
-                AppUtil.getDraggableHeight(context),
+            height: AppUtil.getScreenHeight(context) - AppUtil.getDraggableHeight(context),
             color: Colors.transparent,
           ),
         ),
@@ -1159,13 +988,8 @@ class HomeLoadingWidget extends StatelessWidget {
             height: AppUtil.getDraggableHeight(context),
             decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(32),
-                    topLeft: Radius.circular(32))),
-            padding: EdgeInsets.only(
-                top: 20,
-                left: horizontalPaddingDraggable,
-                right: horizontalPaddingDraggable),
+                borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+            padding: EdgeInsets.only(top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
             alignment: Alignment.center,
             child: Container(
               child: Center(
@@ -1213,8 +1037,7 @@ class HomeErrorWidget extends StatelessWidget {
             children: <Widget>[
               IgnorePointer(
                 child: Container(
-                  height: AppUtil.getScreenHeight(context) -
-                      AppUtil.getDraggableHeight(context),
+                  height: AppUtil.getScreenHeight(context) - AppUtil.getDraggableHeight(context),
                   color: Colors.transparent,
                 ),
               ),
@@ -1222,26 +1045,17 @@ class HomeErrorWidget extends StatelessWidget {
                 height: AppUtil.getDraggableHeight(context),
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(32),
-                        topLeft: Radius.circular(32))),
-                padding: EdgeInsets.only(
-                    top: 20,
-                    left: horizontalPaddingDraggable,
-                    right: horizontalPaddingDraggable),
+                    borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                padding: EdgeInsets.only(top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                 alignment: Alignment.center,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SvgPicture.asset("assets/coming soon.svg",
-                        height: AppUtil.getDraggableHeight(context) / 2.5),
+                    SvgPicture.asset("assets/coming soon.svg", height: AppUtil.getDraggableHeight(context) / 2.5),
                     Text(
                       "IN YOUR LOCATION",
-                      style: TextStyle(
-                          fontSize: 25,
-                          color: primary3,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 25, color: primary3, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
                       height: 20,
@@ -1255,9 +1069,7 @@ class HomeErrorWidget extends StatelessWidget {
                     ),
                     Text("info@flyereats.in",
                         style: TextStyle(
-                            fontSize: 20,
-                            decoration: TextDecoration.underline,
-                            color: Colors.lightBlueAccent)),
+                            fontSize: 20, decoration: TextDecoration.underline, color: Colors.lightBlueAccent)),
                     SizedBox(
                       height: 10,
                     ),
@@ -1276,8 +1088,7 @@ class HomeErrorWidget extends StatelessWidget {
             children: <Widget>[
               IgnorePointer(
                 child: Container(
-                  height: AppUtil.getScreenHeight(context) -
-                      AppUtil.getDraggableHeight(context),
+                  height: AppUtil.getScreenHeight(context) - AppUtil.getDraggableHeight(context),
                   color: Colors.transparent,
                 ),
               ),
@@ -1285,13 +1096,8 @@ class HomeErrorWidget extends StatelessWidget {
                 height: AppUtil.getDraggableHeight(context),
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(32),
-                        topLeft: Radius.circular(32))),
-                padding: EdgeInsets.only(
-                    top: 20,
-                    left: horizontalPaddingDraggable,
-                    right: horizontalPaddingDraggable),
+                    borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                padding: EdgeInsets.only(top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                 alignment: Alignment.center,
                 child: Container(
                   child: Center(
@@ -1312,9 +1118,7 @@ class DefaultBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: AppUtil.getScreenHeight(context) -
-          AppUtil.getDraggableHeight(context) +
-          100,
+      height: AppUtil.getScreenHeight(context) - AppUtil.getDraggableHeight(context) + 100,
       child: Stack(
         children: <Widget>[
           Container(

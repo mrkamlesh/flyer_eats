@@ -43,12 +43,13 @@ class ChangeAddress extends FoodOrderEvent {
 }
 
 class ChangeContactPhone extends FoodOrderEvent {
+  final bool isChangePrimaryContact;
   final String contact;
 
-  const ChangeContactPhone(this.contact);
+  const ChangeContactPhone(this.isChangePrimaryContact, this.contact);
 
   @override
-  List<Object> get props => [contact];
+  List<Object> get props => [isChangePrimaryContact, contact];
 }
 
 class ChangeInstruction extends FoodOrderEvent {

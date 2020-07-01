@@ -9,6 +9,7 @@ import 'package:flyereats/page/app_settings_page.dart';
 import 'package:flyereats/page/help_page.dart';
 import 'package:flyereats/page/login/login_number_page.dart';
 import 'package:flyereats/page/my_wallet_page.dart';
+import 'package:flyereats/page/notifications_list_page.dart';
 import 'package:flyereats/page/order_history_page.dart';
 
 class EndDrawer extends StatelessWidget {
@@ -16,8 +17,7 @@ class EndDrawer extends StatelessWidget {
   final String name;
   final String number;
 
-  const EndDrawer({Key key, this.image, this.name, this.number})
-      : super(key: key);
+  const EndDrawer({Key key, this.image, this.name, this.number}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +44,7 @@ class EndDrawer extends StatelessWidget {
                 Container(
                   height: 40,
                   width: 40,
-                  decoration:
-                      BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
                   child: FittedBox(
                     fit: BoxFit.none,
                     child: SvgPicture.asset(
@@ -69,8 +68,7 @@ class EndDrawer extends StatelessWidget {
                             state.user.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
                             height: 5,
@@ -79,8 +77,7 @@ class EndDrawer extends StatelessWidget {
                             state.user.phone,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black45),
+                            style: TextStyle(fontSize: 16, color: Colors.black45),
                           ),
                         ],
                       );
@@ -159,6 +156,35 @@ class EndDrawer extends StatelessWidget {
           SizedBox(
             height: distanceSectionContent,
           ),
+          InkWell(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return NotificationSListPage();
+              }));
+            },
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "Notifications",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Icon(Icons.keyboard_arrow_right),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: distanceSectionContent,
+          ),
+          Divider(
+            height: 1.0,
+            color: Colors.black12,
+          ),
+          SizedBox(
+            height: distanceSectionContent,
+          ),
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
@@ -214,7 +240,7 @@ class EndDrawer extends StatelessWidget {
             height: 1.0,
             color: Colors.black12,
           ),
-          SizedBox(
+          /*SizedBox(
             height: distanceSectionContent,
           ),
           GestureDetector(
@@ -229,6 +255,34 @@ class EndDrawer extends StatelessWidget {
                 Expanded(
                   child: Text(
                     "**Login Mock Up**",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Icon(Icons.keyboard_arrow_right),
+              ],
+            ),
+          ),*/
+
+          Expanded(child: SizedBox()),
+          Divider(
+            height: 1.0,
+            color: Colors.black12,
+          ),
+          SizedBox(
+            height: distanceSectionContent,
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return HelpPage();
+              }));
+            },
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "Log Out",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),

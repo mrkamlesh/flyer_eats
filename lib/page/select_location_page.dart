@@ -23,8 +23,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<LocationBloc>(context)
-        .add(GetPredefinedLocations(_selectedCountry.toString()));
+    BlocProvider.of<LocationBloc>(context).add(GetPredefinedLocations(_selectedCountry.toString()));
     _scrollController = ScrollController();
   }
 
@@ -35,11 +34,9 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0.0 &&
-        _scrollController.hasClients) {
-      _offsetController = 200;
-      _scrollController.animateTo(_offsetController,
-          duration: Duration(milliseconds: 200), curve: Curves.ease);
+    if (MediaQuery.of(context).viewInsets.bottom > 0.0 && _scrollController.hasClients) {
+      _offsetController = 0;
+      _scrollController.animateTo(_offsetController, duration: Duration(milliseconds: 200), curve: Curves.ease);
     }
 
     return WillPopScope(
@@ -88,9 +85,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(32),
-                            topLeft: Radius.circular(32))),
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                     padding: EdgeInsets.only(
                       top: horizontalPaddingDraggable,
                     ),
@@ -104,8 +99,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPaddingDraggable),
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
                           child: Container(
                             margin: EdgeInsets.only(bottom: 20),
                             child: Row(
@@ -113,14 +107,11 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                               children: <Widget>[
                                 Text(
                                   "SELECT LOCATION",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                                 InkWell(
                                     onTap: () {
-                                      BlocProvider.of<LocationBloc>(context)
-                                          .add(GetPreviousLocation());
+                                      BlocProvider.of<LocationBloc>(context).add(GetPreviousLocation());
                                       Navigator.of(context).pop();
                                     },
                                     child: Container(child: Icon(Icons.clear)))
@@ -132,8 +123,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                           builder: (context, loginState) {
                             return InkWell(
                               onTap: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) {
                                   return SelectCurrentLocationPage(
                                     token: loginState.user.token,
                                   );
@@ -158,8 +148,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                     ),
                                     Text(
                                       "CURRENT LOCATION",
-                                      style: TextStyle(
-                                          color: primary3, fontSize: 16),
+                                      style: TextStyle(color: primary3, fontSize: 16),
                                     ),
                                   ],
                                 ),
@@ -181,12 +170,9 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                  color: Colors.black12, width: 1.0)),
+                              border: Border.all(color: Colors.black12, width: 1.0)),
                           margin: EdgeInsets.only(
-                              bottom: 20,
-                              left: horizontalPaddingDraggable,
-                              right: horizontalPaddingDraggable),
+                              bottom: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                           child: Row(
                             children: <Widget>[
                               Container(
@@ -209,8 +195,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                             Expanded(
                                               child: Container(
                                                 height: 20,
-                                                child: SvgPicture.asset(
-                                                    "assets/india_flag.svg"),
+                                                child: SvgPicture.asset("assets/india_flag.svg"),
                                               ),
                                             ),
                                             SizedBox(
@@ -219,10 +204,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                             Expanded(
                                               child: Text(
                                                 "IND",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                               ),
                                             )
                                           ],
@@ -239,8 +221,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                             Expanded(
                                               child: Container(
                                                 height: 20,
-                                                child: SvgPicture.asset(
-                                                    "assets/singapore_flag.svg"),
+                                                child: SvgPicture.asset("assets/singapore_flag.svg"),
                                               ),
                                             ),
                                             SizedBox(
@@ -249,10 +230,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                             Expanded(
                                               child: Text(
                                                 "SNG",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                               ),
                                             )
                                           ],
@@ -264,33 +242,26 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                     setState(() {
                                       _selectedCountry = i;
                                     });
-                                    BlocProvider.of<LocationBloc>(context).add(
-                                        GetPredefinedLocations(
-                                            _selectedCountry.toString()));
+                                    BlocProvider.of<LocationBloc>(context)
+                                        .add(GetPredefinedLocations(_selectedCountry.toString()));
                                   },
                                 ),
                               ),
                               Expanded(
                                 child: Container(
                                   decoration: BoxDecoration(
-                                      border: Border(
-                                          left: BorderSide(
-                                              color: Colors.black12,
-                                              width: 1.0))),
+                                      border: Border(left: BorderSide(color: Colors.black12, width: 1.0))),
                                   padding: EdgeInsets.symmetric(horizontal: 20),
                                   child: TextField(
                                     controller: _controller,
                                     onChanged: (filter) {
-                                      BlocProvider.of<LocationBloc>(context)
-                                          .add(FilterLocations(filter));
+                                      BlocProvider.of<LocationBloc>(context).add(FilterLocations(filter));
                                     },
                                     decoration: InputDecoration(
-                                      contentPadding:
-                                          EdgeInsets.symmetric(vertical: 15),
+                                      contentPadding: EdgeInsets.symmetric(vertical: 15),
                                       border: InputBorder.none,
                                       hintText: "SELECT LOCATIONS",
-                                      hintStyle: TextStyle(
-                                          fontSize: 16, color: Colors.black38),
+                                      hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
                                     ),
                                   ),
                                 ),
@@ -300,13 +271,9 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                         ),
                         Container(
                           margin: EdgeInsets.only(
-                              left: horizontalPaddingDraggable,
-                              right: horizontalPaddingDraggable,
-                              bottom: 20),
+                              left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: 20),
                           padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              color: Colors.black12,
-                              borderRadius: BorderRadius.circular(4)),
+                          decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(4)),
                           child: Text("Select your town or city here"),
                         ),
                         Expanded(
@@ -316,8 +283,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                   state is LoadingPredefinedLocationsSuccess ||
                                   state is LoadingPredefinedLocationsError ||
                                   state is NoLocationsAvailable ||
-                                  state is PredefinedLocationsFiltered)
-                                return true;
+                                  state is PredefinedLocationsFiltered) return true;
                               return false;
                             },
                             builder: (context, state) {
@@ -328,28 +294,22 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                   height: 40,
                                   child: CircularProgressIndicator(),
                                 ));
-                              } else if (state
-                                  is LoadingPredefinedLocationsError) {
+                              } else if (state is LoadingPredefinedLocationsError) {
                                 return Container(
                                     margin: EdgeInsets.symmetric(
-                                        vertical: horizontalPaddingDraggable,
-                                        horizontal: horizontalPaddingDraggable),
+                                        vertical: horizontalPaddingDraggable, horizontal: horizontalPaddingDraggable),
                                     child: Text("${state.message}"));
                               } else if (state is NoLocationsAvailable) {
                                 return Container(
                                     margin: EdgeInsets.symmetric(
-                                        vertical: horizontalPaddingDraggable,
-                                        horizontal: horizontalPaddingDraggable),
+                                        vertical: horizontalPaddingDraggable, horizontal: horizontalPaddingDraggable),
                                     child: Text("${state.message}"));
-                              } else if (state
-                                      is LoadingPredefinedLocationsSuccess ||
+                              } else if (state is LoadingPredefinedLocationsSuccess ||
                                   state is PredefinedLocationsFiltered) {
                                 List<Location> list = List();
-                                if (state
-                                    is LoadingPredefinedLocationsSuccess) {
+                                if (state is LoadingPredefinedLocationsSuccess) {
                                   list = state.locations;
-                                } else if (state
-                                    is PredefinedLocationsFiltered) {
+                                } else if (state is PredefinedLocationsFiltered) {
                                   list = state.locations;
                                 }
 
@@ -359,9 +319,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                       child: CustomScrollView(
                                         slivers: <Widget>[
                                           SliverList(
-                                              delegate:
-                                                  SliverChildBuilderDelegate(
-                                                      (context, i) {
+                                              delegate: SliverChildBuilderDelegate((context, i) {
                                             return GestureDetector(
                                               onTap: () {
                                                 _onTap(
@@ -372,10 +330,8 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                               },
                                               child: Container(
                                                 padding: EdgeInsets.only(
-                                                    left:
-                                                        horizontalPaddingDraggable,
-                                                    right:
-                                                        horizontalPaddingDraggable,
+                                                    left: horizontalPaddingDraggable,
+                                                    right: horizontalPaddingDraggable,
                                                     bottom: 5),
                                                 child: Column(
                                                   children: <Widget>[
@@ -385,16 +341,12 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                           child: Text(
                                                             list[i].address,
                                                             maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: TextStyle(
-                                                                fontSize: 14),
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(fontSize: 14),
                                                           ),
                                                         ),
                                                         Icon(
-                                                          Icons
-                                                              .arrow_forward_ios,
+                                                          Icons.arrow_forward_ios,
                                                           size: 18,
                                                         )
                                                       ],
@@ -434,8 +386,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
 
   void _onTap(i, String token, Location location) {
     setState(() {
-      BlocProvider.of<LocationBloc>(context)
-          .add(GetHomeDataByLocation(location, token));
+      BlocProvider.of<LocationBloc>(context).add(GetHomeDataByLocation(location, token));
       Navigator.pushReplacementNamed(context, "/home");
     });
   }

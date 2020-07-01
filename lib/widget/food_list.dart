@@ -33,8 +33,7 @@ class FoodListWidget extends StatefulWidget {
   _FoodListWidgetState createState() => _FoodListWidgetState();
 }
 
-class _FoodListWidgetState extends State<FoodListWidget>
-    with TickerProviderStateMixin {
+class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStateMixin {
   int _selectedFood = -1;
   AnimationController _animationController;
   Animation<double> _scaleAnimation;
@@ -47,8 +46,8 @@ class _FoodListWidgetState extends State<FoodListWidget>
       duration: itemClickedDuration,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale)
+        .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
   }
 
   @override
@@ -104,7 +103,9 @@ class _FoodListWidgetState extends State<FoodListWidget>
                 crossAxisCount: 2,
                 mainAxisSpacing: 20,
                 crossAxisSpacing: 20,
-                childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 245));
+                childAspectRatio: AppUtil.getScreenWidth(context) /
+                    2 /
+                    230)); // kalo ada description dua line jadi 270, kalo tanpa description jadi 230
 
     return SliverPadding(padding: widget.padding, sliver: list);
   }
@@ -115,10 +116,8 @@ class _FoodListWidgetState extends State<FoodListWidget>
     });
     _animationController.forward().orCancel.whenComplete(() {
       _animationController.reverse().orCancel.whenComplete(() {
-        BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(
-            widget.listFood[_selectedFood].id,
-            widget.listFood[_selectedFood],
-            (widget.cart.getQuantity(widget.listFood[_selectedFood].id) + 1)));
+        BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(widget.listFood[_selectedFood].id,
+            widget.listFood[_selectedFood], (widget.cart.getQuantity(widget.listFood[_selectedFood].id) + 1)));
       });
     });
   }
@@ -129,10 +128,8 @@ class _FoodListWidgetState extends State<FoodListWidget>
     });
     _animationController.forward().orCancel.whenComplete(() {
       _animationController.reverse().orCancel.whenComplete(() {
-        BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(
-            widget.listFood[_selectedFood].id,
-            widget.listFood[_selectedFood],
-            (widget.cart.getQuantity(widget.listFood[_selectedFood].id) - 1)));
+        BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(widget.listFood[_selectedFood].id,
+            widget.listFood[_selectedFood], (widget.cart.getQuantity(widget.listFood[_selectedFood].id) - 1)));
       });
     });
   }
@@ -182,9 +179,7 @@ class FoodList extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                       color: Colors.yellow[600],
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10))),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[Icon(Icons.add), Text("Add")],
@@ -199,9 +194,7 @@ class FoodList extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: Colors.yellow[600],
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10))),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[Icon(Icons.add), Text("Add")],
@@ -214,8 +207,7 @@ class FoodList extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
           color: Colors.yellow[600],
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -224,22 +216,16 @@ class FoodList extends StatelessWidget {
             onTap: onTapRemove,
             child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.yellow[700],
-                    borderRadius:
-                        BorderRadius.only(topLeft: Radius.circular(10))),
+                    color: Colors.yellow[700], borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
                 child: Icon(Icons.remove)),
           )),
-          Expanded(
-              child: Container(
-                  alignment: Alignment.center, child: Text("$quantity"))),
+          Expanded(child: Container(alignment: Alignment.center, child: Text("$quantity"))),
           Expanded(
               child: GestureDetector(
             onTap: onTapAdd,
             child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.yellow[700],
-                    borderRadius:
-                        BorderRadius.only(bottomRight: Radius.circular(10))),
+                    color: Colors.yellow[700], borderRadius: BorderRadius.only(bottomRight: Radius.circular(10))),
                 child: Icon(Icons.add)),
           ))
         ],
@@ -272,9 +258,7 @@ class FoodList extends StatelessWidget {
                   Container(
                     //margin: EdgeInsets.only(left: 10, top: 10, right: 10),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10)),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                       child: CachedNetworkImage(
                         imageUrl: food.image,
                         width: (AppUtil.getScreenWidth(context) - 30) / 2,
@@ -285,8 +269,7 @@ class FoodList extends StatelessWidget {
                           return Shimmer.fromColors(
                               child: Container(
                                 height: 80,
-                                width:
-                                    (AppUtil.getScreenWidth(context) - 50) / 2,
+                                width: (AppUtil.getScreenWidth(context) - 50) / 2,
                                 color: Colors.black,
                               ),
                               baseColor: Colors.grey[300],
@@ -296,101 +279,97 @@ class FoodList extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                          child: Row(
-                            children: <Widget>[
-                              food.isAvailable
-                                  ? Container(
-                                      height: 12,
-                                      width: 12,
-                                      margin: EdgeInsets.only(right: 10),
-                                      child: SvgPicture.asset(
-                                        "assets/box_circle.svg",
-                                        width: 12,
-                                        height: 12,
-                                      ),
-                                    )
-                                  : Container(),
-                              Expanded(
-                                child: Text(
-                                  food.title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin:
-                              EdgeInsets.only(bottom: 10, left: 10, right: 10),
-                          child: Text(
-                            food.description,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style:
-                                TextStyle(color: Colors.black54, fontSize: 10),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              Positioned(
-                bottom: 0,
-                child: Container(
-                  height: 40,
-                  width: (AppUtil.getScreenWidth(context) - 60) / 2,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 5,
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          child: Align(
-                            alignment: Alignment.center,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 10, right: 10),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                SvgPicture.asset(
-                                  "assets/rupee.svg",
-                                  height: 8,
-                                  width: 8,
-                                  color: Colors.black,
-                                ),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                Text(
-                                  "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
+                                food.isAvailable
+                                    ? Container(
+                                        height: 12,
+                                        width: 12,
+                                        margin: EdgeInsets.only(right: 10),
+                                        child: SvgPicture.asset(
+                                          "assets/box_circle.svg",
+                                          width: 12,
+                                          height: 12,
+                                        ),
+                                      )
+                                    : Container(),
+                                Expanded(
+                                  child: Text(
+                                    food.title,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
+                          /*food.description != null && food.description != ""
+                              ? Container(
+                                  margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+                                  child: Text(
+                                    food.description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: Colors.black54, fontSize: 10),
+                                  ),
+                                )
+                              : Container(),*/
+                        ],
                       ),
-                      quantity == 0
-                          ? Expanded(flex: 5, child: addButton)
-                          : Expanded(flex: 5, child: changeQuantityButton),
-                    ],
+                    ),
                   ),
-                ),
+                  Container(
+                    height: 40,
+                    width: (AppUtil.getScreenWidth(context) - 60) / 2,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 5,
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SvgPicture.asset(
+                                    "assets/rupee.svg",
+                                    height: 8,
+                                    width: 8,
+                                    color: Colors.black,
+                                  ),
+                                  SizedBox(
+                                    width: 3,
+                                  ),
+                                  Text(
+                                    "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        quantity == 0
+                            ? Expanded(flex: 5, child: addButton)
+                            : Expanded(flex: 5, child: changeQuantityButton),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -460,28 +439,36 @@ class FoodList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(right: 10),
-                          child: Text(
-                            food.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Container(
-                          margin:
-                              EdgeInsets.only(top: 5, bottom: 10, right: 10),
-                          child: Text(
-                            food.description,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style:
-                                TextStyle(color: Colors.black54, fontSize: 10),
-                          ),
-                        ),
                         Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(right: 10),
+                                child: Text(
+                                  food.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              food.description != null && food.description != ""
+                                  ? Container(
+                                      margin: EdgeInsets.only(top: 5, bottom: 10, right: 10),
+                                      child: Text(
+                                        food.description,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: Colors.black54, fontSize: 10),
+                                      ),
+                                    )
+                                  : SizedBox(),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          height: 43,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -505,9 +492,7 @@ class FoodList extends StatelessWidget {
                                         "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
@@ -518,8 +503,7 @@ class FoodList extends StatelessWidget {
                               ),
                               quantity == 0
                                   ? Expanded(flex: 6, child: addButton)
-                                  : Expanded(
-                                      flex: 6, child: changeQuantityButton),
+                                  : Expanded(flex: 6, child: changeQuantityButton),
                             ],
                           ),
                         ),

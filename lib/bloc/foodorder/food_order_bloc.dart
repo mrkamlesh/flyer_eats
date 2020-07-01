@@ -21,17 +21,15 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     FoodOrderEvent event,
   ) async* {
     if (event is InitPlaceOrder) {
-      yield* mapInitPlaceOrderToState(
-          event.restaurant, event.foodCart, event.user);
+      yield* mapInitPlaceOrderToState(event.restaurant, event.foodCart, event.user);
     } else if (event is ChangeTransactionType) {
       yield* mapChangeTransactionTypeToState(event.transactionType);
     } else if (event is ChangeAddress) {
       yield* mapChangeAddressToState(event.address);
     } else if (event is ChangeContactPhone) {
-      yield* mapChangeContactPhoneToState(event.contact);
+      yield* mapChangeContactPhoneToState(event.isChangePrimaryContact, event.contact);
     } else if (event is ChangeQuantityFoodCart) {
-      yield* mapChangeQuantityFoodCartToState(
-          event.id, event.food, event.quantity);
+      yield* mapChangeQuantityFoodCartToState(event.id, event.food, event.quantity);
     } else if (event is ChangeInstruction) {
       yield* mapChangeInstructionToState(event.instruction);
     } else if (event is GetPaymentOptions) {
@@ -47,77 +45,66 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     }
   }
 
-  Stream<FoodOrderState> mapChangeTransactionTypeToState(
-      String transactionType) async* {
-    yield FoodOrderState(
-        placeOrder:
-            state.placeOrder.copyWith(transactionType: transactionType));
+  Stream<FoodOrderState> mapChangeTransactionTypeToState(String transactionType) async* {
+    yield FoodOrderState(placeOrder: state.placeOrder.copyWith(transactionType: transactionType));
     add(GetPaymentOptions(state.placeOrder));
   }
 
   Stream<FoodOrderState> mapChangeAddressToState(Address address) async* {
-    yield FoodOrderState(
-        placeOrder: state.placeOrder.copyWith(address: address));
+    yield FoodOrderState(placeOrder: state.placeOrder.copyWith(address: address));
     add(GetPaymentOptions(state.placeOrder));
   }
 
-  Stream<FoodOrderState> mapChangeContactPhoneToState(String contact) async* {
+  Stream<FoodOrderState> mapChangeContactPhoneToState(bool isChangePrimaryContact, String contact) async* {
     yield FoodOrderState(
-        placeOrder: state.placeOrder.copyWith(contact: contact));
+        placeOrder: state.placeOrder.copyWith(contact: contact, isChangePrimaryContact: isChangePrimaryContact));
   }
 
-  Stream<FoodOrderState> mapChangeQuantityFoodCartToState(
-      String id, Food food, int quantity) async* {
+  Stream<FoodOrderState> mapChangeQuantityFoodCartToState(String id, Food food, int quantity) async* {
     FoodCart newCart = state.placeOrder.foodCart;
     newCart.changeQuantity(id, food, quantity);
 
     if (newCart.cart.length > 0) {
-      yield FoodOrderState(
-          placeOrder: state.placeOrder.copyWith(foodCart: newCart));
+      yield FoodOrderState(placeOrder: state.placeOrder.copyWith(foodCart: newCart));
       add(GetPaymentOptions(state.placeOrder));
     } else {
       yield NoItemsInCart();
     }
   }
 
-  Stream<FoodOrderState> mapInitPlaceOrderToState(
-      Restaurant restaurant, FoodCart foodCart, User user) async* {
+  Stream<FoodOrderState> mapInitPlaceOrderToState(Restaurant restaurant, FoodCart foodCart, User user) async* {
     yield FoodOrderState(
       placeOrder: PlaceOrder(
-        isValid: true,
-        restaurant: restaurant,
-        foodCart: foodCart,
-        user: user,
-        address: user.defaultAddress,
-        contact: user.phone,
-        transactionType: 'delivery',
-        deliveryInstruction: '',
-        deliveryCharges: 0,
-        voucher: Voucher(amount: 0, rate: 0),
-        paymentMethod: "",
-        discountOrder: 0,
-        discountOrderPrettyString: "DISCOUNT ORDER",
-        taxCharges: 0,
-        packagingCharges: 0,
-        taxPrettyString: "Tax",
-        isUseWallet: false,
-        walletAmount: 0,
-      ),
+          isValid: true,
+          restaurant: restaurant,
+          foodCart: foodCart,
+          user: user,
+          address: user.defaultAddress,
+          contact: user.phone,
+          transactionType: 'delivery',
+          deliveryInstruction: '',
+          deliveryCharges: 0,
+          voucher: Voucher(amount: 0, rate: 0),
+          selectedPaymentMethod: "",
+          discountOrder: 0,
+          discountOrderPrettyString: "DISCOUNT ORDER",
+          taxCharges: 0,
+          packagingCharges: 0,
+          taxPrettyString: "Tax",
+          isUseWallet: false,
+          walletAmount: 0,
+          isChangePrimaryContact: false),
     );
 
     add(GetPaymentOptions(state.placeOrder));
   }
 
-  Stream<FoodOrderState> mapChangeInstructionToState(
-      String instruction) async* {
-    yield FoodOrderState(
-        placeOrder:
-            state.placeOrder.copyWith(deliveryInstruction: instruction));
+  Stream<FoodOrderState> mapChangeInstructionToState(String instruction) async* {
+    yield FoodOrderState(placeOrder: state.placeOrder.copyWith(deliveryInstruction: instruction));
   }
 
   Stream<FoodOrderState> mapGetPaymentOptionsToState(PlaceOrder order) async* {
-    yield LoadingGetPayments(
-        placeOrder: state.placeOrder.copyWith(isValid: false));
+    yield LoadingGetPayments(placeOrder: state.placeOrder.copyWith(isValid: false));
     try {
       PlaceOrder result = await repository.getPaymentOptions(state.placeOrder);
 
@@ -134,28 +121,22 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
                 discountOrder: result.discountOrder,
                 discountPrettyString: result.discountOrderPrettyString,
                 deliveryCharges: result.deliveryCharges,
-                walletAmount: result.walletAmount));
+                walletAmount: result.walletAmount,
+                listPaymentMethod: result.listPaymentMethod));
       } else {
-        yield FoodOrderState(
-            placeOrder: state.placeOrder
-                .copyWith(isValid: false, message: result.message));
+        yield FoodOrderState(placeOrder: state.placeOrder.copyWith(isValid: false, message: result.message));
       }
     } catch (e) {
-      yield FoodOrderState(
-          placeOrder:
-              state.placeOrder.copyWith(isValid: false, message: e.toString()));
+      yield FoodOrderState(placeOrder: state.placeOrder.copyWith(isValid: false, message: e.toString()));
     }
   }
 
   Stream<FoodOrderState> mapApplyCouponToState(Voucher voucher) async* {
-    yield FoodOrderState(
-        placeOrder: state.placeOrder.copyWith(voucher: voucher));
+    yield FoodOrderState(placeOrder: state.placeOrder.copyWith(voucher: voucher));
   }
 
-  Stream<FoodOrderState> mapChangePaymentMethodToState(
-      String paymentMethod) async* {
-    yield FoodOrderState(
-        placeOrder: state.placeOrder.copyWith(paymentMethod: paymentMethod));
+  Stream<FoodOrderState> mapChangePaymentMethodToState(String paymentMethod) async* {
+    yield FoodOrderState(placeOrder: state.placeOrder.copyWith(selectedPaymentMethod: paymentMethod));
   }
 
   Stream<FoodOrderState> mapPlaceOrderEventToState() async* {
@@ -163,23 +144,20 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     try {
       PlaceOrder placeOrder = await repository.placeOrder(state.placeOrder);
 
+      //PlaceOrder placeOrder = PlaceOrder(id: "55919");
+
       if (placeOrder.id != null) {
-        yield SuccessPlaceOrder(
-            placeOrder: state.placeOrder
-                .copyWith(id: placeOrder.id, message: placeOrder.message));
+        yield SuccessPlaceOrder(placeOrder: state.placeOrder.copyWith(id: placeOrder.id, message: placeOrder.message));
       } else {
-        ErrorPlaceOrder(placeOrder.message,
-            placeOrder: state.placeOrder
-                .copyWith(isValid: false, message: placeOrder.message));
+        yield ErrorPlaceOrder(placeOrder.message,
+            placeOrder: state.placeOrder.copyWith(isValid: false, message: placeOrder.message));
       }
     } catch (e) {
-      yield ErrorPlaceOrder(e.toString(),
-          placeOrder: state.placeOrder.copyWith());
+      yield ErrorPlaceOrder(e.toString(), placeOrder: state.placeOrder.copyWith());
     }
   }
 
   Stream<FoodOrderState> mapChangeWalletUsageToState(bool isUseWallet) async* {
-    yield FoodOrderState(
-        placeOrder: state.placeOrder.copyWith(isUseWallet: isUseWallet));
+    yield FoodOrderState(placeOrder: state.placeOrder.copyWith(isUseWallet: isUseWallet));
   }
 }

@@ -16,15 +16,37 @@ class Order {
   final String deliveryCharge;
   final String tax;*/
 
-  Order(
-      {this.restaurant,
-      this.itemsString,
-      this.date,
-      this.status,
-      this.id,
-      this.title,
-      this.total,
-      this.paymentType});
+  Order({this.restaurant, this.itemsString, this.date, this.status, this.id, this.title, this.total, this.paymentType});
+
+  String getIcon(){
+    switch (this.status) {
+      case "Order Placed":
+        return "assets/in process icon.svg";
+      case "Food Preparing":
+        return "assets/in process icon.svg";
+      case "On the way":
+        return "assets/in process icon.svg";
+      case "Delivered":
+        return "assets/check.svg";
+      default:
+        return "assets/remove.svg";
+    }
+  }
+
+  String getMapStatus(){
+    switch (this.status) {
+      case "Order Placed":
+        return "In Progress";
+      case "Food Preparing":
+        return "In Progress";
+      case "On the way":
+        return "In Progress";
+      case "Delivered":
+        return "Delivered";
+      default:
+        return "Cancelled";
+    }
+  }
 
   factory Order.fromJson(Map<String, dynamic> parsedJson) {
     String itemsString = '';
@@ -36,13 +58,14 @@ class Order {
       itemsString = itemsString + item['item_name'] + " X " + item['quantity'] + add;
     });
 
+    var listStatus = parsedJson['order_history'] as List;
+
     return Order(
       id: parsedJson['order_id'],
       title: parsedJson['title_new'],
-      restaurant: Restaurant("", parsedJson['merchant_name'], "", "",
-          parsedJson['marchant_logo'], "", "", true),
+      restaurant: Restaurant("", parsedJson['merchant_name'], "", "", parsedJson['marchant_logo'], "", "", true),
       date: parsedJson['place_on'],
-      status: parsedJson['status'],
+      status: listStatus.last['status'],
       total: parsedJson['total'],
       itemsString: itemsString,
       paymentType: parsedJson['payment_type'],

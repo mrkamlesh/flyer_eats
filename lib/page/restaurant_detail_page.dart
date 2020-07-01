@@ -120,6 +120,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                       return RestaurantPlaceOrderPage(
                         foodCart: _foodCart,
                         restaurant: widget.restaurant,
+                        location: widget.location,
                       );
                     }));
                   },

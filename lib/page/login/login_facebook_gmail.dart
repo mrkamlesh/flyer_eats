@@ -76,6 +76,7 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     title: Text(
                       "Error",
                       style: TextStyle(fontWeight: FontWeight.bold),

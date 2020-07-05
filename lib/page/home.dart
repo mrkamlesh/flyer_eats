@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/currentorder/current_order_bloc.dart';
+import 'package:flyereats/bloc/currentorder/current_order_event.dart';
 import 'package:flyereats/bloc/currentorder/current_order_state.dart';
 import 'package:flyereats/bloc/location/location_bloc.dart';
 import 'package:flyereats/bloc/location/location_event.dart';
@@ -28,6 +30,9 @@ import 'package:flyereats/widget/promo_list.dart';
 import 'package:flyereats/widget/restaurant_list.dart';
 import 'package:flyereats/widget/shop_category_list.dart';
 import 'package:flyereats/classes/example_model.dart';
+import 'package:scratcher/scratcher.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -90,6 +95,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 height: 0,
               );
             }
+            if (state is HomePageDataLoaded) {
+              _homePageData = state.data;
+            }
+
             return BottomAppBar(
               elevation: 8,
               clipBehavior: Clip.antiAlias,
@@ -101,29 +110,36 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     child: child,
                   );
                 },
-                child: CustomBottomNavBar(
-                  animationDuration: Duration(milliseconds: 300),
-                  items: [
-                    BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
-                    BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
-                    BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
-                    BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
-                  ],
-                  onItemSelected: (index) {
-                    setState(() {
-                      _currentIndex = index;
-                      if (index == 2) {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return SearchPage();
-                        }));
-                      } else if (index == 3) {
-                        Navigator.pushNamed(context, "/orderHistory");
-                      }
-                    });
+                child: BlocBuilder<LoginBloc, LoginState>(
+                  builder: (context, loginState) {
+                    return CustomBottomNavBar(
+                      animationDuration: Duration(milliseconds: 300),
+                      items: [
+                        BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
+                        BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
+                        BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
+                        BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
+                      ],
+                      onItemSelected: (index) {
+                        setState(() {
+                          _currentIndex = index;
+                          if (index == 2) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return SearchPage(
+                                address: _homePageData.location,
+                                token: loginState.user.token,
+                              );
+                            }));
+                          } else if (index == 3) {
+                            Navigator.pushNamed(context, "/orderHistory");
+                          }
+                        });
+                      },
+                      selectedIndex: _currentIndex,
+                      selectedColor: Colors.orange[700],
+                      unselectedColor: Colors.black26,
+                    );
                   },
-                  selectedIndex: _currentIndex,
-                  selectedColor: Colors.orange[700],
-                  unselectedColor: Colors.black26,
                 ),
               ),
             );
@@ -532,7 +548,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                         ),
                                         Container(
                                           margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                          height: 135,
+                                          height: 150,
                                           child: RestaurantListWidget(
                                             type: RestaurantViewType.orderAgainRestaurant,
                                             restaurants: _homePageData.orderAgainRestaurants,
@@ -547,7 +563,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                     ),
                               Container(
                                 margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
-                                height: 0.15 * AppUtil.getScreenHeight(context),
+                                height: 0.16 * AppUtil.getScreenHeight(context),
                                 decoration: BoxDecoration(
                                   color: Color(0xFFFFC94B),
                                   boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)],
@@ -555,8 +571,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                      width: 0.15 * AppUtil.getScreenHeight(context) - 20,
-                                      height: 0.15 * AppUtil.getScreenHeight(context) - 20,
+                                      width: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                      height: 0.16 * AppUtil.getScreenHeight(context) - 20,
                                       margin: EdgeInsets.all(10),
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
@@ -592,9 +608,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                             "REFER A FRIEND AND EARN",
                                             style: TextStyle(fontWeight: FontWeight.bold),
                                           ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: <Widget>[
@@ -613,12 +626,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                               ),
                                               Text(
                                                 "100",
-                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                               ),
                                             ],
-                                          ),
-                                          SizedBox(
-                                            height: 5,
                                           ),
                                           FittedBox(
                                             fit: BoxFit.none,
@@ -710,7 +720,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                             ),
                                           ),
                                           Container(
-                                            height: 210,
+                                            height: 225,
                                             padding: EdgeInsets.only(
                                                 top: distanceSectionContent, bottom: distanceSectionContent),
                                             margin: EdgeInsets.only(bottom: distanceSectionContent),
@@ -745,88 +755,168 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
           Positioned(
             bottom: kBottomNavigationBarHeight,
-            child: BlocBuilder<CurrentOrderBloc, CurrentOrderState>(
-              builder: (context, state) {
-                if (state.statusOrder == null) {
-                  return SizedBox();
-                }
-                return AnimatedBuilder(
-                  animation: _orderInformationAnimation,
-                  builder: (context, child) {
-                    return Opacity(
-                      opacity: _orderInformationAnimation.value,
-                      child: child,
-                    );
+            child: BlocBuilder<LoginBloc, LoginState>(
+              builder: (context, loginState) {
+                return BlocConsumer<CurrentOrderBloc, CurrentOrderState>(
+                  listener: (context, state) {
+                    if (state is NoActiveOrderState) {
+                      if (state.currentOrder.isShowReview)
+                        _showReviewSheet(loginState.user.token, state.currentOrder.orderId);
+                    }
                   },
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        height: 90,
-                        width: AppUtil.getScreenWidth(context),
-                        decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
-                        padding: EdgeInsets.only(top: 20, bottom: 20),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            SizedBox(
-                              width: 40,
-                            ),
-                            SvgPicture.asset(
-                              state.statusOrder.getIconAssets(),
-                              width: 45,
-                              height: 45,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    "ORDER NO - " + state.orderId,
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: 7,
-                                  ),
-                                  Text(
-                                    state.statusOrder.status,
-                                    style: TextStyle(color: Colors.white, fontSize: 18),
-                                  )
-                                ],
+                  builder: (context, state) {
+                    if (state is ErrorState) {
+                      return AnimatedBuilder(
+                        animation: _orderInformationAnimation,
+                        builder: (context, child) {
+                          return Opacity(
+                            opacity: _orderInformationAnimation.value,
+                            child: child,
+                          );
+                        },
+                        child: Container(
+                          height: 90,
+                          width: AppUtil.getScreenWidth(context),
+                          decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                          padding: EdgeInsets.only(top: 20, bottom: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Connection Error",
+                                style: TextStyle(color: Colors.white),
                               ),
-                            ),
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context){
-                                  return TrackOrderPage();
-                                }));
-                              },
-                              child: Container(
-                                child: Text(
-                                  "Track Order",
-                                  style: TextStyle(color: primary3),
+                              SizedBox(width: 20),
+                              GestureDetector(
+                                onTap: () {
+                                  BlocProvider.of<CurrentOrderBloc>(context).add(Retry(loginState.user.token));
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                  decoration: BoxDecoration(color: primary3, borderRadius: BorderRadius.circular(10)),
+                                  child: Text(
+                                    "RETRY",
+                                    style: TextStyle(color: Colors.white, fontSize: 20),
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                          padding: EdgeInsets.all(5),
-                          child: Align(
-                            alignment: Alignment.topRight,
-                            child: Icon(
-                              Icons.clear,
-                              color: Colors.white,
+                      );
+                    } else if (state is LoadingState) {
+                      return AnimatedBuilder(
+                        animation: _orderInformationAnimation,
+                        builder: (context, child) {
+                          return Opacity(
+                            opacity: _orderInformationAnimation.value,
+                            child: child,
+                          );
+                        },
+                        child: Container(
+                          height: 90,
+                          width: AppUtil.getScreenWidth(context),
+                          decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                          padding: EdgeInsets.only(top: 20, bottom: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Retrying...",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              SizedBox(width: 20),
+                              SpinKitCircle(
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    if (state.currentOrder.statusOrder == null) {
+                      return SizedBox();
+                    }
+                    return AnimatedBuilder(
+                      animation: _orderInformationAnimation,
+                      builder: (context, child) {
+                        return Opacity(
+                          opacity: _orderInformationAnimation.value,
+                          child: child,
+                        );
+                      },
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                            height: 90,
+                            width: AppUtil.getScreenWidth(context),
+                            decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                            padding: EdgeInsets.only(top: 15, bottom: 15),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 40,
+                                ),
+                                SvgPicture.asset(
+                                  state.currentOrder.statusOrder.getIconAssets(),
+                                  width: 45,
+                                  height: 45,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        "ORDER NO - " + state.currentOrder.orderId,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      SizedBox(
+                                        height: 7,
+                                      ),
+                                      Text(
+                                        state.currentOrder.statusOrder.status,
+                                        style: TextStyle(color: Colors.white, fontSize: 18),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                      return TrackOrderPage();
+                                    }));
+                                  },
+                                  child: Container(
+                                    child: Text(
+                                      "Track Order",
+                                      style: TextStyle(color: primary3),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                              ],
                             ),
-                          ))
-                    ],
-                  ),
+                          ),
+                          Container(
+                              padding: EdgeInsets.all(5),
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: Icon(
+                                  Icons.clear,
+                                  color: Colors.white,
+                                ),
+                              ))
+                        ],
+                      ),
+                    );
+                  },
                 );
               },
             ),
@@ -834,6 +924,302 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  void _showReviewSheet(String token, String orderId) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (context) {
+          return BlocConsumer<CurrentOrderBloc, CurrentOrderState>(
+            listener: (context, state) {
+              if (state is ErrorAddReview) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        title: Text(
+                          "Error",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        content: Text(
+                          state.message,
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                              child: Text("YES")),
+                          FlatButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("NO")),
+                        ],
+                      );
+                    },
+                    barrierDismissible: true);
+              } else if (state is SuccessAddReview) {
+                Navigator.pop(context);
+              }
+            },
+            builder: (context, state) {
+              return SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 1,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Icon(
+                                Icons.clear,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                            flex: 9,
+                            child: Text(
+                              "Add Review To Order #" + state.currentOrder.orderId,
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Divider(
+                          height: 0.5,
+                          color: Colors.black12,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(right: 10),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: CachedNetworkImage(
+                                  imageUrl: state.currentOrder.merchantLogo,
+                                  height: 50,
+                                  width: 50,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.center,
+                                  placeholder: (context, url) {
+                                    return Shimmer.fromColors(
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          color: Colors.black,
+                                        ),
+                                        baseColor: Colors.grey[300],
+                                        highlightColor: Colors.grey[100]);
+                                  },
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    state.currentOrder.merchantName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    state.currentOrder.merchantName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 12, color: Colors.black26),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "Rate Merchant",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: SmoothStarRating(
+                              rating: state.rating,
+                              borderColor: primary3,
+                              color: primary3,
+                              size: 30,
+                              allowHalfRating: true,
+                              onRated: (rating) {
+                                BlocProvider.of<CurrentOrderBloc>(context).add(UpdateReviewRating(rating));
+                              },
+                              starCount: 5,
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black12)),
+                        child: TextField(
+                          onChanged: (value) {
+                            BlocProvider.of<CurrentOrderBloc>(context).add(UpdateReviewComment(value));
+                          },
+                          maxLines: 4,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                              hintText: "Enter your review",
+                              hintStyle: TextStyle(fontSize: 14),
+                              border: InputBorder.none),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      GestureDetector(
+                        onTap: state.isReviewValid() && !(state is LoadingAddReview)
+                            ? () {
+                                BlocProvider.of<CurrentOrderBloc>(context).add(AddReview(token, orderId));
+                              }
+                            : () {},
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              height: 50,
+                              margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFFB531),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              alignment: Alignment.center,
+                              child: state is LoadingAddReview
+                                  ? SpinKitCircle(
+                                      color: Colors.white,
+                                      size: 30,
+                                    )
+                                  : Text(
+                                      "SUBMIT",
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                            ),
+                            AnimatedOpacity(
+                              opacity: state.isReviewValid() && !(state is LoadingAddReview) ? 0.0 : 0.5,
+                              child: Container(
+                                height: 50,
+                                color: Colors.white,
+                              ),
+                              duration: Duration(milliseconds: 300),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  void _showScratchCard() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (context) {
+          return SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Icon(
+                            Icons.clear,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        flex: 9,
+                        child: Text(
+                          "Scratch Card",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: Divider(
+                      height: 0.5,
+                      color: Colors.black12,
+                    ),
+                  ),
+                  Scratcher(child: Container()),
+                ],
+              ),
+            ),
+          );
+        });
   }
 }
 

@@ -1,39 +1,56 @@
-import 'package:flyereats/model/status_order.dart';
+import 'package:flyereats/model/current_order.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-abstract class CurrentOrderState {
-  final StatusOrder statusOrder;
-  final String orderId;
-  final bool isActive;
+class CurrentOrderState {
+  final CurrentOrder currentOrder;
 
-  CurrentOrderState({this.orderId, this.statusOrder, this.isActive});
+  final String comment;
+  final double rating;
+  final bool hasGivenStar;
+
+  CurrentOrderState({this.comment, this.rating, this.hasGivenStar, this.currentOrder});
+
+  bool isReviewValid() {
+    return hasGivenStar && comment != null && comment != "";
+  }
 }
 
 class InitialCurrentOrderState extends CurrentOrderState {
-  InitialCurrentOrderState()
-      : super(isActive: false);
+  InitialCurrentOrderState() : super(currentOrder: CurrentOrder(isActive: false));
 }
 
 class LoadingState extends CurrentOrderState {
-  LoadingState({StatusOrder statusOrder, String orderId, bool isActive})
-      : super(statusOrder: statusOrder, orderId: orderId, isActive: isActive);
+  LoadingState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
 }
 
 class SuccessState extends CurrentOrderState {
-  SuccessState({StatusOrder statusOrder, String orderId, bool isActive})
-      : super(statusOrder: statusOrder, orderId: orderId, isActive: isActive);
+  SuccessState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
 }
 
 class NoActiveOrderState extends CurrentOrderState {
-  NoActiveOrderState({StatusOrder statusOrder, String orderId, bool isActive})
-      : super(statusOrder: statusOrder, orderId: orderId, isActive: isActive);
+  NoActiveOrderState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder, rating: 0, hasGivenStar: false);
 }
 
 class ErrorState extends CurrentOrderState {
   final String message;
 
-  ErrorState(this.message,
-      {StatusOrder statusOrder, String orderId, bool isActive})
-      : super(statusOrder: statusOrder, orderId: orderId, isActive: isActive);
+  ErrorState(this.message, {CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
+}
+
+class LoadingAddReview extends CurrentOrderState {
+  LoadingAddReview({CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
+      : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
+}
+
+class SuccessAddReview extends CurrentOrderState {
+  SuccessAddReview({CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
+      : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
+}
+
+class ErrorAddReview extends CurrentOrderState {
+  final String message;
+
+  ErrorAddReview(this.message, {CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
+      : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
 }

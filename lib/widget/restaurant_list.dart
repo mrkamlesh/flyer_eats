@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/restaurantlist/restaurantlist_bloc.dart';
 import 'package:flyereats/bloc/restaurantlist/restaurantlist_state.dart';
+import 'package:flyereats/bloc/search/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/model/location.dart';
@@ -12,7 +13,14 @@ import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/page/restaurant_detail_page.dart';
 import 'package:shimmer/shimmer.dart';
 
-enum RestaurantViewType { topRestaurant, orderAgainRestaurant, dinnerTimeRestaurant, detailList, detailGrid }
+enum RestaurantViewType {
+  topRestaurant,
+  orderAgainRestaurant,
+  dinnerTimeRestaurant,
+  detailList,
+  detailGrid,
+  searchResult
+}
 
 class RestaurantListWidget extends StatefulWidget {
   final List<Restaurant> restaurants;
@@ -256,7 +264,60 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget> with Single
                   crossAxisCount: 2,
                   crossAxisSpacing: 20,
                   mainAxisSpacing: 20,
-                  childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 240,
+                  childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 260,
+                ),
+              ),
+            );
+          },
+        );
+      case RestaurantViewType.searchResult:
+        return BlocBuilder<SearchBloc, SearchState>(
+          builder: (context, state) {
+            return SliverPadding(
+              padding: EdgeInsets.only(
+                  left: horizontalPaddingDraggable,
+                  right: horizontalPaddingDraggable,
+                  top: distanceSectionContent,
+                  bottom: distanceSectionContent + kBottomNavigationBarHeight),
+              sliver: SliverGrid(
+                delegate: SliverChildBuilderDelegate((context, i) {
+                  if (state is LoadingMore && i == state.restaurants.length) {
+                    return Container(
+                      child: Center(
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    );
+                  }
+                  return RestaurantDetailGridWidget(
+                    restaurant: widget.restaurants[i],
+                    index: i,
+                    selectedIndex: _selectedTopRestaurant,
+                    onTap: () {
+                      setState(() {
+                        _selectedTopRestaurant = i;
+                        if (widget.restaurants[i].isOpen) {
+                          _animationController.forward().orCancel.whenComplete(() {
+                            _animationController.reverse().orCancel.whenComplete(() {
+                              _navigateToRestaurantDetailPage(widget.restaurants[i]);
+                            });
+                          });
+                        } else {
+                          _showAlertDialog();
+                        }
+                      });
+                    },
+                    scale: _scaleAnimation,
+                  );
+                }, childCount: (state is LoadingMore) ? widget.restaurants.length + 1 : widget.restaurants.length),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 260,
                 ),
               ),
             );
@@ -281,6 +342,7 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget> with Single
         context: context,
         builder: (context) {
           return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: Text(
               "Closed!",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -511,7 +573,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
       child: Opacity(
         opacity: restaurant.isOpen ? 1.0 : 0.3,
         child: Container(
-          height: 115,
+          height: 130,
           width: 95,
           margin:
               EdgeInsets.only(bottom: 10, top: 10, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
@@ -541,14 +603,14 @@ class RestaurantDetailListWidget extends StatelessWidget {
                       borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
                       child: CachedNetworkImage(
                         imageUrl: restaurant.image,
-                        height: 115,
+                        height: 130,
                         width: 95,
                         fit: BoxFit.cover,
                         alignment: Alignment.center,
                         placeholder: (context, url) {
                           return Shimmer.fromColors(
                               child: Container(
-                                height: 115,
+                                height: 130,
                                 width: 95,
                                 color: Colors.black,
                               ),
@@ -560,7 +622,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
                   ),
                   Expanded(
                     child: Container(
-                      height: 115,
+                      height: 130,
                       padding: EdgeInsets.only(top: 12, bottom: 12, right: 12),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -888,13 +950,16 @@ class DinnerRestaurantHomeWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(bottom: 7),
-                        child: Text(
-                          restaurant.name + "\n",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 7),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            restaurant.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
                       restaurant.discountDescription != null
@@ -984,7 +1049,7 @@ class LoadingRestaurantListWidget extends StatelessWidget {
                   ),
                   margin: EdgeInsets.only(
                       bottom: 10, top: 10, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
-                  height: 115,
+                  height: 130,
                 ),
                 baseColor: Colors.grey[300],
                 highlightColor: Colors.grey[100]);

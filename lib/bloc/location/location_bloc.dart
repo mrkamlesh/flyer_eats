@@ -10,7 +10,7 @@ import './bloc.dart';
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
   DataRepository repository = DataRepository();
   List<Location> savedPredefinedLocations = List();
-  Location selectedLocation = Location();
+  HomePageData prevData = HomePageData();
 
   @override
   LocationState get initialState => InitialLocationState();
@@ -61,8 +61,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   Stream<LocationState> mapUpdateLocationToState(LatLng latLng) async* {
     yield UpdatingLocation();
     try {
-      List<Placemark> placeMark = await Geolocator()
-          .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+      List<Placemark> placeMark = await Geolocator().placemarkFromCoordinates(latLng.latitude, latLng.longitude);
       yield UpdatingLocationSuccess(Location(
           latitude: placeMark[0].position.latitude,
           longitude: placeMark[0].position.longitude,
@@ -82,8 +81,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     yield LocationMoved(latLng);
   }
 
-  Stream<LocationState> mapGetPredefinedLocationsToState(
-      String countryId) async* {
+  Stream<LocationState> mapGetPredefinedLocationsToState(String countryId) async* {
     yield LoadingPredefinedLocations();
     try {
       List<Location> list = await repository.getLocations(countryId);
@@ -101,41 +99,32 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   Stream<LocationState> mapFilterLocationsToState(String filter) async* {
     yield LoadingPredefinedLocations();
 
-    try{
-
+    try {
       List<Location> filteredList = savedPredefinedLocations.where((location) {
-        return location.location.toLowerCase().contains(filter) ||
-            location.address.toLowerCase().contains(filter);
+        return location.location.toLowerCase().contains(filter) || location.address.toLowerCase().contains(filter);
       }).toList();
 
-      if (filteredList.isNotEmpty){
+      if (filteredList.isNotEmpty) {
         yield PredefinedLocationsFiltered(filteredList);
       } else {
         yield NoLocationsAvailable();
       }
-    }catch(e){
+    } catch (e) {
       yield LoadingPredefinedLocationsError(e.toString());
     }
-
   }
 
   Stream<LocationState> mapGetPreviousLocationToState() async* {
-    yield HomePageDataLoaded(HomePageData());
+    yield HomePageDataLoaded(prevData);
   }
 
-  Stream<LocationState> mapGetHomeDataByLatLngToState(
-      String token, double lat, double lng) async* {
+  Stream<LocationState> mapGetHomeDataByLatLngToState(String token, double lat, double lng) async* {
     yield LoadingLocation();
     try {
       var data = await repository.getHomePageData(
-          token: token,
-          lat: lat,
-          long: lng,
-          topRestaurantPage: 0,
-          foodCategoryPage: 0,
-          dblPage: 0,
-          adsPage: 0);
+          token: token, lat: lat, long: lng, topRestaurantPage: 0, foodCategoryPage: 0, dblPage: 0, adsPage: 0);
       if (data is HomePageData) {
+        prevData = data;
         yield HomePageDataLoaded(data);
       } else {
         yield NoLocationsAvailable();
@@ -145,21 +134,15 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     }
   }
 
-  Stream<LocationState> mapGetHomeDataByLocationToState(
-      String token, Location location) async* {
+  Stream<LocationState> mapGetHomeDataByLocationToState(String token, Location location) async* {
     yield LoadingLocation();
 
     try {
       var data = await repository.getHomePageData(
-          token: token,
-          address: location.address,
-          topRestaurantPage: 0,
-          foodCategoryPage: 0,
-          dblPage: 0,
-          adsPage: 0);
+          token: token, address: location.address, topRestaurantPage: 0, foodCategoryPage: 0, dblPage: 0, adsPage: 0);
 
-      selectedLocation = location;
       if (data is HomePageData) {
+        prevData = data;
         yield HomePageDataLoaded(data);
       } else {
         yield NoLocationsAvailable();

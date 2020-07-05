@@ -502,6 +502,7 @@ class AddressItemWidget extends StatelessWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         title: Text("DELETE?"),
                         content: Text("Delete ${address.title}?"),
                         actions: <Widget>[

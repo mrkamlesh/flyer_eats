@@ -320,7 +320,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                         slivers: <Widget>[
                                           SliverList(
                                               delegate: SliverChildBuilderDelegate((context, i) {
-                                            return GestureDetector(
+                                            return InkWell(
                                               onTap: () {
                                                 _onTap(
                                                   i,
@@ -393,6 +393,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
 
   Future<bool> _onBackPressed() async {
     Navigator.pop(context);
+    BlocProvider.of<LocationBloc>(context).add(GetPreviousLocation());
 
     return true;
   }

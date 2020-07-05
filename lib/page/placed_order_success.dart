@@ -136,7 +136,7 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                             ),
                             Container(
                               margin: EdgeInsets.only(top: 20, bottom: 20),
-                              height: 0.15 * AppUtil.getScreenHeight(context),
+                              height: 0.16 * AppUtil.getScreenHeight(context),
                               decoration: BoxDecoration(
                                 color: Color(0xFFFFC94B),
                                 boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)],
@@ -144,8 +144,8 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                               child: Row(
                                 children: <Widget>[
                                   Container(
-                                    width: 0.15 * AppUtil.getScreenHeight(context) - 20,
-                                    height: 0.15 * AppUtil.getScreenHeight(context) - 20,
+                                    width: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                    height: 0.16 * AppUtil.getScreenHeight(context) - 20,
                                     margin: EdgeInsets.all(10),
                                     padding: EdgeInsets.all(10),
                                     decoration: BoxDecoration(
@@ -181,9 +181,6 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                           "REFER A FRIEND AND EARN",
                                           style: TextStyle(fontWeight: FontWeight.bold),
                                         ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: <Widget>[
@@ -202,12 +199,9 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                             ),
                                             Text(
                                               "100",
-                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                             ),
                                           ],
-                                        ),
-                                        SizedBox(
-                                          height: 5,
                                         ),
                                         FittedBox(
                                           fit: BoxFit.none,

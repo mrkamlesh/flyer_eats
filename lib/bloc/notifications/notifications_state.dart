@@ -1,5 +1,4 @@
 import 'package:flyereats/model/notification.dart';
-import 'package:flyereats/model/review.dart';
 
 class NotificationsState {
   final List<NotificationItem> listNotification;
@@ -9,3 +8,4 @@ class NotificationsState {
 
   NotificationsState({this.page, this.isLoading, this.hasReachedMax, this.listNotification});
 }
+

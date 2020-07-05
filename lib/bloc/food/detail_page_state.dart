@@ -1,68 +1,44 @@
-import 'package:equatable/equatable.dart';
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/menu_category.dart';
-import 'package:meta/meta.dart';
 
-@immutable
-abstract class DetailPageState extends Equatable {
-  const DetailPageState();
+class DetailPageState {
+  final FoodCart foodCart;
+  final List<MenuCategory> menuCategories;
+  final bool isVegOnly;
+  final List<Food> foodList;
+
+  DetailPageState({
+    this.foodCart,
+    this.menuCategories,
+    this.isVegOnly,
+    this.foodList,
+  });
 }
 
-class Uninitialized extends DetailPageState {
-  const Uninitialized();
-
-  @override
-  List<Object> get props => [];
+class Initialize extends DetailPageState {
+  Initialize()
+      : super(foodList: List(), isVegOnly: false, menuCategories: List<MenuCategory>(), foodCart: FoodCart(Map()));
 }
 
 class OnDataLoading extends DetailPageState {
-  const OnDataLoading();
-
-  @override
-  List<Object> get props => [];
-}
-
-class OnDataLoaded extends DetailPageState {
-  final List<Food> list;
-
-  const OnDataLoaded(this.list);
-
-  @override
-  List<Object> get props => [list];
+  OnDataLoading({FoodCart foodCart, List<MenuCategory> menuCategories, bool isVegOnly, List<Food> foodList})
+      : super(isVegOnly: isVegOnly, menuCategories: menuCategories, foodCart: foodCart, foodList: foodList);
 }
 
 class OnDataError extends DetailPageState {
   final String error;
 
-  const OnDataError(this.error);
-
-  @override
-  List<Object> get props => [error];
-}
-
-class CartState extends DetailPageState {
-  final FoodCart cart;
-
-  const CartState(this.cart);
-
-  @override
-  List<Object> get props => [cart];
-}
-
-class MenusLoaded extends DetailPageState {
-  final List<MenuCategory> menus;
-
-  const MenusLoaded(this.menus);
-
-  @override
-  List<Object> get props => [menus];
+  OnDataError(this.error, {FoodCart foodCart, List<MenuCategory> menuCategories, bool isVegOnly, List<Food> foodList})
+      : super(isVegOnly: isVegOnly, menuCategories: menuCategories, foodCart: foodCart, foodList: foodList);
 }
 
 class NoFoodAvailable extends DetailPageState {
+  NoFoodAvailable({FoodCart foodCart, List<MenuCategory> menuCategories, bool isVegOnly, List<Food> foodList})
+      : super(isVegOnly: isVegOnly, menuCategories: menuCategories, foodCart: foodCart, foodList: foodList);
+}
 
-  const NoFoodAvailable();
-
-  @override
-  List<Object> get props => [];
+class CartState extends DetailPageState {
+  CartState({FoodCart foodCart, List<MenuCategory> menuCategories, bool isVegOnly, List<Food> foodList})
+      : super(isVegOnly: isVegOnly, menuCategories: menuCategories, foodCart: foodCart, foodList: foodList);
 }

@@ -1,5 +1,6 @@
 import 'package:flyereats/classes/data_provider.dart';
 import 'package:flyereats/model/ads.dart';
+import 'package:flyereats/model/current_order.dart';
 import 'package:flyereats/model/detail_order.dart';
 import 'package:flyereats/model/filter.dart';
 import 'package:flyereats/model/food.dart';
@@ -13,7 +14,6 @@ import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/review.dart';
 import 'package:flyereats/model/sort_by.dart';
-import 'package:flyereats/model/status_order.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
 import 'package:flyereats/model/register_post.dart';
@@ -126,6 +126,19 @@ class DataRepository {
     }
   }
 
+  Future<List<Restaurant>> globalSearch(String token, String textSearch, String address, int page) async {
+    final response = await _provider.globalSearch(token, textSearch, address, page);
+    if (response['code'] == 1) {
+      var listResponse = response['details'] as List;
+      List<Restaurant> list = listResponse.map((i) {
+        return Restaurant.fromSearch(i);
+      }).toList();
+      return list;
+    } else {
+      return List();
+    }
+  }
+
   Future<List<NotificationItem>> getNotificationList(String token, int page) async {
     final response = await _provider.getNotificationList(token, page);
     if (response['code'] == 1) {
@@ -135,7 +148,7 @@ class DataRepository {
       }).toList();
       return list;
     } else {
-       return List();
+      return List();
     }
   }
 
@@ -376,16 +389,13 @@ class DataRepository {
     }
   }
 
-  Future<Map<String, dynamic>> getActiveOrder(String token) async {
+  Future<CurrentOrder> getActiveOrder(String token) async {
     final response = await _provider.getActiveOrder(token);
     if (response['code'] == 1) {
-      Map<String, dynamic> map = Map();
-      map['status_order'] = StatusOrder.fromJson(response['details']);
-      map['active_order'] = response['details']['active_order'];
-      map['order_id'] = response['details']['order_id'];
-      return map;
+      CurrentOrder currentOrder = CurrentOrder.fromJson(response);
+      return currentOrder;
     } else {
-      return Map<String, dynamic>();
+      throw Exception(response['msg']);
     }
   }
 }

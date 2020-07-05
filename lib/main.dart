@@ -7,6 +7,7 @@ import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/page/home.dart';
 import 'package:flyereats/page/login/login_number_page.dart';
 import 'package:flyereats/page/order_history_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'bloc/location/location_bloc.dart';
 
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Demo',
           theme: ThemeData(
             primarySwatch: Colors.blue,
+            textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
           ),
           initialRoute: "/",
           routes: {

@@ -161,6 +161,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                         title: Text(
                                           "Login Success",
                                           style: TextStyle(
@@ -186,6 +187,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                         title: Text(
                                           "Error!",
                                           style: TextStyle(

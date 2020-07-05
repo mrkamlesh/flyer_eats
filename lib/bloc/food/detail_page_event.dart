@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flyereats/model/food.dart';
+import 'package:flyereats/model/food_cart.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -54,3 +55,12 @@ class ChangeQuantity extends DetailPageEvent {
   @override
   List<Object> get props => [id, food, quantity];
 }
+class UpdateCart extends DetailPageEvent {
+  final FoodCart foodCart;
+
+  UpdateCart(this.foodCart);
+
+  @override
+  List<Object> get props => [foodCart];
+}
+

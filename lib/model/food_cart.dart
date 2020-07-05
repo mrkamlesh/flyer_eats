@@ -37,6 +37,19 @@ class FoodCart {
       }
     }
   }
+
+  double getAmount() {
+    double amount = 0;
+    this.cart.forEach((i, item) {
+      amount = amount + item.food.price * item.quantity;
+    });
+
+    return amount;
+  }
+
+  int cartItemNumber() {
+    return this.cart.length;
+  }
 }
 
 class FoodCartItem {

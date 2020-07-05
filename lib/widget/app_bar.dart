@@ -81,7 +81,7 @@ class CustomAppBar extends StatelessWidget {
             width: 10,
           ),
           Expanded(
-            child: GestureDetector(
+            child: InkWell(
               onTap: onTapTitle,
               child: Container(
                 height: kToolbarHeight,
@@ -100,10 +100,14 @@ class CustomAppBar extends StatelessWidget {
                   onTap: onTapTitle,
                   child: Container(
                     margin: EdgeInsets.only(right: 10),
-                    child: SvgPicture.asset(
-                      "assets/dropdown home.svg",
-                      height: 8,
-                      width: 8,
+                    height: kBottomNavigationBarHeight,
+                    width: 20,
+                    child: Center(
+                      child: SvgPicture.asset(
+                        "assets/dropdown home.svg",
+                        height: 8,
+                        width: 8,
+                      ),
                     ),
                   ),
                 )

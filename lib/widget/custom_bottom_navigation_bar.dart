@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final List<BottomNavyBarItem> items;
@@ -49,8 +48,7 @@ class CustomBottomNavBar extends StatelessWidget {
     }).toList();
 
     return Container(
-      decoration: BoxDecoration(
-          border: Border(top: BorderSide(width: 0.8, color: Colors.orange[200]))),
+      decoration: BoxDecoration(border: Border(top: BorderSide(width: 0.8, color: Colors.orange[200]))),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -93,8 +91,7 @@ class AnimatedBottomNavBarItem extends StatelessWidget {
             height: isSelected ? normalHeight : normalHeight - 5,
             width: isSelected ? normalHeight : normalHeight - 5,
             duration: animationDuration,
-            child: SvgPicture.asset(icon,
-                color: isSelected ? selectedColor : unselectedColor),
+            child: SvgPicture.asset(icon, color: isSelected ? selectedColor : unselectedColor),
           ),
           AnimatedOpacity(
             curve: Curves.easeInCubic,
@@ -103,10 +100,11 @@ class AnimatedBottomNavBarItem extends StatelessWidget {
             child: AnimatedDefaultTextStyle(
                 curve: Curves.easeInCubic,
                 child: Text(title),
-                style: TextStyle(
+                style: GoogleFonts.poppins(
+                    textStyle: TextStyle(
                   color: isSelected ? selectedColor : unselectedColor,
                   fontSize: isSelected ? 11 : 0,
-                ),
+                )),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 duration: animationDuration),

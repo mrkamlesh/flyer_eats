@@ -597,6 +597,30 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> globalSearch(String token, String textSearch, String address, int page) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/globalSearch?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "address": address,
+      "search_text": textSearch,
+      "page": page.toString(),
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> getFoods(String restaurantId, String categoryId) async {
     String url =
         "${developmentServerUrl}mobileapp/apiRest/getItem?json=true&api_key=flyereats&merchant_id=$restaurantId&cat_id=$categoryId&page=all";

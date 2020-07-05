@@ -36,10 +36,7 @@ class OrderBottomNavBar extends StatelessWidget {
               children: <Widget>[
                 Text(
                   description,
-                  style: TextStyle(fontSize: 12),
-                ),
-                SizedBox(
-                  height: 5,
+                  style: TextStyle(fontSize: 10),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

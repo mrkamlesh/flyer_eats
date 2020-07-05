@@ -9,6 +9,7 @@ import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/bloc/login/checkphoneexist/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/page/home.dart';
 import 'package:flyereats/page/login/login_facebook_gmail.dart';
 import 'package:flyereats/page/login/otp_page.dart';
 
@@ -55,7 +56,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
           if (state is LoggedIn) {
             BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation(state.user.token));
             BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(state.user.token));
-            Navigator.pushReplacementNamed(context, "/home");
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+              return Home();}));
           }
         },
         builder: (context, state) {
@@ -76,6 +78,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           title: Text(
                             "Error",
                             style: TextStyle(fontWeight: FontWeight.bold),

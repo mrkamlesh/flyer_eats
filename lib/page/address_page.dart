@@ -155,6 +155,7 @@ class _AddressPageState extends State<AddressPage> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       title: Text(
                                         "Success",
                                         style: TextStyle(
@@ -177,6 +178,7 @@ class _AddressPageState extends State<AddressPage> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       title: Text(
                                         "Error",
                                         style: TextStyle(
@@ -201,6 +203,7 @@ class _AddressPageState extends State<AddressPage> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       title: Text(
                                         "Success",
                                         style: TextStyle(
@@ -223,6 +226,7 @@ class _AddressPageState extends State<AddressPage> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       title: Text(
                                         "Error",
                                         style: TextStyle(

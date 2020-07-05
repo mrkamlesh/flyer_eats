@@ -86,6 +86,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     title: Text(
                       "Registration Error",
                       style: TextStyle(fontWeight: FontWeight.bold),

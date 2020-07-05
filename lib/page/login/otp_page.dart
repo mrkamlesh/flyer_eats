@@ -7,6 +7,7 @@ import 'package:flyereats/bloc/location/bloc.dart';
 import 'package:flyereats/bloc/login/bloc.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/page/home.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpPage extends StatefulWidget {
@@ -34,12 +35,14 @@ class _OtpPageState extends State<OtpPage> {
         if (state is Success) {
           BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation(state.user.token));
           BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(state.user.token));
-          Navigator.pushReplacementNamed(context, "/home");
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+            return Home();}));
         } else if (state is Error) {
           showDialog(
               context: context,
               builder: (context) {
                 return AlertDialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   title: Text(
                     "Error",
                     style: TextStyle(fontWeight: FontWeight.bold),

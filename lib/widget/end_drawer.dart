@@ -7,7 +7,6 @@ import 'package:flyereats/classes/style.dart';
 import 'package:flyereats/page/account_page.dart';
 import 'package:flyereats/page/app_settings_page.dart';
 import 'package:flyereats/page/help_page.dart';
-import 'package:flyereats/page/login/login_number_page.dart';
 import 'package:flyereats/page/my_wallet_page.dart';
 import 'package:flyereats/page/notifications_list_page.dart';
 import 'package:flyereats/page/order_history_page.dart';

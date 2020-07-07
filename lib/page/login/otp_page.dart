@@ -21,11 +21,21 @@ class OtpPage extends StatefulWidget {
 
 class _OtpPageState extends State<OtpPage> {
   TextEditingController _otpController;
+  String otpCode = "";
 
   @override
   void initState() {
     super.initState();
     _otpController = TextEditingController();
+    _otpController.addListener(() {
+      setState(() {
+        otpCode = _otpController.text;
+      });
+    });
+  }
+
+  bool isValid() {
+    return otpCode.length >= 6;
   }
 
   @override
@@ -35,8 +45,9 @@ class _OtpPageState extends State<OtpPage> {
         if (state is Success) {
           BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation(state.user.token));
           BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(state.user.token));
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-            return Home();}));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+            return Home();
+          }));
         } else if (state is Error) {
           showDialog(
               context: context,
@@ -115,17 +126,21 @@ class _OtpPageState extends State<OtpPage> {
                               length: 6,
                               onChanged: (code) {},
                               textInputType: TextInputType.number,
+                              autoFocus: true,
                               pinTheme: PinTheme(
                                   shape: PinCodeFieldShape.box,
+                                  selectedColor: primary2,
                                   borderRadius: BorderRadius.circular(8),
                                   inactiveColor: primary2),
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              BlocProvider.of<LoginBloc>(context)
-                                  .add(VerifyOtp(widget.phoneNumber, _otpController.text));
-                            },
+                            onTap: isValid()
+                                ? () {
+                                    BlocProvider.of<LoginBloc>(context)
+                                        .add(VerifyOtp(widget.phoneNumber, _otpController.text));
+                                  }
+                                : () {},
                             child: Stack(
                               children: <Widget>[
                                 Container(
@@ -141,7 +156,7 @@ class _OtpPageState extends State<OtpPage> {
                                   ),
                                 ),
                                 AnimatedOpacity(
-                                  opacity: 0.0,
+                                  opacity: isValid() ? 0.0 : 0.5,
                                   child: Container(
                                     height: 50,
                                     color: Colors.white,

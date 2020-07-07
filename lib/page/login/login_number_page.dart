@@ -61,7 +61,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
           }
         },
         builder: (context, state) {
-          if (state is NotLoggedIn) {
+          if (state is NotLoggedIn || state is LoggedOut) {
             return BlocConsumer<LoginPhoneBloc, LoginPhoneState>(
               listener: (context, state) {
                 if (state is PhoneIsExist) {
@@ -236,7 +236,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                             Expanded(
                                               child: Container(
                                                 decoration: BoxDecoration(
-                                                    border: Border(left: BorderSide(color: primary3, width: 2))),
+                                                    border: Border(left: BorderSide(color: primary2, width: 2))),
                                                 padding: EdgeInsets.symmetric(horizontal: 20),
                                                 child: TextField(
                                                   autofocus: true,

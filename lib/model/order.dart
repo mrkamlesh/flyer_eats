@@ -28,6 +28,8 @@ class Order {
         return "assets/in process icon.svg";
       case "Delivered":
         return "assets/check.svg";
+      case "Cancelled":
+        return "assets/remove.svg";
       default:
         return "assets/remove.svg";
     }
@@ -43,6 +45,8 @@ class Order {
         return "In Progress";
       case "Delivered":
         return "Delivered";
+      case "Cancelled":
+        return "Cancelled";
       default:
         return "Cancelled";
     }

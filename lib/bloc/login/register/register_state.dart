@@ -11,8 +11,7 @@ class RegisterState {
 }
 
 class InitialRegisterState extends RegisterState {
-  InitialRegisterState()
-      : super(listLocations: List(), registerPost: RegisterPost());
+  InitialRegisterState() : super(listLocations: List(), registerPost: RegisterPost(isUseReferral: false));
 }
 
 class LoadingRegister extends RegisterState {
@@ -23,16 +22,14 @@ class LoadingRegister extends RegisterState {
 class SuccessRegister extends RegisterState {
   final LoginStatus status;
 
-  SuccessRegister(this.status,
-      {List<String> listLocations, RegisterPost registerPost})
+  SuccessRegister(this.status, {List<String> listLocations, RegisterPost registerPost})
       : super(listLocations: listLocations, registerPost: registerPost);
 }
 
 class ErrorRegister extends RegisterState {
   final String message;
 
-  ErrorRegister(this.message,
-      {List<String> listLocations, RegisterPost registerPost})
+  ErrorRegister(this.message, {List<String> listLocations, RegisterPost registerPost})
       : super(listLocations: listLocations, registerPost: registerPost);
 }
 
@@ -44,8 +41,7 @@ class LoadingLocations extends RegisterState {
 class ErrorLocations extends RegisterState {
   final String message;
 
-  ErrorLocations(this.message,
-      {List<String> listLocations, RegisterPost registerPost})
+  ErrorLocations(this.message, {List<String> listLocations, RegisterPost registerPost})
       : super(listLocations: listLocations, registerPost: registerPost);
 }
 

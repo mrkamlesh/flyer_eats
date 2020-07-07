@@ -6,6 +6,7 @@ import 'package:flyereats/model/payment_method.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
+import 'package:intl/intl.dart';
 
 class PlaceOrder {
   final String id;
@@ -32,6 +33,8 @@ class PlaceOrder {
   final double walletAmount;
   final bool isChangePrimaryContact;
   final List<PaymentMethod> listPaymentMethod;
+  final DateTime now;
+  final DateTime selectedDeliveryTime;
 
   PlaceOrder({
     this.id,
@@ -58,6 +61,8 @@ class PlaceOrder {
     this.isUseWallet,
     this.isChangePrimaryContact,
     this.listPaymentMethod,
+    this.selectedDeliveryTime,
+    this.now,
   });
 
   factory PlaceOrder.fromJson(Map<String, dynamic> parsedJson) {
@@ -121,6 +126,8 @@ class PlaceOrder {
     bool isUseWallet,
     bool isChangePrimaryContact,
     List<PaymentMethod> listPaymentMethod,
+    DateTime selectedDeliveryTime,
+    DateTime now,
   }) {
     return PlaceOrder(
         id: id ?? this.id,
@@ -146,7 +153,49 @@ class PlaceOrder {
         walletAmount: walletAmount ?? this.walletAmount,
         isUseWallet: isUseWallet ?? this.isUseWallet,
         isChangePrimaryContact: isChangePrimaryContact ?? this.isChangePrimaryContact,
-        listPaymentMethod: listPaymentMethod ?? this.listPaymentMethod);
+        listPaymentMethod: listPaymentMethod ?? this.listPaymentMethod,
+        selectedDeliveryTime: selectedDeliveryTime ?? this.selectedDeliveryTime,
+        now: now ?? this.now);
+  }
+
+  String getDeliveryDate() {
+    return DateFormat('yyyy-MM-dd').format(this.selectedDeliveryTime);
+  }
+
+  String getDeliveryDatePretty() {
+    return DateFormat('MMM dd, yyyy').format(this.selectedDeliveryTime);
+  }
+
+  String getDeliveryTime() {
+    return DateFormat('hh:mm a').format(this.selectedDeliveryTime);
+  }
+
+  List<DateTime> getDeliveryTimeOptions() {
+    List<DateTime> list = List();
+
+    DateTime tresshold = DateTime(
+      this.now.year,
+      this.now.month,
+      this.now.day,
+      22,
+      this.now.minute,
+    );
+
+    DateTime i = DateTime(
+      this.now.year,
+      this.now.month,
+      this.now.day,
+      this.now.hour,
+      this.now.minute,
+      this.now.second,
+      this.now.millisecond,
+      this.now.microsecond,
+    ).add(Duration(minutes: 45));
+    do {
+      list.add(i);
+      i = i.add(Duration(minutes: 15));
+    } while (i.isBefore(tresshold));
+    return list;
   }
 
   String cartToString() {

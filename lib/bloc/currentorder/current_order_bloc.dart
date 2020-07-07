@@ -24,6 +24,8 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
       yield* mapUpdateReviewRatingToState(event.rating);
     } else if (event is AddReview) {
       yield* mapAddReviewToState(event.token, event.orderId);
+    } else if (event is ScratchCardEvent) {
+      yield* mapScratchCardEventToState(event.token, event.cardId);
     }
   }
 
@@ -36,7 +38,15 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
           add(GetActiveOrder(token));
         });
       } else {
-        yield NoActiveOrderState(currentOrder: currentOrder);
+        if (currentOrder.statusOrder == null) {
+          yield NoActiveOrderState(currentOrder: currentOrder);
+        } else {
+          if (currentOrder.statusOrder.isDelivered()) {
+            yield DeliveredOrderState(currentOrder: currentOrder);
+          } else if (currentOrder.statusOrder.isCancelled()) {
+            yield CancelledOrderState(currentOrder: currentOrder);
+          }
+        }
       }
     } catch (e) {
       yield ErrorState(e.toString(), currentOrder: state.currentOrder);
@@ -89,5 +99,14 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
   Stream<CurrentOrderState> mapUpdateReviewRatingToState(double rating) async* {
     yield CurrentOrderState(
         currentOrder: state.currentOrder, comment: state.comment, rating: rating, hasGivenStar: true);
+  }
+
+  Stream<CurrentOrderState> mapScratchCardEventToState(String token, String cardId) async* {
+    await repository.scratchCard(token, cardId);
+    /*yield CardScratched(
+        rating: state.rating,
+        hasGivenStar: state.hasGivenStar,
+        comment: state.comment,
+        currentOrder: state.currentOrder);*/
   }
 }

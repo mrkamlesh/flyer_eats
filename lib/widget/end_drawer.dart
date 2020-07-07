@@ -273,9 +273,7 @@ class EndDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return HelpPage();
-              }));
+              BlocProvider.of<LoginBloc>(context).add(LogOut());
             },
             child: Row(
               children: <Widget>[

@@ -22,3 +22,10 @@ class InitLoginEvent extends LoginEvent {
   @override
   List<Object> get props => [];
 }
+
+class LogOut extends LoginEvent {
+  const LogOut();
+
+  @override
+  List<Object> get props => [];
+}

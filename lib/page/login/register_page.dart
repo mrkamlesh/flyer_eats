@@ -27,9 +27,7 @@ class RegisterPage extends StatefulWidget {
   deviceId: "DASDASDA",
   avatar: _photo*/
 
-  const RegisterPage(
-      {Key key, this.phoneNumber, this.email, this.name, this.imageUrl})
-      : super(key: key);
+  const RegisterPage({Key key, this.phoneNumber, this.email, this.name, this.imageUrl}) : super(key: key);
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -59,8 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0.0 &&
-        _controller.hasClients) {
+    if (MediaQuery.of(context).viewInsets.bottom > 0.0 && _controller.hasClients) {
       _controller.animateTo(MediaQuery.of(context).viewInsets.bottom,
           duration: Duration(milliseconds: 200), curve: Curves.ease);
     }
@@ -69,10 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
       create: (context) {
         return _bloc
           ..add(InitRegisterEvent(
-              email: widget.email,
-              name: widget.name,
-              imageUrl: widget.imageUrl,
-              phoneNumber: widget.phoneNumber));
+              email: widget.email, name: widget.name, imageUrl: widget.imageUrl, phoneNumber: widget.phoneNumber));
       },
       child: BlocConsumer<RegisterBloc, RegisterState>(
         listener: (context, state) {
@@ -108,12 +102,26 @@ class _RegisterPageState extends State<RegisterPage> {
             body: Stack(
               children: <Widget>[
                 Container(
-                  decoration: BoxDecoration(color: Colors.black),
+                  height: AppUtil.getScreenHeight(context),
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.black),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                SingleChildScrollView(
-                  controller: _controller,
-                  child: Container(
-                    height: AppUtil.getScreenHeight(context),
+                Container(
+                  height: AppUtil.getScreenHeight(context),
+                  child: SingleChildScrollView(
+                    controller: _controller,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -130,211 +138,217 @@ class _RegisterPageState extends State<RegisterPage> {
                                 )),
                           ),
                         ),
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(top: 10),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(32),
-                                    topLeft: Radius.circular(32))),
-                            padding: EdgeInsets.only(
-                                top: 20,
-                                left: horizontalPaddingDraggable,
-                                right: horizontalPaddingDraggable),
-                            alignment: Alignment.center,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    bottom: 20,
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "DETAILS",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                        Container(
+                          margin: EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                          padding: EdgeInsets.only(
+                              top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                          alignment: Alignment.center,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(
+                                  bottom: 20,
                                 ),
-                                Transform.translate(
-                                  offset: Offset(12, 0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _chooseImage();
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.only(bottom: 30),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: <Widget>[
-                                          Container(
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                    color: Colors.black12)),
-                                            width: 100,
-                                            height: 100,
-                                            child: state.registerPost.avatar !=
-                                                    null
-                                                ? ClipOval(
-                                                    child: FittedBox(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        fit: BoxFit.cover,
-                                                        child: Image.file(state
-                                                            .registerPost
-                                                            .avatar)),
-                                                  )
-                                                : widget.imageUrl != null
-                                                    ? ClipOval(
-                                                        child: FittedBox(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            fit: BoxFit.cover,
-                                                            child: Image
-                                                                .network(widget
-                                                                    .imageUrl)),
-                                                      )
-                                                    : FittedBox(
-                                                        fit: BoxFit.none,
-                                                        child: SizedBox(
-                                                          width: 40,
-                                                          height: 40,
-                                                          child:
-                                                              SvgPicture.asset(
-                                                            "assets/account.svg",
-                                                            color:
-                                                                Colors.black38,
-                                                          ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "DETAILS",
+                                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Transform.translate(
+                                offset: Offset(12, 0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _chooseImage();
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 30),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: <Widget>[
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle, border: Border.all(color: Colors.black12)),
+                                          width: 100,
+                                          height: 100,
+                                          child: state.registerPost.avatar != null
+                                              ? ClipOval(
+                                                  child: FittedBox(
+                                                      alignment: Alignment.center,
+                                                      fit: BoxFit.cover,
+                                                      child: Image.file(state.registerPost.avatar)),
+                                                )
+                                              : widget.imageUrl != null
+                                                  ? ClipOval(
+                                                      child: FittedBox(
+                                                          alignment: Alignment.center,
+                                                          fit: BoxFit.cover,
+                                                          child: Image.network(widget.imageUrl)),
+                                                    )
+                                                  : FittedBox(
+                                                      fit: BoxFit.none,
+                                                      child: SizedBox(
+                                                        width: 40,
+                                                        height: 40,
+                                                        child: SvgPicture.asset(
+                                                          "assets/account.svg",
+                                                          color: Colors.black38,
                                                         ),
                                                       ),
-                                          ),
-                                          Icon(
-                                            Icons.camera_alt,
-                                            color: Colors.black38,
-                                            size: 24,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  child: TextField(
-                                    enabled: false,
-                                    controller: TextEditingController(
-                                        text: widget.email),
-                                    decoration: InputDecoration(
-                                      contentPadding:
-                                          EdgeInsets.symmetric(vertical: 15),
-                                      border: InputBorder.none,
-                                      hintText: "Enter your email",
-                                      hintStyle: TextStyle(
-                                          fontSize: 16, color: Colors.black38),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  child: TextField(
-                                    controller: _nameController,
-                                    decoration: InputDecoration(
-                                      contentPadding:
-                                          EdgeInsets.symmetric(vertical: 15),
-                                      border: InputBorder.none,
-                                      hintText: "Your name here",
-                                      hintStyle: TextStyle(
-                                          fontSize: 16, color: Colors.black38),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  margin: EdgeInsets.only(bottom: 30),
-                                  child: DropdownButton<String>(
-                                    underline: Container(),
-                                    isExpanded: true,
-                                    hint: Text("Select Your Location"),
-                                    value: state.registerPost.location,
-                                    icon: Icon(Icons.expand_more),
-                                    items: state.listLocations
-                                        .map<DropdownMenuItem<String>>(
-                                            (value) =>
-                                                new DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Container(
-                                                    child: Text(
-                                                      value,
-                                                      style: TextStyle(
-                                                          fontSize: 16),
                                                     ),
-                                                  ),
-                                                ))
-                                        .toList(),
-                                    onChanged: (i) {
-                                      _bloc.add(ChangeLocation(i));
-                                    },
+                                        ),
+                                        Icon(
+                                          Icons.camera_alt,
+                                          color: Colors.black38,
+                                          size: 24,
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: state.registerPost.isValid()
-                                      ? () {
-                                          _bloc.add(Register());
-                                        }
-                                      : () {},
-                                  child: Stack(
-                                    children: <Widget>[
-                                      Container(
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFFFFB531),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          "CONFIRM",
-                                          style: TextStyle(fontSize: 20),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.black12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                margin: EdgeInsets.only(bottom: 20),
+                                child: TextField(
+                                  enabled: false,
+                                  controller: TextEditingController(text: widget.email),
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                    border: InputBorder.none,
+                                    hintText: "Enter your email",
+                                    hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.black12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                margin: EdgeInsets.only(bottom: 20),
+                                child: TextField(
+                                  controller: _nameController,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                    border: InputBorder.none,
+                                    hintText: "Your name here",
+                                    hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.black12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                margin: EdgeInsets.only(bottom: 10),
+                                child: DropdownButton<String>(
+                                  underline: Container(),
+                                  isExpanded: true,
+                                  hint: Text("Select Your Location"),
+                                  value: state.registerPost.location,
+                                  icon: Icon(Icons.expand_more),
+                                  items: state.listLocations
+                                      .map<DropdownMenuItem<String>>((value) => new DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Container(
+                                              child: Text(
+                                                value,
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ),
+                                          ))
+                                      .toList(),
+                                  onChanged: (i) {
+                                    _bloc.add(ChangeLocation(i));
+                                  },
+                                ),
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Checkbox(
+                                    value: state.registerPost.isUseReferral,
+                                    onChanged: (value) {
+                                      _bloc.add(ChangeIsUseReferral(value));
+                                    },
+                                    visualDensity: VisualDensity(vertical: 0, horizontal: 0),
+                                  ),
+                                  Expanded(child: Text("Use Referral Code"))
+                                ],
+                              ),
+                              state.registerPost.isUseReferral
+                                  ? Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(color: Colors.black12),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      margin: EdgeInsets.only(top: 10),
+                                      child: TextField(
+                                        enabled: true,
+                                        onChanged: (value) {
+                                          _bloc.add(ChangeReferral(value));
+                                        },
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                          border: InputBorder.none,
+                                          hintText: "Enter referral code here",
+                                          hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
                                         ),
                                       ),
-                                      AnimatedOpacity(
-                                        opacity: state.registerPost.isValid()
-                                            ? 0.0
-                                            : 0.5,
-                                        child: Container(
-                                          height: 50,
-                                          color: Colors.white,
-                                        ),
-                                        duration: Duration(milliseconds: 300),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
+                                    )
+                                  : SizedBox(),
+                              GestureDetector(
+                                onTap: state.registerPost.isValid()
+                                    ? () {
+                                        _bloc.add(Register());
+                                      }
+                                    : () {},
+                                child: Stack(
+                                  children: <Widget>[
+                                    Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFFFB531),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      alignment: Alignment.center,
+                                      margin: EdgeInsets.only(top: 20, bottom: 30),
+                                      child: Text(
+                                        "CONFIRM",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                    ),
+                                    AnimatedOpacity(
+                                      opacity: state.registerPost.isValid() ? 0.0 : 0.5,
+                                      child: Container(
+                                        height: 50,
+                                        margin: EdgeInsets.only(top: 20, bottom: 30),
+                                        color: Colors.white,
+                                      ),
+                                      duration: Duration(milliseconds: 300),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
                         )
                       ],
@@ -343,8 +357,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 (state is LoadingRegister || state is LoadingLocations)
                     ? Container(
-                        decoration:
-                            BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                        decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
                         child: Center(
                           child: SpinKitCircle(
                             color: Colors.white,
@@ -369,15 +382,13 @@ class _RegisterPageState extends State<RegisterPage> {
             child: new Container(
               decoration: new BoxDecoration(
                   borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(10.0),
-                      topRight: const Radius.circular(10.0))),
+                      topLeft: const Radius.circular(10.0), topRight: const Radius.circular(10.0))),
               child: new Wrap(
                 children: <Widget>[
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      PickedFile file = await ImagePicker().getImage(
-                          source: ImageSource.camera, imageQuality: 20);
+                      PickedFile file = await ImagePicker().getImage(source: ImageSource.camera, imageQuality: 20);
                       if (file != null) {
                         _bloc.add(ChangeAvatar(File(file.path)));
                       }
@@ -393,8 +404,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      PickedFile file = await ImagePicker()
-                          .getImage(source: ImageSource.gallery);
+                      PickedFile file = await ImagePicker().getImage(source: ImageSource.gallery);
                       if (file != null) {
                         _bloc.add(ChangeAvatar(File(file.path)));
                       }

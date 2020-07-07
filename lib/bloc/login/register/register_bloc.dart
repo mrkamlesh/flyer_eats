@@ -30,34 +30,28 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       yield* mapChangeAvatarToState(event.file);
     } else if (event is ChangeReferral) {
       yield* mapChangeReferralToState(event.referral);
+    } else if (event is ChangeIsUseReferral) {
+      yield* mapChangeIsUseReferralToState(event.isUseReferral);
     }
   }
 
   Stream<RegisterState> mapRegisterToState() async* {
-    yield LoadingRegister(
-        listLocations: state.listLocations, registerPost: state.registerPost);
+    yield LoadingRegister(listLocations: state.listLocations, registerPost: state.registerPost);
 
     try {
       LoginStatus status = await repository.register(state.registerPost);
       if (status.status) {
-        yield SuccessRegister(status,
-            listLocations: state.listLocations,
-            registerPost: state.registerPost);
+        yield SuccessRegister(status, listLocations: state.listLocations, registerPost: state.registerPost);
       } else {
-        yield ErrorRegister(status.message,
-            listLocations: state.listLocations,
-            registerPost: state.registerPost);
+        yield ErrorRegister(status.message, listLocations: state.listLocations, registerPost: state.registerPost);
       }
     } catch (e) {
-      yield ErrorRegister(e.toString(),
-          listLocations: state.listLocations, registerPost: state.registerPost);
+      yield ErrorRegister(e.toString(), listLocations: state.listLocations, registerPost: state.registerPost);
     }
   }
 
-  Stream<RegisterState> mapInitRegisterEventToState(
-      InitRegisterEvent event) async* {
-    yield LoadingLocations(
-        listLocations: state.listLocations, registerPost: state.registerPost);
+  Stream<RegisterState> mapInitRegisterEventToState(InitRegisterEvent event) async* {
+    yield LoadingLocations(listLocations: state.listLocations, registerPost: state.registerPost);
 
     String devicePlatform = "";
     String deviceId = "";
@@ -86,45 +80,42 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         deviceId: deviceId,
         appVersion: "5.0",
         referral: "",
+        isUseReferral: false,
       );
 
       List<String> list = List();
       try {
         list = await repository.getRegisterLocations();
       } catch (e) {
-        yield ErrorLocations(e.toString(),
-            listLocations: state.listLocations,
-            registerPost: state.registerPost);
+        yield ErrorLocations(e.toString(), listLocations: state.listLocations, registerPost: state.registerPost);
       }
 
       yield RegisterState(listLocations: list, registerPost: registerPost);
     } catch (e) {
-      yield ErrorLocations(e.toString(),
-          listLocations: state.listLocations, registerPost: state.registerPost);
+      yield ErrorLocations(e.toString(), listLocations: state.listLocations, registerPost: state.registerPost);
     }
   }
 
   Stream<RegisterState> mapChangeNameToState(String name) async* {
-    yield RegisterState(
-        listLocations: state.listLocations,
-        registerPost: state.registerPost.copyWith(name: name));
+    yield RegisterState(listLocations: state.listLocations, registerPost: state.registerPost.copyWith(name: name));
   }
 
   Stream<RegisterState> mapChangeLocationToState(String location) async* {
     yield RegisterState(
-        listLocations: state.listLocations,
-        registerPost: state.registerPost.copyWith(location: location));
+        listLocations: state.listLocations, registerPost: state.registerPost.copyWith(location: location));
   }
 
   Stream<RegisterState> mapChangeAvatarToState(File file) async* {
-    yield RegisterState(
-        listLocations: state.listLocations,
-        registerPost: state.registerPost.copyWith(avatar: file));
+    yield RegisterState(listLocations: state.listLocations, registerPost: state.registerPost.copyWith(avatar: file));
   }
 
   Stream<RegisterState> mapChangeReferralToState(String referral) async* {
     yield RegisterState(
-        listLocations: state.listLocations,
-        registerPost: state.registerPost.copyWith(referral: referral));
+        listLocations: state.listLocations, registerPost: state.registerPost.copyWith(referral: referral));
+  }
+
+  Stream<RegisterState> mapChangeIsUseReferralToState(bool isUseReferral) async* {
+    yield RegisterState(
+        listLocations: state.listLocations, registerPost: state.registerPost.copyWith(isUseReferral: isUseReferral));
   }
 }

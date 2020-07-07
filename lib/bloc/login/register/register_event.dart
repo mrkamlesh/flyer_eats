@@ -14,8 +14,7 @@ class InitRegisterEvent extends RegisterEvent {
   final String name;
   final String imageUrl;
 
-  const InitRegisterEvent(
-      {this.email, this.phoneNumber, this.name, this.imageUrl});
+  const InitRegisterEvent({this.email, this.phoneNumber, this.name, this.imageUrl});
 
   @override
   List<Object> get props => [email, phoneNumber, name, imageUrl];
@@ -70,4 +69,15 @@ class ChangeReferral extends RegisterEvent {
 
   @override
   List<Object> get props => [referral];
+}
+
+class ChangeIsUseReferral extends RegisterEvent {
+  final bool isUseReferral;
+
+  const ChangeIsUseReferral(
+    this.isUseReferral,
+  );
+
+  @override
+  List<Object> get props => [isUseReferral];
 }

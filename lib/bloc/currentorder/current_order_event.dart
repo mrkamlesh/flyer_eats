@@ -51,3 +51,13 @@ class UpdateReviewComment extends CurrentOrderEvent {
   @override
   List<Object> get props => [comment];
 }
+
+class ScratchCardEvent extends CurrentOrderEvent {
+  final String token;
+  final String cardId;
+
+  ScratchCardEvent(this.token, this.cardId);
+
+  @override
+  List<Object> get props => [token, cardId];
+}

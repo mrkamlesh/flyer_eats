@@ -10,8 +10,7 @@ class LoginState {
   });
 
   LoginState copyWith({User user, bool isValid}) {
-    return LoginState(
-        user: user ?? this.user, isValid: isValid ?? this.isValid);
+    return LoginState(user: user ?? this.user, isValid: isValid ?? this.isValid);
   }
 }
 
@@ -30,12 +29,15 @@ class LoggedIn extends LoginState {
 class Error extends LoginState {
   final String error;
 
-  Error(this.error, {User user, bool isValid})
-      : super(user: user, isValid: isValid);
+  Error(this.error, {User user, bool isValid}) : super(user: user, isValid: isValid);
 }
 
 class InitialState extends LoginState {
   InitialState() : super();
+}
+
+class LoggedOut extends LoginState {
+  LoggedOut() : super();
 }
 
 class NotLoggedIn extends LoginState {

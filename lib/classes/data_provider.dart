@@ -42,7 +42,7 @@ class DataProvider {
     Map<String, dynamic> formData = {
       "email_address": registerPost.email,
       "contact_phone": registerPost.contactPhone,
-      "referral_code": registerPost.referral,
+      "referral_code": registerPost.isUseReferral ? registerPost.referral : "",
       "full_name": registerPost.name,
       "country_code": registerPost.countryId,
       "loc_name": registerPost.location,
@@ -222,6 +222,8 @@ class DataProvider {
       "voucher_type": order.voucher.type != null ? order.voucher.type : "",
       "voucher_rate": order.voucher.rate != 0 ? order.voucher.rate.toString() : "",
       "change_primary_contact": order.isChangePrimaryContact ? "1" : "0",
+      "delivery_date": order.getDeliveryDate(), //yyyy-mm-dd
+      "delivery_time": order.getDeliveryTime(),
     };
 
     if (order.getWalletUsed() > 0) {
@@ -292,6 +294,25 @@ class DataProvider {
     var formData = {
       "client_token": token,
     };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> scratchCard(String token, String cardId) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/cardScratch?json=true&api_key=flyereats";
+
+    var formData = {"client_token": token, "card_id": cardId};
 
     var responseJson;
     try {
@@ -475,6 +496,12 @@ class DataProvider {
     return token;
   }
 
+  Future<bool> removeToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isRemoved = await prefs.remove("TOKEN");
+    return isRemoved;
+  }
+
   Future<dynamic> getLocations(String countryId) async {
     String url = "${productionServerUrl}store/addressesWithCountry?country_id=$countryId";
 
@@ -523,7 +550,7 @@ class DataProvider {
       "address": address,
       "page": page.toString(),
       "merchant_type": merchantTypeParams,
-      //"is_veg": "1",
+      //"is_veg": "1", 1 for true, 0 for false
     };
 
     if (type != null) {
@@ -578,6 +605,27 @@ class DataProvider {
 
   Future<dynamic> getActiveOrder(String token) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/getActiveOrder?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> getWalletInfo(String token) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/getWinAmount?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,

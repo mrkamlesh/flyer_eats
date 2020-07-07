@@ -173,9 +173,9 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                   ),
                                   Expanded(
                                       child: Container(
-                                    padding: EdgeInsets.all(15),
+                                    padding: EdgeInsets.all(10),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Text(
                                           "REFER A FRIEND AND EARN",
@@ -206,7 +206,7 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                         FittedBox(
                                           fit: BoxFit.none,
                                           child: Container(
-                                            padding: EdgeInsets.symmetric(vertical: 3.5, horizontal: 5),
+                                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius: BorderRadius.circular(4),

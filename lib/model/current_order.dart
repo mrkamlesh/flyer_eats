@@ -1,3 +1,4 @@
+import 'package:flyereats/model/scratch_card.dart';
 import 'package:flyereats/model/status_order.dart';
 
 class CurrentOrder {
@@ -14,6 +15,7 @@ class CurrentOrder {
   final String merchantName;
   final String merchantLogo;
   final String merchantAddress;
+  final ScratchCard scratchCard;
 
   CurrentOrder(
       {this.driverLatitude,
@@ -28,7 +30,8 @@ class CurrentOrder {
       this.isScratchShowFirst,
       this.merchantLogo,
       this.merchantName,
-      this.merchantAddress});
+      this.merchantAddress,
+      this.scratchCard});
 
   CurrentOrder copyWith({
     StatusOrder statusOrder,
@@ -44,6 +47,7 @@ class CurrentOrder {
     String merchantName,
     String merchantLogo,
     String merchantAddress,
+    ScratchCard scratchCard,
   }) {
     return CurrentOrder(
         isActive: isActive ?? this.isActive,
@@ -58,11 +62,16 @@ class CurrentOrder {
         isShowScratch: isShowScratch ?? this.isShowScratch,
         merchantName: merchantName ?? this.merchantName,
         merchantAddress: merchantAddress ?? this.merchantAddress,
-        merchantLogo: merchantLogo ?? this.merchantLogo);
+        merchantLogo: merchantLogo ?? this.merchantLogo,
+        scratchCard: scratchCard ?? this.scratchCard);
   }
 
   factory CurrentOrder.fromJson(Map<String, dynamic> parsedJson) {
     StatusOrder order = StatusOrder.fromJson2(parsedJson['details']);
+    ScratchCard scratchCard;
+    if (parsedJson['details']['cardInfo'] is Map) {
+      scratchCard = ScratchCard.fromJson(parsedJson['details']['cardInfo']);
+    }
 
     return CurrentOrder(
         statusOrder: order,
@@ -81,6 +90,7 @@ class CurrentOrder {
         driverPhone: parsedJson['details']['driver_phone'],
         merchantLogo: parsedJson['details']['marchant_logo'],
         merchantName: parsedJson['details']['marchant_name'],
-        merchantAddress: parsedJson['details']['merchant_address']);
+        merchantAddress: parsedJson['details']['merchant_address'],
+        scratchCard: scratchCard);
   }
 }

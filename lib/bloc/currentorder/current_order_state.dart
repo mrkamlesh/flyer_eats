@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 @immutable
 class CurrentOrderState {
   final CurrentOrder currentOrder;
-
   final String comment;
   final double rating;
   final bool hasGivenStar;
@@ -29,7 +28,15 @@ class SuccessState extends CurrentOrderState {
 }
 
 class NoActiveOrderState extends CurrentOrderState {
-  NoActiveOrderState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder, rating: 0, hasGivenStar: false);
+  NoActiveOrderState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
+}
+
+class DeliveredOrderState extends CurrentOrderState {
+  DeliveredOrderState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder, rating: 0, hasGivenStar: false);
+}
+
+class CancelledOrderState extends CurrentOrderState {
+  CancelledOrderState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
 }
 
 class ErrorState extends CurrentOrderState {
@@ -52,5 +59,11 @@ class ErrorAddReview extends CurrentOrderState {
   final String message;
 
   ErrorAddReview(this.message, {CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
+      : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
+}
+
+class CardScratched extends CurrentOrderState {
+
+  CardScratched({CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
       : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
 }

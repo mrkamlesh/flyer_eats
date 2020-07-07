@@ -16,6 +16,8 @@ import 'package:flyereats/classes/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flyereats/model/home_page_data.dart';
 import 'package:flyereats/model/location.dart';
+import 'package:flyereats/model/scratch_card.dart';
+import 'package:flyereats/page/cancelled_order_page.dart';
 import 'package:flyereats/page/delivery_process_order_page.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
 import 'package:flyereats/page/search_page.dart';
@@ -110,7 +112,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     child: child,
                   );
                 },
-                child: BlocBuilder<LoginBloc, LoginState>(
+                child: BlocConsumer<LoginBloc, LoginState>(
+                  listener: (context, state) {
+                    if (state is LoggedOut) {
+                      Navigator.pushReplacementNamed(context, "/");
+                    }
+                  },
                   builder: (context, loginState) {
                     return CustomBottomNavBar(
                       animationDuration: Duration(milliseconds: 300),
@@ -352,7 +359,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               Container(
                                 padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable - 5),
                                 margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                height: 110,
+                                height: 115,
                                 child: ShopCategoryListWidget(
                                   onTap: (i) {
                                     if (i == 0) {
@@ -600,9 +607,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                     ),
                                     Expanded(
                                         child: Container(
-                                      padding: EdgeInsets.all(15),
+                                      padding: EdgeInsets.all(10),
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text(
                                             "REFER A FRIEND AND EARN",
@@ -633,7 +640,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           FittedBox(
                                             fit: BoxFit.none,
                                             child: Container(
-                                              padding: EdgeInsets.symmetric(vertical: 3.5, horizontal: 5),
+                                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius: BorderRadius.circular(4),
@@ -759,9 +766,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               builder: (context, loginState) {
                 return BlocConsumer<CurrentOrderBloc, CurrentOrderState>(
                   listener: (context, state) {
-                    if (state is NoActiveOrderState) {
-                      if (state.currentOrder.isShowReview)
+                    if (state is DeliveredOrderState) {
+                      if (state.currentOrder.isShowReview) {
                         _showReviewSheet(loginState.user.token, state.currentOrder.orderId);
+                      }
+                      if (state.currentOrder.isShowScratch) {
+                        _showScratchCard(loginState.user.token, state.currentOrder.scratchCard);
+                      }
+                    } else if (state is CancelledOrderState) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return CancelledOrderPage(
+                          token: loginState.user.token,
+                          orderId: state.currentOrder.orderId,
+                          address: _homePageData != null ? _homePageData.location : null,
+                        );
+                      }));
                     }
                   },
                   builder: (context, state) {
@@ -835,7 +854,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         ),
                       );
                     }
-                    if (state.currentOrder.statusOrder == null) {
+                    if (state.currentOrder.statusOrder == null ||
+                        state is NoActiveOrderState ||
+                        state is DeliveredOrderState ||
+                        state is CancelledOrderState) {
                       return SizedBox();
                     }
                     return AnimatedBuilder(
@@ -1163,7 +1185,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         });
   }
 
-  void _showScratchCard() {
+  void _showScratchCard(String token, ScratchCard scratchCard) {
+    double opacity = 0.0;
     showModalBottomSheet(
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
@@ -1171,53 +1194,93 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         backgroundColor: Colors.white,
         context: context,
         builder: (context) {
-          return SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
+          return StatefulBuilder(
+            builder: (context, newState) {
+              return SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Expanded(
-                        flex: 1,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(
-                            Icons.clear,
-                            size: 20,
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 1,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Icon(
+                                Icons.clear,
+                                size: 20,
+                              ),
+                            ),
                           ),
-                        ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                            flex: 9,
+                            child: Text(
+                              "Scratch Card",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(
-                        width: 20,
+                        height: 10,
                       ),
-                      Expanded(
-                        flex: 9,
-                        child: Text(
-                          "Scratch Card",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Divider(
+                          height: 0.5,
+                          color: Colors.black12,
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Center(child: Text("You Have Won A Scratch Card!")),
+                      ),
+                      Scratcher(
+                        accuracy: ScratchAccuracy.medium,
+                        brushSize: 50,
+                        threshold: 25,
+                        color: Colors.black,
+                        onThreshold: () {
+                          newState(() {
+                            opacity = 1.0;
+                          });
+                          BlocProvider.of<CurrentOrderBloc>(context).add(ScratchCardEvent(token, scratchCard.cardId));
+                        },
+                        image: Image.asset(
+                          "assets/flyereatslogo.png",
+                          fit: BoxFit.none,
+                          width: AppUtil.getScreenWidth(context) - 100,
+                          height: 0.7 * AppUtil.getScreenWidth(context) - 100,
+                        ),
+                        child: AnimatedOpacity(
+                          duration: Duration(milliseconds: 300),
+                          opacity: opacity,
+                          child: Container(
+                            height: 0.7 * AppUtil.getScreenWidth(context),
+                            width: AppUtil.getScreenWidth(context),
+                            decoration: BoxDecoration(color: Colors.white),
+                            child: Center(
+                              child: Text(
+                                "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(scratchCard.amount),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50, color: primary3),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: Divider(
-                      height: 0.5,
-                      color: Colors.black12,
-                    ),
-                  ),
-                  Scratcher(child: Container()),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         });
   }
@@ -1277,14 +1340,13 @@ class _HomeActionWidgetState extends State<HomeActionWidget> with SingleTickerPr
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Expanded(
                   flex: 6,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
@@ -1302,6 +1364,9 @@ class _HomeActionWidgetState extends State<HomeActionWidget> with SingleTickerPr
                       )
                     ],
                   ),
+                ),
+                SizedBox(
+                  width: 10,
                 ),
                 Expanded(
                   flex: 4,

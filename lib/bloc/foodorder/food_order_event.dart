@@ -114,3 +114,12 @@ class ChangeWalletUsage extends FoodOrderEvent {
   @override
   List<Object> get props => [isUseWallet];
 }
+
+class ChangeDeliveryTime extends FoodOrderEvent {
+  final DateTime dateTime;
+
+  ChangeDeliveryTime(this.dateTime);
+
+  @override
+  List<Object> get props => [dateTime];
+}

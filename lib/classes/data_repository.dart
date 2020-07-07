@@ -17,6 +17,7 @@ import 'package:flyereats/model/sort_by.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
 import 'package:flyereats/model/register_post.dart';
+import 'package:flyereats/model/wallet.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
 
 class DataRepository {
@@ -216,6 +217,10 @@ class DataRepository {
     return await _provider.getSavedToken();
   }
 
+  Future<bool> removeSavedToken() async {
+    return await _provider.removeToken();
+  }
+
   Future<List<Location>> getLocations(String countryId) async {
     final response = await _provider.getLocations(countryId);
     var listLocations = response as List;
@@ -298,6 +303,20 @@ class DataRepository {
       return ads;
     } else {
       return response['msg'];
+    }
+  }
+
+  Future<void> scratchCard(String token, String cardId) async {
+    await _provider.scratchCard(token, cardId);
+  }
+
+  Future<Wallet> getWalletInfo(String token) async {
+    final response = await _provider.getWalletInfo(token);
+    if (response['code'] == 1) {
+      Wallet wallet = Wallet.fromJson(response['details']);
+      return wallet;
+    } else {
+      throw Exception(response['msg']);
     }
   }
 
@@ -392,8 +411,13 @@ class DataRepository {
   Future<CurrentOrder> getActiveOrder(String token) async {
     final response = await _provider.getActiveOrder(token);
     if (response['code'] == 1) {
-      CurrentOrder currentOrder = CurrentOrder.fromJson(response);
-      return currentOrder;
+      if (response['details'] != "") {
+        CurrentOrder currentOrder = CurrentOrder.fromJson(response);
+        return currentOrder;
+      } else {
+        CurrentOrder currentOrder = CurrentOrder(isActive: false);
+        return currentOrder;
+      }
     } else {
       throw Exception(response['msg']);
     }

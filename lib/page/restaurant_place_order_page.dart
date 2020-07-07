@@ -25,6 +25,7 @@ import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/place_order_bottom_navbar.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:intl/intl.dart';
 
 class RestaurantPlaceOrderPage extends StatefulWidget {
   final Restaurant restaurant;
@@ -529,7 +530,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                   margin: EdgeInsets.only(
                                                       left: horizontalPaddingDraggable,
                                                       right: horizontalPaddingDraggable,
-                                                      bottom: kBottomNavigationBarHeight + 160),
+                                                      bottom: 20),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius: BorderRadius.circular(18),
@@ -565,6 +566,104 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                             hintText: "Enter your instruction here",
                                                             hintStyle: TextStyle(fontSize: 12),
                                                             border: InputBorder.none),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: horizontalPaddingDraggable,
+                                                      horizontal: horizontalPaddingDraggable),
+                                                  margin: EdgeInsets.only(
+                                                      left: horizontalPaddingDraggable,
+                                                      right: horizontalPaddingDraggable,
+                                                      bottom: kBottomNavigationBarHeight + 170),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(18),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: shadow,
+                                                        blurRadius: 7,
+                                                        spreadRadius: -3,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "DELIVERY TIME",
+                                                        style: TextStyle(fontSize: 16),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Text(
+                                                        "Choose time when order will be delivered",
+                                                        style: TextStyle(color: Colors.black45, fontSize: 12),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Divider(
+                                                        color: Colors.black12,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          showDeliveryOptions(state.placeOrder);
+                                                        },
+                                                        child: Row(
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: <Widget>[
+                                                            Row(
+                                                              children: <Widget>[
+                                                                SvgPicture.asset(
+                                                                  "assets/calendar.svg",
+                                                                  height: 18,
+                                                                  width: 18,
+                                                                  color: Colors.black,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Text(
+                                                                  state.placeOrder.getDeliveryDatePretty(),
+                                                                  style: TextStyle(fontSize: 14),
+                                                                )
+                                                              ],
+                                                            ),
+                                                            Expanded(child: Container()),
+                                                            Row(
+                                                              children: <Widget>[
+                                                                SvgPicture.asset(
+                                                                  "assets/clock.svg",
+                                                                  height: 18,
+                                                                  width: 18,
+                                                                  color: Colors.black,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Text(
+                                                                  state.placeOrder.getDeliveryTime(),
+                                                                  style: TextStyle(fontSize: 14),
+                                                                )
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                              width: 30,
+                                                            ),
+                                                            Icon(
+                                                              Icons.arrow_forward_ios,
+                                                              size: 18,
+                                                            )
+                                                          ],
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
@@ -675,6 +774,129 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
         );
       },
     );
+  }
+
+  showDeliveryOptions(PlaceOrder placeOrder) {
+    DateTime groupValue = placeOrder.selectedDeliveryTime;
+    showModalBottomSheet(
+        isScrollControlled: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, newState) {
+              return Stack(
+                children: <Widget>[
+                  SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 110,
+                        ),
+                        Column(
+                          children: placeOrder.getDeliveryTimeOptions().map((time) {
+                            return Container(
+                              padding:
+                                  EdgeInsets.only(left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                              child: RadioListTile<DateTime>(
+                                dense: true,
+                                onChanged: (value) {
+                                  newState(() {
+                                    groupValue = value;
+                                  });
+                                  _foodOrderBloc.add(ChangeDeliveryTime(value));
+                                  Navigator.pop(context);
+                                },
+                                groupValue: groupValue,
+                                value: time,
+                                title: Text(
+                                  DateFormat('hh:mm a').format(time),
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    child: Container(
+                      width: AppUtil.getScreenWidth(context),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                          color: Colors.white),
+                      padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Icon(
+                                    Icons.clear,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Expanded(
+                                flex: 9,
+                                child: Text(
+                                  "Select Delivery Time For",
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            child: Divider(
+                              height: 0.5,
+                              color: Colors.black12,
+                            ),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SvgPicture.asset(
+                                "assets/calendar.svg",
+                                height: 18,
+                                width: 18,
+                                color: Colors.black,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                placeOrder.getDeliveryDatePretty(),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        });
   }
 
   showPaymentMethodOptions(PlaceOrder placeOrder) {
@@ -1139,7 +1361,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
     );
 
     return Container(
-      height: 100,
+      height: 120,
       margin: EdgeInsets.only(top: 2, bottom: 18, left: 5, right: 5),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1161,14 +1383,14 @@ class FoodItemPlaceOrder extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 child: CachedNetworkImage(
                   imageUrl: food.image,
-                  height: 100,
+                  height: 120,
                   width: 120,
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
                   placeholder: (context, url) {
                     return Shimmer.fromColors(
                         child: Container(
-                          height: 100,
+                          height: 120,
                           width: 120,
                           color: Colors.black,
                         ),

@@ -227,36 +227,48 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                                 );
                                               }));
                                             },
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        color: Colors.black38,
-                                                        offset: Offset(1, 1),
-                                                        spreadRadius: -1,
-                                                        blurRadius: 4)
-                                                  ],
-                                                  border: Border.all(color: Colors.orange)),
-                                              child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Icon(
-                                                    Icons.star,
-                                                    size: 14,
-                                                    color: Colors.orange,
+                                            child: Row(
+                                              children: <Widget>[
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                            color: Colors.black38,
+                                                            offset: Offset(1, 1),
+                                                            spreadRadius: -1,
+                                                            blurRadius: 4)
+                                                      ],
+                                                      border: Border.all(color: Colors.orange)),
+                                                  child: Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.star,
+                                                        size: 14,
+                                                        color: Colors.orange,
+                                                      ),
+                                                      Text(
+                                                        widget.restaurant.review,
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.orange,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Text(
-                                                    widget.restaurant.review,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.orange,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  size: 18,
+                                                  color: Colors.black38,
+                                                )
+                                              ],
                                             ),
                                           ),
                                         ],

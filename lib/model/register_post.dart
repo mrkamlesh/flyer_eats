@@ -12,6 +12,7 @@ class RegisterPost {
   final String imageUrl;
   final File avatar;
   final String contactPhone;
+  final bool isUseReferral;
 
   RegisterPost(
       {this.email,
@@ -24,7 +25,8 @@ class RegisterPost {
       this.devicePlatform,
       this.deviceId,
       this.referral,
-      this.location});
+      this.location,
+      this.isUseReferral});
 
   RegisterPost copyWith(
       {String countryId,
@@ -37,7 +39,8 @@ class RegisterPost {
       String name,
       String imageUrl,
       String contactPhone,
-      File avatar}) {
+      File avatar,
+      bool isUseReferral}) {
     return RegisterPost(
         contactPhone: contactPhone ?? this.contactPhone,
         deviceId: deviceId ?? this.deviceId,
@@ -49,15 +52,11 @@ class RegisterPost {
         email: email ?? this.email,
         avatar: avatar ?? this.avatar,
         name: name ?? this.name,
-        imageUrl: imageUrl ?? this.imageUrl);
+        imageUrl: imageUrl ?? this.imageUrl,
+        isUseReferral: isUseReferral ?? this.isUseReferral);
   }
 
   bool isValid() {
-    return name != null &&
-        name != "" &&
-        email != null &&
-        email != "" &&
-        location != null &&
-        location != "";
+    return name != null && name != "" && email != null && email != "" && location != null && location != "";
   }
 }

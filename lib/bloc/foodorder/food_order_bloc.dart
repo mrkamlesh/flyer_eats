@@ -42,6 +42,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapPlaceOrderEventToState();
     } else if (event is ChangeWalletUsage) {
       yield* mapChangeWalletUsageToState(event.isUseWallet);
+    } else if (event is ChangeDeliveryTime) {
+      yield* mapChangeDeliveryTimeToState(event.dateTime);
     }
   }
 
@@ -73,6 +75,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   }
 
   Stream<FoodOrderState> mapInitPlaceOrderToState(Restaurant restaurant, FoodCart foodCart, User user) async* {
+    DateTime now = DateTime.now();
     yield FoodOrderState(
       placeOrder: PlaceOrder(
           isValid: true,
@@ -93,7 +96,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
           taxPrettyString: "Tax",
           isUseWallet: false,
           walletAmount: 0,
-          isChangePrimaryContact: false),
+          isChangePrimaryContact: false,
+          now: now,
+          selectedDeliveryTime: now.add(Duration(minutes: 45))),
     );
 
     add(GetPaymentOptions(state.placeOrder));
@@ -159,5 +164,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
 
   Stream<FoodOrderState> mapChangeWalletUsageToState(bool isUseWallet) async* {
     yield FoodOrderState(placeOrder: state.placeOrder.copyWith(isUseWallet: isUseWallet));
+  }
+
+  Stream<FoodOrderState> mapChangeDeliveryTimeToState(DateTime dateTime) async* {
+    yield FoodOrderState(placeOrder: state.placeOrder.copyWith(selectedDeliveryTime: dateTime));
   }
 }

@@ -134,6 +134,8 @@ flutter:
     - assets/no available items cart.svg
     - assets/dropdown home.svg
     - assets/in process icon.svg
+    - assets/calendar.svg
+    - assets/clock.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

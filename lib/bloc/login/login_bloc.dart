@@ -19,11 +19,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield* mapVerifyOtpToState(event.contactPhone, event.otpCode);
     } else if (event is InitLoginEvent) {
       yield* mapInitLoginEventToState();
+    } else if (event is LogOut) {
+      yield* mapLogOutToState();
     }
   }
 
-  Stream<LoginState> mapVerifyOtpToState(
-      String contactPhone, String otpCode) async* {
+  Stream<LoginState> mapVerifyOtpToState(String contactPhone, String otpCode) async* {
     yield Loading(user: state.user, isValid: state.isValid);
     try {
       var result = await _repository.verifyOtp(contactPhone, otpCode);
@@ -50,5 +51,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } catch (e) {
       yield NotLoggedIn(isValid: false);
     }
+  }
+
+  Stream<LoginState> mapLogOutToState() async* {
+    try {
+      bool isLoggedOut = await _repository.removeSavedToken();
+      if (isLoggedOut) {
+        yield LoggedOut();
+      }
+    } catch (e) {}
   }
 }

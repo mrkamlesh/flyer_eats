@@ -104,7 +104,7 @@ class ShopCategoryWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(12),
               margin: EdgeInsets.only(
                 top: 5,
                 bottom: 10,
@@ -136,7 +136,7 @@ class ShopCategoryWidget extends StatelessWidget {
                   category.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 13),
+                  style: TextStyle(fontSize: 11),
                 ))
           ],
         ),

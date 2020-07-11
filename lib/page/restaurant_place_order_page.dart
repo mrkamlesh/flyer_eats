@@ -57,10 +57,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
 
   @override
   void dispose() {
-    super.dispose();
     _addressBloc.close();
     _foodOrderBloc.close();
     _razorpay.clear();
+    super.dispose();
   }
 
   @override
@@ -270,7 +270,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Center(
-                                                  child: CircularProgressIndicator(),
+                                                  child: SpinKitCircle(
+                                                    color: Colors.black38,
+                                                    size: 30,
+                                                  ),
                                                 ),
                                                 SizedBox(
                                                   height: 10,
@@ -470,7 +473,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                         title: "ORDER",
                                                         color: Colors.black,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
-                                                            state.placeOrder.getOrderTotal()),
+                                                            state.placeOrder.subTotal()),
                                                       ),
                                                       OrderRowItem(
                                                         title: state.placeOrder.taxPrettyString,
@@ -490,12 +493,12 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.deliveryCharges),
                                                       ),
-                                                      OrderRowItem(
+                                                      /*OrderRowItem(
                                                         title: "DISCOUNT FOOD",
                                                         color: Colors.green,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.getDiscountFoodTotal()),
-                                                      ),
+                                                      ),*/
                                                       OrderRowItem(
                                                         title: state.placeOrder.discountOrderPrettyString,
                                                         color: Colors.green,
@@ -968,7 +971,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
       "key": placeOrder.razorKey, //"rzp_test_shynWbWngI8JsA", // change to placeOrder.razorKey
       "amount": (placeOrder.getTotal() * 100.0).ceil().toString(),
       "name": "Flyer Eats",
-      "description": "Payment for Flyer Eats",
+      "description": "Payment for Flyer Eats Order",
       "prefill": {
         "contact": placeOrder.contact,
         "email": placeOrder.user.username,
@@ -1457,33 +1460,43 @@ class FoodItemPlaceOrder extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Expanded(
-                            flex: 4,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                children: <Widget>[
-                                  SvgPicture.asset(
-                                    "assets/rupee.svg",
-                                    height: 11,
-                                    width: 11,
-                                    color: Colors.black,
-                                  ),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Text(
-                                    "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                food.discount > 0
+                                    ? Text(
+                                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price),
+                                  style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                )
+                                    : SizedBox(),
+                                Row(
+                                  children: <Widget>[
+                                    SvgPicture.asset(
+                                      "assets/rupee.svg",
+                                      height: 11,
+                                      width: 11,
+                                      color: Colors.black,
+                                    ),
+                                    SizedBox(
+                                      width: 3,
+                                    ),
+                                    Text(
+                                      "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(
-                            width: 5,
+                          Expanded(
+                            flex: 2,
+                            child: SizedBox(),
                           ),
                           quantity == 0
                               ? Expanded(flex: 6, child: addButton)
@@ -1718,7 +1731,10 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                                     );
                                   } else if (state is LoadingListAddress) {
                                     return Container(
-                                      child: Center(child: CircularProgressIndicator()),
+                                      child: Center(child: SpinKitCircle(
+                                        color: Colors.black38,
+                                        size: 30,
+                                      )),
                                     );
                                   } else if (state is ErrorLoadingListAddress) {
                                     return Container(

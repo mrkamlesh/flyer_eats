@@ -393,7 +393,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
 
   Future<bool> _onBackPressed() async {
     Navigator.pop(context);
-    BlocProvider.of<LocationBloc>(context).add(GetPreviousLocation());
+    //BlocProvider.of<LocationBloc>(context).add(GetPreviousLocation());
 
     return true;
   }

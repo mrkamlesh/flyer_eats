@@ -21,13 +21,15 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
     if (event is PageDetailRestaurantOpen) {
       yield* mapPageOpenToState(event.restaurantId);
     } else if (event is SwitchVegOnly) {
-      yield* mapSwitchVegOnlyToState(event.isVegOnly);
+      yield* mapSwitchVegOnlyToState(event.restaurantId, event.isVegOnly);
     } else if (event is ChangeQuantity) {
       yield* mapChangeQuantityToState(event.id, event.food, event.quantity);
     } else if (event is RestaurantMenuChange) {
-      yield* mapRestaurantMenuChangeToState(event.restaurantId, event.menuId);
+      yield* mapRestaurantMenuChangeToState(event.restaurantId, event.menuId, event.menuSelected);
     } else if (event is UpdateCart) {
       yield* mapUpdateCartToState(event.foodCart);
+    } else if (event is SearchFood) {
+      yield* mapSearchFoodToState(event.restaurantId, event.keyword);
     }
   }
 
@@ -36,30 +38,71 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
         foodCart: state.foodCart,
         isVegOnly: state.isVegOnly,
         menuCategories: state.menuCategories,
-        foodList: state.foodList);
+        foodList: state.foodList,
+        menuSelected: state.menuSelected);
     try {
       List<MenuCategory> menus = await repository.getCategories(restaurantId);
-      List<Food> foods = await repository.getFoods(restaurantId, menus[0].id);
+      List<Food> foods = await repository.getFoods(restaurantId, menus[state.menuSelected].id, false, null);
 
       if (foods.isEmpty) {
         yield NoFoodAvailable(
-            menuCategories: menus, foodCart: state.foodCart, isVegOnly: state.isVegOnly, foodList: List());
+            menuCategories: menus,
+            foodCart: state.foodCart,
+            isVegOnly: state.isVegOnly,
+            foodList: List(),
+            menuSelected: state.menuSelected);
       } else {
         yield DetailPageState(
-            isVegOnly: state.isVegOnly, foodCart: state.foodCart, menuCategories: menus, foodList: foods);
+            isVegOnly: state.isVegOnly,
+            foodCart: state.foodCart,
+            menuCategories: menus,
+            foodList: foods,
+            menuSelected: state.menuSelected);
       }
     } catch (e) {
       yield OnDataError(e.toString(),
           foodCart: state.foodCart,
           isVegOnly: state.isVegOnly,
           menuCategories: state.menuCategories,
-          foodList: state.foodList);
+          foodList: state.foodList,
+          menuSelected: state.menuSelected);
     }
   }
 
-  Stream<DetailPageState> mapSwitchVegOnlyToState(bool isVegOnly) async* {
-    yield DetailPageState(
-        isVegOnly: isVegOnly, foodCart: state.foodCart, menuCategories: state.menuCategories, foodList: state.foodList);
+  Stream<DetailPageState> mapSwitchVegOnlyToState(String restaurantId, bool isVegOnly) async* {
+    yield OnDataLoading(
+        foodCart: state.foodCart,
+        isVegOnly: isVegOnly,
+        menuCategories: state.menuCategories,
+        foodList: state.foodList,
+        menuSelected: state.menuSelected);
+    try {
+      List<Food> foods =
+          await repository.getFoods(restaurantId, state.menuCategories[state.menuSelected].id, isVegOnly, null);
+
+      if (foods.isEmpty) {
+        yield NoFoodAvailable(
+            menuCategories: state.menuCategories,
+            foodCart: state.foodCart,
+            isVegOnly: isVegOnly,
+            foodList: List(),
+            menuSelected: state.menuSelected);
+      } else {
+        yield DetailPageState(
+            isVegOnly: isVegOnly,
+            foodCart: state.foodCart,
+            menuCategories: state.menuCategories,
+            foodList: foods,
+            menuSelected: state.menuSelected);
+      }
+    } catch (e) {
+      yield OnDataError(e.toString(),
+          foodCart: state.foodCart,
+          isVegOnly: isVegOnly,
+          menuCategories: state.menuCategories,
+          foodList: state.foodList,
+          menuSelected: state.menuSelected);
+    }
   }
 
   Stream<DetailPageState> mapSwitchCategoryToState(String id) async* {}
@@ -70,41 +113,89 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
     cart.changeQuantity(id, food, quantity);
 
     yield CartState(
-        isVegOnly: state.isVegOnly, foodCart: cart, menuCategories: state.menuCategories, foodList: state.foodList);
+        isVegOnly: state.isVegOnly,
+        foodCart: cart,
+        menuCategories: state.menuCategories,
+        foodList: state.foodList,
+        menuSelected: state.menuSelected,
+        result: state.result);
   }
 
-  Stream<DetailPageState> mapRestaurantMenuChangeToState(String restaurantId, String menuId) async* {
+  Stream<DetailPageState> mapRestaurantMenuChangeToState(String restaurantId, String menuId, int menuSelected) async* {
     yield OnDataLoading(
         foodCart: state.foodCart,
         isVegOnly: state.isVegOnly,
         menuCategories: state.menuCategories,
-        foodList: state.foodList);
+        foodList: List(),
+        menuSelected: menuSelected);
     try {
-      List<Food> foods = await repository.getFoods(restaurantId, menuId);
+      List<Food> foods = await repository.getFoods(restaurantId, menuId, state.isVegOnly, null);
       if (foods.isEmpty) {
         yield NoFoodAvailable(
             menuCategories: state.menuCategories,
             foodCart: state.foodCart,
             isVegOnly: state.isVegOnly,
-            foodList: List());
+            foodList: List(),
+            menuSelected: menuSelected);
       } else {
         yield DetailPageState(
             isVegOnly: state.isVegOnly,
             foodCart: state.foodCart,
             menuCategories: state.menuCategories,
-            foodList: foods);
+            foodList: foods,
+            menuSelected: menuSelected);
       }
     } catch (e) {
       yield OnDataError(e.toString(),
           foodCart: state.foodCart,
           isVegOnly: state.isVegOnly,
           menuCategories: state.menuCategories,
-          foodList: state.foodList);
+          foodList: state.foodList,
+          menuSelected: menuSelected);
     }
   }
 
   Stream<DetailPageState> mapUpdateCartToState(FoodCart foodCart) async* {
     yield DetailPageState(
-        isVegOnly: state.isVegOnly, foodCart: foodCart, menuCategories: state.menuCategories, foodList: state.foodList);
+        isVegOnly: state.isVegOnly,
+        foodCart: foodCart,
+        menuCategories: state.menuCategories,
+        foodList: state.foodList,
+        menuSelected: state.menuSelected);
+  }
+
+  Stream<DetailPageState> mapSearchFoodToState(String restaurantId, String keyword) async* {
+    yield LoadingSearch(
+        foodCart: state.foodCart,
+        isVegOnly: state.isVegOnly,
+        menuCategories: state.menuCategories,
+        foodList: state.foodList,
+        menuSelected: state.menuSelected);
+    try {
+      List<Food> result = await repository.getFoods(restaurantId, null, null, keyword);
+      if (result.isNotEmpty) {
+        yield DetailPageState(
+            result: result,
+            foodCart: state.foodCart,
+            isVegOnly: state.isVegOnly,
+            menuCategories: state.menuCategories,
+            foodList: state.foodList,
+            menuSelected: state.menuSelected);
+      } else {
+        ErrorSearch("Food item not available",
+            foodCart: state.foodCart,
+            isVegOnly: state.isVegOnly,
+            menuCategories: state.menuCategories,
+            foodList: state.foodList,
+            menuSelected: state.menuSelected);
+      }
+    } catch (e) {
+      ErrorSearch(e.toString(),
+          foodCart: state.foodCart,
+          isVegOnly: state.isVegOnly,
+          menuCategories: state.menuCategories,
+          foodList: state.foodList,
+          menuSelected: state.menuSelected);
+    }
   }
 }

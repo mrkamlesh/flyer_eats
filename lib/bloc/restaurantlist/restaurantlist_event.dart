@@ -14,8 +14,7 @@ class GetFirstDataRestaurantList extends RestaurantListEvent {
   final RestaurantListType type;
   final String category;
 
-  const GetFirstDataRestaurantList(
-      this.token, this.address, this.merchantType, this.type, this.category);
+  const GetFirstDataRestaurantList(this.token, this.address, this.merchantType, this.type, this.category);
 
   @override
   List<Object> get props => [token, address, merchantType, type, category];
@@ -28,8 +27,7 @@ class LoadMore extends RestaurantListEvent {
   final RestaurantListType type;
   final String category;
 
-  const LoadMore(
-      this.token, this.address, this.merchantType, this.type, this.category);
+  const LoadMore(this.token, this.address, this.merchantType, this.type, this.category);
 
   @override
   List<Object> get props => [token, address, merchantType, type, category];
@@ -69,8 +67,7 @@ class ApplyFilter extends RestaurantListEvent {
   final RestaurantListType type;
   final String category;
 
-  const ApplyFilter(
-      this.token, this.address, this.merchantType, this.type, this.category);
+  const ApplyFilter(this.token, this.address, this.merchantType, this.type, this.category);
 
   @override
   List<Object> get props => [token, address, merchantType, type, category];
@@ -83,9 +80,23 @@ class ClearFilter extends RestaurantListEvent {
   final RestaurantListType type;
   final String category;
 
-  const ClearFilter(
-      this.token, this.address, this.merchantType, this.type, this.category);
+  const ClearFilter(this.token, this.address, this.merchantType, this.type, this.category);
 
   @override
   List<Object> get props => [token, address, merchantType, type, category];
+}
+
+class ChangeVegOnly extends RestaurantListEvent {
+  final bool isVegOnly;
+
+  final String token;
+  final String address;
+  final MerchantType merchantType;
+  final RestaurantListType type;
+  final String category;
+
+  const ChangeVegOnly(this.token, this.address, this.merchantType, this.type, this.category, this.isVegOnly);
+
+  @override
+  List<Object> get props => [token, address, merchantType, type, category, isVegOnly];
 }

@@ -41,16 +41,16 @@ class RestaurantListPage extends StatefulWidget {
   _RestaurantListPageState createState() => _RestaurantListPageState();
 }
 
-class _RestaurantListPageState extends State<RestaurantListPage>
-    with SingleTickerProviderStateMixin {
+class _RestaurantListPageState extends State<RestaurantListPage> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   bool _isScrollingDown = false;
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
 
   bool _isListMode = true;
-  int _selectedFilter = 0;
-  int _radioFilterGroup = -1;
+
+/*  int _selectedFilter = 0;
+  int _radioFilterGroup = -1;*/
 
   RestaurantListBloc _bloc;
 
@@ -61,10 +61,8 @@ class _RestaurantListPageState extends State<RestaurantListPage>
       vsync: this,
       duration: Duration(milliseconds: 500),
     );
-    _navBarAnimation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
-        .animate(
-            CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _navBarAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
+        .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
 
     _bloc = RestaurantListBloc();
   }
@@ -84,11 +82,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
           create: (context) {
             return _bloc
               ..add(GetFirstDataRestaurantList(
-                  loginState.user.token,
-                  widget.location.address,
-                  widget.merchantType,
-                  widget.type,
-                  widget.category));
+                  loginState.user.token, widget.location.address, widget.merchantType, widget.type, widget.category));
           },
           child: Scaffold(
             extendBody: true,
@@ -116,8 +110,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                   child: CustomBottomNavBar(
                     animationDuration: Duration(milliseconds: 300),
                     items: [
-                      BottomNavyBarItem(
-                          icon: "assets/2.svg", title: "Flyer Eats"),
+                      BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
                       BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
                       BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
                       BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
@@ -184,11 +177,9 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                   ),
                 ),
                 DraggableScrollableSheet(
-                  initialChildSize: (AppUtil.getScreenHeight(context) -
-                          AppUtil.getToolbarHeight(context)) /
+                  initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  minChildSize: (AppUtil.getScreenHeight(context) -
-                          AppUtil.getToolbarHeight(context)) /
+                  minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
                   maxChildSize: 1.0,
                   builder: (context, controller) {
@@ -198,15 +189,10 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                         double currentScroll = controller.position.pixels;
 
                         if (currentScroll == maxScroll)
-                          _bloc.add(LoadMore(
-                              loginState.user.token,
-                              widget.location.address,
-                              widget.merchantType,
-                              widget.type,
-                              widget.category));
+                          _bloc.add(LoadMore(loginState.user.token, widget.location.address, widget.merchantType,
+                              widget.type, widget.category));
 
-                        if (controller.position.userScrollDirection ==
-                            ScrollDirection.reverse) {
+                        if (controller.position.userScrollDirection == ScrollDirection.reverse) {
                           if (!_isScrollingDown) {
                             _isScrollingDown = true;
                             setState(() {
@@ -214,11 +200,8 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                             });
                           }
                         }
-                        if ((controller.position.userScrollDirection ==
-                                ScrollDirection.forward) |
-                            (controller.offset >=
-                                    controller.position.maxScrollExtent -
-                                        kBottomNavigationBarHeight &&
+                        if ((controller.position.userScrollDirection == ScrollDirection.forward) |
+                            (controller.offset >= controller.position.maxScrollExtent - kBottomNavigationBarHeight &&
                                 !controller.position.outOfRange)) {
                           if (_isScrollingDown) {
                             _isScrollingDown = false;
@@ -233,38 +216,44 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                     return Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(32),
-                              topLeft: Radius.circular(32))),
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                       child: CustomScrollView(
                         controller: controller,
                         slivers: <Widget>[
-                          SliverPersistentHeader(
-                            pinned: true,
-                            delegate: ListRestaurantFilterWidget(
-                              onTap: _onTapFilter,
-                              title: widget.title,
-                              isListSelected: _isListMode,
-                              onListButtonTap: () {
-                                setState(
-                                  () {
-                                    if (!_isListMode) {
-                                      _isListMode = true;
-                                    }
+                          BlocBuilder<RestaurantListBloc, RestaurantListState>(
+                            builder: (context, state) {
+                              return SliverPersistentHeader(
+                                pinned: true,
+                                delegate: ListRestaurantFilterWidget(
+                                  onChange: (value) {
+                                    _bloc.add(ChangeVegOnly(loginState.user.token, widget.location.address,
+                                        widget.merchantType, widget.type, widget.category, value));
                                   },
-                                );
-                              },
-                              onGridButtonTap: () {
-                                setState(
-                                  () {
-                                    if (_isListMode) {
-                                      _isListMode = false;
-                                    }
+                                  isVegOnly: state.isVeg,
+                                  title: widget.title,
+                                  isListSelected: _isListMode,
+                                  onListButtonTap: () {
+                                    setState(
+                                      () {
+                                        if (!_isListMode) {
+                                          _isListMode = true;
+                                        }
+                                      },
+                                    );
                                   },
-                                );
-                              },
-                              size: 27,
-                            ),
+                                  onGridButtonTap: () {
+                                    setState(
+                                      () {
+                                        if (_isListMode) {
+                                          _isListMode = false;
+                                        }
+                                      },
+                                    );
+                                  },
+                                  size: 27,
+                                ),
+                              );
+                            },
                           ),
                           BlocBuilder<RestaurantListBloc, RestaurantListState>(
                             bloc: _bloc,
@@ -274,9 +263,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                 location: widget.location,
                                 fade: 0.4,
                                 scale: 0.95,
-                                type: _isListMode
-                                    ? RestaurantViewType.detailList
-                                    : RestaurantViewType.detailGrid,
+                                type: _isListMode ? RestaurantViewType.detailList : RestaurantViewType.detailGrid,
                               );
                             },
                           ),
@@ -293,13 +280,12 @@ class _RestaurantListPageState extends State<RestaurantListPage>
     );
   }
 
-  _onTapFilter() {
+/*_onTapFilter() {
     showModalBottomSheet(
         context: context,
         isScrollControlled: false,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         builder: (context) {
           return BlocBuilder<RestaurantListBloc, RestaurantListState>(
             bloc: _bloc,
@@ -311,8 +297,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                       return Stack(
                         children: <Widget>[
                           Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(32)),
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
                             child: Column(
                               children: <Widget>[
                                 Container(
@@ -326,27 +311,20 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                       Expanded(
                                         child: Text(
                                           "FILTERS (${currentState.selectedFilter.length})",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18),
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                         ),
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          _bloc.add(ClearFilter(
-                                              loginState.user.token,
-                                              widget.location.address,
-                                              widget.merchantType,
-                                              widget.type,
-                                              widget.category));
+                                          _bloc.add(ClearFilter(loginState.user.token, widget.location.address,
+                                              widget.merchantType, widget.type, widget.category));
                                           Navigator.pop(context);
                                         },
                                         child: Container(
                                           padding: EdgeInsets.all(10),
                                           child: Text(
                                             "Clear Filter",
-                                            style: TextStyle(
-                                                color: primary3, fontSize: 14),
+                                            style: TextStyle(color: primary3, fontSize: 14),
                                           ),
                                         ),
                                       ),
@@ -357,8 +335,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                           onTap: () {
                                             Navigator.pop(context);
                                           },
-                                          child: Container(
-                                              child: Icon(Icons.clear))),
+                                          child: Container(child: Icon(Icons.clear))),
                                     ],
                                   ),
                                 ),
@@ -373,21 +350,18 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                 Expanded(
                                   child: Container(
                                     child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Expanded(
                                           flex: 3,
                                           child: Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey[100]),
+                                            decoration: BoxDecoration(color: Colors.grey[100]),
                                             child: ListView(
                                               children: <Widget>[
                                                 FilterItem(
                                                   text: "SORT",
                                                   index: 0,
-                                                  selectedIndex:
-                                                      _selectedFilter,
+                                                  selectedIndex: _selectedFilter,
                                                   onTap: () {
                                                     state(() {
                                                       _selectedFilter = 0;
@@ -398,8 +372,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                                     ? FilterItem(
                                                         text: "CUISINES",
                                                         index: 1,
-                                                        selectedIndex:
-                                                            _selectedFilter,
+                                                        selectedIndex: _selectedFilter,
                                                         onTap: () {
                                                           state(() {
                                                             _selectedFilter = 1;
@@ -410,7 +383,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                                         height: 0,
                                                         width: 0,
                                                       ),
-                                                /*FilterItem(
+                                                */ /*FilterItem(
                                                   text: "OTHERS",
                                                   index: 2,
                                                   selectedIndex:
@@ -420,7 +393,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                                       _selectedFilter = 2;
                                                     });
                                                   },
-                                                )*/
+                                                )*/ /*
                                               ],
                                             ),
                                           ),
@@ -429,57 +402,36 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                           flex: 7,
                                           child: Container(
                                             padding: EdgeInsets.only(
-                                                left:
-                                                    horizontalPaddingDraggable,
-                                                right:
-                                                    horizontalPaddingDraggable,
-                                                bottom:
-                                                    horizontalPaddingDraggable),
+                                                left: horizontalPaddingDraggable,
+                                                right: horizontalPaddingDraggable,
+                                                bottom: horizontalPaddingDraggable),
                                             child: IndexedStack(
                                               index: _selectedFilter,
                                               children: <Widget>[
                                                 ListView.builder(
                                                   itemBuilder: (context, i) {
                                                     return RadioListTile(
-                                                        controlAffinity:
-                                                            ListTileControlAffinity
-                                                                .leading,
+                                                        controlAffinity: ListTileControlAffinity.leading,
                                                         isThreeLine: false,
                                                         dense: false,
                                                         value: i,
-                                                        title: Text(currentState
-                                                            .sortBy[i].title),
-                                                        groupValue:
-                                                            _radioFilterGroup,
+                                                        title: Text(currentState.sortBy[i].title),
+                                                        groupValue: _radioFilterGroup,
                                                         onChanged: (value) {
                                                           state(() {
-                                                            _radioFilterGroup =
-                                                                i;
+                                                            _radioFilterGroup = i;
                                                           });
-                                                          _bloc.add(
-                                                              SelectSortBy(
-                                                                  currentState
-                                                                      .sortBy[i]
-                                                                      .key));
+                                                          _bloc.add(SelectSortBy(currentState.sortBy[i].key));
                                                         });
                                                   },
-                                                  itemCount: currentState
-                                                      .sortBy.length,
+                                                  itemCount: currentState.sortBy.length,
                                                 ),
                                                 ListView.builder(
                                                   itemBuilder: (context, i) {
                                                     bool value = false;
-                                                    for (int j = 0;
-                                                        j <
-                                                            currentState
-                                                                .selectedFilter
-                                                                .length;
-                                                        j++) {
-                                                      if (currentState
-                                                              .filters[i].id ==
-                                                          currentState
-                                                                  .selectedFilter[
-                                                              j]) {
+                                                    for (int j = 0; j < currentState.selectedFilter.length; j++) {
+                                                      if (currentState.filters[i].id ==
+                                                          currentState.selectedFilter[j]) {
                                                         value = true;
                                                         break;
                                                       }
@@ -488,31 +440,19 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                                     return CheckboxListTile(
                                                       value: value,
                                                       dense: false,
-                                                      controlAffinity:
-                                                          ListTileControlAffinity
-                                                              .leading,
+                                                      controlAffinity: ListTileControlAffinity.leading,
                                                       onChanged: (value) {
                                                         if (value) {
-                                                          _bloc.add(AddFilter(
-                                                              currentState
-                                                                  .filters[i]
-                                                                  .id));
+                                                          _bloc.add(AddFilter(currentState.filters[i].id));
                                                         } else {
-                                                          _bloc.add(
-                                                              RemoveFilter(
-                                                                  currentState
-                                                                      .filters[
-                                                                          i]
-                                                                      .id));
+                                                          _bloc.add(RemoveFilter(currentState.filters[i].id));
                                                         }
                                                       },
                                                       isThreeLine: false,
-                                                      title: Text(currentState
-                                                          .filters[i].title),
+                                                      title: Text(currentState.filters[i].title),
                                                     );
                                                   },
-                                                  itemCount: currentState
-                                                      .filters.length,
+                                                  itemCount: currentState.filters.length,
                                                 ),
                                                 Text("3"),
                                               ],
@@ -530,12 +470,8 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                             alignment: Alignment.bottomCenter,
                             child: GestureDetector(
                               onTap: () {
-                                _bloc.add(ApplyFilter(
-                                    loginState.user.token,
-                                    widget.location.address,
-                                    widget.merchantType,
-                                    widget.type,
-                                    widget.category));
+                                _bloc.add(ApplyFilter(loginState.user.token, widget.location.address,
+                                    widget.merchantType, widget.type, widget.category));
                                 Navigator.pop(context);
                               },
                               child: Container(
@@ -555,7 +491,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
             },
           );
         });
-  }
+  }*/
 }
 
 class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
@@ -564,11 +500,13 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
   final bool isListSelected;
   final double size;
   final String title;
-  final Function onTap;
+  final Function(bool) onChange;
+  final bool isVegOnly;
 
   ListRestaurantFilterWidget({
-    this.onTap,
+    this.onChange,
     this.title,
+    this.isVegOnly,
     this.onListButtonTap,
     this.onGridButtonTap,
     this.isListSelected,
@@ -576,8 +514,7 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
   });
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return SizedBox.expand(
       child: Container(
         padding: EdgeInsets.only(
@@ -586,43 +523,33 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
             top: MediaQuery.of(context).padding.top),
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+            borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
               title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(
-              width: 15,
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: onTap,
-                child: Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.filter_list,
-                      color: Colors.black,
-                      size: 20,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      "Filter",
-                      style: TextStyle(color: Colors.black),
-                    )
-                  ],
+            Row(
+              children: <Widget>[
+                Text(
+                  "Veg Only",
+                  style: TextStyle(color: Colors.black, fontSize: 12),
                 ),
-              ),
+                Transform.scale(
+                  scale: 0.7,
+                  child: CupertinoSwitch(
+                    value: isVegOnly,
+                    onChanged: onChange,
+                    activeColor: Colors.green,
+                  ),
+                ),
+              ],
             ),
             Container(
               height: size,
-              decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(6)),
+              decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(6)),
               child: Row(
                 children: <Widget>[
                   GestureDetector(
@@ -636,8 +563,7 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
                         color: isListSelected ? Colors.white : Colors.grey,
                       ),
                       decoration: BoxDecoration(
-                          color:
-                              isListSelected ? Colors.green : Colors.grey[100],
+                          color: isListSelected ? Colors.green : Colors.grey[100],
                           borderRadius: BorderRadius.circular(6)),
                       duration: Duration(milliseconds: 300),
                     ),
@@ -653,8 +579,7 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
                         color: !isListSelected ? Colors.white : Colors.grey,
                       ),
                       decoration: BoxDecoration(
-                          color:
-                              !isListSelected ? Colors.green : Colors.grey[100],
+                          color: !isListSelected ? Colors.green : Colors.grey[100],
                           borderRadius: BorderRadius.circular(6)),
                       duration: Duration(milliseconds: 300),
                     ),
@@ -686,9 +611,7 @@ class FilterItem extends StatelessWidget {
   final int selectedIndex;
   final Function onTap;
 
-  const FilterItem(
-      {Key key, this.text, this.index, this.selectedIndex, this.onTap})
-      : super(key: key);
+  const FilterItem({Key key, this.text, this.index, this.selectedIndex, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

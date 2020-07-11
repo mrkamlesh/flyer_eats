@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flyereats/bloc/food/detail_page_bloc.dart';
 import 'package:flyereats/bloc/food/detail_page_event.dart';
@@ -20,6 +21,7 @@ import 'package:flyereats/widget/app_bar.dart';
 import 'package:flyereats/widget/end_drawer.dart';
 import 'package:flyereats/widget/food_list.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   final Restaurant restaurant;
@@ -40,6 +42,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
 
   bool _isListMode = true;
 
+  DetailPageBloc _bloc;
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +60,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
       i++;
       _rankPageController.animateToPage(i % 2, duration: Duration(milliseconds: 700), curve: Curves.ease);
     });
+
+    _bloc = DetailPageBloc();
   }
 
   @override
@@ -63,6 +69,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
     _timer?.cancel();
     _animationController.dispose();
     _rankPageController.dispose();
+    _bloc.close();
     super.dispose();
   }
 
@@ -72,7 +79,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
 
     return BlocProvider<DetailPageBloc>(
       create: (context) {
-        return DetailPageBloc()..add(PageDetailRestaurantOpen(widget.restaurant.id));
+        return _bloc..add(PageDetailRestaurantOpen(widget.restaurant.id));
       },
       child: BlocBuilder<DetailPageBloc, DetailPageState>(
         builder: (context, state) {
@@ -107,7 +114,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                       );
                     }));
 
-                    BlocProvider.of<DetailPageBloc>(context).add(UpdateCart(newCart));
+                    _bloc.add(UpdateCart(newCart));
                   },
                 ),
               ),
@@ -380,6 +387,135 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                               pinned: true,
                               delegate: DetailRestaurantFilterTabs(
                                 widget.restaurant.id,
+                                onSearchTap: () {
+                                  showMaterialModalBottomSheet(
+                                      backgroundColor: Colors.transparent,
+                                      expand: false,
+                                      enableDrag: true,
+                                      context: context,
+                                      builder: (context, controller) {
+                                        return Container(
+                                          height: AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context),
+                                          width: AppUtil.getScreenWidth(context),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                                          child: CustomScrollView(
+                                            controller: controller,
+                                            slivers: <Widget>[
+                                              SliverToBoxAdapter(
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                    top: 30,
+                                                    left: horizontalPaddingDraggable,
+                                                    right: horizontalPaddingDraggable,
+                                                  ),
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                          child: Text(
+                                                        "SEARCH FOOD",
+                                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                      )),
+                                                      InkWell(
+                                                          onTap: () {
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: Icon(Icons.clear))
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              SliverToBoxAdapter(
+                                                child: Container(
+                                                  height: 55,
+                                                  margin: EdgeInsets.only(
+                                                      right: horizontalPaddingDraggable,
+                                                      left: horizontalPaddingDraggable,
+                                                      top: 20,
+                                                      bottom: 20),
+                                                  padding: EdgeInsets.only(left: horizontalPaddingDraggable),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    border: Border.all(color: primary1),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: primary1,
+                                                        blurRadius: 7,
+                                                        spreadRadius: -3,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  child: TextField(
+                                                    autofocus: true,
+                                                    decoration: InputDecoration(
+                                                      border: InputBorder.none,
+                                                      hintText: "Search here....",
+                                                      hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                                    ),
+                                                    onChanged: (value) {
+                                                      _bloc.add(SearchFood(widget.restaurant.id, value));
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              BlocBuilder<DetailPageBloc, DetailPageState>(
+                                                bloc: _bloc,
+                                                builder: (context, state) {
+                                                  if (state is LoadingSearch) {
+                                                    return SliverToBoxAdapter(
+                                                      child: Container(
+                                                        child: Center(
+                                                          child: SpinKitCircle(
+                                                            color: Colors.black38,
+                                                            size: 30,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } else if (state is ErrorSearch) {
+                                                    return SliverToBoxAdapter(
+                                                      child: Container(
+                                                        child: Text(state.message),
+                                                      ),
+                                                    );
+                                                  }
+                                                  return state.result != null
+                                                      ? FoodListWidget(
+                                                          onAdd: (i) {
+                                                            _bloc.add(ChangeQuantity(
+                                                                state.result[i].id,
+                                                                state.result[i],
+                                                                (state.foodCart.getQuantity(state.result[i].id) + 1)));
+                                                          },
+                                                          onRemove: (i) {
+                                                            _bloc.add(ChangeQuantity(
+                                                                state.result[i].id,
+                                                                state.result[i],
+                                                                (state.foodCart.getQuantity(state.result[i].id) - 1)));
+                                                          },
+                                                          padding: EdgeInsets.only(
+                                                              left: horizontalPaddingDraggable - 5,
+                                                              right: horizontalPaddingDraggable - 5,
+                                                              top: 10,
+                                                              bottom: kBottomNavigationBarHeight),
+                                                          cart: state.foodCart,
+                                                          listFood: state.result,
+                                                          type: FoodListViewType.list,
+                                                          scale: 0.90,
+                                                        )
+                                                      : SliverToBoxAdapter(
+                                                          child: SizedBox(),
+                                                        );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                },
                                 offset: offset,
                                 isListSelected: _isListMode,
                                 onListButtonTap: () {
@@ -401,7 +537,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                   );
                                 },
                                 onSwitchChanged: (value) {
-                                  BlocProvider.of<DetailPageBloc>(context).add(SwitchVegOnly(value));
+                                  _bloc.add(SwitchVegOnly(widget.restaurant.id, value));
                                 },
                                 isVegOnly: state.isVegOnly,
                                 size: 27,
@@ -444,12 +580,12 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                 }
                                 return FoodListWidget(
                                   onAdd: (i) {
-                                    BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(state.foodList[i].id,
-                                        state.foodList[i], (state.foodCart.getQuantity(state.foodList[i].id) + 1)));
+                                    _bloc.add(ChangeQuantity(state.foodList[i].id, state.foodList[i],
+                                        (state.foodCart.getQuantity(state.foodList[i].id) + 1)));
                                   },
                                   onRemove: (i) {
-                                    BlocProvider.of<DetailPageBloc>(context).add(ChangeQuantity(state.foodList[i].id,
-                                        state.foodList[i], (state.foodCart.getQuantity(state.foodList[i].id) - 1)));
+                                    _bloc.add(ChangeQuantity(state.foodList[i].id, state.foodList[i],
+                                        (state.foodCart.getQuantity(state.foodList[i].id) - 1)));
                                   },
                                   padding: _isListMode
                                       ? EdgeInsets.only(
@@ -637,6 +773,7 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
   final bool isVegOnly;
   final Function(bool) onSwitchChanged;
   final double offset;
+  final Function onSearchTap;
 
   DetailRestaurantFilterTabs(
     this.restaurantId, {
@@ -647,6 +784,7 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
     this.isVegOnly,
     this.onSwitchChanged,
     this.offset,
+    this.onSearchTap,
   });
 
   @override
@@ -701,11 +839,14 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                   ),
                 ),*/
                 Expanded(child: Container()),
-                Container(
-                  margin: EdgeInsets.only(right: 20),
-                  child: SvgPicture.asset(
-                    "assets/search.svg",
-                    color: Colors.grey,
+                InkWell(
+                  onTap: onSearchTap,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 20),
+                    child: SvgPicture.asset(
+                      "assets/search.svg",
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
                 Container(
@@ -767,7 +908,7 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                     child: TabBar(
                       onTap: (i) {
                         BlocProvider.of<DetailPageBloc>(context)
-                            .add(RestaurantMenuChange(restaurantId, state.menuCategories[i].id));
+                            .add(RestaurantMenuChange(restaurantId, state.menuCategories[i].id, i));
                       },
                       isScrollable: true,
                       labelColor: Colors.black,

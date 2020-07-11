@@ -372,24 +372,35 @@ class FoodList extends StatelessWidget {
                             margin: EdgeInsets.symmetric(horizontal: 10),
                             child: Align(
                               alignment: Alignment.center,
-                              child: Row(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  SvgPicture.asset(
-                                    "assets/rupee.svg",
-                                    height: 8,
-                                    width: 8,
-                                    color: Colors.black,
-                                  ),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Text(
-                                    "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                  food.discount > 0
+                                      ? Text(
+                                          "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price),
+                                          style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                        )
+                                      : SizedBox(),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SvgPicture.asset(
+                                        "assets/rupee.svg",
+                                        height: 8,
+                                        width: 8,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Text(
+                                        "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -490,7 +501,7 @@ class FoodList extends StatelessWidget {
                                   ? Container(
                                       margin: EdgeInsets.only(top: 5, bottom: 10, right: 10),
                                       child: Text(
-                                        food.description,
+                                        AppUtil.parseHtmlString(food.description),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(color: Colors.black54, fontSize: 10),
@@ -506,33 +517,43 @@ class FoodList extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              Expanded(
-                                flex: 4,
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: <Widget>[
-                                      SvgPicture.asset(
-                                        "assets/rupee.svg",
-                                        height: 11,
-                                        width: 11,
-                                        color: Colors.black,
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Text(
-                                        "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    food.discount > 0
+                                        ? Text(
+                                            "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price),
+                                            style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                          )
+                                        : SizedBox(),
+                                    Row(
+                                      children: <Widget>[
+                                        SvgPicture.asset(
+                                          "assets/rupee.svg",
+                                          height: 11,
+                                          width: 11,
+                                          color: Colors.black,
+                                        ),
+                                        SizedBox(
+                                          width: 3,
+                                        ),
+                                        Text(
+                                          "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                              SizedBox(
-                                width: 5,
+                              Expanded(
+                                flex: 2,
+                                child: SizedBox(),
                               ),
                               quantity == 0
                                   ? Expanded(flex: 6, child: addButton)
@@ -655,24 +676,35 @@ class FoodList extends StatelessWidget {
                             margin: EdgeInsets.symmetric(horizontal: 10),
                             child: Align(
                               alignment: Alignment.center,
-                              child: Row(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  SvgPicture.asset(
-                                    "assets/rupee.svg",
-                                    height: 8,
-                                    width: 8,
-                                    color: Colors.black,
-                                  ),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Text(
-                                    "${AppUtil.doubleRemoveZeroTrailing(food.price)}",
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                  food.discount > 0
+                                      ? Text(
+                                          "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price),
+                                          style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                        )
+                                      : SizedBox(),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SvgPicture.asset(
+                                        "assets/rupee.svg",
+                                        height: 8,
+                                        width: 8,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Text(
+                                        "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),

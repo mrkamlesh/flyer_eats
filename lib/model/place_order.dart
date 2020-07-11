@@ -231,7 +231,7 @@ class PlaceOrder {
     double subTotal = 0;
 
     foodCart.cart.forEach((key, item) {
-      subTotal = subTotal + item.quantity * (item.food.price - item.food.discount);
+      subTotal = subTotal + item.quantity * item.food.getRealPrice();
     });
 
     return subTotal;
@@ -247,21 +247,20 @@ class PlaceOrder {
     return discountTotal;
   }
 
-  double getOrderTotal() {
+/*  double getOrderTotal() {
     double totalOrder = 0;
 
     foodCart.cart.forEach((key, item) {
-      totalOrder = totalOrder + item.quantity * item.food.price;
+      totalOrder = totalOrder + item.quantity * item.food.getRealPrice();
     });
 
     return totalOrder;
-  }
+  }*/
 
   double getTotal() {
     double total = 0;
 
-    total = getOrderTotal() -
-        getDiscountFoodTotal() +
+    total = subTotal() +
         deliveryCharges +
         packagingCharges +
         taxCharges -

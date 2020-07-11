@@ -11,19 +11,20 @@ class RestaurantListState {
   final List<Filter> filters;
   final bool isLoading;
   final String error;
+  final bool isVeg;
   final bool hasReachedMax;
 
-  const RestaurantListState({
-    this.selectedSortBy,
-    this.selectedFilter,
-    this.restaurants,
-    this.page,
-    this.filters,
-    this.isLoading,
-    this.error,
-    this.sortBy,
-    this.hasReachedMax,
-  });
+  const RestaurantListState(
+      {this.selectedSortBy,
+      this.selectedFilter,
+      this.restaurants,
+      this.page,
+      this.filters,
+      this.isLoading,
+      this.error,
+      this.sortBy,
+      this.hasReachedMax,
+      this.isVeg});
 
   factory RestaurantListState.initial() {
     return RestaurantListState(
@@ -35,6 +36,7 @@ class RestaurantListState {
         filters: List(),
         hasReachedMax: false,
         selectedSortBy: null,
+        isVeg: false,
         selectedFilter: List());
   }
 
@@ -47,7 +49,8 @@ class RestaurantListState {
       List<Filter> filter,
       bool isLoading,
       String error,
-      bool hasReachedMax}) {
+      bool hasReachedMax,
+      bool isVeg}) {
     return RestaurantListState(
         restaurants: restaurants ?? this.restaurants,
         filters: filter ?? this.filters,
@@ -57,6 +60,7 @@ class RestaurantListState {
         selectedSortBy: selectedSortBy ?? this.selectedSortBy,
         page: page ?? this.page,
         isLoading: isLoading ?? this.isLoading,
-        sortBy: sortBy ?? this.sortBy);
+        sortBy: sortBy ?? this.sortBy,
+        isVeg: isVeg ?? this.isVeg);
   }
 }

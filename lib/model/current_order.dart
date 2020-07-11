@@ -12,10 +12,14 @@ class CurrentOrder {
   final double driverLongitude;
   final String driverName;
   final String driverPhone;
+  final String merchantId;
   final String merchantName;
   final String merchantLogo;
   final String merchantAddress;
+  final String merchantCity;
+  final String merchantState;
   final ScratchCard scratchCard;
+  final bool isShownCancel;
 
   CurrentOrder(
       {this.driverLatitude,
@@ -28,10 +32,14 @@ class CurrentOrder {
       this.isShowScratch,
       this.isShowReview,
       this.isScratchShowFirst,
+      this.merchantCity,
+      this.merchantState,
+      this.merchantId,
       this.merchantLogo,
       this.merchantName,
       this.merchantAddress,
-      this.scratchCard});
+      this.scratchCard,
+      this.isShownCancel});
 
   CurrentOrder copyWith({
     StatusOrder statusOrder,
@@ -44,10 +52,14 @@ class CurrentOrder {
     double driverLongitude,
     String driverName,
     String driverPhone,
+    String merchantId,
+    String merchantCity,
+    String merchantState,
     String merchantName,
     String merchantLogo,
     String merchantAddress,
     ScratchCard scratchCard,
+    bool isShownCancel,
   }) {
     return CurrentOrder(
         isActive: isActive ?? this.isActive,
@@ -63,7 +75,11 @@ class CurrentOrder {
         merchantName: merchantName ?? this.merchantName,
         merchantAddress: merchantAddress ?? this.merchantAddress,
         merchantLogo: merchantLogo ?? this.merchantLogo,
-        scratchCard: scratchCard ?? this.scratchCard);
+        scratchCard: scratchCard ?? this.scratchCard,
+        isShownCancel: isShownCancel ?? this.isShownCancel,
+        merchantId: merchantId ?? this.merchantId,
+        merchantCity: merchantCity ?? this.merchantCity,
+        merchantState: merchantState ?? this.merchantState);
   }
 
   factory CurrentOrder.fromJson(Map<String, dynamic> parsedJson) {
@@ -88,9 +104,13 @@ class CurrentOrder {
             : null,
         driverName: parsedJson['details']['driver_name'],
         driverPhone: parsedJson['details']['driver_phone'],
+        merchantId: parsedJson['details']['merchant_id'],
         merchantLogo: parsedJson['details']['marchant_logo'],
         merchantName: parsedJson['details']['marchant_name'],
         merchantAddress: parsedJson['details']['merchant_address'],
-        scratchCard: scratchCard);
+        scratchCard: scratchCard,
+        isShownCancel: parsedJson['details']['isShowCancel'],
+        merchantState: parsedJson['details']['merchant_state'],
+        merchantCity: parsedJson['details']['merchant_city']);
   }
 }

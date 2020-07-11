@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
@@ -96,7 +97,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         return _bloc;
       },
       child: BlocConsumer<SearchBloc, SearchState>(
-        listener: (context, state){
+        listener: (context, state) {
           if (state is CartState) {
             _isScrollingDown = false;
             _animationController.reverse().orCancel;
@@ -238,7 +239,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                       return Expanded(
                         child: Container(
                           child: Center(
-                            child: CircularProgressIndicator(),
+                            child: SpinKitCircle(
+                              color: Colors.black38,
+                              size: 30,
+                            ),
                           ),
                         ),
                       );
@@ -361,7 +365,12 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                       slivers.add(SliverToBoxAdapter(
                         child: state is LoadingMore
                             ? Container(
-                                margin: EdgeInsets.only(top: 20), child: Center(child: CircularProgressIndicator()))
+                                margin: EdgeInsets.only(top: 20),
+                                child: Center(
+                                    child: SpinKitCircle(
+                                  color: Colors.black38,
+                                  size: 30,
+                                )))
                             : SizedBox(),
                       ));
                       slivers.add(

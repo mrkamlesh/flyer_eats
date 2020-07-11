@@ -44,4 +44,8 @@ class Food {
         category:
             MenuCategory(parsedJson['cat_id'], parsedJson['category_name']));
   }
+
+  double getRealPrice(){
+    return price - discount;
+  }
 }

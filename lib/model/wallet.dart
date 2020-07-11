@@ -20,8 +20,8 @@ class Wallet {
       walletAmount: double.parse(parsedJson['wallet_amount'].toString()),
       scratchAmount: double.parse(parsedJson['scratch_amount'].toString()),
       loyaltyAmount: 0,
-      razorpayKey: parsedJson['razorpay_key'],
-      razorpaySecret: parsedJson['razorpay_secret'],
+      razorpayKey: parsedJson['razor_key'],
+      razorpaySecret: parsedJson['razor_secret'],
     );
   }
 }

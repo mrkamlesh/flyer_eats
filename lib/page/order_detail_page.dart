@@ -303,11 +303,11 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                       children: <Widget>[
                                         Column(
                                           children: <Widget>[
-                                            _feeRowWidget("Order", state.detailOrder.total, true),
+                                            _feeRowWidget("Order", state.detailOrder.subtotal, true),
                                             _feeRowWidget("Tax", state.detailOrder.tax, true),
                                             _feeRowWidget("Packaging", state.detailOrder.packagingFee, true),
                                             _feeRowWidget("Delivery Fee", state.detailOrder.deliveryCharges, true),
-                                            _feeRowWidget("Discount Food", state.detailOrder.discountFood, false),
+                                            /*_feeRowWidget("Discount Food", state.detailOrder.discountFood, false),*/
                                             _feeRowWidget("Discount Order", state.detailOrder.discountOrder, false),
                                             _feeRowWidget("Coupon/Voucher", state.detailOrder.voucherAmount, false),
                                           ],
@@ -840,7 +840,7 @@ class FoodCartItemWidget extends StatelessWidget {
                     " ( " +
                     item.quantity.toString() +
                     " X \u20b9 " +
-                    AppUtil.doubleRemoveZeroTrailing(item.food.price) +
+                    AppUtil.doubleRemoveZeroTrailing(item.food.getRealPrice()) +
                     " )",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
@@ -848,7 +848,7 @@ class FoodCartItemWidget extends StatelessWidget {
             Expanded(
                 flex: 3,
                 child: Text(
-                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing((item.quantity * item.food.price)),
+                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing((item.quantity * item.food.getRealPrice())),
                   textAlign: TextAlign.end,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ))

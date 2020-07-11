@@ -9,7 +9,6 @@ abstract class DetailPageEvent extends Equatable {
 }
 
 class PageDetailRestaurantOpen extends DetailPageEvent {
-
   final String restaurantId;
 
   const PageDetailRestaurantOpen(this.restaurantId);
@@ -19,23 +18,25 @@ class PageDetailRestaurantOpen extends DetailPageEvent {
 }
 
 class RestaurantMenuChange extends DetailPageEvent {
-
   final String restaurantId;
   final String menuId;
 
-  const RestaurantMenuChange(this.restaurantId, this.menuId);
+  final int menuSelected;
+
+  const RestaurantMenuChange(this.restaurantId, this.menuId, this.menuSelected);
 
   @override
-  List<Object> get props => [restaurantId, menuId];
+  List<Object> get props => [restaurantId, menuId, menuSelected];
 }
 
 class SwitchVegOnly extends DetailPageEvent {
   final bool isVegOnly;
+  final String restaurantId;
 
-  const SwitchVegOnly(this.isVegOnly);
+  const SwitchVegOnly(this.restaurantId, this.isVegOnly);
 
   @override
-  List<Object> get props => [isVegOnly];
+  List<Object> get props => [restaurantId, isVegOnly];
 }
 
 class FilterList extends DetailPageEvent {
@@ -55,6 +56,7 @@ class ChangeQuantity extends DetailPageEvent {
   @override
   List<Object> get props => [id, food, quantity];
 }
+
 class UpdateCart extends DetailPageEvent {
   final FoodCart foodCart;
 
@@ -64,3 +66,12 @@ class UpdateCart extends DetailPageEvent {
   List<Object> get props => [foodCart];
 }
 
+class SearchFood extends DetailPageEvent {
+  final String restaurantId;
+  final String keyword;
+
+  SearchFood(this.restaurantId, this.keyword);
+
+  @override
+  List<Object> get props => [restaurantId, keyword];
+}

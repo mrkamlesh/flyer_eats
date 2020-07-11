@@ -13,6 +13,7 @@ import 'package:flyereats/model/order.dart';
 import 'package:flyereats/model/place_order.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/review.dart';
+import 'package:flyereats/model/scratch_card.dart';
 import 'package:flyereats/model/sort_by.dart';
 import 'package:flyereats/model/user.dart';
 import 'package:flyereats/model/voucher.dart';
@@ -306,8 +307,13 @@ class DataRepository {
     }
   }
 
-  Future<void> scratchCard(String token, String cardId) async {
-    await _provider.scratchCard(token, cardId);
+  Future<bool> scratchCard(String token, String cardId) async {
+    final response = await _provider.scratchCard(token, cardId);
+    if (response['code'] == 1) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future<Wallet> getWalletInfo(String token) async {
@@ -317,6 +323,15 @@ class DataRepository {
       return wallet;
     } else {
       throw Exception(response['msg']);
+    }
+  }
+
+  Future<bool> addWallet(String token, double amount) async {
+    final response = await _provider.addWallet(token, amount);
+    if (response['code'] == 1) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -331,11 +346,11 @@ class DataRepository {
   }
 
   Future<Map<String, dynamic>> getFirstDataRestaurantList(
-      String token, String address, MerchantType merchantType, RestaurantListType type, String category,
+      String token, String address, MerchantType merchantType, RestaurantListType type, String category, bool isVegOnly,
       {String cuisineType, String sortBy}) async {
     Map<String, dynamic> map = Map();
 
-    final response = await _provider.getRestaurantList(token, address, merchantType, type, category, 0,
+    final response = await _provider.getRestaurantList(token, address, merchantType, type, category, 0, isVegOnly,
         sortBy: sortBy, cuisineType: cuisineType);
     if (response['code'] == 1) {
       var listLocations = response['details']['restaurants'] as List;
@@ -369,8 +384,8 @@ class DataRepository {
   }
 
   Future<List<Restaurant>> getRestaurantList(String token, String address, MerchantType merchantType,
-      RestaurantListType type, String category, int page) async {
-    final response = await _provider.getRestaurantList(token, address, merchantType, type, category, page);
+      RestaurantListType type, String category, int page, bool isVegOnly) async {
+    final response = await _provider.getRestaurantList(token, address, merchantType, type, category, page, isVegOnly);
     if (response['code'] == 1) {
       var listLocations = response['details']['restaurants'] as List;
       List<Restaurant> restaurants = listLocations.map((i) {
@@ -395,8 +410,8 @@ class DataRepository {
     }
   }
 
-  Future<List<Food>> getFoods(String restaurantId, String categoryId) async {
-    final response = await _provider.getFoods(restaurantId, categoryId);
+  Future<List<Food>> getFoods(String restaurantId, String categoryId, bool isVegOnly, String searchKeyword) async {
+    final response = await _provider.getFoods(restaurantId, categoryId, isVegOnly, searchKeyword);
     if (response['code'] == 1) {
       var list = response['details']['item'] as List;
       List<Food> foods = list.map((i) {
@@ -420,6 +435,45 @@ class DataRepository {
       }
     } else {
       throw Exception(response['msg']);
+    }
+  }
+
+  Future<dynamic> getSimilarRestaurant(String token, String merchantId, String address) async {
+    final response = await _provider.getSimilarRestaurant(token, merchantId, address);
+    if (response['code'] == 1) {
+      Map<String, dynamic> map = Map();
+      map['category'] = response['details']['food_category_id'];
+      var listResponse = response['details']['restaurants'] as List;
+      List<Restaurant> list = listResponse.map((i) {
+        return Restaurant.fromJson(i);
+      }).toList();
+      map['restaurants'] = list;
+      return map;
+    } else {
+      return response['msg'];
+    }
+  }
+
+  Future<Map<String, dynamic>> getScratchCardList(String token) async {
+    final response = await _provider.getScratchCardList(token);
+    if (response['code'] == 1) {
+      Map<String, dynamic> map = Map();
+      map['amount'] = response['details']['total_amount'];
+      map['currency'] = response['details']['currency'];
+      var listScratched = response['details']['scratched_card'] as List;
+      var listNotScratched = response['details']['not_scratched_card'] as List;
+      List<ScratchCard> cards = listNotScratched.map((i) {
+            return ScratchCard.fromListJson(i);
+          }).toList() +
+          listScratched.map((i) {
+            return ScratchCard.fromListJson(i);
+          }).toList();
+      map['list'] = cards;
+      return map;
+    } else {
+      Map<String, dynamic> map = Map();
+      map['meesage'] = response['msg'];
+      return map;
     }
   }
 }

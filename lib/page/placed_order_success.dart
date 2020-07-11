@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flyereats/bloc/currentorder/bloc.dart';
 import 'package:flyereats/bloc/placedordersuccess/placed_order_success_bloc.dart';
@@ -240,7 +241,10 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                 return Container(
                                   margin: EdgeInsets.symmetric(vertical: 10),
                                   child: Center(
-                                    child: CircularProgressIndicator(),
+                                    child: SpinKitCircle(
+                                      color: Colors.black38,
+                                      size: 30,
+                                    ),
                                   ),
                                 );
                               } else if (state is ErrorAds) {

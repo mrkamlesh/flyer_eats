@@ -8,9 +8,11 @@ import 'package:flyereats/bloc/wallet/wallet_event.dart';
 import 'package:flyereats/bloc/wallet/wallet_state.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/page/loyalty_reward_points_page.dart';
+import 'package:flyereats/model/user.dart';
+import 'package:flyereats/model/wallet.dart';
 import 'package:flyereats/page/scratch_card_list_page.dart';
 import 'package:flyereats/widget/app_bar.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class MyWalletPage extends StatefulWidget {
   @override
@@ -19,16 +21,24 @@ class MyWalletPage extends StatefulWidget {
 
 class _MyWalletPageState extends State<MyWalletPage> {
   WalletBloc _bloc;
+  Razorpay _razorpay;
+
+  String _token;
 
   @override
   void initState() {
     super.initState();
     _bloc = WalletBloc();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerPaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handlerExternalWallet);
   }
 
   @override
   void dispose() {
     _bloc.close();
+    _razorpay.clear();
     super.dispose();
   }
 
@@ -36,6 +46,7 @@ class _MyWalletPageState extends State<MyWalletPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
+        _token = loginState.user.token;
         return BlocProvider<WalletBloc>(
           create: (context) {
             return _bloc..add(GetWalletInfo(loginState.user.token));
@@ -111,36 +122,168 @@ class _MyWalletPageState extends State<MyWalletPage> {
                               child: Text(state.message),
                             ),
                           );
-                        } else if (state is SuccessWalletState) {
-                          return Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                            padding: EdgeInsets.only(top: 20),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(18),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: shadow,
-                                          blurRadius: 7,
-                                          spreadRadius: -3,
-                                        )
-                                      ],
+                        }
+                        return Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                          child: Stack(
+                            children: <Widget>[
+                              SingleChildScrollView(
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(18),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: shadow,
+                                            blurRadius: 7,
+                                            spreadRadius: -3,
+                                          )
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.only(left: 20, right: 20, top: 15),
+                                      margin: EdgeInsets.only(
+                                          left: horizontalPaddingDraggable,
+                                          right: horizontalPaddingDraggable,
+                                          bottom: horizontalPaddingDraggable,
+                                          top: 20),
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            children: <Widget>[
+                                              Container(
+                                                margin: EdgeInsets.only(right: 15),
+                                                child: SizedBox(
+                                                  width: 25,
+                                                  height: 25,
+                                                  child: FittedBox(
+                                                    fit: BoxFit.fill,
+                                                    child: SvgPicture.asset(
+                                                      "assets/wallet.svg",
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Total Wallet Amount",
+                                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 7,
+                                                    ),
+                                                    Text(
+                                                      "Current Balance",
+                                                      style: TextStyle(fontSize: 13, color: Colors.black38),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              Row(
+                                                children: <Widget>[
+                                                  /*SizedBox(
+                                                      width: 11,
+                                                      height: 17,
+                                                      child: FittedBox(
+                                                        fit: BoxFit.fill,
+                                                        child: SvgPicture.asset(
+                                                          "assets/rupee.svg",
+                                                          color: primary3,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),*/
+                                                  Container(
+                                                    alignment: Alignment.bottomRight,
+                                                    child: Text(
+                                                      state.wallet.currency +
+                                                          " " +
+                                                          AppUtil.doubleRemoveZeroTrailing(state.wallet.walletAmount),
+                                                      textAlign: TextAlign.right,
+                                                      style: TextStyle(
+                                                          fontSize: 30, color: primary3, fontWeight: FontWeight.bold),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 7,
+                                          ),
+                                          Row(
+                                            children: <Widget>[
+                                              SizedBox(
+                                                width: 40,
+                                              ),
+                                              Expanded(
+                                                child: Text(
+                                                  "Added Money + Loyalty Reward Points + Scratch Card",
+                                                  style: TextStyle(fontSize: 12, color: Colors.black45),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Divider(
+                                            height: 0.5,
+                                            color: Colors.black12,
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              _showAddMoneySheet(loginState.user, state.wallet);
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.only(top: 15, bottom: horizontalPaddingDraggable),
+                                              child: Text(
+                                                "ADD MONEY",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: primary3,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                    padding: EdgeInsets.only(left: 20, right: 20, top: 15),
-                                    margin: EdgeInsets.only(
-                                        left: horizontalPaddingDraggable,
-                                        right: horizontalPaddingDraggable,
-                                        bottom: horizontalPaddingDraggable),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
+                                    GestureDetector(
+                                      onTap: () async {
+                                        await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                          return ScratchCardPage();
+                                        }));
+
+                                        _bloc.add(GetWalletInfo(loginState.user.token));
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(18),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: shadow,
+                                              blurRadius: 7,
+                                              spreadRadius: -3,
+                                            )
+                                          ],
+                                        ),
+                                        margin: EdgeInsets.only(
+                                            left: horizontalPaddingDraggable,
+                                            right: horizontalPaddingDraggable,
+                                            bottom: 20),
+                                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                        child: Row(
                                           children: <Widget>[
                                             Container(
                                               margin: EdgeInsets.only(right: 15),
@@ -157,278 +300,83 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                             ),
                                             Expanded(
                                               child: Column(
+                                                mainAxisSize: MainAxisSize.min,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: <Widget>[
                                                   Text(
-                                                    "Total Wallet Amount",
+                                                    "Scratch Card",
                                                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                                   ),
                                                   SizedBox(
                                                     height: 7,
                                                   ),
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        child: Text(
+                                                          "Current Balance",
+                                                          style: TextStyle(fontSize: 13, color: Colors.black38),
+                                                        ),
+                                                      ),
+                                                      /*SizedBox(
+                                                          width: 5,
+                                                          height: 8,
+                                                          child: FittedBox(
+                                                            fit: BoxFit.fill,
+                                                            child: SvgPicture.asset(
+                                                              "assets/rupee.svg",
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),*/
+                                                      Text(
+                                                        state.wallet.currency +
+                                                            " " +
+                                                            AppUtil.doubleRemoveZeroTrailing(
+                                                                state.wallet.scratchAmount),
+                                                        textAlign: TextAlign.right,
+                                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 7,
+                                                  ),
                                                   Text(
-                                                    "Current Balance",
-                                                    style: TextStyle(fontSize: 13, color: Colors.black38),
+                                                    "View in detailed",
+                                                    style: TextStyle(
+                                                        color: primary3,
+                                                        fontSize: 13,
+                                                        decoration: TextDecoration.underline),
                                                   )
                                                 ],
                                               ),
                                             ),
-                                            Row(
-                                              children: <Widget>[
-                                                /*SizedBox(
-                                                  width: 11,
-                                                  height: 17,
-                                                  child: FittedBox(
-                                                    fit: BoxFit.fill,
-                                                    child: SvgPicture.asset(
-                                                      "assets/rupee.svg",
-                                                      color: primary3,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),*/
-                                                Container(
-                                                  alignment: Alignment.bottomRight,
-                                                  child: Text(
-                                                    state.wallet.currency +
-                                                        " " +
-                                                        AppUtil.doubleRemoveZeroTrailing(state.wallet.walletAmount),
-                                                    textAlign: TextAlign.right,
-                                                    style: TextStyle(
-                                                        fontSize: 30, color: primary3, fontWeight: FontWeight.bold),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
                                           ],
                                         ),
-                                        SizedBox(
-                                          height: 7,
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            SizedBox(
-                                              width: 40,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                "Added Money + Loyalty Reward Points + Scratch Card",
-                                                style: TextStyle(fontSize: 12, color: Colors.black45),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Divider(
-                                          height: 0.5,
-                                          color: Colors.black12,
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.only(top: 15, bottom: horizontalPaddingDraggable),
-                                          child: Text(
-                                            "ADD MONEY",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: primary3,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                        return LoyaltyRewardPointsPage();
-                                      }));
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(18),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: shadow,
-                                            blurRadius: 7,
-                                            spreadRadius: -3,
-                                          )
-                                        ],
-                                      ),
-                                      margin: EdgeInsets.only(
-                                          left: horizontalPaddingDraggable,
-                                          right: horizontalPaddingDraggable,
-                                          bottom: 20),
-                                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.only(right: 15),
-                                            child: SizedBox(
-                                              width: 25,
-                                              height: 25,
-                                              child: FittedBox(
-                                                fit: BoxFit.fill,
-                                                child: SvgPicture.asset(
-                                                  "assets/wallet.svg",
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  "Loyalty Reward Points",
-                                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                                ),
-                                                SizedBox(
-                                                  height: 7,
-                                                ),
-                                                Row(
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                      child: Text(
-                                                        "Current Balance",
-                                                        style: TextStyle(fontSize: 13, color: Colors.black38),
-                                                      ),
-                                                    ),
-                                                    /*SizedBox(
-                                                      width: 5,
-                                                      height: 8,
-                                                      child: FittedBox(
-                                                        fit: BoxFit.fill,
-                                                        child: SvgPicture.asset(
-                                                          "assets/rupee.svg",
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),*/
-                                                    Text(
-                                                      "0",
-                                                      textAlign: TextAlign.right,
-                                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                                    )
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
                                       ),
                                     ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                        return ScratchCardPage();
-                                      }));
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(18),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: shadow,
-                                            blurRadius: 7,
-                                            spreadRadius: -3,
-                                          )
-                                        ],
-                                      ),
-                                      margin: EdgeInsets.only(
-                                          left: horizontalPaddingDraggable,
-                                          right: horizontalPaddingDraggable,
-                                          bottom: 20),
-                                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.only(right: 15),
-                                            child: SizedBox(
-                                              width: 25,
-                                              height: 25,
-                                              child: FittedBox(
-                                                fit: BoxFit.fill,
-                                                child: SvgPicture.asset(
-                                                  "assets/wallet.svg",
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  "Scratch Card",
-                                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                                ),
-                                                SizedBox(
-                                                  height: 7,
-                                                ),
-                                                Row(
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                      child: Text(
-                                                        "Current Balance",
-                                                        style: TextStyle(fontSize: 13, color: Colors.black38),
-                                                      ),
-                                                    ),
-                                                    /*SizedBox(
-                                                      width: 5,
-                                                      height: 8,
-                                                      child: FittedBox(
-                                                        fit: BoxFit.fill,
-                                                        child: SvgPicture.asset(
-                                                          "assets/rupee.svg",
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),*/
-                                                    Text(
-                                                      state.wallet.currency +
-                                                          " " +
-                                                          AppUtil.doubleRemoveZeroTrailing(state.wallet.scratchAmount),
-                                                      textAlign: TextAlign.right,
-                                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                                    )
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  /*Container(
-                                    padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
-                                    child: Text(
-                                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam vel accumsan dolor. Nulla dignissim ante sed dapibus tincidunt. Fusce id pulvinar nibh. Fusce non fermentum metus. Suspendisse libero metus, finibus sit amet volutpat accumsan, rhoncus in magna. Etiam condimentum,",
-                                      style: TextStyle(fontSize: 13, color: Colors.black38),
-                                    ),
-                                  )*/
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }
-                        return Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                              (state is LoadingAddWallet)
+                                  ? Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.5),
+                                          borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                      child: Center(
+                                        child: SpinKitCircle(
+                                          color: Colors.white,
+                                          size: 30,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox()
+                            ],
+                          ),
                         );
                       },
                     );
@@ -440,5 +388,184 @@ class _MyWalletPageState extends State<MyWalletPage> {
         );
       },
     );
+  }
+
+  void handlerPaymentSuccess(PaymentSuccessResponse response) {
+    _bloc..add(AddWallet(_token))..add(GetWalletInfo(_token));
+  }
+
+  void handlerPaymentError(PaymentFailureResponse response) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            title: Text(
+              "Error",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              response.message,
+              style: TextStyle(color: Colors.black54),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("OK")),
+            ],
+          );
+        },
+        barrierDismissible: true);
+  }
+
+  void handlerExternalWallet(ExternalWalletResponse response) {}
+
+  openRazorPayCheckOut(User user, Wallet wallet, double amount) {
+    var options = {
+      "key": wallet.razorpayKey, //"rzp_test_shynWbWngI8JsA", // change to placeOrder.razorKey
+      "amount": (amount * 100.0).ceil().toString(),
+      "name": "Flyer Eats",
+      "description": "Payment Add Money to Wallet",
+      "prefill": {
+        "contact": user.phone,
+        "email": user.username,
+      },
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  bool amountIsValid(String amount) {
+    if (amount == null || amount == "") {
+      return false;
+    } else {
+      if (double.parse(amount) > 0.0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  void _showAddMoneySheet(User user, Wallet wallet) {
+    //var maskFormatter = new MaskTextInputFormatter(mask: "$currency # ### ### ", filter: {"#": RegExp(r'[0-9]')});
+
+    String _money;
+
+    showModalBottomSheet(
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, state) {
+              return Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                    color: Colors.white),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        width: AppUtil.getScreenWidth(context),
+                        padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                "ADD MONEY",
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            IconButton(
+                                icon: Icon(Icons.clear),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: 20),
+                        child: Text("Enter how much money you want to add to wallet"),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: 20),
+                        child: Center(
+                          child: TextField(
+                            autofocus: true,
+                            onChanged: (value) {
+                              state(() {
+                                _money = value;
+                              });
+                            },
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 50),
+                            decoration: InputDecoration(
+                                hintText: wallet.currency + " 0",
+                                contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                hintStyle: TextStyle(fontSize: 50, color: Colors.black12),
+                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: primary2)),
+                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: primary2)),
+                                border: UnderlineInputBorder(borderSide: BorderSide(color: primary2))),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: amountIsValid(_money)
+                            ? () {
+                                openRazorPayCheckOut(user, wallet, double.parse(_money));
+                                _bloc.add(InitAmount(double.parse(_money)));
+                                Navigator.pop(context);
+                              }
+                            : () {},
+                        child: Container(
+                          margin: EdgeInsets.only(
+                              left: horizontalPaddingDraggable,
+                              right: horizontalPaddingDraggable,
+                              bottom: MediaQuery.of(context).viewInsets.bottom + 32),
+                          child: Stack(
+                            children: <Widget>[
+                              Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFFB531),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "ADD",
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                              AnimatedOpacity(
+                                opacity: amountIsValid(_money) ? 0.0 : 0.5,
+                                child: Container(
+                                  height: 50,
+                                  color: Colors.white,
+                                ),
+                                duration: Duration(milliseconds: 300),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        });
   }
 }

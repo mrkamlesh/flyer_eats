@@ -44,7 +44,11 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
           if (currentOrder.statusOrder.isDelivered()) {
             yield DeliveredOrderState(currentOrder: currentOrder);
           } else if (currentOrder.statusOrder.isCancelled()) {
-            yield CancelledOrderState(currentOrder: currentOrder);
+            if (currentOrder.isShownCancel) {
+              yield CancelledOrderState(currentOrder: currentOrder);
+            } else {
+              yield NoActiveOrderState(currentOrder: currentOrder);
+            }
           }
         }
       }
@@ -66,7 +70,19 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
           add(GetActiveOrder(token));
         });
       } else {
-        yield NoActiveOrderState();
+        if (currentOrder.statusOrder == null) {
+          yield NoActiveOrderState(currentOrder: currentOrder);
+        } else {
+          if (currentOrder.statusOrder.isDelivered()) {
+            yield DeliveredOrderState(currentOrder: currentOrder);
+          } else if (currentOrder.statusOrder.isCancelled()) {
+            if (currentOrder.isShownCancel) {
+              yield CancelledOrderState(currentOrder: currentOrder);
+            } else {
+              yield NoActiveOrderState(currentOrder: currentOrder);
+            }
+          }
+        }
       }
     } catch (e) {
       yield ErrorState(e.toString(), currentOrder: state.currentOrder);

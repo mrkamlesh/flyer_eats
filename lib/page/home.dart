@@ -378,7 +378,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           image: "assets/allrestaurant.png",
                                           merchantType: MerchantType.grocery,
                                           isExternalImage: false,
-                                          title: "All Restaurants",
+                                          title: "All Grocery",
                                           location: Location(address: _homePageData.location),
                                         );
                                       }));
@@ -388,7 +388,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           image: "assets/allrestaurant.png",
                                           merchantType: MerchantType.vegFruits,
                                           isExternalImage: false,
-                                          title: "All Restaurants",
+                                          title: "All Merchants",
                                           location: Location(address: _homePageData.location),
                                         );
                                       }));
@@ -398,7 +398,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           image: "assets/allrestaurant.png",
                                           merchantType: MerchantType.meat,
                                           isExternalImage: false,
-                                          title: "All Restaurants",
+                                          title: "All Merchants",
                                           location: Location(address: _homePageData.location),
                                         );
                                       }));
@@ -457,7 +457,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                         ),
                                         Container(
                                           margin: EdgeInsets.only(bottom: distanceBetweenSection - 20),
-                                          height: 160,
+                                          height: 170,
                                           child: RestaurantListWidget(
                                             type: RestaurantViewType.topRestaurant,
                                             restaurants: _homePageData.topRestaurants,
@@ -778,7 +778,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         return CancelledOrderPage(
                           token: loginState.user.token,
                           orderId: state.currentOrder.orderId,
-                          address: _homePageData != null ? _homePageData.location : null,
+                          address: state.currentOrder.merchantCity + " " + state.currentOrder.merchantState,
+                          merchantId: state.currentOrder.merchantId,
                         );
                       }));
                     }
@@ -1243,34 +1244,37 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         margin: EdgeInsets.only(bottom: 10),
                         child: Center(child: Text("You Have Won A Scratch Card!")),
                       ),
-                      Scratcher(
-                        accuracy: ScratchAccuracy.medium,
-                        brushSize: 50,
-                        threshold: 25,
-                        color: Colors.black,
-                        onThreshold: () {
-                          newState(() {
-                            opacity = 1.0;
-                          });
-                          BlocProvider.of<CurrentOrderBloc>(context).add(ScratchCardEvent(token, scratchCard.cardId));
-                        },
-                        image: Image.asset(
-                          "assets/flyereatslogo.png",
-                          fit: BoxFit.none,
-                          width: AppUtil.getScreenWidth(context) - 100,
-                          height: 0.7 * AppUtil.getScreenWidth(context) - 100,
-                        ),
-                        child: AnimatedOpacity(
-                          duration: Duration(milliseconds: 300),
-                          opacity: opacity,
-                          child: Container(
-                            height: 0.7 * AppUtil.getScreenWidth(context),
-                            width: AppUtil.getScreenWidth(context),
-                            decoration: BoxDecoration(color: Colors.white),
-                            child: Center(
-                              child: Text(
-                                "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(scratchCard.amount),
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50, color: primary3),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Scratcher(
+                          accuracy: ScratchAccuracy.medium,
+                          brushSize: 50,
+                          threshold: 25,
+                          color: Colors.black,
+                          onThreshold: () {
+                            newState(() {
+                              opacity = 1.0;
+                            });
+                            BlocProvider.of<CurrentOrderBloc>(context).add(ScratchCardEvent(token, scratchCard.cardId));
+                          },
+                          image: Image.asset(
+                            "assets/flyereatslogo.png",
+                            fit: BoxFit.none,
+                            width: AppUtil.getScreenWidth(context) - 100,
+                            height: 0.7 * AppUtil.getScreenWidth(context) - 100,
+                          ),
+                          child: AnimatedOpacity(
+                            duration: Duration(milliseconds: 300),
+                            opacity: opacity,
+                            child: Container(
+                              height: 0.7 * AppUtil.getScreenWidth(context),
+                              width: AppUtil.getScreenWidth(context),
+                              decoration: BoxDecoration(color: Colors.white),
+                              child: Center(
+                                child: Text(
+                                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(scratchCard.amount),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50, color: primary3),
+                                ),
                               ),
                             ),
                           ),

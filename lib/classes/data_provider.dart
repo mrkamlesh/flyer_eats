@@ -328,6 +328,25 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> getScratchCardList(String token) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/scratchCardHistory?json=true&api_key=flyereats";
+
+    var formData = {"client_token": token};
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> getHomePageData(
       {String token,
       String address,
@@ -529,8 +548,8 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getRestaurantList(
-      String token, String address, MerchantType merchantType, RestaurantListType type, String category, int page,
+  Future<dynamic> getRestaurantList(String token, String address, MerchantType merchantType, RestaurantListType type,
+      String category, int page, bool isVegOnly,
       {String cuisineType, String sortBy}) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/restaurantList?json=true&api_key=flyereats";
 
@@ -550,7 +569,7 @@ class DataProvider {
       "address": address,
       "page": page.toString(),
       "merchant_type": merchantTypeParams,
-      //"is_veg": "1", 1 for true, 0 for false
+      "is_veg": isVegOnly ? "1" : "0", //1 for true, 0 for false
     };
 
     if (type != null) {
@@ -624,12 +643,50 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> getSimilarRestaurant(String token, String merchantId, String address) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/similarRestaurantList?json=true&api_key=flyereats";
+
+    var formData = {"client_token": token, "merchant_id": merchantId, "address": address};
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> getWalletInfo(String token) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/getWinAmount?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
     };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> addWallet(String token, double amount) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/addWalletMoney?json=true&api_key=flyereats";
+
+    var formData = {"client_token": token, "amount": amount.toString()};
 
     var responseJson;
     try {
@@ -669,9 +726,12 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getFoods(String restaurantId, String categoryId) async {
+  Future<dynamic> getFoods(String restaurantId, String categoryId, bool isVegOnly, String searchKeyword) async {
+    String vegOnlyParam = isVegOnly != null ? isVegOnly ? "&is_veg=1" : "&is_veg=0" : "";
+    String searchParam = searchKeyword != null ? "&searchitem=$searchKeyword" : "";
+    String categoryParam = categoryId != null ? "&cat_id=$categoryId" : "";
     String url =
-        "${developmentServerUrl}mobileapp/apiRest/getItem?json=true&api_key=flyereats&merchant_id=$restaurantId&cat_id=$categoryId&page=all";
+        "${developmentServerUrl}mobileapp/apiRest/getItem?json=true&api_key=flyereats&page=all&merchant_id=$restaurantId$categoryParam$vegOnlyParam$searchParam";
 
     var responseJson;
     try {

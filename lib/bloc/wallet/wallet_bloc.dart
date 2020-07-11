@@ -16,15 +16,40 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
   ) async* {
     if (event is GetWalletInfo) {
       yield* mapGetWalletInfoToState(event.token);
+    } else if (event is AddWallet) {
+      yield* mapAddWalletToState(event.token);
+    } else if (event is InitAmount) {
+      yield* mapInitAmountToState(event.amount);
     }
   }
 
   Stream<WalletState> mapGetWalletInfoToState(String token) async* {
+    yield LoadingWalletState();
     try {
       Wallet wallet = await repository.getWalletInfo(token);
-      yield SuccessWalletState(wallet);
+      yield WalletState(wallet: wallet);
     } catch (e) {
       yield ErrorWalletState(e.toString());
     }
+  }
+
+  Stream<WalletState> mapAddWalletToState(String token) async* {
+    yield LoadingAddWallet(wallet: state.wallet, amount: state.amount);
+
+    try {
+      bool isSuccess = await repository.addWallet(token, state.amount);
+
+      if (isSuccess) {
+        yield WalletState(wallet: state.wallet);
+      } else {
+        yield ErrorAddWallet("", wallet: state.wallet);
+      }
+    } catch (e) {
+      yield ErrorAddWallet(e.toString(), wallet: state.wallet);
+    }
+  }
+
+  Stream<WalletState> mapInitAmountToState(double amount) async* {
+    yield WalletState(amount: amount, wallet: state.wallet);
   }
 }

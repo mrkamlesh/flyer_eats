@@ -41,7 +41,7 @@ class FoodCart {
   double getAmount() {
     double amount = 0;
     this.cart.forEach((i, item) {
-      amount = amount + item.food.price * item.quantity;
+      amount = amount + item.food.getRealPrice() * item.quantity;
     });
 
     return amount;

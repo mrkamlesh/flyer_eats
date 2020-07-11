@@ -246,7 +246,10 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                 return SliverToBoxAdapter(
                                   child: Container(
                                     child: Center(
-                                      child: CircularProgressIndicator(),
+                                      child: SpinKitCircle(
+                                        color: Colors.black38,
+                                        size: 30,
+                                      ),
                                     ),
                                   ),
                                 );

@@ -1,6 +1,7 @@
 import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/menu_category.dart';
+import 'package:flyereats/model/price.dart';
 import 'package:flyereats/model/restaurant.dart';
 import 'package:flyereats/model/status_order.dart';
 
@@ -79,22 +80,21 @@ class DetailOrder {
       foodCart.addFoodToCart(
           foodCartItemJson[i]['item_id'] + i.toString(),
           Food(
-              id: foodCartItemJson[i]['id'],
-              title: foodCartItemJson[i]['item_name'],
-              category: MenuCategory(foodCartItemJson[i]['category_id'],
-                  foodCartItemJson[i]['category_name']),
-              discount:
-                  double.parse(foodCartItemJson[i]['discount'].toString()),
-              price:
-                  double.parse(foodCartItemJson[i]['normal_price'].toString())),
-          int.parse(foodCartItemJson[i]['qty'].toString()));
+            id: foodCartItemJson[i]['id'],
+            title: foodCartItemJson[i]['item_name'],
+            category: MenuCategory(foodCartItemJson[i]['category_id'], foodCartItemJson[i]['category_name']),
+            discount: double.parse(foodCartItemJson[i]['discount'].toString()),
+            prices: [Price(price: double.parse(foodCartItemJson[i]['normal_price'].toString()))],
+          ),
+          int.parse(foodCartItemJson[i]['qty'].toString()),
+          0);
     }
 
     double discountTotal = 0;
     double totalOrder = 0;
     foodCart.cart.forEach((key, item) {
       discountTotal = discountTotal + item.quantity * item.food.discount;
-      totalOrder = totalOrder + item.quantity * item.food.price;
+      totalOrder = totalOrder + item.quantity * item.food.prices[0].price;
     });
     double subTotalOrder = totalOrder - discountTotal;
 
@@ -108,15 +108,8 @@ class DetailOrder {
         foodCart: foodCart,
         createdDate: parsedJson['date_created'],
         orderInstruction: parsedJson['delivery_instruction'],
-        restaurant: Restaurant(
-            parsedJson['merchant_id'],
-            parsedJson['marchant_name'],
-            parsedJson['delivery_time'],
-            "",
-            parsedJson['marchant_logo'],
-            "",
-            parsedJson['address'],
-            true),
+        restaurant: Restaurant(parsedJson['merchant_id'], parsedJson['marchant_name'], parsedJson['delivery_time'], "",
+            parsedJson['marchant_logo'], "", parsedJson['address'], true),
         deliveryAddress: parsedJson['info']['Deliver to'],
         deliveryAddressName: parsedJson['info']['Location Name'],
         deliveryContact: parsedJson['info']['Contact Number'],
@@ -127,19 +120,12 @@ class DetailOrder {
         //deliveryTime: parsedJson['info']['Delivery Time'],
         restaurantContactNumber: parsedJson['info']['Telephone'],
         currentStatus: StatusOrder(status: "On the way"),
-        grandTotal:
-            double.parse(parsedJson['html']['total']['total'].toString()),
-        tax: double.parse(
-            parsedJson['html']['total']['taxable_total'].toString()),
-        deliveryCharges: double.parse(
-            parsedJson['html']['total']['delivery_charges'].toString()),
-        packagingFee: double.parse(parsedJson['html']['total']
-                ['merchant_packaging_charge']
-            .toString()),
-        voucherAmount: double.parse(
-            parsedJson['html']['total']['voucher_value'].toString()),
-        discountOrder: double.parse(
-            parsedJson['html']['total']['discounted_amount'].toString()),
+        grandTotal: double.parse(parsedJson['html']['total']['total'].toString()),
+        tax: double.parse(parsedJson['html']['total']['taxable_total'].toString()),
+        deliveryCharges: double.parse(parsedJson['html']['total']['delivery_charges'].toString()),
+        packagingFee: double.parse(parsedJson['html']['total']['merchant_packaging_charge'].toString()),
+        voucherAmount: double.parse(parsedJson['html']['total']['voucher_value'].toString()),
+        discountOrder: double.parse(parsedJson['html']['total']['discounted_amount'].toString()),
         discountFood: discountTotal,
         subtotal: subTotalOrder,
         total: totalOrder,

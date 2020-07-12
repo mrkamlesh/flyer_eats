@@ -12,6 +12,7 @@ import 'package:flyereats/bloc/food/detail_page_event.dart';
 import 'package:flyereats/bloc/food/detail_page_state.dart';
 import 'package:flyereats/classes/app_util.dart';
 import 'package:flyereats/classes/style.dart';
+import 'package:flyereats/model/food.dart';
 import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/location.dart';
 import 'package:flyereats/model/restaurant.dart';
@@ -387,135 +388,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                               pinned: true,
                               delegate: DetailRestaurantFilterTabs(
                                 widget.restaurant.id,
-                                onSearchTap: () {
-                                  showMaterialModalBottomSheet(
-                                      backgroundColor: Colors.transparent,
-                                      expand: false,
-                                      enableDrag: true,
-                                      context: context,
-                                      builder: (context, controller) {
-                                        return Container(
-                                          height: AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context),
-                                          width: AppUtil.getScreenWidth(context),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-                                          child: CustomScrollView(
-                                            controller: controller,
-                                            slivers: <Widget>[
-                                              SliverToBoxAdapter(
-                                                child: Container(
-                                                  margin: EdgeInsets.only(
-                                                    top: 30,
-                                                    left: horizontalPaddingDraggable,
-                                                    right: horizontalPaddingDraggable,
-                                                  ),
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                          child: Text(
-                                                        "SEARCH FOOD",
-                                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                                      )),
-                                                      InkWell(
-                                                          onTap: () {
-                                                            Navigator.pop(context);
-                                                          },
-                                                          child: Icon(Icons.clear))
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              SliverToBoxAdapter(
-                                                child: Container(
-                                                  height: 55,
-                                                  margin: EdgeInsets.only(
-                                                      right: horizontalPaddingDraggable,
-                                                      left: horizontalPaddingDraggable,
-                                                      top: 20,
-                                                      bottom: 20),
-                                                  padding: EdgeInsets.only(left: horizontalPaddingDraggable),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    border: Border.all(color: primary1),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: primary1,
-                                                        blurRadius: 7,
-                                                        spreadRadius: -3,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  child: TextField(
-                                                    autofocus: true,
-                                                    decoration: InputDecoration(
-                                                      border: InputBorder.none,
-                                                      hintText: "Search here....",
-                                                      hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
-                                                    ),
-                                                    onChanged: (value) {
-                                                      _bloc.add(SearchFood(widget.restaurant.id, value));
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                              BlocBuilder<DetailPageBloc, DetailPageState>(
-                                                bloc: _bloc,
-                                                builder: (context, state) {
-                                                  if (state is LoadingSearch) {
-                                                    return SliverToBoxAdapter(
-                                                      child: Container(
-                                                        child: Center(
-                                                          child: SpinKitCircle(
-                                                            color: Colors.black38,
-                                                            size: 30,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  } else if (state is ErrorSearch) {
-                                                    return SliverToBoxAdapter(
-                                                      child: Container(
-                                                        child: Text(state.message),
-                                                      ),
-                                                    );
-                                                  }
-                                                  return state.result != null
-                                                      ? FoodListWidget(
-                                                          onAdd: (i) {
-                                                            _bloc.add(ChangeQuantity(
-                                                                state.result[i].id,
-                                                                state.result[i],
-                                                                (state.foodCart.getQuantity(state.result[i].id) + 1)));
-                                                          },
-                                                          onRemove: (i) {
-                                                            _bloc.add(ChangeQuantity(
-                                                                state.result[i].id,
-                                                                state.result[i],
-                                                                (state.foodCart.getQuantity(state.result[i].id) - 1)));
-                                                          },
-                                                          padding: EdgeInsets.only(
-                                                              left: horizontalPaddingDraggable - 5,
-                                                              right: horizontalPaddingDraggable - 5,
-                                                              top: 10,
-                                                              bottom: kBottomNavigationBarHeight),
-                                                          cart: state.foodCart,
-                                                          listFood: state.result,
-                                                          type: FoodListViewType.list,
-                                                          scale: 0.90,
-                                                        )
-                                                      : SliverToBoxAdapter(
-                                                          child: SizedBox(),
-                                                        );
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      });
-                                },
+                                onSearchTap: _onSearchTap,
                                 offset: offset,
                                 isListSelected: _isListMode,
                                 onListButtonTap: () {
@@ -580,12 +453,23 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                 }
                                 return FoodListWidget(
                                   onAdd: (i) {
-                                    _bloc.add(ChangeQuantity(state.foodList[i].id, state.foodList[i],
-                                        (state.foodCart.getQuantity(state.foodList[i].id) + 1)));
+                                    if (!state.foodCart.isFoodExist(state.foodList[i].id) &&
+                                        state.foodList[i].prices.length > 1) {
+                                      _showAddOns(state.foodList[i]);
+                                    } else {
+                                      _bloc.add(ChangeQuantity(
+                                          state.foodList[i].id,
+                                          state.foodList[i],
+                                          (state.foodCart.getQuantity(state.foodList[i].id) + 1),
+                                          state.foodCart.getSelectedPrice(state.foodList[i].id)));
+                                    }
                                   },
                                   onRemove: (i) {
-                                    _bloc.add(ChangeQuantity(state.foodList[i].id, state.foodList[i],
-                                        (state.foodCart.getQuantity(state.foodList[i].id) - 1)));
+                                    _bloc.add(ChangeQuantity(
+                                        state.foodList[i].id,
+                                        state.foodList[i],
+                                        (state.foodCart.getQuantity(state.foodList[i].id) - 1),
+                                        state.foodCart.getSelectedPrice(state.foodList[i].id)));
                                   },
                                   padding: _isListMode
                                       ? EdgeInsets.only(
@@ -653,6 +537,192 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
     } else {
       Navigator.pop(context);
     }
+  }
+
+  _showAddOns(Food food) {
+    showModalBottomSheet(
+        isScrollControlled: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (context) {
+          List<Widget> sizeWidget = List();
+          for (int i = 0; i < food.prices.length; i++) {
+            sizeWidget.add(RadioListTile<int>(
+              title: Row(
+                children: <Widget>[
+                  Expanded(child: Text(food.prices[i].size)),
+                  Text("\u20b9 " + food.getRealPrice(i).toString())
+                ],
+              ),
+              value: i,
+              onChanged: (i) {
+                Navigator.pop(context);
+                _bloc.add(ChangeQuantity(food.id, food, 1, i));
+              },
+              groupValue: null,
+            ));
+          }
+
+          return Container(
+            padding: EdgeInsets.only(bottom: 20, top: 25),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.only(
+                        left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, top: 15, bottom: 15),
+                    decoration: BoxDecoration(color: Color(0xFFF3F3F3)),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(child: Text("SIZE")),
+                        InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(Icons.clear))
+                      ],
+                    ),
+                  ),
+                  Column(children: sizeWidget),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _onSearchTap() {
+    showMaterialModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        expand: false,
+        enableDrag: true,
+        context: context,
+        builder: (context, controller) {
+          return Container(
+            height: AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context),
+            width: AppUtil.getScreenWidth(context),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            child: CustomScrollView(
+              controller: controller,
+              slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      top: 30,
+                      left: horizontalPaddingDraggable,
+                      right: horizontalPaddingDraggable,
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: Text(
+                          "SEARCH FOOD",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        )),
+                        InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(Icons.clear))
+                      ],
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    height: 55,
+                    margin: EdgeInsets.only(
+                        right: horizontalPaddingDraggable, left: horizontalPaddingDraggable, top: 20, bottom: 20),
+                    padding: EdgeInsets.only(left: horizontalPaddingDraggable),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: primary1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: primary1,
+                          blurRadius: 7,
+                          spreadRadius: -3,
+                        )
+                      ],
+                    ),
+                    child: TextField(
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Search here....",
+                        hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                      ),
+                      onChanged: (value) {
+                        _bloc.add(SearchFood(widget.restaurant.id, value));
+                      },
+                    ),
+                  ),
+                ),
+                BlocBuilder<DetailPageBloc, DetailPageState>(
+                  bloc: _bloc,
+                  builder: (context, state) {
+                    if (state is LoadingSearch) {
+                      return SliverToBoxAdapter(
+                        child: Container(
+                          child: Center(
+                            child: SpinKitCircle(
+                              color: Colors.black38,
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else if (state is ErrorSearch) {
+                      return SliverToBoxAdapter(
+                        child: Container(
+                          child: Text(state.message),
+                        ),
+                      );
+                    }
+                    return state.result != null
+                        ? FoodListWidget(
+                            onAdd: (i) {
+                              _bloc.add(ChangeQuantity(
+                                  state.result[i].id,
+                                  state.result[i],
+                                  (state.foodCart.getQuantity(state.result[i].id) + 1),
+                                  state.foodCart.getSelectedPrice(state.result[i].id)));
+                            },
+                            onRemove: (i) {
+                              _bloc.add(ChangeQuantity(
+                                  state.result[i].id,
+                                  state.result[i],
+                                  (state.foodCart.getQuantity(state.result[i].id) - 1),
+                                  state.foodCart.getSelectedPrice(state.result[i].id)));
+                            },
+                            padding: EdgeInsets.only(
+                                left: horizontalPaddingDraggable - 5,
+                                right: horizontalPaddingDraggable - 5,
+                                top: 10,
+                                bottom: kBottomNavigationBarHeight),
+                            cart: state.foodCart,
+                            listFood: state.result,
+                            type: FoodListViewType.list,
+                            scale: 0.90,
+                          )
+                        : SliverToBoxAdapter(
+                            child: SizedBox(),
+                          );
+                  },
+                ),
+              ],
+            ),
+          );
+        });
   }
 }
 

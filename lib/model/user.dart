@@ -9,14 +9,7 @@ class User {
   final Address defaultAddress;
   final String username;
 
-  User(
-      {this.avatar,
-      this.name,
-      this.phone,
-      this.hasAddress,
-      this.token,
-      this.defaultAddress,
-      this.username});
+  User({this.avatar, this.name, this.phone, this.hasAddress, this.token, this.defaultAddress, this.username});
 
   factory User.fromJson(Map<String, dynamic> parsedJson) {
     Address defaultAddress = parsedJson['default_address'] == false
@@ -31,7 +24,8 @@ class User {
             state: parsedJson['default_address']['state'],
             latitude: parsedJson['default_address']['delivery_latitude'],
             longitude: parsedJson['default_address']['delivery_longitude'],
-            mapAddress: parsedJson['default_address']['address'],);
+            mapAddress: parsedJson['default_address']['address'],
+          );
 
     return User(
         name: parsedJson['client_name_cookie'],
@@ -41,5 +35,22 @@ class User {
         token: parsedJson['token'],
         username: parsedJson['email'],
         defaultAddress: defaultAddress);
+  }
+
+  User copyWith({String name,
+      String phone,
+      bool hasAddress,
+      String token,
+      String avatar,
+      Address defaultAddress,
+      String username}) {
+    return User(
+        name: name ?? this.name,
+        phone: phone ?? this.phone,
+        avatar: avatar ?? this.avatar,
+        username: username ?? this.username,
+        token: token ?? this.token,
+        hasAddress: hasAddress ?? this.hasAddress,
+        defaultAddress: defaultAddress ?? this.defaultAddress);
   }
 }

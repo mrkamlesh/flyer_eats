@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flyereats/classes/app_exceptions.dart';
 import 'package:flyereats/model/place_order.dart';
+import 'package:flyereats/model/user_profile.dart';
 import 'package:flyereats/page/restaurants_list_page.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -471,6 +472,36 @@ class DataProvider {
     var formData = {
       "client_token": token,
     };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> saveProfile(String token, Profile profile) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/saveProfile?json=true&api_key=flyereats";
+
+    Map<String, dynamic> formData = {
+      "client_token": token,
+      "full_name": profile.name,
+      "contact_phone": profile.phone,
+      "password": profile.password != null && profile.password != "" ? profile.password : "",
+    };
+
+    if (profile.avatar != null){
+      formData['file'] = await MultipartFile.fromFile(profile.avatar.path);
+    } else {
+      formData['file'] = "";
+    }
 
     var responseJson;
     try {

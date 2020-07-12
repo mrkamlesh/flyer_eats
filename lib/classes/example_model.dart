@@ -1,5 +1,4 @@
 import 'package:flyereats/model/food.dart';
-import 'package:flyereats/model/food_cart.dart';
 import 'package:flyereats/model/food_category.dart';
 import 'package:flyereats/model/banner.dart';
 import 'package:flyereats/model/shop_category.dart';
@@ -223,13 +222,13 @@ class ExampleModel {
     return _listFoods;
   }
 
-  static FoodCart getFoodCart() {
+/*  static FoodCart getFoodCart() {
     FoodCart cart = FoodCart(Map<String, FoodCartItem>());
     cart.cart["5"] = FoodCartItem("5", ExampleModel.getFoods()[0], 2);
     cart.cart["4"] = FoodCartItem("4", ExampleModel.getFoods()[1], 2);
     cart.cart["1"] = FoodCartItem("1", ExampleModel.getFoods()[5], 3);
     return cart;
-  }
+  }*/
 
   static List<Address> getAddresses() {
     List<Address> list = [];

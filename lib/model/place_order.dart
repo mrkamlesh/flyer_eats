@@ -209,9 +209,10 @@ class PlaceOrder {
 
     foodCart.cart.forEach((key, item) {
       Map<String, dynamic> cartItem = Map();
-      cartItem['item_id'] = item.id;
+      cartItem['item_id'] = item.food.id;
       cartItem['qty'] = item.quantity;
-      cartItem['price'] = item.food.price.toString();
+      cartItem['price'] =
+          item.food.prices[item.selectedPrice].price.toString() + "|" + item.food.prices[item.selectedPrice].size;
       cartItem['sub_item'] = [];
       cartItem['cooking_ref'] = [];
       cartItem['ingredients'] = [];
@@ -231,7 +232,7 @@ class PlaceOrder {
     double subTotal = 0;
 
     foodCart.cart.forEach((key, item) {
-      subTotal = subTotal + item.quantity * item.food.getRealPrice();
+      subTotal = subTotal + item.quantity * item.food.getRealPrice(item.selectedPrice);
     });
 
     return subTotal;
@@ -260,12 +261,7 @@ class PlaceOrder {
   double getTotal() {
     double total = 0;
 
-    total = subTotal() +
-        deliveryCharges +
-        packagingCharges +
-        taxCharges -
-        discountOrder -
-        voucher.amount;
+    total = subTotal() + deliveryCharges + packagingCharges + taxCharges - discountOrder - voucher.amount;
 
     if (total < 0) {
       return 0;

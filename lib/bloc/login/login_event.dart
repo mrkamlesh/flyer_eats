@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flyereats/model/user.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -28,4 +29,13 @@ class LogOut extends LoginEvent {
 
   @override
   List<Object> get props => [];
+}
+
+class UpdateUserProfile extends LoginEvent {
+  final User user;
+
+  const UpdateUserProfile(this.user);
+
+  @override
+  List<Object> get props => [user];
 }

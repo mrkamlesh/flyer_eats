@@ -9,8 +9,8 @@ class FoodCart {
     return cart.containsKey(id);
   }
 
-  void addFoodToCart(String id, Food food, int quantity) {
-    cart[id] = FoodCartItem(id, food, quantity);
+  void addFoodToCart(String id, Food food, int quantity, int selectedPrice) {
+    cart[id] = FoodCartItem(id, food, quantity, selectedPrice);
   }
 
   int getQuantity(String id) {
@@ -27,9 +27,17 @@ class FoodCart {
     }
   }
 
-  void changeQuantity(String id, Food food, int quantity) {
+  int getSelectedPrice(String foodId) {
+    if (isFoodExist(foodId)) {
+      return cart[foodId].selectedPrice;
+    } else {
+      return 0;
+    }
+  }
+
+  void changeQuantity(String id, Food food, int quantity, int selectedPrice) {
     if (!isFoodExist(id)) {
-      addFoodToCart(id, food, 1);
+      addFoodToCart(id, food, 1, selectedPrice);
     } else {
       cart[id].quantity = quantity;
       if (quantity <= 0) {
@@ -41,7 +49,7 @@ class FoodCart {
   double getAmount() {
     double amount = 0;
     this.cart.forEach((i, item) {
-      amount = amount + item.food.getRealPrice() * item.quantity;
+      amount = amount + item.food.getRealPrice(item.selectedPrice) * item.quantity;
     });
 
     return amount;
@@ -56,6 +64,7 @@ class FoodCartItem {
   final String id;
   final Food food;
   int quantity;
+  final int selectedPrice;
 
-  FoodCartItem(this.id, this.food, this.quantity);
+  FoodCartItem(this.id, this.food, this.quantity, this.selectedPrice);
 }

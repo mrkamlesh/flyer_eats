@@ -84,10 +84,12 @@ class ChangeQuantityFoodCart extends FoodOrderEvent {
   final Food food;
   final int quantity;
 
-  const ChangeQuantityFoodCart(this.id, this.food, this.quantity);
+  final int selectedPrice;
+
+  const ChangeQuantityFoodCart(this.id, this.food, this.quantity, this.selectedPrice);
 
   @override
-  List<Object> get props => [id, food, quantity];
+  List<Object> get props => [id, food, quantity, selectedPrice];
 }
 
 class PlaceOrderEvent extends FoodOrderEvent {

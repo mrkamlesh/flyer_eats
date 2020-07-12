@@ -18,7 +18,7 @@ class FoodProvider {
   saveCart(String id, Food food, int quantity) {
     //save to shared preference
 
-    foodCart.changeQuantity(id, food, quantity);
+    //foodCart.changeQuantity(id, food, quantity);
   }
 
   Future<FoodCart> getSavedCart() async {

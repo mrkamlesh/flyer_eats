@@ -51,10 +51,12 @@ class ChangeQuantity extends DetailPageEvent {
   final Food food;
   final int quantity;
 
-  const ChangeQuantity(this.id, this.food, this.quantity);
+  final int selectedPrice;
+
+  const ChangeQuantity(this.id, this.food, this.quantity, this.selectedPrice);
 
   @override
-  List<Object> get props => [id, food, quantity];
+  List<Object> get props => [id, food, quantity, selectedPrice];
 }
 
 class UpdateCart extends DetailPageEvent {

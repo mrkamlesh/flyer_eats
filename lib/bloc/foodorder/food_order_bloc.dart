@@ -29,7 +29,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     } else if (event is ChangeContactPhone) {
       yield* mapChangeContactPhoneToState(event.isChangePrimaryContact, event.contact);
     } else if (event is ChangeQuantityFoodCart) {
-      yield* mapChangeQuantityFoodCartToState(event.id, event.food, event.quantity);
+      yield* mapChangeQuantityFoodCartToState(event.id, event.food, event.quantity, event.selectedPrice);
     } else if (event is ChangeInstruction) {
       yield* mapChangeInstructionToState(event.instruction);
     } else if (event is GetPaymentOptions) {
@@ -62,9 +62,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         placeOrder: state.placeOrder.copyWith(contact: contact, isChangePrimaryContact: isChangePrimaryContact));
   }
 
-  Stream<FoodOrderState> mapChangeQuantityFoodCartToState(String id, Food food, int quantity) async* {
+  Stream<FoodOrderState> mapChangeQuantityFoodCartToState(String id, Food food, int quantity, int selectedPrice) async* {
     FoodCart newCart = state.placeOrder.foodCart;
-    newCart.changeQuantity(id, food, quantity);
+    newCart.changeQuantity(id, food, quantity, selectedPrice);
 
     if (newCart.cart.length > 0) {
       yield FoodOrderState(placeOrder: state.placeOrder.copyWith(foodCart: newCart));

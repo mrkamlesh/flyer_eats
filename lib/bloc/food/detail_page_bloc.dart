@@ -23,7 +23,7 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
     } else if (event is SwitchVegOnly) {
       yield* mapSwitchVegOnlyToState(event.restaurantId, event.isVegOnly);
     } else if (event is ChangeQuantity) {
-      yield* mapChangeQuantityToState(event.id, event.food, event.quantity);
+      yield* mapChangeQuantityToState(event.id, event.food, event.quantity, event.selectedPrice);
     } else if (event is RestaurantMenuChange) {
       yield* mapRestaurantMenuChangeToState(event.restaurantId, event.menuId, event.menuSelected);
     } else if (event is UpdateCart) {
@@ -107,10 +107,10 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
 
   Stream<DetailPageState> mapSwitchCategoryToState(String id) async* {}
 
-  Stream<DetailPageState> mapChangeQuantityToState(String id, Food food, int quantity) async* {
+  Stream<DetailPageState> mapChangeQuantityToState(String id, Food food, int quantity, int selectedPrice) async* {
     //yield OnDataLoading();
     FoodCart cart = FoodCart(Map.from((state.foodCart).cart));
-    cart.changeQuantity(id, food, quantity);
+    cart.changeQuantity(id, food, quantity, selectedPrice);
 
     yield CartState(
         isVegOnly: state.isVegOnly,

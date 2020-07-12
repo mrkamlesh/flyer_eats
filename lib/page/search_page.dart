@@ -299,7 +299,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                     state.restaurants[i].searchFoodList[j].id,
                                     state.restaurants[i].searchFoodList[j],
                                     (state.foodCart.getQuantity(state.restaurants[i].searchFoodList[j].id) + 1),
-                                    state.restaurants[i]));
+                                    state.restaurants[i],
+                                    0));
                               } else {
                                 showDialog(
                                     context: context,
@@ -326,7 +327,9 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                                       (state.foodCart
                                                               .getQuantity(state.restaurants[i].searchFoodList[j].id) +
                                                           1),
-                                                      state.restaurants[i]));
+                                                      state.restaurants[i],
+                                                      state.foodCart.getSelectedPrice(
+                                                          state.restaurants[i].searchFoodList[j].id)));
                                               },
                                               child: Text("YES")),
                                           FlatButton(
@@ -347,7 +350,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                     state.restaurants[i].searchFoodList[j].id,
                                     state.restaurants[i].searchFoodList[j],
                                     (state.foodCart.getQuantity(state.restaurants[i].searchFoodList[j].id) - 1),
-                                    state.restaurants[i]));
+                                    state.restaurants[i],
+                                    state.foodCart.getSelectedPrice(state.restaurants[i].searchFoodList[j].id)));
                               }
                             },
                             padding: EdgeInsets.only(

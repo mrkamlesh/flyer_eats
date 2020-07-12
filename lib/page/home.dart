@@ -770,7 +770,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       if (state.currentOrder.isShowReview) {
                         _showReviewSheet(loginState.user.token, state.currentOrder.orderId);
                       }
-                      if (state.currentOrder.isShowScratch) {
+                      if (state.currentOrder.isShowScratch && state.currentOrder.scratchCard != null) {
                         _showScratchCard(loginState.user.token, state.currentOrder.scratchCard);
                       }
                     } else if (state is CancelledOrderState) {

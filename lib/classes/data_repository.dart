@@ -16,6 +16,7 @@ import 'package:flyereats/model/review.dart';
 import 'package:flyereats/model/scratch_card.dart';
 import 'package:flyereats/model/sort_by.dart';
 import 'package:flyereats/model/user.dart';
+import 'package:flyereats/model/user_profile.dart';
 import 'package:flyereats/model/voucher.dart';
 import 'package:flyereats/model/register_post.dart';
 import 'package:flyereats/model/wallet.dart';
@@ -193,6 +194,16 @@ class DataRepository {
   Future<dynamic> checkTokenValid(String token) async {
     final response = await _provider.checkTokenValid(token);
     if (response['details']['is_exist']) {
+      User user = User.fromJson(response['details']);
+      return user;
+    } else {
+      return response['msg'];
+    }
+  }
+
+  Future<dynamic> saveProfile(String token, Profile profile) async {
+    final response = await _provider.saveProfile(token, profile);
+    if (response['code'] == 1) {
       User user = User.fromJson(response['details']);
       return user;
     } else {

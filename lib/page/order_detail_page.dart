@@ -840,7 +840,7 @@ class FoodCartItemWidget extends StatelessWidget {
                     " ( " +
                     item.quantity.toString() +
                     " X \u20b9 " +
-                    AppUtil.doubleRemoveZeroTrailing(item.food.getRealPrice()) +
+                    AppUtil.doubleRemoveZeroTrailing(item.food.getRealPrice(0)) +
                     " )",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
@@ -848,7 +848,7 @@ class FoodCartItemWidget extends StatelessWidget {
             Expanded(
                 flex: 3,
                 child: Text(
-                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing((item.quantity * item.food.getRealPrice())),
+                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing((item.quantity * item.food.getRealPrice(0))),
                   textAlign: TextAlign.end,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ))

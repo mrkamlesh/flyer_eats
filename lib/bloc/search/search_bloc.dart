@@ -22,7 +22,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     } else if (event is LoadMore) {
       yield* mapLoadMoreToState(event.token, event.address);
     } else if (event is ChangeQuantity) {
-      yield* mapChangeQuantityToState(event.id, event.food, event.quantity, event.selectedRestaurant);
+      yield* mapChangeQuantityToState(event.id, event.food, event.quantity, event.selectedRestaurant, event.selectedPrice);
     } else if (event is ClearCart) {
       yield* mapClearCartToState();
     } else if (event is UpdateCart) {
@@ -81,10 +81,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   Stream<SearchState> mapChangeQuantityToState(
-      String id, Food food, int quantity, Restaurant selectedRestaurant) async* {
+      String id, Food food, int quantity, Restaurant selectedRestaurant, int selectedPrice) async* {
     //yield OnDataLoading();
     FoodCart cart = FoodCart(Map.from((state.foodCart).cart));
-    cart.changeQuantity(id, food, quantity);
+    cart.changeQuantity(id, food, quantity, selectedPrice);
 
     yield CartState(
         foodCart: cart,

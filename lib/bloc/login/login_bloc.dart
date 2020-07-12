@@ -21,6 +21,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield* mapInitLoginEventToState();
     } else if (event is LogOut) {
       yield* mapLogOutToState();
+    } else if (event is UpdateUserProfile) {
+      yield* mapUpdateUserProfileToState(event.user);
     }
   }
 
@@ -60,5 +62,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         yield LoggedOut();
       }
     } catch (e) {}
+  }
+
+  Stream<LoginState> mapUpdateUserProfileToState(User user) async* {
+    yield LoginState(
+        isValid: state.isValid, user: state.user.copyWith(phone: user.phone, name: user.name, avatar: user.avatar));
   }
 }

@@ -35,11 +35,12 @@ class ChangeQuantity extends SearchEvent {
   final Food food;
   final int quantity;
   final Restaurant selectedRestaurant;
+  final int selectedPrice;
 
-  const ChangeQuantity(this.id, this.food, this.quantity, this.selectedRestaurant);
+  const ChangeQuantity(this.id, this.food, this.quantity, this.selectedRestaurant, this.selectedPrice);
 
   @override
-  List<Object> get props => [id, food, quantity, selectedRestaurant];
+  List<Object> get props => [id, food, quantity, selectedRestaurant, selectedPrice];
 }
 
 class ClearCart extends SearchEvent {

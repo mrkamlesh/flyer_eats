@@ -1,6 +1,6 @@
-# flyereats
+# clients
 
-Flyer Eats Application
+Flyer Eats Clients
 
 ## Getting Started
 

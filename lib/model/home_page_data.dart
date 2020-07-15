@@ -1,7 +1,7 @@
-import 'package:flyereats/model/ads.dart';
-import 'package:flyereats/model/food_category.dart';
-import 'package:flyereats/model/banner.dart';
-import 'package:flyereats/model/restaurant.dart';
+import 'package:clients/model/ads.dart';
+import 'package:clients/model/food_category.dart';
+import 'package:clients/model/banner.dart';
+import 'package:clients/model/restaurant.dart';
 
 class HomePageData {
   final String location;

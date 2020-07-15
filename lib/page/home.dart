@@ -4,34 +4,34 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/currentorder/current_order_bloc.dart';
-import 'package:flyereats/bloc/currentorder/current_order_event.dart';
-import 'package:flyereats/bloc/currentorder/current_order_state.dart';
-import 'package:flyereats/bloc/location/location_bloc.dart';
-import 'package:flyereats/bloc/location/location_event.dart';
-import 'package:flyereats/bloc/location/location_state.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
+import 'package:clients/bloc/currentorder/current_order_bloc.dart';
+import 'package:clients/bloc/currentorder/current_order_event.dart';
+import 'package:clients/bloc/currentorder/current_order_state.dart';
+import 'package:clients/bloc/location/location_bloc.dart';
+import 'package:clients/bloc/location/location_event.dart';
+import 'package:clients/bloc/location/location_state.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
 import 'package:flutter/material.dart';
-import 'package:flyereats/model/home_page_data.dart';
-import 'package:flyereats/model/location.dart';
-import 'package:flyereats/model/scratch_card.dart';
-import 'package:flyereats/page/cancelled_order_page.dart';
-import 'package:flyereats/page/delivery_process_order_page.dart';
-import 'package:flyereats/page/restaurants_list_page.dart';
-import 'package:flyereats/page/search_page.dart';
-import 'package:flyereats/page/select_location_page.dart';
-import 'package:flyereats/page/track_order_page.dart';
-import 'package:flyereats/widget/app_bar.dart';
-import 'package:flyereats/widget/banner_list_widget.dart';
-import 'package:flyereats/widget/custom_bottom_navigation_bar.dart';
-import 'package:flyereats/widget/end_drawer.dart';
-import 'package:flyereats/widget/food_category_list.dart';
-import 'package:flyereats/widget/promo_list.dart';
-import 'package:flyereats/widget/restaurant_list.dart';
-import 'package:flyereats/widget/shop_category_list.dart';
-import 'package:flyereats/classes/example_model.dart';
+import 'package:clients/model/home_page_data.dart';
+import 'package:clients/model/location.dart';
+import 'package:clients/model/scratch_card.dart';
+import 'package:clients/page/cancelled_order_page.dart';
+import 'package:clients/page/delivery_process_order_page.dart';
+import 'package:clients/page/restaurants_list_page.dart';
+import 'package:clients/page/search_page.dart';
+import 'package:clients/page/select_location_page.dart';
+import 'package:clients/page/track_order_page.dart';
+import 'package:clients/widget/app_bar.dart';
+import 'package:clients/widget/banner_list_widget.dart';
+import 'package:clients/widget/custom_bottom_navigation_bar.dart';
+import 'package:clients/widget/end_drawer.dart';
+import 'package:clients/widget/food_category_list.dart';
+import 'package:clients/widget/promo_list.dart';
+import 'package:clients/widget/restaurant_list.dart';
+import 'package:clients/widget/shop_category_list.dart';
+import 'package:clients/classes/example_model.dart';
 import 'package:scratcher/scratcher.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
@@ -798,25 +798,33 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           height: 90,
                           width: AppUtil.getScreenWidth(context),
                           decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
-                          padding: EdgeInsets.only(top: 20, bottom: 20),
+                          padding: EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                "Connection Error",
-                                style: TextStyle(color: Colors.white),
+                              Expanded(
+                                flex: 7,
+                                child: Text(
+                                  "Connection Error getting active order",
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                               SizedBox(width: 20),
-                              GestureDetector(
-                                onTap: () {
-                                  BlocProvider.of<CurrentOrderBloc>(context).add(Retry(loginState.user.token));
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                                  decoration: BoxDecoration(color: primary3, borderRadius: BorderRadius.circular(10)),
-                                  child: Text(
-                                    "RETRY",
-                                    style: TextStyle(color: Colors.white, fontSize: 20),
+                              Expanded(
+                                flex: 3,
+                                child: InkWell(
+                                  onTap: () {
+                                    BlocProvider.of<CurrentOrderBloc>(context).add(Retry(loginState.user.token));
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(color: primary3, borderRadius: BorderRadius.circular(10)),
+                                    child: Center(
+                                      child: Text(
+                                        "RETRY",
+                                        style: TextStyle(color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),

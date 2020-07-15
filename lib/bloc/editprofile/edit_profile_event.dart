@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:flyereats/model/user_profile.dart';
+import 'package:clients/model/user_profile.dart';
 import 'package:meta/meta.dart';
 
 @immutable

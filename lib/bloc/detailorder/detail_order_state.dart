@@ -1,4 +1,4 @@
-import 'package:flyereats/model/detail_order.dart';
+import 'package:clients/model/detail_order.dart';
 
 class DetailOrderState {
   final double rating;

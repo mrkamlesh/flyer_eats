@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/location/bloc.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/location.dart';
-import 'package:flyereats/page/select_current_location_page.dart';
+import 'package:clients/bloc/location/bloc.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/location.dart';
+import 'package:clients/page/select_current_location_page.dart';
 
 class SelectLocationPage extends StatefulWidget {
   @override

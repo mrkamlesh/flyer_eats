@@ -1,5 +1,5 @@
-import 'package:flyereats/model/ads.dart';
-import 'package:flyereats/model/restaurant.dart';
+import 'package:clients/model/ads.dart';
+import 'package:clients/model/restaurant.dart';
 
 class CancelledOrderState {}
 

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/bloc/wallet/wallet_bloc.dart';
-import 'package:flyereats/bloc/wallet/wallet_event.dart';
-import 'package:flyereats/bloc/wallet/wallet_state.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/user.dart';
-import 'package:flyereats/model/wallet.dart';
-import 'package:flyereats/page/scratch_card_list_page.dart';
-import 'package:flyereats/widget/app_bar.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/bloc/wallet/wallet_bloc.dart';
+import 'package:clients/bloc/wallet/wallet_event.dart';
+import 'package:clients/bloc/wallet/wallet_state.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/user.dart';
+import 'package:clients/model/wallet.dart';
+import 'package:clients/page/scratch_card_list_page.dart';
+import 'package:clients/widget/app_bar.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class MyWalletPage extends StatefulWidget {

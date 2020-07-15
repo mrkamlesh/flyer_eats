@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flyereats/model/user.dart';
+import 'package:clients/model/user.dart';
 import 'package:meta/meta.dart';
 
 @immutable

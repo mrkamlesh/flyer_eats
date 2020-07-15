@@ -1,5 +1,5 @@
-import 'package:flyereats/bloc/address/address_provider.dart';
-import 'package:flyereats/model/address.dart';
+import 'package:clients/bloc/address/address_provider.dart';
+import 'package:clients/model/address.dart';
 
 class AddressRepository {
   AddressProvider provider = AddressProvider();

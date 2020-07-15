@@ -3,14 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/restaurantlist/restaurantlist_bloc.dart';
-import 'package:flyereats/bloc/restaurantlist/restaurantlist_state.dart';
-import 'package:flyereats/bloc/search/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/location.dart';
-import 'package:flyereats/model/restaurant.dart';
-import 'package:flyereats/page/restaurant_detail_page.dart';
+import 'package:clients/bloc/restaurantlist/restaurantlist_bloc.dart';
+import 'package:clients/bloc/restaurantlist/restaurantlist_state.dart';
+import 'package:clients/bloc/search/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/location.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/page/restaurant_detail_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 enum RestaurantViewType {

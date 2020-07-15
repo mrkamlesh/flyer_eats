@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:flyereats/model/address.dart';
-import 'package:flyereats/model/food_cart.dart';
-import 'package:flyereats/model/payment_method.dart';
-import 'package:flyereats/model/restaurant.dart';
-import 'package:flyereats/model/user.dart';
-import 'package:flyereats/model/voucher.dart';
+import 'package:clients/model/address.dart';
+import 'package:clients/model/food_cart.dart';
+import 'package:clients/model/payment_method.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/model/user.dart';
+import 'package:clients/model/voucher.dart';
 import 'package:intl/intl.dart';
 
 class PlaceOrder {

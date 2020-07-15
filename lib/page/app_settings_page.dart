@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/widget/app_bar.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/widget/app_bar.dart';
 
 class AppSettingsPage extends StatefulWidget {
   @override

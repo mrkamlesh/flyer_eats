@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:device_info/device_info.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/login_status.dart';
-import 'package:flyereats/model/register_post.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/login_status.dart';
+import 'package:clients/model/register_post.dart';
 import 'dart:io' show Platform;
 import './bloc.dart';
 

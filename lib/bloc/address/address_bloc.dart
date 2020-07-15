@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/bloc/address/address_repository.dart';
-import 'package:flyereats/bloc/address/bloc.dart';
-import 'package:flyereats/model/address.dart';
+import 'package:clients/bloc/address/address_repository.dart';
+import 'package:clients/bloc/address/bloc.dart';
+import 'package:clients/model/address.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 

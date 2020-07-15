@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/bloc/restaurantlist/restaurantlist_state.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/restaurant.dart';
-import 'package:flyereats/page/restaurants_list_page.dart';
+import 'package:clients/bloc/restaurantlist/restaurantlist_state.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/page/restaurants_list_page.dart';
 import './bloc.dart';
 
 class RestaurantListBloc extends Bloc<RestaurantListEvent, RestaurantListState> {

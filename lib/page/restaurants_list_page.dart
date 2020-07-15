@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/bloc/restaurantlist/restaurantlist_bloc.dart';
-import 'package:flyereats/bloc/restaurantlist/restaurantlist_event.dart';
-import 'package:flyereats/bloc/restaurantlist/restaurantlist_state.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/location.dart';
-import 'package:flyereats/widget/app_bar.dart';
-import 'package:flyereats/widget/custom_bottom_navigation_bar.dart';
-import 'package:flyereats/widget/end_drawer.dart';
-import 'package:flyereats/widget/restaurant_list.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/bloc/restaurantlist/restaurantlist_bloc.dart';
+import 'package:clients/bloc/restaurantlist/restaurantlist_event.dart';
+import 'package:clients/bloc/restaurantlist/restaurantlist_state.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/location.dart';
+import 'package:clients/widget/app_bar.dart';
+import 'package:clients/widget/custom_bottom_navigation_bar.dart';
+import 'package:clients/widget/end_drawer.dart';
+import 'package:clients/widget/restaurant_list.dart';
 
 class RestaurantListPage extends StatefulWidget {
   @required

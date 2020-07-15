@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/wallet.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/wallet.dart';
 import './bloc.dart';
 
 class WalletBloc extends Bloc<WalletEvent, WalletState> {

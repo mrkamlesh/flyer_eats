@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/page/account_page.dart';
-import 'package:flyereats/page/app_settings_page.dart';
-import 'package:flyereats/page/help_page.dart';
-import 'package:flyereats/page/my_wallet_page.dart';
-import 'package:flyereats/page/notifications_list_page.dart';
-import 'package:flyereats/page/order_history_page.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/page/account_page.dart';
+import 'package:clients/page/app_settings_page.dart';
+import 'package:clients/page/help_page.dart';
+import 'package:clients/page/my_wallet_page.dart';
+import 'package:clients/page/notifications_list_page.dart';
+import 'package:clients/page/order_history_page.dart';
 
 class EndDrawer extends StatelessWidget {
   final String image;

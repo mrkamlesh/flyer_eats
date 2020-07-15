@@ -1,5 +1,5 @@
-import 'package:flyereats/model/scratch_card.dart';
-import 'package:flyereats/model/status_order.dart';
+import 'package:clients/model/scratch_card.dart';
+import 'package:clients/model/status_order.dart';
 
 class CurrentOrder {
   final StatusOrder statusOrder;

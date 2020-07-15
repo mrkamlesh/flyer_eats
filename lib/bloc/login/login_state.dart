@@ -1,4 +1,4 @@
-import 'package:flyereats/model/user.dart';
+import 'package:clients/model/user.dart';
 
 class LoginState {
   final User user;

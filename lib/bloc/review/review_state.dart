@@ -1,4 +1,4 @@
-import 'package:flyereats/model/review.dart';
+import 'package:clients/model/review.dart';
 
 class ReviewState {
   ReviewState();

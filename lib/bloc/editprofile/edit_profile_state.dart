@@ -1,5 +1,5 @@
-import 'package:flyereats/model/user.dart';
-import 'package:flyereats/model/user_profile.dart';
+import 'package:clients/model/user.dart';
+import 'package:clients/model/user_profile.dart';
 
 class EditProfileState {
   final Profile profile;

@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/order.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/order.dart';
 import 'package:shimmer/shimmer.dart';
 
 class OrderHistoryWidget extends StatelessWidget {

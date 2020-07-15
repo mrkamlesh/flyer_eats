@@ -1,6 +1,6 @@
-import 'package:flyereats/bloc/food/food_provider.dart';
-import 'package:flyereats/model/food.dart';
-import 'package:flyereats/model/food_cart.dart';
+import 'package:clients/bloc/food/food_provider.dart';
+import 'package:clients/model/food.dart';
+import 'package:clients/model/food_cart.dart';
 
 class FoodRepository {
 

@@ -1,5 +1,5 @@
-import 'package:flyereats/model/menu_category.dart';
-import 'package:flyereats/model/price.dart';
+import 'package:clients/model/menu_category.dart';
+import 'package:clients/model/price.dart';
 
 class Food {
   final String id;

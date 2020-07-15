@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flyereats/classes/app_util.dart';
+import 'package:clients/classes/app_util.dart';
 
 class OrderBottomNavBar extends StatelessWidget {
   final amount;

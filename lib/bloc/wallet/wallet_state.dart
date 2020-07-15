@@ -1,4 +1,4 @@
-import 'package:flyereats/model/wallet.dart';
+import 'package:clients/model/wallet.dart';
 
 class WalletState {
   final double amount;

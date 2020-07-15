@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/currentorder/bloc.dart';
-import 'package:flyereats/bloc/placedordersuccess/placed_order_success_bloc.dart';
-import 'package:flyereats/bloc/placedordersuccess/placed_order_success_event.dart';
-import 'package:flyereats/bloc/placedordersuccess/placed_order_success_state.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/page/order_detail_page.dart';
-import 'package:flyereats/widget/promo_list.dart';
+import 'package:clients/bloc/currentorder/bloc.dart';
+import 'package:clients/bloc/placedordersuccess/placed_order_success_bloc.dart';
+import 'package:clients/bloc/placedordersuccess/placed_order_success_event.dart';
+import 'package:clients/bloc/placedordersuccess/placed_order_success_state.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/page/order_detail_page.dart';
+import 'package:clients/widget/promo_list.dart';
 
 class PlacedOrderSuccessPage extends StatefulWidget {
   final String placeOrderId;

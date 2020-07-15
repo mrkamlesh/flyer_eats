@@ -1,5 +1,5 @@
-import 'package:flyereats/model/food_cart.dart';
-import 'package:flyereats/model/restaurant.dart';
+import 'package:clients/model/food_cart.dart';
+import 'package:clients/model/restaurant.dart';
 
 class SearchState {
   final List<Restaurant> restaurants;

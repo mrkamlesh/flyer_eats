@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/bloc/scratchcardlist/scratch_card_list_bloc.dart';
-import 'package:flyereats/bloc/scratchcardlist/scratch_card_list_event.dart';
-import 'package:flyereats/bloc/scratchcardlist/scratch_card_list_state.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/scratch_card.dart';
-import 'package:flyereats/widget/app_bar.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/bloc/scratchcardlist/scratch_card_list_bloc.dart';
+import 'package:clients/bloc/scratchcardlist/scratch_card_list_event.dart';
+import 'package:clients/bloc/scratchcardlist/scratch_card_list_state.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/scratch_card.dart';
+import 'package:clients/widget/app_bar.dart';
 import 'package:scratcher/scratcher.dart';
 
 class ScratchCardPage extends StatefulWidget {

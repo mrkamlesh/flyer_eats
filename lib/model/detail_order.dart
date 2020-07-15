@@ -1,9 +1,9 @@
-import 'package:flyereats/model/food.dart';
-import 'package:flyereats/model/food_cart.dart';
-import 'package:flyereats/model/menu_category.dart';
-import 'package:flyereats/model/price.dart';
-import 'package:flyereats/model/restaurant.dart';
-import 'package:flyereats/model/status_order.dart';
+import 'package:clients/model/food.dart';
+import 'package:clients/model/food_cart.dart';
+import 'package:clients/model/menu_category.dart';
+import 'package:clients/model/price.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/model/status_order.dart';
 
 class DetailOrder {
   final String id;

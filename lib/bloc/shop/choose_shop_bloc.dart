@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/model/shop.dart';
+import 'package:clients/model/shop.dart';
 import './bloc.dart';
 
 class ChooseShopBloc extends Bloc<ChooseShopEvent, Shop> {

@@ -1,4 +1,4 @@
-import 'package:flyereats/model/address.dart';
+import 'package:clients/model/address.dart';
 
 class User {
   final String name;

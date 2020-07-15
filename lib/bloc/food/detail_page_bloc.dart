@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/food.dart';
-import 'package:flyereats/model/food_cart.dart';
-import 'package:flyereats/model/menu_category.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/food.dart';
+import 'package:clients/model/food_cart.dart';
+import 'package:clients/model/menu_category.dart';
 import 'bloc.dart';
 
 class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {

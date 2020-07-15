@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flyereats/bloc/currentorder/current_order_bloc.dart';
-import 'package:flyereats/bloc/currentorder/current_order_event.dart';
-import 'package:flyereats/bloc/location/bloc.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/page/home.dart';
+import 'package:clients/bloc/currentorder/current_order_bloc.dart';
+import 'package:clients/bloc/currentorder/current_order_event.dart';
+import 'package:clients/bloc/location/bloc.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/page/home.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpPage extends StatefulWidget {

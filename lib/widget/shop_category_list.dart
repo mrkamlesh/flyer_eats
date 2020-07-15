@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/shop_category.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/shop_category.dart';
 
 class ShopCategoryListWidget extends StatefulWidget {
   final List<ShopCategory> shopCategories;

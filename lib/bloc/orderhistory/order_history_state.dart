@@ -1,4 +1,4 @@
-import 'package:flyereats/model/order.dart';
+import 'package:clients/model/order.dart';
 
 class OrderHistoryState {
   OrderHistoryState();

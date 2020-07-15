@@ -4,12 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/coupon/bloc.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/restaurant.dart';
-import 'package:flyereats/widget/app_bar.dart';
+import 'package:clients/bloc/coupon/bloc.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/widget/app_bar.dart';
 
 class ApplyCouponPage extends StatefulWidget {
   final Restaurant restaurant;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/bloc/notifications/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/notification.dart';
-import 'package:flyereats/widget/app_bar.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/bloc/notifications/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/notification.dart';
+import 'package:clients/widget/app_bar.dart';
 
 class NotificationSListPage extends StatefulWidget {
   @override

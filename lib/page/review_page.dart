@@ -4,12 +4,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/bloc/review/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/restaurant.dart';
-import 'package:flyereats/model/review.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/bloc/review/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/model/review.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 

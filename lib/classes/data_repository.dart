@@ -1,26 +1,26 @@
-import 'package:flyereats/classes/data_provider.dart';
-import 'package:flyereats/model/ads.dart';
-import 'package:flyereats/model/current_order.dart';
-import 'package:flyereats/model/detail_order.dart';
-import 'package:flyereats/model/filter.dart';
-import 'package:flyereats/model/food.dart';
-import 'package:flyereats/model/home_page_data.dart';
-import 'package:flyereats/model/location.dart';
-import 'package:flyereats/model/login_status.dart';
-import 'package:flyereats/model/menu_category.dart';
-import 'package:flyereats/model/notification.dart';
-import 'package:flyereats/model/order.dart';
-import 'package:flyereats/model/place_order.dart';
-import 'package:flyereats/model/restaurant.dart';
-import 'package:flyereats/model/review.dart';
-import 'package:flyereats/model/scratch_card.dart';
-import 'package:flyereats/model/sort_by.dart';
-import 'package:flyereats/model/user.dart';
-import 'package:flyereats/model/user_profile.dart';
-import 'package:flyereats/model/voucher.dart';
-import 'package:flyereats/model/register_post.dart';
-import 'package:flyereats/model/wallet.dart';
-import 'package:flyereats/page/restaurants_list_page.dart';
+import 'package:clients/classes/data_provider.dart';
+import 'package:clients/model/ads.dart';
+import 'package:clients/model/current_order.dart';
+import 'package:clients/model/detail_order.dart';
+import 'package:clients/model/filter.dart';
+import 'package:clients/model/food.dart';
+import 'package:clients/model/home_page_data.dart';
+import 'package:clients/model/location.dart';
+import 'package:clients/model/login_status.dart';
+import 'package:clients/model/menu_category.dart';
+import 'package:clients/model/notification.dart';
+import 'package:clients/model/order.dart';
+import 'package:clients/model/place_order.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/model/review.dart';
+import 'package:clients/model/scratch_card.dart';
+import 'package:clients/model/sort_by.dart';
+import 'package:clients/model/user.dart';
+import 'package:clients/model/user_profile.dart';
+import 'package:clients/model/voucher.dart';
+import 'package:clients/model/register_post.dart';
+import 'package:clients/model/wallet.dart';
+import 'package:clients/page/restaurants_list_page.dart';
 
 class DataRepository {
   DataProvider _provider = DataProvider();
@@ -70,8 +70,8 @@ class DataRepository {
     }
   }
 
-  Future<dynamic> verifyOtp(String contactPhone, String otp) async {
-    final response = await _provider.verifyOtp(contactPhone, otp);
+  Future<dynamic> verifyOtp(String contactPhone, String otp, String firebaseToken, String platform) async {
+    final response = await _provider.verifyOtp(contactPhone, otp, firebaseToken, platform);
     if (response['code'] == 1) {
       User user = User.fromJson(response['details']);
       return user;
@@ -191,8 +191,8 @@ class DataRepository {
     }
   }
 
-  Future<dynamic> checkTokenValid(String token) async {
-    final response = await _provider.checkTokenValid(token);
+  Future<dynamic> checkTokenValid(String token, String firebaseToken, String platform) async {
+    final response = await _provider.checkTokenValid(token, firebaseToken, platform);
     if (response['details']['is_exist']) {
       User user = User.fromJson(response['details']);
       return user;

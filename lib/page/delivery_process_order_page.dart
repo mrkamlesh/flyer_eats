@@ -1,21 +1,21 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flyereats/bloc/delivery/delivery_order_event.dart';
-import 'package:flyereats/model/shop.dart';
-import 'package:flyereats/model/pickup.dart';
+import 'package:clients/bloc/delivery/delivery_order_event.dart';
+import 'package:clients/model/shop.dart';
+import 'package:clients/model/pickup.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/delivery/delivery_order_bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/page/delivery_pickup_location.dart';
-import 'package:flyereats/widget/app_bar.dart';
-import 'package:flyereats/widget/end_drawer.dart';
-import 'package:flyereats/widget/place_order_bottom_navbar.dart';
+import 'package:clients/bloc/delivery/delivery_order_bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/page/delivery_pickup_location.dart';
+import 'package:clients/widget/app_bar.dart';
+import 'package:clients/widget/end_drawer.dart';
+import 'package:clients/widget/place_order_bottom_navbar.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flyereats/page/delivery_place_order_page.dart';
+import 'package:clients/page/delivery_place_order_page.dart';
 
 class DeliveryProcessOrderPage extends StatefulWidget {
   @override

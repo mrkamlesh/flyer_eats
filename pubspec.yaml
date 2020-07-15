@@ -1,5 +1,9 @@
-name: flyereats
-description: Flyer Eats Application
+name: clients
+description: Flyer Eats Clients
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -55,6 +59,7 @@ dependencies:
   scratcher: 1.3.0
   modal_bottom_sheet: ^0.2.0
   mask_text_input_formatter: ^1.0.7
+  firebase_messaging: ^6.0.9
 
 dev_dependencies:
   flutter_test:
@@ -71,7 +76,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
- # To add assets to your application, add an assets section, like this:
+  # To add assets to your application, add an assets section, like this:
   assets:
     - assets/banner1.jpg
     - assets/banner2.png

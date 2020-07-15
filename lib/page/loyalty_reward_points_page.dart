@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/example_model.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/widget/app_bar.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/example_model.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/widget/app_bar.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LoyaltyRewardPointsPage extends StatefulWidget {

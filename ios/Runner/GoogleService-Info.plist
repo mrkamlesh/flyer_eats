@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1032844025192-kjmge6kdhu4b3oc3caqh4iivoroub0q5.apps.googleusercontent.com</string>
+	<string>193643736903-l4cd5l7af8npu7n7a3977ps8pq37u9oc.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1032844025192-kjmge6kdhu4b3oc3caqh4iivoroub0q5</string>
+	<string>com.googleusercontent.apps.193643736903-l4cd5l7af8npu7n7a3977ps8pq37u9oc</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>1032844025192-i0odqmu8gdjr8ihpli2jcfce7191umoi.apps.googleusercontent.com</string>
+	<string>193643736903-ef4jc93ohjn70k2fs6vn0hohj1utogs5.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDFNUn83gF2eLs7jFd4GjT1gOMmsgfVapU</string>
+	<string>AIzaSyAkRQ_pgPB-xF0xTcN4ngwe--t38RelSS4</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1032844025192</string>
+	<string>193643736903</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.flyereats</string>
+	<string>in.flyereats.clients</string>
 	<key>PROJECT_ID</key>
-	<string>flyer-eats</string>
+	<string>flyer-209706</string>
 	<key>STORAGE_BUCKET</key>
-	<string>flyer-eats.appspot.com</string>
+	<string>flyer-209706.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1032844025192:ios:e12c0f7aa928adc6544add</string>
+	<string>1:193643736903:ios:cfc6321caf84ea20</string>
 	<key>DATABASE_URL</key>
-	<string>https://flyer-eats.firebaseio.com</string>
+	<string>https://flyer-209706.firebaseio.com</string>
 </dict>
 </plist>

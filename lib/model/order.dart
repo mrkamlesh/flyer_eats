@@ -1,4 +1,4 @@
-import 'package:flyereats/model/restaurant.dart';
+import 'package:clients/model/restaurant.dart';
 
 class Order {
   final String id;

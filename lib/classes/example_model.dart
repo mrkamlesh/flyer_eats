@@ -1,9 +1,9 @@
-import 'package:flyereats/model/food.dart';
-import 'package:flyereats/model/food_category.dart';
-import 'package:flyereats/model/banner.dart';
-import 'package:flyereats/model/shop_category.dart';
-import 'package:flyereats/model/address.dart';
-import 'package:flyereats/model/location.dart';
+import 'package:clients/model/food.dart';
+import 'package:clients/model/food_category.dart';
+import 'package:clients/model/banner.dart';
+import 'package:clients/model/shop_category.dart';
+import 'package:clients/model/address.dart';
+import 'package:clients/model/location.dart';
 
 class ExampleModel {
   static List<BannerItem> getPromos() {

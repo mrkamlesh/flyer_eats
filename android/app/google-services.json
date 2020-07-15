@@ -1,43 +1,186 @@
 {
   "project_info": {
-    "project_number": "1032844025192",
-    "firebase_url": "https://flyer-eats.firebaseio.com",
-    "project_id": "flyer-eats",
-    "storage_bucket": "flyer-eats.appspot.com"
+    "project_number": "193643736903",
+    "firebase_url": "https://flyer-209706.firebaseio.com",
+    "project_id": "flyer-209706",
+    "storage_bucket": "flyer-209706.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1032844025192:android:c375dad25812d423544add",
+        "mobilesdk_app_id": "1:193643736903:android:cfc6321caf84ea20",
         "android_client_info": {
-          "package_name": "com.example.flyereats"
+          "package_name": "in.flyereats.clients"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1032844025192-i0odqmu8gdjr8ihpli2jcfce7191umoi.apps.googleusercontent.com",
+          "client_id": "193643736903-ef4jc93ohjn70k2fs6vn0hohj1utogs5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.flyereats",
+            "package_name": "in.flyereats.clients",
             "certificate_hash": "30785b06280e7b8b2adaa3d34574b3195e1525d1"
           }
         },
         {
-          "client_id": "1032844025192-3h8f1uknlt2eqk0925pjopr7sd7r2mjc.apps.googleusercontent.com",
+          "client_id": "193643736903-j7mgqmglglnaungbc4d057up3nhd51m1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.flyereats.clients",
+            "certificate_hash": "49614825949ca653eb16b98a064af9d337be37dc"
+          }
+        },
+        {
+          "client_id": "193643736903-q9rmf6i45lqe5gdobui31jstf31jdnfs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.flyereats.clients",
+            "certificate_hash": "4ff88f7c32df2b391b6169e687974d626796659b"
+          }
+        },
+        {
+          "client_id": "193643736903-ijb00d7ll6n587jb3r2qg7ro99re03m6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.flyereats.clients",
+            "certificate_hash": "17b994c1ecf109e7539729f969a792a20dcd1ea4"
+          }
+        },
+        {
+          "client_id": "193643736903-7jsnetn0tu3iq39o9vbfm19pcgjprjo7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.flyereats.clients",
+            "certificate_hash": "e6a2fbee1b93f906fb01b66a7bf650c635c03814"
+          }
+        },
+        {
+          "client_id": "193643736903-fed95gq0o4p54vgk75hc9rv6tp7i6dqb.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB9CAEU9QgAbMWpVivOxOwAbHQp6FNWEno"
+          "current_key": "AIzaSyAEpSpPFycvWz1ZTwUuAE_AlYZhra9bKjg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1032844025192-3h8f1uknlt2eqk0925pjopr7sd7r2mjc.apps.googleusercontent.com",
+              "client_id": "193643736903-fed95gq0o4p54vgk75hc9rv6tp7i6dqb.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "193643736903-l4cd5l7af8npu7n7a3977ps8pq37u9oc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "in.flyereats.clients"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193643736903:android:74f5d6934ed9af13",
+        "android_client_info": {
+          "package_name": "in.flyereats.drivers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "193643736903-d46k1ns5r19248m6jvp4g4o63ucav54a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.flyereats.drivers",
+            "certificate_hash": "b8b0c9b50ac53ece341c46a5bee67139bb011ca4"
+          }
+        },
+        {
+          "client_id": "193643736903-447fsilaf4rodjurd3rjgbbgv3rgtard.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.flyereats.drivers",
+            "certificate_hash": "4f1d6a972d01bf846e6b9ed555c787eebeccd9b6"
+          }
+        },
+        {
+          "client_id": "193643736903-fed95gq0o4p54vgk75hc9rv6tp7i6dqb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEpSpPFycvWz1ZTwUuAE_AlYZhra9bKjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "193643736903-fed95gq0o4p54vgk75hc9rv6tp7i6dqb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "193643736903-l4cd5l7af8npu7n7a3977ps8pq37u9oc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "in.flyereats.clients"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193643736903:android:6c1a4366e72e588e",
+        "android_client_info": {
+          "package_name": "in.flyereats.merchants"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "193643736903-gprgaqdrpbvuttc9e15lqe29952dq5r7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.flyereats.merchants",
+            "certificate_hash": "a29688d0d3c18a3bb8eaa62811eee3a302730768"
+          }
+        },
+        {
+          "client_id": "193643736903-1r5iae2lk4pqbttpkabd5j4t7s7bocto.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.flyereats.merchants",
+            "certificate_hash": "446fae7826648d9e340f847206142dab76972518"
+          }
+        },
+        {
+          "client_id": "193643736903-fed95gq0o4p54vgk75hc9rv6tp7i6dqb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEpSpPFycvWz1ZTwUuAE_AlYZhra9bKjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "193643736903-fed95gq0o4p54vgk75hc9rv6tp7i6dqb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "193643736903-l4cd5l7af8npu7n7a3977ps8pq37u9oc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "in.flyereats.clients"
+              }
             }
           ]
         }

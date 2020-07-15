@@ -1,4 +1,4 @@
-import 'package:flyereats/model/ads.dart';
+import 'package:clients/model/ads.dart';
 
 class PlacedOrderSuccessState {}
 

@@ -4,11 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/location/bloc.dart';
-import 'package:flyereats/bloc/location/location_bloc.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
+import 'package:clients/bloc/location/bloc.dart';
+import 'package:clients/bloc/location/location_bloc.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SelectCurrentLocationPage extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:flyereats/model/scratch_card.dart';
+import 'package:clients/model/scratch_card.dart';
 
 class ScratchCardListState {
   final double scratchAmountTotal;

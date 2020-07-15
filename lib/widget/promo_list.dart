@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/ads.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/ads.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PromoListWidget extends StatefulWidget {

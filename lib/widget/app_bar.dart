@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/classes/app_util.dart';
+import 'package:clients/classes/app_util.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String leading;

@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flyereats/bloc/address/address_bloc.dart';
-import 'package:flyereats/bloc/address/address_event.dart';
-import 'package:flyereats/bloc/address/address_repository.dart';
-import 'package:flyereats/bloc/address/address_state.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/address.dart';
+import 'package:clients/bloc/address/address_bloc.dart';
+import 'package:clients/bloc/address/address_event.dart';
+import 'package:clients/bloc/address/address_repository.dart';
+import 'package:clients/bloc/address/address_state.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/address.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AddressPage extends StatefulWidget {

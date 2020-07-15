@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/model/banner.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/model/banner.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BannerListWidget extends StatefulWidget {

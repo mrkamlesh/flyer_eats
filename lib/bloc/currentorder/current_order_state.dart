@@ -1,4 +1,4 @@
-import 'package:flyereats/model/current_order.dart';
+import 'package:clients/model/current_order.dart';
 import 'package:meta/meta.dart';
 
 @immutable

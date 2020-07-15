@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flyereats/model/shop.dart';
+import 'package:clients/model/shop.dart';
 
 class PickUp {
   final Shop shop;

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:flyereats/model/food.dart';
-import 'package:flyereats/model/food_cart.dart';
+import 'package:clients/model/food.dart';
+import 'package:clients/model/food_cart.dart';
 import 'package:meta/meta.dart';
 
 @immutable

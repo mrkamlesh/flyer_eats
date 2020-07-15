@@ -1,6 +1,6 @@
-import 'package:flyereats/model/food.dart';
-import 'package:flyereats/model/food_cart.dart';
-import 'package:flyereats/model/menu_category.dart';
+import 'package:clients/model/food.dart';
+import 'package:clients/model/food_cart.dart';
+import 'package:clients/model/menu_category.dart';
 
 class DetailPageState {
   final FoodCart foodCart;

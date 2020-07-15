@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/login_status.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/login_status.dart';
 import './bloc.dart';
 
 class LoginPhoneBloc extends Bloc<LoginPhoneEvent, LoginPhoneState> {

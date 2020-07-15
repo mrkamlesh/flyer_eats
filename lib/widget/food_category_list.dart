@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/food_category.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/food_category.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FoodCategoryListWidget extends StatefulWidget {

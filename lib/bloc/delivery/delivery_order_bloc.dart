@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/model/shop.dart';
-import 'package:flyereats/model/pickup.dart';
+import 'package:clients/model/shop.dart';
+import 'package:clients/model/pickup.dart';
 import './bloc.dart';
 
 class DeliveryOrderBloc extends Bloc<DeliveryOrderEvent, PickUp> {

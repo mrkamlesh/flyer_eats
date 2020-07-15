@@ -1,6 +1,6 @@
-import 'package:flyereats/model/login_status.dart';
+import 'package:clients/model/login_status.dart';
 import 'package:meta/meta.dart';
-import 'package:flyereats/model/register_post.dart';
+import 'package:clients/model/register_post.dart';
 
 @immutable
 class RegisterState {

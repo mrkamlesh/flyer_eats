@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/detail_order.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/detail_order.dart';
 import './bloc.dart';
 
 class DetailOrderBloc extends Bloc<DetailOrderEvent, DetailOrderState> {

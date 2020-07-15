@@ -1,4 +1,4 @@
-import 'package:flyereats/model/food.dart';
+import 'package:clients/model/food.dart';
 
 class FoodCart {
   final Map<String, FoodCartItem> cart;

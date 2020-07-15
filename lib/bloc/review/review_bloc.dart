@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/review.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/review.dart';
 import './bloc.dart';
 
 class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {

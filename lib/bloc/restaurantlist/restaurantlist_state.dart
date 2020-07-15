@@ -1,6 +1,6 @@
-import 'package:flyereats/model/filter.dart';
-import 'package:flyereats/model/restaurant.dart';
-import 'package:flyereats/model/sort_by.dart';
+import 'package:clients/model/filter.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/model/sort_by.dart';
 
 class RestaurantListState {
   final List<Restaurant> restaurants;

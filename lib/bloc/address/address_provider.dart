@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flyereats/classes/app_exceptions.dart';
-import 'package:flyereats/model/address.dart';
+import 'package:clients/classes/app_exceptions.dart';
+import 'package:clients/model/address.dart';
 
 class AddressProvider {
   /*String baseUrl = "http://flyereats.in/";*/

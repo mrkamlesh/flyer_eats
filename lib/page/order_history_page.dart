@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flyereats/bloc/login/bloc.dart';
-import 'package:flyereats/bloc/orderhistory/bloc.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/page/order_detail_page.dart';
-import 'package:flyereats/widget/app_bar.dart';
-import 'package:flyereats/widget/order_history_widget.dart';
+import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/bloc/orderhistory/bloc.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/page/order_detail_page.dart';
+import 'package:clients/widget/app_bar.dart';
+import 'package:clients/widget/order_history_widget.dart';
 
 class OrderHistoryPage extends StatefulWidget {
   @override

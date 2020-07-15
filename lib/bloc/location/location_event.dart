@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flyereats/model/location.dart';
+import 'package:clients/model/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 

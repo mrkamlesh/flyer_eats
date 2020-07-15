@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/current_order.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/current_order.dart';
 import './bloc.dart';
 
 class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
@@ -93,17 +93,33 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
   }
 
   Stream<CurrentOrderState> mapAddReviewToState(String token, String orderId) async* {
-    yield LoadingAddReview(currentOrder: state.currentOrder);
+    yield LoadingAddReview(
+        currentOrder: state.currentOrder,
+        comment: state.comment,
+        hasGivenStar: state.hasGivenStar,
+        rating: state.rating);
 
     try {
       bool isAdded = await repository.addReview(token, orderId, state.comment, state.rating);
       if (isAdded) {
-        yield SuccessAddReview(currentOrder: state.currentOrder);
+        yield SuccessAddReview(
+            currentOrder: state.currentOrder,
+            comment: state.comment,
+            hasGivenStar: state.hasGivenStar,
+            rating: state.rating);
       } else {
-        yield ErrorAddReview("Can not add review", currentOrder: state.currentOrder);
+        yield ErrorAddReview("Can not add review",
+            currentOrder: state.currentOrder,
+            comment: state.comment,
+            hasGivenStar: state.hasGivenStar,
+            rating: state.rating);
       }
     } catch (e) {
-      yield ErrorAddReview(e.toString(), currentOrder: state.currentOrder);
+      yield ErrorAddReview(e.toString(),
+          currentOrder: state.currentOrder,
+          comment: state.comment,
+          hasGivenStar: state.hasGivenStar,
+          rating: state.rating);
     }
   }
 

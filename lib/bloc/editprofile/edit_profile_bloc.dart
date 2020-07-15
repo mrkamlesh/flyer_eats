@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/user.dart';
-import 'package:flyereats/model/user_profile.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/user.dart';
+import 'package:clients/model/user_profile.dart';
 import './bloc.dart';
 
 class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {

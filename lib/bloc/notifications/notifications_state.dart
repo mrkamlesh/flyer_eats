@@ -1,4 +1,4 @@
-import 'package:flyereats/model/notification.dart';
+import 'package:clients/model/notification.dart';
 
 class NotificationsState {
   final List<NotificationItem> listNotification;

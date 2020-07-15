@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flyereats/bloc/search/search_event.dart';
-import 'package:flyereats/classes/data_repository.dart';
-import 'package:flyereats/model/food.dart';
-import 'package:flyereats/model/food_cart.dart';
-import 'package:flyereats/model/restaurant.dart';
+import 'package:clients/bloc/search/search_event.dart';
+import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/food.dart';
+import 'package:clients/model/food_cart.dart';
+import 'package:clients/model/restaurant.dart';
 import './bloc.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {

@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flyereats/classes/app_exceptions.dart';
-import 'package:flyereats/model/place_order.dart';
-import 'package:flyereats/model/user_profile.dart';
-import 'package:flyereats/page/restaurants_list_page.dart';
+import 'package:clients/classes/app_exceptions.dart';
+import 'package:clients/model/place_order.dart';
+import 'package:clients/model/user_profile.dart';
+import 'package:clients/page/restaurants_list_page.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flyereats/model/register_post.dart';
+import 'package:clients/model/register_post.dart';
 
 class DataProvider {
   static String emailKey = "EMAIL";
@@ -131,12 +131,14 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> verifyOtp(String contactPhone, String otp) async {
+  Future<dynamic> verifyOtp(String contactPhone, String otp, String firebaseToken, String platform) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/verifyOtp?json=true&api_key=flyereats";
 
     var formData = {
       "contact_phone": contactPhone,
       "code": otp,
+      "device_id": firebaseToken,
+      "device_platform": platform
     };
 
     var responseJson;
@@ -466,12 +468,10 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> checkTokenValid(String token) async {
+  Future<dynamic> checkTokenValid(String token, String firebaseToken, String platform) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/check?json=true&api_key=flyereats";
 
-    var formData = {
-      "client_token": token,
-    };
+    var formData = {"client_token": token, "device_id": firebaseToken, "device_platform": platform};
 
     var responseJson;
     try {
@@ -497,7 +497,7 @@ class DataProvider {
       "password": profile.password != null && profile.password != "" ? profile.password : "",
     };
 
-    if (profile.avatar != null){
+    if (profile.avatar != null) {
       formData['file'] = await MultipartFile.fromFile(profile.avatar.path);
     } else {
       formData['file'] = "";

@@ -1,4 +1,4 @@
-import 'package:flyereats/model/voucher.dart';
+import 'package:clients/model/voucher.dart';
 
 class CouponState {
   final String couponTyped;

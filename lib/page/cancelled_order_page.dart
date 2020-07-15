@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flyereats/bloc/cancelledorder/cancelled_order_bloc.dart';
-import 'package:flyereats/bloc/cancelledorder/cancelled_order_event.dart';
-import 'package:flyereats/bloc/cancelledorder/cancelled_order_state.dart';
-import 'package:flyereats/classes/app_util.dart';
-import 'package:flyereats/classes/style.dart';
-import 'package:flyereats/model/location.dart';
-import 'package:flyereats/page/restaurants_list_page.dart';
-import 'package:flyereats/widget/promo_list.dart';
-import 'package:flyereats/widget/restaurant_list.dart';
+import 'package:clients/bloc/cancelledorder/cancelled_order_bloc.dart';
+import 'package:clients/bloc/cancelledorder/cancelled_order_event.dart';
+import 'package:clients/bloc/cancelledorder/cancelled_order_state.dart';
+import 'package:clients/classes/app_util.dart';
+import 'package:clients/classes/style.dart';
+import 'package:clients/model/location.dart';
+import 'package:clients/page/restaurants_list_page.dart';
+import 'package:clients/widget/promo_list.dart';
+import 'package:clients/widget/restaurant_list.dart';
 
 class CancelledOrderPage extends StatefulWidget {
   final String orderId;

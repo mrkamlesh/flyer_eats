@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/page/offers_list_page.dart';
+import 'package:clients/page/order_history_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,10 +62,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
     _navBarAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
         .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
-    _orderInformationAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _orderInformationAnimation =
+        Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
   }
 
   @override
@@ -127,20 +127,29 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
                         BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
                       ],
-                      onItemSelected: (index) {
-                        setState(() {
-                          _currentIndex = index;
-                          if (index == 2) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return SearchPage(
-                                address: _homePageData.location,
-                                token: loginState.user.token,
-                              );
-                            }));
-                          } else if (index == 3) {
-                            Navigator.pushNamed(context, "/orderHistory");
-                          }
-                        });
+                      onItemSelected: (index) async {
+                        _currentIndex = index;
+                        if (index == 1) {
+                          await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                            return OfferListPage(
+                              address: _homePageData.location,
+                            );
+                          }));
+                          _currentIndex = 0;
+                        } else if (index == 2) {
+                          await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                            return SearchPage(
+                              address: _homePageData.location,
+                              token: loginState.user.token,
+                            );
+                          }));
+                          _currentIndex = 0;
+                        } else if (index == 3) {
+                          await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                            return OrderHistoryPage();
+                          }));
+                          _currentIndex = 0;
+                        }
                       },
                       selectedIndex: _currentIndex,
                       selectedColor: Colors.orange[700],

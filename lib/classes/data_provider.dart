@@ -131,14 +131,16 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> verifyOtp(String contactPhone, String otp, String firebaseToken, String platform) async {
+  Future<dynamic> verifyOtp(
+      String contactPhone, String otp, String firebaseToken, String platform, String version) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/verifyOtp?json=true&api_key=flyereats";
 
     var formData = {
       "contact_phone": contactPhone,
       "code": otp,
       "device_id": firebaseToken,
-      "device_platform": platform
+      "device_platform": platform,
+      "app_version": version
     };
 
     var responseJson;
@@ -468,10 +470,15 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> checkTokenValid(String token, String firebaseToken, String platform) async {
+  Future<dynamic> checkTokenValid(String token, String firebaseToken, String platform, String version) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/check?json=true&api_key=flyereats";
 
-    var formData = {"client_token": token, "device_id": firebaseToken, "device_platform": platform};
+    var formData = {
+      "client_token": token,
+      "device_id": firebaseToken,
+      "device_platform": platform,
+      "app_version": version
+    };
 
     var responseJson;
     try {
@@ -646,6 +653,28 @@ class DataProvider {
     var responseJson;
     try {
       final response = await Dio().get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getOfferList(String token, String address, String type) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/getOffers?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "address": address,
+      "type": type, //type: {bank, admin, merchant}
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');

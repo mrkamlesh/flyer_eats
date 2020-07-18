@@ -6,6 +6,7 @@ import 'package:clients/bloc/login/login_state.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/classes/push_notification_manager.dart';
 import 'package:clients/model/user.dart';
+import 'package:package_info/package_info.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   DataRepository _repository = DataRepository();
@@ -31,18 +32,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> mapVerifyOtpToState(String contactPhone, String otpCode) async* {
     yield Loading(user: state.user, isValid: state.isValid);
     try {
+      String firebaseToken = await PushNotificationsManager().getToken();
+      String version = await _getVersion();
 
-      PushNotificationsManager manager = PushNotificationsManager()..init();
-      String firebaseToken = await manager.getToken();
-
-      String platform = "";
-      if (Platform.isAndroid) {
-        platform = "Android";
-      } else if (Platform.isIOS) {
-        platform = "Ios";
-      }
-
-      var result = await _repository.verifyOtp(contactPhone, otpCode, firebaseToken, platform);
+      var result = await _repository.verifyOtp(contactPhone, otpCode, firebaseToken, _getPlatform(), version);
       if (result is User) {
         _repository.saveToken(result.token);
         yield Success(user: result, isValid: true);
@@ -58,17 +51,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       String token = await _repository.getSavedToken();
       if (token != null) {
-        PushNotificationsManager manager = PushNotificationsManager()..init();
-        String firebaseToken = await manager.getToken();
+        String firebaseToken = await PushNotificationsManager().getToken();
+        String version = await _getVersion();
 
-        String platform = "";
-        if (Platform.isAndroid) {
-          platform = "Android";
-        } else if (Platform.isIOS) {
-          platform = "Ios";
-        }
-
-        User user = await _repository.checkTokenValid(token, firebaseToken, platform);
+        User user = await _repository.checkTokenValid(token, firebaseToken, _getPlatform(), version);
 
         yield LoggedIn(user: user, isValid: state.isValid);
       } else {
@@ -91,5 +77,19 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> mapUpdateUserProfileToState(User user) async* {
     yield LoginState(
         isValid: state.isValid, user: state.user.copyWith(phone: user.phone, name: user.name, avatar: user.avatar));
+  }
+
+  String _getPlatform() {
+    if (Platform.isAndroid) {
+      return "Android";
+    } else if (Platform.isIOS) {
+      return "Ios";
+    }
+    return "";
+  }
+
+  Future<String> _getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
   }
 }

@@ -1,4 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/page/offers_list_page.dart';
+import 'package:clients/page/order_history_page.dart';
+import 'package:clients/page/search_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -115,10 +118,29 @@ class _RestaurantListPageState extends State<RestaurantListPage> with SingleTick
                       BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
                       BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
                     ],
-                    onItemSelected: (index) {
-                      setState(() {
-                        _currentIndex = index;
-                      });
+                    onItemSelected: (index) async {
+                      _currentIndex = index;
+                      if (index == 1) {
+                        await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                          return OfferListPage(
+                            address: widget.location.address,
+                          );
+                        }));
+                        _currentIndex = 0;
+                      } else if (index == 2) {
+                        await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                          return SearchPage(
+                            address: widget.location.address,
+                            token: loginState.user.token,
+                          );
+                        }));
+                        _currentIndex = 0;
+                      } else if (index == 3) {
+                        await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                          return OrderHistoryPage();
+                        }));
+                        _currentIndex = 0;
+                      }
                     },
                     selectedIndex: _currentIndex,
                     selectedColor: Colors.orange[700],

@@ -1,7 +1,9 @@
 import 'package:clients/classes/data_provider.dart';
 import 'package:clients/model/ads.dart';
+import 'package:clients/model/bank.dart';
 import 'package:clients/model/current_order.dart';
 import 'package:clients/model/detail_order.dart';
+import 'package:clients/model/fe_offer.dart';
 import 'package:clients/model/filter.dart';
 import 'package:clients/model/food.dart';
 import 'package:clients/model/home_page_data.dart';
@@ -70,8 +72,9 @@ class DataRepository {
     }
   }
 
-  Future<dynamic> verifyOtp(String contactPhone, String otp, String firebaseToken, String platform) async {
-    final response = await _provider.verifyOtp(contactPhone, otp, firebaseToken, platform);
+  Future<dynamic> verifyOtp(
+      String contactPhone, String otp, String firebaseToken, String platform, String version) async {
+    final response = await _provider.verifyOtp(contactPhone, otp, firebaseToken, platform, version);
     if (response['code'] == 1) {
       User user = User.fromJson(response['details']);
       return user;
@@ -191,8 +194,8 @@ class DataRepository {
     }
   }
 
-  Future<dynamic> checkTokenValid(String token, String firebaseToken, String platform) async {
-    final response = await _provider.checkTokenValid(token, firebaseToken, platform);
+  Future<dynamic> checkTokenValid(String token, String firebaseToken, String platform, String version) async {
+    final response = await _provider.checkTokenValid(token, firebaseToken, platform, version);
     if (response['details']['is_exist']) {
       User user = User.fromJson(response['details']);
       return user;
@@ -217,6 +220,45 @@ class DataRepository {
       return true;
     } else {
       return false;
+    }
+  }
+
+  Future<List<FEOffer>> getFEOfferList(String token, String address) async {
+    final response = await _provider.getOfferList(token, address, "admin");
+    if (response['code'] == 1) {
+      var listResponse = response['details'] as List;
+      List<FEOffer> list = listResponse.map((i) {
+        return FEOffer.fromJson(i);
+      }).toList();
+      return list;
+    } else {
+      throw Exception(response['msg']);
+    }
+  }
+
+  Future<List<Restaurant>> getMerchantOfferList(String token, String address) async {
+    final response = await _provider.getOfferList(token, address, "merchant");
+    if (response['code'] == 1) {
+      var listResponse = response['details'] as List;
+      List<Restaurant> list = listResponse.map((i) {
+        return Restaurant.fromJson(i['merchantInfo']);
+      }).toList();
+      return list;
+    } else {
+      throw Exception(response['msg']);
+    }
+  }
+
+  Future<List<Bank>> getBankOfferList(String token, String address) async {
+    final response = await _provider.getOfferList(token, address, "bank");
+    if (response['code'] == 1) {
+      var listResponse = response['details'] as List;
+      List<Bank> list = listResponse.map((i) {
+        return Bank.fromJson(i);
+      }).toList();
+      return list;
+    } else {
+      throw Exception(response['msg']);
     }
   }
 

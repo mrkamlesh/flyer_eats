@@ -19,7 +19,8 @@ enum RestaurantViewType {
   dinnerTimeRestaurant,
   detailList,
   detailGrid,
-  searchResult
+  searchResult,
+  offerpage
 }
 
 class RestaurantListWidget extends StatefulWidget {
@@ -322,6 +323,35 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget> with Single
               ),
             );
           },
+        );
+      case RestaurantViewType.offerpage:
+        return SliverPadding(
+          padding: EdgeInsets.only(
+              top: distanceSectionContent - 10, bottom: distanceSectionContent + kBottomNavigationBarHeight),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate((context, i) {
+              return RestaurantDetailListWidget(
+                restaurant: widget.restaurants[i],
+                index: i,
+                selectedIndex: _selectedTopRestaurant,
+                onTap: () {
+                  setState(() {
+                    _selectedTopRestaurant = i;
+                    if (widget.restaurants[i].isOpen) {
+                      _animationController.forward().orCancel.whenComplete(() {
+                        _animationController.reverse().orCancel.whenComplete(() {
+                          _navigateToRestaurantDetailPage(widget.restaurants[i]);
+                        });
+                      });
+                    } else {
+                      _showAlertDialog();
+                    }
+                  });
+                },
+                scale: _scaleAnimation,
+              );
+            }, childCount: widget.restaurants.length),
+          ),
         );
       default:
         return Container();

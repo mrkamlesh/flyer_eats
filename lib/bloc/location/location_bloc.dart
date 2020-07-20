@@ -63,8 +63,8 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     try {
       List<Placemark> placeMark = await Geolocator().placemarkFromCoordinates(latLng.latitude, latLng.longitude);
       yield UpdatingLocationSuccess(Location(
-          latitude: placeMark[0].position.latitude,
-          longitude: placeMark[0].position.longitude,
+          latitude: latLng.latitude,
+          longitude: latLng.longitude,
           address: placeMark[0].name +
               " " +
               placeMark[0].locality +

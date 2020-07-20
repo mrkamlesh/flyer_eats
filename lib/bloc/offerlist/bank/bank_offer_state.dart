@@ -1,5 +1,4 @@
 import 'package:clients/model/bank.dart';
-import 'package:clients/model/fe_offer.dart';
 
 class BankOfferState {
   final List<Bank> banks;

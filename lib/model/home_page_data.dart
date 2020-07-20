@@ -1,10 +1,11 @@
 import 'package:clients/model/ads.dart';
 import 'package:clients/model/food_category.dart';
 import 'package:clients/model/banner.dart';
+import 'package:clients/model/location.dart';
 import 'package:clients/model/restaurant.dart';
 
 class HomePageData {
-  final String location;
+  final Location location;
   final String countryId;
   final List<BannerItem> promos;
   final List<Restaurant> topRestaurants;
@@ -55,7 +56,7 @@ class HomePageData {
     }).toList();
 
     return HomePageData(
-        location: parsedJson['location']['address'],
+        location: Location.fromHomePageJson(parsedJson['location']),
         countryId: parsedJson['location']['country_code'],
         promos: promos,
         topRestaurants: top,

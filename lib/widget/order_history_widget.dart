@@ -5,10 +5,10 @@ import 'package:clients/classes/style.dart';
 import 'package:clients/model/order.dart';
 import 'package:shimmer/shimmer.dart';
 
-class OrderHistoryWidget extends StatelessWidget {
+class FoodOrderHistoryWidget extends StatelessWidget {
   final Order order;
 
-  const OrderHistoryWidget({Key key, this.order}) : super(key: key);
+  const FoodOrderHistoryWidget({Key key, this.order}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +146,137 @@ class OrderHistoryWidget extends StatelessWidget {
                   ),
                   Text(
                     order.getMapStatus(),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 5, bottom: 15),
+                child: Text(
+                  "REORDER",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: primary3),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class PickupOrderHistoryWidget extends StatelessWidget {
+  final PickupOrder pickupOrder;
+
+  const PickupOrderHistoryWidget({Key key, this.pickupOrder}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(
+          left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: horizontalPaddingDraggable),
+      padding: EdgeInsets.only(left: 15, right: 15, top: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: shadow,
+            blurRadius: 7,
+            spreadRadius: -3,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  pickupOrder.shopName ?? "",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  pickupOrder.pickupAddress ?? "",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12, color: Colors.black26),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Divider(
+              height: 0.5,
+              color: Colors.black12,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Text(
+              pickupOrder.title,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Divider(
+              height: 0.5,
+              color: Colors.black12,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Text(
+              pickupOrder.getItemString(),
+              style: TextStyle(fontSize: 16, color: Colors.black45, height: 1.3),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Text(
+              pickupOrder.date,
+              style: TextStyle(fontSize: 13, color: Colors.black38),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Text(
+              pickupOrder.amount,
+              style: TextStyle(fontSize: 13, color: Colors.black38),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            child: Divider(
+              height: 0.5,
+              color: Colors.black12,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: FittedBox(fit: BoxFit.fill, child: SvgPicture.asset(pickupOrder.getIcon()))),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    pickupOrder.getMapStatus(),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   )
                 ],

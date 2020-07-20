@@ -28,10 +28,22 @@ class UpdateItem extends DeliveryOrderEvent {
   List<Object> get props => [index, item];
 }
 
-class AddTextField extends DeliveryOrderEvent{
+class AddItem extends DeliveryOrderEvent {
+  final int index;
+
+  AddItem(this.index);
+
   @override
   List<Object> get props => [];
+}
 
+class RemoveItem extends DeliveryOrderEvent {
+  final int index;
+
+  RemoveItem(this.index);
+
+  @override
+  List<Object> get props => [];
 }
 
 class AddAttachment extends DeliveryOrderEvent {
@@ -41,4 +53,23 @@ class AddAttachment extends DeliveryOrderEvent {
 
   @override
   List<Object> get props => [file];
+}
+
+class UpdateDeliveryInstruction extends DeliveryOrderEvent {
+  final String deliveryInstruction;
+
+  const UpdateDeliveryInstruction(this.deliveryInstruction);
+
+  @override
+  List<Object> get props => [deliveryInstruction];
+}
+
+class GetInfo extends DeliveryOrderEvent {
+  final String token;
+  final String address;
+
+  const GetInfo(this.token, this.address);
+
+  @override
+  List<Object> get props => [];
 }

@@ -13,6 +13,7 @@ import 'package:clients/model/menu_category.dart';
 import 'package:clients/model/notification.dart';
 import 'package:clients/model/order.dart';
 import 'package:clients/model/place_order.dart';
+import 'package:clients/model/place_order_pickup.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/review.dart';
 import 'package:clients/model/scratch_card.dart';
@@ -119,8 +120,8 @@ class DataRepository {
     }
   }
 
-  Future<List<Order>> getOrderHistory(String token) async {
-    final response = await _provider.getOrderHistory(token);
+  Future<List<Order>> getOrderHistory(String token, String typeOrder, int page) async {
+    final response = await _provider.getOrderHistory(token, typeOrder, 0);
     if (response['code'] == 1) {
       var orderHistory = response['details'] as List;
       List<Order> list = orderHistory.map((i) {
@@ -128,7 +129,20 @@ class DataRepository {
       }).toList();
       return list;
     } else {
-      return List();
+      throw Exception(response['msg']);
+    }
+  }
+
+  Future<List<PickupOrder>> getPickupOrderHistory(String token, String typeOrder, int page) async {
+    final response = await _provider.getOrderHistory(token, typeOrder, page);
+    if (response['code'] == 1) {
+      var orderHistory = response['details'] as List;
+      List<PickupOrder> list = orderHistory.map((i) {
+        return PickupOrder.fromJson(i);
+      }).toList();
+      return list;
+    } else {
+      throw Exception(response['msg']);
     }
   }
 
@@ -262,6 +276,15 @@ class DataRepository {
     }
   }
 
+  Future<String> getPickupInfo(String token, String address) async {
+    final response = await _provider.getPickupInfo(token, address);
+    if (response['code'] == 1) {
+      return response['details']['description'];
+    } else {
+      throw Exception(response['msg']);
+    }
+  }
+
   Future<bool> saveToken(String token) async {
     await _provider.saveToken(token);
     return true;
@@ -298,6 +321,30 @@ class DataRepository {
     }
   }
 
+  Future<PlaceOrderPickup> getDeliveryCharge(
+      String token, String deliveryLat, String deliveryLng, String pickupLat, String pickupLng, String location) async {
+    final response = await _provider.getDeliveryCharge(token, deliveryLat, deliveryLng, pickupLat, pickupLng, location);
+    if (response['code'] == 1) {
+      return PlaceOrderPickup(
+          isValid: true,
+          razorSecret: response['details']['razor_secret'],
+          razorKey: response['details']['razor_key'],
+          distance: response['details']['distance'],
+          deliveryAmount: double.parse(response['details']['price'].toString()));
+    } else {
+      return PlaceOrderPickup(isValid: false, message: response['msg']);
+    }
+  }
+
+  Future<String> placeOrderPickup(PlaceOrderPickup placeOrderPickup) async {
+    final response = await _provider.placeOrderPickup(placeOrderPickup);
+    if (response['code'] == 1) {
+      return response['details']['order_id'];
+    } else {
+      throw Exception(response['msg']);
+    }
+  }
+
   Future<dynamic> applyVoucher(String restaurantId, String voucherCode, double totalOrder, String token) async {
     final response = await _provider.applyCoupon(restaurantId, voucherCode, totalOrder, token);
     if (response['code'] == 1) {
@@ -305,17 +352,6 @@ class DataRepository {
       return voucher;
     } else {
       return response['msg'] as String;
-    }
-  }
-
-  Future<Location> getLocationByLatLng(double lat, double lng) async {
-    final response = await _provider.getLocationByLatLng(lat, lng);
-    if (response['code'] == 1) {
-      var locationMap = response['details'];
-      Location location = Location.fromJson2(locationMap);
-      return location;
-    } else {
-      return null;
     }
   }
 
@@ -511,7 +547,7 @@ class DataRepository {
     final response = await _provider.getScratchCardList(token);
     if (response['code'] == 1) {
       Map<String, dynamic> map = Map();
-      map['amount'] = response['details']['total_amount'];
+      map['amount'] = response['details']['total_amount'].toString();
       map['currency'] = response['details']['currency'];
       var listScratched = response['details']['scratched_card'] as List;
       var listNotScratched = response['details']['not_scratched_card'] as List;

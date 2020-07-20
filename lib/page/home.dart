@@ -132,14 +132,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         if (index == 1) {
                           await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
                             return OfferListPage(
-                              address: _homePageData.location,
+                              address: _homePageData.location.address,
                             );
                           }));
                           _currentIndex = 0;
                         } else if (index == 2) {
                           await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
                             return SearchPage(
-                              address: _homePageData.location,
+                              address: _homePageData.location.address,
                               token: loginState.user.token,
                             );
                           }));
@@ -257,7 +257,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       isLoading = false;
                       isDropdownVisible = true;
                     } else if (state is HomePageDataLoaded) {
-                      titleText = state.data.location;
+                      titleText = state.data.location.address;
                       isLoading = false;
                       isDropdownVisible = true;
                       switch (state.data.countryId) {
@@ -378,7 +378,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           merchantType: MerchantType.restaurant,
                                           isExternalImage: false,
                                           title: "All Restaurants",
-                                          location: Location(address: _homePageData.location),
+                                          location: Location(address: _homePageData.location.address),
                                         );
                                       }));
                                     } else if (i == 1) {
@@ -388,7 +388,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           merchantType: MerchantType.grocery,
                                           isExternalImage: false,
                                           title: "All Grocery",
-                                          location: Location(address: _homePageData.location),
+                                          location: Location(address: _homePageData.location.address),
                                         );
                                       }));
                                     } else if (i == 2) {
@@ -398,7 +398,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           merchantType: MerchantType.vegFruits,
                                           isExternalImage: false,
                                           title: "All Merchants",
-                                          location: Location(address: _homePageData.location),
+                                          location: Location(address: _homePageData.location.address),
                                         );
                                       }));
                                     } else if (i == 3) {
@@ -408,7 +408,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           merchantType: MerchantType.meat,
                                           isExternalImage: false,
                                           title: "All Merchants",
-                                          location: Location(address: _homePageData.location),
+                                          location: Location(address: _homePageData.location.address),
                                         );
                                       }));
                                     }
@@ -422,7 +422,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                       right: horizontalPaddingDraggable,
                                       bottom: distanceSectionContent,
                                       top: 5),
-                                  child: HomeActionWidget()),
+                                  child: HomeActionWidget(location: _homePageData.location)),
                               _homePageData.topRestaurants.isNotEmpty
                                   ? Column(
                                       children: <Widget>[
@@ -442,7 +442,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                                                     return RestaurantListPage(
                                                       title: "Top Restaurants",
-                                                      location: Location(address: _homePageData.location),
+                                                      location: Location(address: _homePageData.location.address),
                                                       type: RestaurantListType.top,
                                                       merchantType: MerchantType.restaurant,
                                                       isExternalImage: false,
@@ -508,7 +508,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                   merchantType: MerchantType.restaurant,
                                                   category: category.id,
                                                   isExternalImage: true,
-                                                  location: Location(address: _homePageData.location),
+                                                  location: Location(address: _homePageData.location.address),
                                                 );
                                               }));
                                             },
@@ -542,7 +542,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                       title: "Order Again",
                                                       merchantType: MerchantType.restaurant,
                                                       type: RestaurantListType.orderAgain,
-                                                      location: Location(address: _homePageData.location),
+                                                      location: Location(address: _homePageData.location.address),
                                                       isExternalImage: false,
                                                       image: "assets/allrestaurant.png",
                                                     );
@@ -569,7 +569,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                             type: RestaurantViewType.orderAgainRestaurant,
                                             restaurants: _homePageData.orderAgainRestaurants,
                                             isExpand: true,
-                                            location: Location(address: state.data.location),
+                                            location: Location(address: state.data.location.address),
                                           ),
                                         ),
                                       ],
@@ -714,7 +714,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                       return RestaurantListPage(
                                                         title: "It's Dinner Time",
                                                         merchantType: MerchantType.restaurant,
-                                                        location: Location(address: _homePageData.location),
+                                                        location: Location(address: _homePageData.location.address),
                                                         type: RestaurantListType.dbl,
                                                         isExternalImage: false,
                                                         image: "assets/allrestaurant.png",
@@ -751,7 +751,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                             child: RestaurantListWidget(
                                               type: RestaurantViewType.dinnerTimeRestaurant,
                                               restaurants: _homePageData.dblRestaurants,
-                                              location: Location(address: state.data.location),
+                                              location: Location(address: state.data.location.address),
                                             ),
                                           ),
                                         ],
@@ -1308,6 +1308,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 }
 
 class HomeActionWidget extends StatefulWidget {
+  final Location location;
+
+  const HomeActionWidget({Key key, this.location}) : super(key: key);
+
   @override
   _HomeActionWidgetState createState() => _HomeActionWidgetState();
 }
@@ -1402,32 +1406,26 @@ class _HomeActionWidgetState extends State<HomeActionWidget> with SingleTickerPr
                     child: GestureDetector(
                       onTap: () {
                         _animationController.forward().orCancel.whenComplete(() {
-                          _animationController.reverse().orCancel.whenComplete(() {});
+                          _animationController.reverse().orCancel.whenComplete(() {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return DeliveryProcessOrderPage(
+                                location: widget.location,
+                              );
+                            }));
+                          });
                         });
                       },
-                      child: GestureDetector(
-                        onTap: () {
-                          _animationController.forward().orCancel.whenComplete(() {
-                            _animationController
-                                .reverse()
-                                .orCancel
-                                .whenComplete(() => Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return DeliveryProcessOrderPage();
-                                    })));
-                          });
-                        },
-                        child: Container(
-                          height: 40,
-                          decoration:
-                              BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(60), boxShadow: [
-                            BoxShadow(offset: Offset(2, 2), color: Colors.black38, spreadRadius: 0, blurRadius: 5),
-                          ]),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Add Task",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                      child: Container(
+                        height: 40,
+                        decoration:
+                            BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(60), boxShadow: [
+                          BoxShadow(offset: Offset(2, 2), color: Colors.black38, spreadRadius: 0, blurRadius: 5),
+                        ]),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Add Task",
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clients/model/place_order_pickup.dart';
 import 'package:dio/dio.dart';
 import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/model/place_order.dart';
@@ -255,6 +256,7 @@ class DataProvider {
     var formData = {
       "client_token": token,
       "order_id": orderId,
+      //trans_type: delivery / pickup_drop determine food order or pickup order
     };
 
     var responseJson;
@@ -293,12 +295,10 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getOrderHistory(String token) async {
+  Future<dynamic> getOrderHistory(String token, String typeOrder, int page) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/getOrderHistory?json=true&api_key=flyereats";
 
-    var formData = {
-      "client_token": token,
-    };
+    var formData = {"client_token": token, "type": typeOrder, "page": page.toString()};
 
     var responseJson;
     try {
@@ -318,6 +318,79 @@ class DataProvider {
     String url = "${developmentServerUrl}mobileapp/apiRest/cardScratch?json=true&api_key=flyereats";
 
     var formData = {"client_token": token, "card_id": cardId};
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> getDeliveryCharge(
+      String token, String deliveryLat, String deliveryLng, String pickupLat, String pickupLng, String location) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/getDeliveryCharge?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "google_lat": deliveryLat,
+      "google_lng": deliveryLng,
+      "pickup_lat": pickupLat,
+      "pickup_long": pickupLng,
+      "location": location,
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> placeOrderPickup(PlaceOrderPickup placeOrderPickup) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/placePickupOrder?json=true&api_key=flyereats";
+
+    Map<String, dynamic> formData = {
+      "client_token": placeOrderPickup.token,
+      "items": placeOrderPickup.pickUp.items.join(","),
+      "formatted_address": placeOrderPickup.address.address,
+      "google_lng": placeOrderPickup.address.longitude,
+      "pickup_lat": placeOrderPickup.address.latitude,
+      "location_name": placeOrderPickup.location,
+      "contact_phone": placeOrderPickup.contact,
+      "delivery_instruction": placeOrderPickup.pickUp.deliveryInstruction,
+      "street": placeOrderPickup.address.address,
+      "change_primary_contact": placeOrderPickup.isChangePrimaryContact ? "1" : "0",
+      "pickup_address": placeOrderPickup.pickUp.shop.address,
+      "shop_name": placeOrderPickup.pickUp.shop.name,
+      "shop_description": placeOrderPickup.pickUp.shop.description,
+      "pickup_latitude": placeOrderPickup.pickUp.shop.lat.toString(),
+      "pickup_longitude": placeOrderPickup.pickUp.shop.long.toString(),
+      "price": placeOrderPickup.deliveryAmount.toString(),
+      "delivery_date": "",
+      "delivery_time": "",
+    };
+
+    List files = [];
+
+    for (int i = 0; i < placeOrderPickup.pickUp.attachment.length; i++) {
+      files.add(await MultipartFile.fromFile(placeOrderPickup.pickUp.attachment[i].path));
+    }
+
+    formData['thumbnail_file'] = files;
 
     var responseJson;
     try {
@@ -572,20 +645,6 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getLocationByLatLng(double lat, double lng) async {
-    String url =
-        "${productionServerUrl}mobileapp/apinew/search?json=true&isgetoffer=1&lat=$lat&lng=$lng&searchin=db&api_key=flyereats";
-
-    var responseJson;
-    try {
-      final response = await Dio().get(url);
-      responseJson = _returnResponse(response);
-    } on SocketException {
-      throw FetchDataException('No Internet connection');
-    }
-    return responseJson;
-  }
-
   Future<dynamic> getRestaurantList(String token, String address, MerchantType merchantType, RestaurantListType type,
       String category, int page, bool isVegOnly,
       {String cuisineType, String sortBy}) async {
@@ -747,6 +806,25 @@ class DataProvider {
     String url = "${developmentServerUrl}mobileapp/apiRest/addWalletMoney?json=true&api_key=flyereats";
 
     var formData = {"client_token": token, "amount": amount.toString()};
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> getPickupInfo(String token, String address) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/getPickupInfo?json=true&api_key=flyereats";
+
+    var formData = {"client_token": token, "address": address};
 
     var responseJson;
     try {

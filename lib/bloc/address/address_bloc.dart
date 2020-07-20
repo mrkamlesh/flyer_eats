@@ -63,8 +63,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapCalculatePriceToState(
-      Address from, Address to) async* {
+  Stream<AddressState> mapCalculatePriceToState(Address from, Address to) async* {
     yield PriceCalculateLoading();
     try {
       // You should get price from repository or API Call here
@@ -95,38 +94,26 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   Stream<AddressState> mapUpdateAddressLocationToState(LatLng latLng) async* {
     yield LoadingTemporaryAddress();
     try {
-      List<Placemark> placeMark = await Geolocator()
-          .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+      List<Placemark> placeMark = await Geolocator().placemarkFromCoordinates(latLng.latitude, latLng.longitude);
 
       String thoroughfare =
-          (placeMark[0].thoroughfare != "" && placeMark[0].thoroughfare != null)
-              ? placeMark[0].thoroughfare + " "
-              : "";
-      String subThoroughfare = (placeMark[0].subThoroughfare != "" &&
-              placeMark[0].subThoroughfare != null)
+          (placeMark[0].thoroughfare != "" && placeMark[0].thoroughfare != null) ? placeMark[0].thoroughfare + " " : "";
+      String subThoroughfare = (placeMark[0].subThoroughfare != "" && placeMark[0].subThoroughfare != null)
           ? placeMark[0].subThoroughfare + " "
           : "";
       String subLocality =
-          (placeMark[0].subLocality != "" && placeMark[0].subLocality != null)
-              ? placeMark[0].subLocality + " "
-              : "";
+          (placeMark[0].subLocality != "" && placeMark[0].subLocality != null) ? placeMark[0].subLocality + " " : "";
       String locality =
-          (placeMark[0].locality != "" && placeMark[0].locality != null)
-              ? placeMark[0].locality + " "
-              : "";
+          (placeMark[0].locality != "" && placeMark[0].locality != null) ? placeMark[0].locality + " " : "";
       String subAdministrativeArea =
-          (placeMark[0].subAdministrativeArea != "" &&
-                  placeMark[0].subAdministrativeArea != null)
+          (placeMark[0].subAdministrativeArea != "" && placeMark[0].subAdministrativeArea != null)
               ? placeMark[0].subAdministrativeArea + " "
               : "";
-      String administrativeArea = (placeMark[0].administrativeArea != "" &&
-              placeMark[0].administrativeArea != null)
+      String administrativeArea = (placeMark[0].administrativeArea != "" && placeMark[0].administrativeArea != null)
           ? placeMark[0].administrativeArea + " "
           : "";
       String postalCode =
-          (placeMark[0].postalCode != "" && placeMark[0].postalCode != null)
-              ? placeMark[0].postalCode + " "
-              : "";
+          (placeMark[0].postalCode != "" && placeMark[0].postalCode != null) ? placeMark[0].postalCode + " " : "";
 
       Address newAddress = address.copyWith(
           address: thoroughfare +
@@ -139,8 +126,8 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
           state: placeMark[0].administrativeArea,
           city: placeMark[0].locality,
           zipCode: placeMark[0].postalCode,
-          latitude: placeMark[0].position.latitude.toString(),
-          longitude: placeMark[0].position.longitude.toString());
+          latitude: latLng.latitude.toString(),
+          longitude: latLng.longitude.toString());
       address = newAddress;
       yield LoadingTemporaryAddressSuccess(newAddress, isFromMap: true);
     } catch (e) {
@@ -148,19 +135,14 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapUpdateAddressInformationToState(
-      UpdateAddressInformation event) async* {
-    Address newAddress = address.copyWith(
-        type: event.type,
-        address: event.address,
-        title: event.title,
-        isDefault: event.isDefault);
+  Stream<AddressState> mapUpdateAddressInformationToState(UpdateAddressInformation event) async* {
+    Address newAddress =
+        address.copyWith(type: event.type, address: event.address, title: event.title, isDefault: event.isDefault);
     address = newAddress;
     yield LoadingTemporaryAddressSuccess(newAddress);
   }
 
-  Stream<AddressState> mapAddAddressToState(
-      Address address, String token) async* {
+  Stream<AddressState> mapAddAddressToState(Address address, String token) async* {
     yield LoadingAddressInformation();
     try {
       bool isAdded = await addressRepository.addAddress(address, token);
@@ -170,8 +152,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapUpdateAddressToState(
-      Address address, String token) async* {
+  Stream<AddressState> mapUpdateAddressToState(Address address, String token) async* {
     yield LoadingTemporaryAddress();
     try {
       bool isUpdated = await addressRepository.updateAddress(address, token);
@@ -181,8 +162,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapAddressUpdatePageOpenToState(
-      Address addressEvent) async* {
+  Stream<AddressState> mapAddressUpdatePageOpenToState(Address addressEvent) async* {
     address = addressEvent;
     yield LoadingTemporaryAddress();
     try {

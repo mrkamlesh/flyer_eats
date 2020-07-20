@@ -26,6 +26,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield* mapLogOutToState();
     } else if (event is UpdateUserProfile) {
       yield* mapUpdateUserProfileToState(event.user);
+    } else if (event is UpdatePrimaryContact) {
+      yield* mapUpdatePrimaryContactToState(event.contact);
     }
   }
 
@@ -77,6 +79,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> mapUpdateUserProfileToState(User user) async* {
     yield LoginState(
         isValid: state.isValid, user: state.user.copyWith(phone: user.phone, name: user.name, avatar: user.avatar));
+  }
+
+  Stream<LoginState> mapUpdatePrimaryContactToState(String contact) async* {
+    yield LoginState(isValid: state.isValid, user: state.user.copyWith(phone: contact));
   }
 
   String _getPlatform() {

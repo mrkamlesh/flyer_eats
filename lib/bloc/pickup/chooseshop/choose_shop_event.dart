@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:clients/model/shop.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -14,6 +15,15 @@ class EntryShopName extends ChooseShopEvent {
 
   @override
   List<Object> get props => [name];
+}
+
+class EntryDescription extends ChooseShopEvent {
+  final String description;
+
+  const EntryDescription(this.description);
+
+  @override
+  List<Object> get props => [description];
 }
 
 class EntryAddress extends ChooseShopEvent {
@@ -32,4 +42,13 @@ class PageOpen extends ChooseShopEvent {
 
   @override
   List<Object> get props => [shop];
+}
+
+class UpdateLatLng extends ChooseShopEvent {
+  final LatLng latLng;
+
+  UpdateLatLng(this.latLng);
+
+  @override
+  List<Object> get props => [latLng];
 }

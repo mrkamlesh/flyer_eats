@@ -18,7 +18,7 @@ class Order {
 
   Order({this.restaurant, this.itemsString, this.date, this.status, this.id, this.title, this.total, this.paymentType});
 
-  String getIcon(){
+  String getIcon() {
     switch (this.status) {
       case "Order Placed":
         return "assets/in process icon.svg";
@@ -35,7 +35,7 @@ class Order {
     }
   }
 
-  String getMapStatus(){
+  String getMapStatus() {
     switch (this.status) {
       case "Order Placed":
         return "In Progress";
@@ -74,5 +74,84 @@ class Order {
       itemsString: itemsString,
       paymentType: parsedJson['payment_type'],
     );
+  }
+}
+
+class PickupOrder {
+  final String id;
+  final String title;
+  final String shopName;
+  final String shopDescription;
+  final String pickupAddress;
+  final List<String> items;
+  final String date;
+  final String amount;
+  final String status;
+
+  PickupOrder(
+      {this.id,
+      this.title,
+      this.shopName,
+      this.shopDescription,
+      this.pickupAddress,
+      this.items,
+      this.date,
+      this.amount,
+      this.status});
+
+  factory PickupOrder.fromJson(Map<String, dynamic> parsedJson) {
+    var itemsJson = parsedJson['items'] as List;
+    List<String> items = itemsJson.map((i) {
+      return i['item_name'].toString();
+    }).toList();
+
+    return PickupOrder(
+        id: parsedJson['order_id'],
+        title: parsedJson['title'],
+        amount: parsedJson['total'],
+        date: parsedJson['place_on'],
+        pickupAddress: parsedJson['pickup_details']['pickup_address'],
+        shopName: parsedJson['pickup_details']['shop_name'],
+        shopDescription: parsedJson['pickup_details']['shop_description'],
+        status: parsedJson['status'],
+        items: items);
+  }
+
+  String getItemString() {
+    return this.items.join(", ");
+  }
+
+  String getIcon() {
+    switch (this.status) {
+      case "Order Placed":
+        return "assets/in process icon.svg";
+      case "Pending":
+        return "assets/in process icon.svg";
+      case "On the way":
+        return "assets/in process icon.svg";
+      case "Delivered":
+        return "assets/check.svg";
+      case "Cancelled":
+        return "assets/remove.svg";
+      default:
+        return "assets/remove.svg";
+    }
+  }
+
+  String getMapStatus() {
+    switch (this.status) {
+      case "Order Placed":
+        return "In Progress";
+      case "Pending":
+        return "In Progress";
+      case "On the way":
+        return "In Progress";
+      case "Delivered":
+        return "Delivered";
+      case "Cancelled":
+        return "Cancelled";
+      default:
+        return "Cancelled";
+    }
   }
 }

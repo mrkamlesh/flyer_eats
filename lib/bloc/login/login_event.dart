@@ -39,3 +39,12 @@ class UpdateUserProfile extends LoginEvent {
   @override
   List<Object> get props => [user];
 }
+
+class UpdatePrimaryContact extends LoginEvent {
+  final String contact;
+
+  const UpdatePrimaryContact(this.contact);
+
+  @override
+  List<Object> get props => [contact];
+}

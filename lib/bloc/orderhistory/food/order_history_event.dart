@@ -15,3 +15,12 @@ class GetOrderHistory extends OrderHistoryEvent {
   @override
   List<Object> get props => [token];
 }
+
+class OnLoadMore extends OrderHistoryEvent {
+  final String token;
+
+  OnLoadMore(this.token);
+
+  @override
+  List<Object> get props => [token];
+}

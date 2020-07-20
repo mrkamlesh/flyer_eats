@@ -717,6 +717,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                           BlocConsumer<FoodOrderBloc, FoodOrderState>(
                             listener: (context, state) {
                               if (state is SuccessPlaceOrder) {
+                                if (state.placeOrder.isChangePrimaryContact) {
+                                  BlocProvider.of<LoginBloc>(context)
+                                      .add(UpdatePrimaryContact(state.placeOrder.contact));
+                                }
                                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                                   return PlacedOrderSuccessPage(
                                     placeOrderId: state.placeOrder.id,
@@ -1625,136 +1629,7 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                     Expanded(child: Container()),
                     GestureDetector(
                       onTap: () {
-                        BlocProvider.of<AddressBloc>(context).add(OpenListAddress(widget.token));
-
-                        showModalBottomSheet(
-                            isScrollControlled: false,
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-                            context: context,
-                            builder: (context) {
-                              return BlocBuilder<AddressBloc, AddressState>(
-                                bloc: widget.addressBloc,
-                                builder: (context, state) {
-                                  if (state is ListAddressLoaded) {
-                                    List<Address> list = state.list;
-                                    List<Widget> address = [];
-                                    for (int i = 0; i < list.length; i++) {
-                                      address.add(AddressItemWidget(
-                                        address: list[i],
-                                        foodOrderBloc: widget.foodOrderBloc,
-                                      ));
-                                    }
-
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-                                      child: Stack(
-                                        children: <Widget>[
-                                          SingleChildScrollView(
-                                            child: Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 20, right: 20, bottom: kBottomNavigationBarHeight, top: 20),
-                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Container(
-                                                    margin: EdgeInsets.only(bottom: 52),
-                                                  ),
-                                                  Container(
-                                                    child: Column(
-                                                      children: address,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 0,
-                                            left: 0,
-                                            child: Container(
-                                                width: AppUtil.getScreenWidth(context),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.only(
-                                                        topLeft: Radius.circular(32), topRight: Radius.circular(32)),
-                                                    color: Colors.white),
-                                                padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
-                                                child: Text(
-                                                  "SELECT ADDRESS",
-                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                                )),
-                                          ),
-                                          Positioned(
-                                              bottom: 0,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                    return AddressPage();
-                                                  }));
-                                                },
-                                                child: Container(
-                                                  width: AppUtil.getScreenWidth(context),
-                                                  height: kBottomNavigationBarHeight,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: <Widget>[
-                                                      Container(
-                                                        margin: EdgeInsets.only(right: 20),
-                                                        child: Icon(
-                                                          Icons.add,
-                                                          size: 20,
-                                                          color: Colors.orange,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        "ADD NEW ADDRESS",
-                                                        style: TextStyle(
-                                                            color: Colors.orange,
-                                                            fontSize: 18,
-                                                            fontWeight: FontWeight.bold),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              )),
-                                          Positioned(
-                                              top: 5,
-                                              right: 0,
-                                              child: IconButton(
-                                                  icon: Icon(Icons.clear),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  }))
-                                        ],
-                                      ),
-                                    );
-                                  } else if (state is LoadingListAddress) {
-                                    return Container(
-                                      child: Center(
-                                          child: SpinKitCircle(
-                                        color: Colors.black38,
-                                        size: 30,
-                                      )),
-                                    );
-                                  } else if (state is ErrorLoadingListAddress) {
-                                    return Container(
-                                        margin: EdgeInsets.symmetric(vertical: 20),
-                                        child: Center(child: Text("Fail load addresses")));
-                                  }
-                                  return Container();
-                                },
-                              );
-                            });
+                        _showChangeAddressSheet();
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
@@ -1809,7 +1684,7 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                     ),
                     GestureDetector(
                       onTap: () {
-                        changeContactNumber();
+                        _showChangeContactSheet();
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
@@ -1829,7 +1704,140 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
           );
   }
 
-  void changeContactNumber() {
+  void _showChangeAddressSheet() {
+    BlocProvider.of<AddressBloc>(context).add(OpenListAddress(widget.token));
+
+    showModalBottomSheet(
+        isScrollControlled: false,
+        shape: RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        context: context,
+        builder: (context) {
+          return BlocBuilder<AddressBloc, AddressState>(
+            bloc: widget.addressBloc,
+            builder: (context, state) {
+              if (state is ListAddressLoaded) {
+                List<Address> list = state.list;
+                List<Widget> address = [];
+                for (int i = 0; i < list.length; i++) {
+                  address.add(AddressItemWidget(
+                    address: list[i],
+                    foodOrderBloc: widget.foodOrderBloc,
+                  ));
+                }
+
+                return Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                  child: Stack(
+                    children: <Widget>[
+                      SingleChildScrollView(
+                        child: Container(
+                          padding: EdgeInsets.only(
+                              left: 20, right: 20, bottom: kBottomNavigationBarHeight, top: 20),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(bottom: 52),
+                              ),
+                              Container(
+                                child: Column(
+                                  children: address,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        child: Container(
+                            width: AppUtil.getScreenWidth(context),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                                color: Colors.white),
+                            padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
+                            child: Text(
+                              "SELECT ADDRESS",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                      Positioned(
+                          bottom: 0,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return AddressPage();
+                              }));
+                            },
+                            child: Container(
+                              width: AppUtil.getScreenWidth(context),
+                              height: kBottomNavigationBarHeight,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(right: 20),
+                                    child: Icon(
+                                      Icons.add,
+                                      size: 20,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                  Text(
+                                    "ADD NEW ADDRESS",
+                                    style: TextStyle(
+                                        color: Colors.orange,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                            ),
+                          )),
+                      Positioned(
+                          top: 5,
+                          right: 0,
+                          child: IconButton(
+                              icon: Icon(Icons.clear),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              }))
+                    ],
+                  ),
+                );
+              } else if (state is LoadingListAddress) {
+                return Container(
+                  child: Center(
+                      child: SpinKitCircle(
+                        color: Colors.black38,
+                        size: 30,
+                      )),
+                );
+              } else if (state is ErrorLoadingListAddress) {
+                return Container(
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    child: Center(child: Text("Fail load addresses")));
+              }
+              return Container();
+            },
+          );
+        });
+  }
+
+  void _showChangeContactSheet() {
     showModalBottomSheet(
         isScrollControlled: true,
         shape: RoundedRectangleBorder(

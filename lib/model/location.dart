@@ -6,9 +6,18 @@ class Location {
   final double longitude;
   final String country;
 
+  final String street;
+  final String city;
+  final String state;
+  final String locationName;
+
   Location(
       {this.country,
       this.id,
+      this.street,
+      this.city,
+      this.state,
+      this.locationName,
       this.address,
       this.location,
       this.latitude,
@@ -25,14 +34,13 @@ class Location {
     );
   }
 
-  factory Location.fromJson2(Map<String, dynamic> parsedJson) {
+  factory Location.fromHomePageJson(Map<String, dynamic> parsedJson){
     return Location(
-      address: parsedJson['addressdetail']['address'],
-      latitude: 0.0,
-      longitude: 0.0,
-      location: parsedJson['addressdetail']['location'],
-      id: parsedJson['addressdetail']['address'],
-      country: parsedJson['country_id'],
+      address: parsedJson['address'],
+      state: parsedJson['state'],
+      city: parsedJson['city'],
+      locationName: parsedJson['location_name'],
+      street: parsedJson['street']
     );
   }
 }

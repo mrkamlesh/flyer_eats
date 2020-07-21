@@ -133,3 +133,67 @@ class DetailOrder {
         isReviewAdded: parsedJson['is_rating_added']);
   }
 }
+
+class PickupDetailOrder {
+  final String orderId;
+  final String title;
+  final String status;
+  final String total;
+  final String date;
+  final List<String> thumbnails;
+  final List<String> items;
+  final String shopName;
+  final String shopDescription;
+  final String shopAddress;
+  final List<StatusOrder> statusHistory;
+  final String deliveryInstruction;
+
+  PickupDetailOrder(
+      {this.orderId,
+      this.title,
+      this.status,
+      this.total,
+      this.date,
+      this.thumbnails,
+      this.items,
+      this.shopName,
+      this.shopDescription,
+      this.shopAddress,
+      this.statusHistory,
+      this.deliveryInstruction});
+
+  StatusOrder getCurrentStatus() {
+    return statusHistory.last;
+  }
+
+  factory PickupDetailOrder.fromJson(Map<String, dynamic> parsedJson) {
+    var itemsJson = parsedJson['items'] as List;
+    List<String> items = itemsJson.map((i) {
+      return i['item_name'].toString();
+    }).toList();
+
+    var thumbnailsJson = parsedJson['thumbnail'] as List;
+    List<String> thumbnails = thumbnailsJson.map((i) {
+      return i.toString();
+    }).toList();
+
+    var statusHistoryJson = parsedJson['order_history'] as List;
+    List<StatusOrder> statusHistory = statusHistoryJson.map((e) {
+      return StatusOrder.fromJson(e);
+    }).toList();
+
+    return PickupDetailOrder(
+        orderId: parsedJson['order_id'],
+        title: parsedJson['title'],
+        status: parsedJson['status'],
+        total: parsedJson['total'],
+        date: parsedJson['place_on'],
+        shopName: parsedJson['pickup_details']['shop_name'],
+        shopAddress: parsedJson['pickup_details']['pickup_address'],
+        shopDescription: parsedJson['pickup_details']['shop_description'],
+        deliveryInstruction: parsedJson['delivery_instruction'],
+        items: items,
+        thumbnails: thumbnails,
+        statusHistory: statusHistory);
+  }
+}

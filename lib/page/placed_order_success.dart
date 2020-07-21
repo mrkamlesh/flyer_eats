@@ -1,3 +1,4 @@
+import 'package:clients/page/pickup_order_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -15,8 +16,10 @@ class PlacedOrderSuccessPage extends StatefulWidget {
   final String placeOrderId;
   final String token;
   final String address;
+  final bool isPickupOrder;
 
-  const PlacedOrderSuccessPage({Key key, this.placeOrderId, this.token, this.address}) : super(key: key);
+  const PlacedOrderSuccessPage({Key key, this.placeOrderId, this.token, this.address, this.isPickupOrder = false})
+      : super(key: key);
 
   @override
   _PlacedOrderSuccessPageState createState() => _PlacedOrderSuccessPageState();
@@ -118,11 +121,19 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return DetailOrderPage(
-                                    orderId: widget.placeOrderId,
-                                  );
-                                }));
+                                if (widget.isPickupOrder) {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                    return PickupOrderDetailPage(
+                                      orderId: widget.placeOrderId,
+                                    );
+                                  }));
+                                } else {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                    return DetailOrderPage(
+                                      orderId: widget.placeOrderId,
+                                    );
+                                  }));
+                                }
                               },
                               child: Container(
                                 margin: EdgeInsets.only(

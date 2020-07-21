@@ -26,6 +26,8 @@ class StatusOrder {
         return "Order delivered successfully";
       case "Cancelled":
         return "Order is cancelled";
+      case "Accepted":
+        return "Order accepted and getting ready";
       default:
         return "";
     }
@@ -51,6 +53,8 @@ class StatusOrder {
         return "assets/delivered icon.svg";
       case "Cancelled":
         return "assets/cancelled icon.svg";
+      case "Accepted":
+        return "assets/pending icon.svg";
       default:
         return "assets/cancelled icon.svg";
     }

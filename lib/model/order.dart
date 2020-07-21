@@ -125,7 +125,7 @@ class PickupOrder {
     switch (this.status) {
       case "Order Placed":
         return "assets/in process icon.svg";
-      case "Pending":
+      case "Accepted":
         return "assets/in process icon.svg";
       case "On the way":
         return "assets/in process icon.svg";
@@ -142,7 +142,7 @@ class PickupOrder {
     switch (this.status) {
       case "Order Placed":
         return "In Progress";
-      case "Pending":
+      case "Accepted":
         return "In Progress";
       case "On the way":
         return "In Progress";

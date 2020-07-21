@@ -22,13 +22,15 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
   }
 
   Stream<OrderHistoryState> mapGetOrderHistoryToState(String token) async* {
-    yield LoadingOrderHistoryState();
-    try {
-      List<Order> list = await repository.getOrderHistory(token, "delivery", 0);
+    if (state.listOrder == null) {
+      yield LoadingOrderHistoryState();
+      try {
+        List<Order> list = await repository.getOrderHistory(token, "delivery", 0);
 
-      yield OrderHistoryState(page: 1, listOrder: list, hasReachedMax: list.isEmpty);
-    } catch (e) {
-      yield ErrorOrderHistoryState(e.toString());
+        yield OrderHistoryState(page: 1, listOrder: list, hasReachedMax: list.isEmpty);
+      } catch (e) {
+        yield ErrorOrderHistoryState(e.toString());
+      }
     }
   }
 

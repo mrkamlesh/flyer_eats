@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/detail_order.dart';
-import './bloc.dart';
+import 'bloc.dart';
 
 class DetailOrderBloc extends Bloc<DetailOrderEvent, DetailOrderState> {
   DataRepository repository = DataRepository();

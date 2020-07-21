@@ -319,7 +319,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                               state.placeOrderPickup.distance != null
                                                   ? state.placeOrderPickup.distance + " kilometers"
                                                   : "",
-                                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ],
@@ -405,6 +405,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                               placeOrderId: state.placeOrderPickup.id,
                               token: loginState.user.token,
                               address: widget.location.address,
+                              isPickupOrder: true,
                             );
                           }));
                         } else if (state is ErrorPlaceOrder) {

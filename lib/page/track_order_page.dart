@@ -145,12 +145,19 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                             isActive: state.currentOrder.statusOrder.status == "Order Placed",
                           ),
                         ),
-                        Expanded(
-                          child: StatusItemWidget(
-                            status: StatusOrder(status: "Food Preparing"),
-                            isActive: state.currentOrder.statusOrder.status == "Food Preparing",
-                          ),
-                        ),
+                        state.currentOrder.isPickupOrder()
+                            ? Expanded(
+                                child: StatusItemWidget(
+                                  status: StatusOrder(status: "Accepted"),
+                                  isActive: state.currentOrder.statusOrder.status == "Accepted",
+                                ),
+                              )
+                            : Expanded(
+                                child: StatusItemWidget(
+                                  status: StatusOrder(status: "Food Preparing"),
+                                  isActive: state.currentOrder.statusOrder.status == "Food Preparing",
+                                ),
+                              ),
                         Expanded(
                           child: StatusItemWidget(
                             status: StatusOrder(status: "On the way"),

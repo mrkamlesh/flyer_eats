@@ -20,6 +20,7 @@ class CurrentOrder {
   final String merchantState;
   final ScratchCard scratchCard;
   final bool isShownCancel;
+  final String orderType;
 
   CurrentOrder(
       {this.driverLatitude,
@@ -28,6 +29,7 @@ class CurrentOrder {
       this.driverPhone,
       this.statusOrder,
       this.orderId,
+      this.orderType,
       this.isActive,
       this.isShowScratch,
       this.isShowReview,
@@ -60,6 +62,7 @@ class CurrentOrder {
     String merchantAddress,
     ScratchCard scratchCard,
     bool isShownCancel,
+    String orderType,
   }) {
     return CurrentOrder(
         isActive: isActive ?? this.isActive,
@@ -79,6 +82,7 @@ class CurrentOrder {
         isShownCancel: isShownCancel ?? this.isShownCancel,
         merchantId: merchantId ?? this.merchantId,
         merchantCity: merchantCity ?? this.merchantCity,
+        orderType: orderType ?? this.orderType,
         merchantState: merchantState ?? this.merchantState);
   }
 
@@ -111,6 +115,11 @@ class CurrentOrder {
         scratchCard: scratchCard,
         isShownCancel: parsedJson['details']['isShowCancel'],
         merchantState: parsedJson['details']['merchant_state'],
-        merchantCity: parsedJson['details']['merchant_city']);
+        merchantCity: parsedJson['details']['merchant_city'],
+        orderType: parsedJson['details']['trans_type']);
+  }
+
+  bool isPickupOrder(){
+    return orderType == "pickup_drop";
   }
 }

@@ -273,6 +273,29 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> getPickupOrderDetail(String orderId, String token) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/getPickupOrderDetails?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "order_id": orderId,
+      //trans_type: delivery / pickup_drop determine food order or pickup order
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> getPromos(String restaurantId, String token) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/loadPromos?json=true&api_key=flyereats";
 

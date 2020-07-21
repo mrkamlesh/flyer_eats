@@ -329,7 +329,7 @@ class DataRepository {
           isValid: true,
           razorSecret: response['details']['razor_secret'],
           razorKey: response['details']['razor_key'],
-          distance: response['details']['distance'],
+          distance: response['details']['distance'].toString(),
           deliveryAmount: double.parse(response['details']['price'].toString()));
     } else {
       return PlaceOrderPickup(isValid: false, message: response['msg']);
@@ -428,6 +428,16 @@ class DataRepository {
     final response = await _provider.getOrderDetail(orderId, token);
     if (response['code'] == 1) {
       DetailOrder detailOrder = DetailOrder.fromJson(response['details']);
+      return detailOrder;
+    } else {
+      return response['msg'];
+    }
+  }
+
+  Future<dynamic> getPickupDetailOrder(String orderId, String token) async {
+    final response = await _provider.getPickupOrderDetail(orderId, token);
+    if (response['code'] == 1) {
+      PickupDetailOrder detailOrder = PickupDetailOrder.fromJson(response['details']);
       return detailOrder;
     } else {
       return response['msg'];

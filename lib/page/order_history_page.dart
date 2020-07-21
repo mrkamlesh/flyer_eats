@@ -1,6 +1,7 @@
 import 'package:clients/bloc/orderhistory/food/bloc.dart';
 import 'package:clients/bloc/orderhistory/pickup/bloc.dart';
 import 'package:clients/bloc/orderhistory/pickup/pickup_order_history_bloc.dart';
+import 'package:clients/page/pickup_order_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,7 +101,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProvider
                       AppUtil.getScreenHeight(context),
                   minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  maxChildSize: 1.0,
+                  maxChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                      AppUtil.getScreenHeight(context),
                   builder: (context, controller) {
                     controller.addListener(() {
                       double maxScroll = controller.position.maxScrollExtent;
@@ -326,11 +328,11 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProvider
                                             }
                                             return GestureDetector(
                                               onTap: () {
-                                                /*Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                    return DetailOrderPage(
-                                                      orderId: state.listOrder[i].id,
-                                                    );
-                                                  }));*/
+                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                  return PickupOrderDetailPage(
+                                                    orderId: state.listOrder[i].id,
+                                                  );
+                                                }));
                                               },
                                               child: PickupOrderHistoryWidget(
                                                 pickupOrder: state.listOrder[i],

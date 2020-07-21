@@ -22,13 +22,15 @@ class PickupOrderHistoryBloc extends Bloc<PickupOrderHistoryEvent, PickupOrderHi
   }
 
   Stream<PickupOrderHistoryState> mapGetOrderHistoryToState(String token) async* {
-    yield LoadingPickupOrderHistoryState();
-    try {
-      List<PickupOrder> list = await repository.getPickupOrderHistory(token, "pickup_drop", 0);
+    if (state.listOrder == null){
+      yield LoadingPickupOrderHistoryState();
+      try {
+        List<PickupOrder> list = await repository.getPickupOrderHistory(token, "pickup_drop", 0);
 
-      yield PickupOrderHistoryState(page: 1, listOrder: list, hasReachedMax: list.isEmpty);
-    } catch (e) {
-      yield ErrorPickupOrderHistoryState(e.toString());
+        yield PickupOrderHistoryState(page: 1, listOrder: list, hasReachedMax: list.isEmpty);
+      } catch (e) {
+        yield ErrorPickupOrderHistoryState(e.toString());
+      }
     }
   }
 

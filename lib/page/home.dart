@@ -38,13 +38,19 @@ import 'package:scratcher/scratcher.dart';
 import 'package:share/share.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:after_layout/after_layout.dart';
 
 class Home extends StatefulWidget {
+  final bool isShowContactConfirmationSheet;
+  final String contactNumber;
+
+  const Home({Key key, this.isShowContactConfirmationSheet = false, this.contactNumber}) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterLayoutMixin<Home> {
   int _currentIndex = 0;
   bool _isScrollingDown = false;
   AnimationController _animationController;
@@ -1311,6 +1317,71 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             },
           );
         });
+  }
+
+  void _showContactConfirmation() {
+    showModalBottomSheet(
+        isScrollControlled: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.all(horizontalPaddingDraggable),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text("NOTIFICATION",
+                          textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Text("Your Number",
+                          textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: Colors.black38)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text(widget.contactNumber,
+                          textAlign: TextAlign.center, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        "will be used as login ID for next time and the OTP will be used as password",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 50,
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFFB531),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "GOT IT",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    )
+                  ]));
+        });
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    if (widget.isShowContactConfirmationSheet) {
+      _showContactConfirmation();
+    }
   }
 }
 

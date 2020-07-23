@@ -46,7 +46,10 @@ class _OtpPageState extends State<OtpPage> {
           BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation(state.user.token));
           BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(state.user.token));
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-            return Home();
+            return Home(
+              contactNumber: widget.phoneNumber,
+              isShowContactConfirmationSheet: true,
+            );
           }));
         } else if (state is Error) {
           showDialog(
@@ -129,8 +132,10 @@ class _OtpPageState extends State<OtpPage> {
                               autoFocus: true,
                               pinTheme: PinTheme(
                                   shape: PinCodeFieldShape.box,
-                                  fieldWidth: (AppUtil.getScreenWidth(context) - 50 - 2 * horizontalPaddingDraggable) / 6,
-                                  fieldHeight: (AppUtil.getScreenWidth(context) - 50 - 2 * horizontalPaddingDraggable) / 6,
+                                  fieldWidth:
+                                      (AppUtil.getScreenWidth(context) - 50 - 2 * horizontalPaddingDraggable) / 6,
+                                  fieldHeight:
+                                      (AppUtil.getScreenWidth(context) - 50 - 2 * horizontalPaddingDraggable) / 6,
                                   selectedColor: primary2,
                                   borderRadius: BorderRadius.circular(8),
                                   inactiveColor: primary2),

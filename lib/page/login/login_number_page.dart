@@ -17,6 +17,10 @@ import 'package:clients/page/login/login_facebook_gmail.dart';
 import 'package:clients/page/login/otp_page.dart';
 
 class LoginNumberPage extends StatefulWidget {
+  final bool isLoggedOut;
+
+  const LoginNumberPage({Key key, this.isLoggedOut = false}) : super(key: key);
+
   @override
   _LoginNumberPageState createState() => _LoginNumberPageState();
 }
@@ -29,6 +33,10 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.isLoggedOut) {
+      BlocProvider.of<LoginBloc>(context).add(LogOut());
+    }
 
     _bloc = LoginPhoneBloc();
     _controller = ScrollController();

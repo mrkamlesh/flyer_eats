@@ -1,3 +1,4 @@
+import 'package:clients/page/login/login_number_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -273,7 +274,11 @@ class EndDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
-              BlocProvider.of<LoginBloc>(context).add(LogOut());
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                return LoginNumberPage(
+                  isLoggedOut: true,
+                );
+              }));
             },
             child: Row(
               children: <Widget>[

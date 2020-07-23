@@ -33,6 +33,7 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
   Animation<Offset> _navBarAnimation;
 
   List<TextEditingController> _controllers = List();
+  List<FocusNode> _focusNodes = List();
 
   DeliveryOrderBloc _bloc = DeliveryOrderBloc();
 
@@ -231,7 +232,7 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                           SliverToBoxAdapter(
                             child: Container(
                               margin: EdgeInsets.only(
-                                bottom: 15,
+                                bottom: 10,
                                 left: horizontalPaddingDraggable,
                                 right: horizontalPaddingDraggable,
                               ),
@@ -243,25 +244,24 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                           ),
                           BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(
                             builder: (context, state) {
-                              return SliverPadding(
-                                padding: EdgeInsets.only(
-                                  left: horizontalPaddingDraggable,
-                                  right: horizontalPaddingDraggable,
-                                ),
-                                sliver: SliverAnimatedList(
-                                  key: _keySliverAnimatedList,
-                                  itemBuilder: (context, i, animation) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: SizeTransition(
-                                        sizeFactor: CurvedAnimation(
-                                            parent: animation.drive(Tween<double>(begin: 0.0, end: 1.0)),
-                                            curve: Interval(0.0, 1.0)),
+                              return SliverAnimatedList(
+                                key: _keySliverAnimatedList,
+                                itemBuilder: (context, i, animation) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: SizeTransition(
+                                      sizeFactor: CurvedAnimation(
+                                          parent: animation.drive(Tween<double>(begin: 0.0, end: 1.0)),
+                                          curve: Interval(0.0, 1.0)),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
                                         child: CustomTextField(
                                           controller: _controllers[i],
+                                          focusNode: _focusNodes[i],
                                           onRemove: () {
                                             _bloc.add(RemoveItem(i));
                                             TextEditingController removedController = _controllers.removeAt(i);
+                                            FocusNode removedFocusNode = _focusNodes.removeAt(i);
                                             _keySliverAnimatedList.currentState.removeItem(
                                               i,
                                               (BuildContext context, Animation<double> animation) {
@@ -272,8 +272,13 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                                     sizeFactor:
                                                         CurvedAnimation(parent: animation, curve: Interval(0.0, 1.0)),
                                                     axisAlignment: 0.0,
-                                                    child: CustomTextField(
-                                                      controller: removedController,
+                                                    child: Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                                      child: CustomTextField(
+                                                        focusNode: removedFocusNode,
+                                                        controller: removedController,
+                                                      ),
                                                     ),
                                                   ),
                                                 );
@@ -283,9 +288,9 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                           },
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
+                                    ),
+                                  );
+                                },
                               );
                             },
                           ),
@@ -294,14 +299,17 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                               return SliverToBoxAdapter(
                                 child: GestureDetector(
                                   onTap: () {
-                                    _bloc.add(AddItem(0));
                                     _keySliverAnimatedList.currentState
-                                        .insertItem(0, duration: Duration(milliseconds: 400));
+                                        .insertItem(pickup.pickUp.items.length, duration: Duration(milliseconds: 400));
                                     TextEditingController newController = TextEditingController();
                                     newController.addListener(() {
                                       _bloc.add(UpdateItem(_controllers.indexOf(newController), newController.text));
                                     });
-                                    _controllers.insert(0, newController);
+                                    _controllers.insert(pickup.pickUp.items.length, newController);
+                                    FocusNode focusNode = FocusNode();
+                                    focusNode.requestFocus();
+                                    _focusNodes.insert(pickup.pickUp.items.length, focusNode);
+                                    _bloc.add(AddItem(pickup.pickUp.items.length));
                                   },
                                   child: Container(
                                     margin: EdgeInsets.only(
@@ -514,24 +522,33 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final Function onRemove;
+  final FocusNode focusNode;
 
   const CustomTextField({
     Key key,
     this.controller,
     this.onRemove,
+    this.focusNode,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
       padding: EdgeInsets.symmetric(horizontal: 20),
-      margin: EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black12)),
+      margin: EdgeInsets.only(bottom: 15, top: 5),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border:
+              Border.all(color: focusNode.hasFocus ? primary2 : Colors.black12, width: focusNode.hasFocus ? 1.5 : 1.0),
+          boxShadow: focusNode.hasFocus ? [BoxShadow(color: primary2, blurRadius: 5, spreadRadius: 1)] : []),
       child: Row(
         children: <Widget>[
           Expanded(
             child: TextField(
               controller: controller,
+              focusNode: focusNode,
               //autofocus: true,
               decoration: InputDecoration(
                 hintText: "Add item here",

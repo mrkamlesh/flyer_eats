@@ -514,32 +514,6 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
       },
     );
   }
-
-  Widget _feeRowWidget(String title, String fee) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 7,
-            child: Text(
-              title,
-              textAlign: TextAlign.end,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              fee,
-              textAlign: TextAlign.end,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          )
-        ],
-      ),
-    );
-  }
 }
 
 class ImageThumbnail extends StatelessWidget {

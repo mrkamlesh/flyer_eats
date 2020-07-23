@@ -1,9 +1,9 @@
+import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:clients/bloc/currentorder/current_order_bloc.dart';
 import 'package:clients/bloc/currentorder/current_order_event.dart';
-import 'package:clients/bloc/location/bloc.dart';
 import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
@@ -43,7 +43,7 @@ class _OtpPageState extends State<OtpPage> {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is Success) {
-          BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation(state.user.token));
+          BlocProvider.of<HomeBloc>(context).add(InitGetData(state.user.token));
           BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(state.user.token));
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
             return Home(

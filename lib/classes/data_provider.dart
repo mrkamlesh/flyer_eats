@@ -649,9 +649,21 @@ class DataProvider {
     return token;
   }
 
-  Future<bool> removeToken() async {
+  Future<bool> saveAddress(String address) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isRemoved = await prefs.remove("TOKEN");
+    prefs.setString("ADDRESS", address);
+    return true;
+  }
+
+  Future<String> getSavedAddress() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String address = prefs.getString("ADDRESS");
+    return address;
+  }
+
+  Future<bool> removeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isRemoved = await prefs.clear();
     return isRemoved;
   }
 

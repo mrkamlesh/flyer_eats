@@ -294,8 +294,17 @@ class DataRepository {
     return await _provider.getSavedToken();
   }
 
-  Future<bool> removeSavedToken() async {
-    return await _provider.removeToken();
+  Future<bool> saveAddress(String address) async {
+    await _provider.saveAddress(address);
+    return true;
+  }
+
+  Future<String> getSavedAddress() async {
+    return await _provider.getSavedAddress();
+  }
+
+  Future<bool> removeData() async {
+    return await _provider.removeData();
   }
 
   Future<List<Location>> getLocations(String countryId) async {

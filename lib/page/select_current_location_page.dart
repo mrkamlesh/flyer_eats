@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:clients/bloc/location/currentlocation/bloc.dart';
+import 'package:clients/bloc/location/home/bloc.dart';
+import 'package:clients/bloc/login/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:clients/bloc/location/bloc.dart';
-import 'package:clients/bloc/location/location_bloc.dart';
-import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -17,15 +17,13 @@ class SelectCurrentLocationPage extends StatefulWidget {
   const SelectCurrentLocationPage({Key key, this.token}) : super(key: key);
 
   @override
-  _SelectCurrentLocationPageState createState() =>
-      _SelectCurrentLocationPageState();
+  _SelectCurrentLocationPageState createState() => _SelectCurrentLocationPageState();
 }
 
 class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
-  Completer<GoogleMapController> _controller = Completer();
+  CurrentLocationBloc _bloc = CurrentLocationBloc();
 
-  final double initLat = 28.620446;
-  final double initLng = 77.227515;
+  Completer<GoogleMapController> _controller = Completer();
 
   Marker marker;
 
@@ -33,272 +31,181 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
   void initState() {
     super.initState();
     AppUtil.checkLocationServiceAndPermission();
-    BlocProvider.of<LocationBloc>(context)
-        .add(GetCurrentLocation(widget.token));
   }
 
   @override
   void dispose() {
+    _bloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Container(
-            width: AppUtil.getScreenWidth(context),
-            child: Column(
-              children: <Widget>[
-                Expanded(
-                  child: BlocConsumer<LocationBloc, LocationState>(
-                    buildWhen: (oldState, state) {
-                      if (state is LoadingLocationSuccess ||
-                          state is LoadingLocationError ||
-                          state is UpdatingLocationSuccess ||
-                          state is LocationMoved) {
-                        return true;
-                      } else {
-                        return false;
-                      }
-                    },
-                    listenWhen: (oldState, state) {
-                      if (state is LoadingLocationError) {
-                        return true;
-                      } else {
-                        return false;
-                      }
-                    },
-                    listener: (context, state) {
-                      if (state is LoadingLocationError) {
-                        final snackBar = SnackBar(
-                          content: Text(state.message),
-                        );
-                        Scaffold.of(context).showSnackBar(snackBar);
-                      }
-                    },
-                    builder: (context, state) {
-                      LatLng loc;
-                      if (state is LoadingLocationSuccess) {
-                        loc = LatLng(
-                            state.location.latitude, state.location.longitude);
-                        _animateCameraToPosition(loc);
-                        BlocProvider.of<LocationBloc>(context)
-                            .add(UpdateLocation(loc));
-                      } else if (state is UpdatingLocationSuccess) {
-                        loc = LatLng(
-                            state.location.latitude, state.location.longitude);
-                      } else if (state is LocationMoved) {
-                        loc = state.latLng;
-                        BlocProvider.of<LocationBloc>(context)
-                            .add(UpdateLocation(loc));
-                      }
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, loginState) {
+        return BlocProvider<CurrentLocationBloc>(
+          create: (context) {
+            return _bloc..add(GetCurrentLocationEvent());
+          },
+          child: BlocBuilder<CurrentLocationBloc, CurrentLocationState>(
+            builder: (context, state) {
+              if (state.lat != null && state.lng != null) {
+                marker = Marker(
+                    markerId: MarkerId("location"),
+                    position: LatLng(state.lat, state.lng),
+                    icon: BitmapDescriptor.defaultMarker);
+              }
+              _animateCameraToPosition(LatLng(state.lat, state.lng));
 
-                      if (loc != null) {
-                        marker = Marker(
-                            markerId: MarkerId("location"),
-                            position: LatLng(loc.latitude, loc.longitude),
-                            icon: BitmapDescriptor.defaultMarker);
-                      }
-
-                      return GoogleMap(
-                        onCameraMove: (position) {
-                          // _bloc.add(UpdateLocation(position.target));
-                        },
-                        markers: Set.of((marker != null) ? [marker] : []),
-                        mapType: MapType.normal,
-                        onTap: (latLng) {
-                          BlocProvider.of<LocationBloc>(context)
-                              .add(MoveLocation(latLng));
-                        },
-                        zoomControlsEnabled: true,
-                        myLocationEnabled: true,
-                        myLocationButtonEnabled: true,
-                        zoomGesturesEnabled: true,
-                        padding: EdgeInsets.all(32),
-                        compassEnabled: true,
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(initLat, initLng),
-                          zoom: 15.5,
-                        ),
-                        onMapCreated: (GoogleMapController controller) {
-                          _controller.complete(controller);
-                        },
-                      );
-                    },
-                  ),
-                ),
-                Stack(
+              return Scaffold(
+                body: Stack(
                   children: <Widget>[
                     Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 5,
-                                spreadRadius: 0)
-                          ]),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: horizontalPaddingDraggable,
-                          vertical: horizontalPaddingDraggable),
+                      width: AppUtil.getScreenWidth(context),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Container(
-                            margin:
-                                EdgeInsets.only(bottom: distanceSectionContent),
-                            child: Text(
-                              "Your Location",
-                              style: TextStyle(
-                                  fontSize: 12, color: Colors.black38),
+                          Expanded(
+                            child: GoogleMap(
+                              onCameraMove: (position) {
+                                // _bloc.add(UpdateLocation(position.target));
+                              },
+                              markers: Set.of((marker != null) ? [marker] : []),
+                              mapType: MapType.normal,
+                              onTap: (latLng) {
+                                _bloc.add(UpdateAddress(latLng.latitude, latLng.longitude));
+                              },
+                              zoomControlsEnabled: true,
+                              myLocationEnabled: true,
+                              myLocationButtonEnabled: true,
+                              zoomGesturesEnabled: true,
+                              padding: EdgeInsets.all(32),
+                              compassEnabled: true,
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(state.lat, state.lng),
+                                zoom: 15.5,
+                              ),
+                              onMapCreated: (GoogleMapController controller) {
+                                _controller.complete(controller);
+                              },
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(bottom: 18),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Icon(Icons.location_on),
-                                SizedBox(
-                                  width: 12,
-                                ),
-                                Expanded(
-                                  child:
-                                      BlocBuilder<LocationBloc, LocationState>(
-                                    condition: (oldState, state) {
-                                      if (state is UpdatingLocationSuccess)
-                                        return true;
-                                      return false;
-                                    },
-                                    builder: (context, state) {
-                                      String address = "...";
-                                      if (state is UpdatingLocationSuccess) {
-                                        address = state.location.address;
-                                      }
-                                      return Container(
-                                        child: Text(
-                                          address + "\n",
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          BlocBuilder<LocationBloc, LocationState>(
-                            condition: (oldState, state) {
-                              if (state is LoadingLocationSuccess ||
-                                  state is LoadingLocationError ||
-                                  state is UpdatingLocationSuccess ||
-                                  state is LocationMoved) {
-                                return true;
-                              } else {
-                                return false;
-                              }
-                            },
-                            builder: (context, state) {
-                              return BlocBuilder<LoginBloc, LoginState>(
-                                builder: (context, loginState) {
-                                  return GestureDetector(
-                                    onTap: state is UpdatingLocationSuccess
-                                        ? () {
-                                            //Navigator pop
-                                            BlocProvider.of<LocationBloc>(
-                                                    context)
-                                                .add(GetHomeDataByLatLng(
-                                                    loginState.user.token,
-                                                    state.location.latitude,
-                                                    state.location.longitude));
-                                            Navigator.pushReplacementNamed(
-                                                context, "/home");
-                                          }
-                                        : () {},
-                                    child: Stack(
-                                      children: <Widget>[
-                                        Container(
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFFFFB531),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "CONFIRM LOCATION",
-                                            style: TextStyle(fontSize: 20),
-                                          ),
-                                        ),
-                                        AnimatedOpacity(
-                                          opacity:
-                                              state is UpdatingLocationSuccess
-                                                  ? 0.0
-                                                  : 0.5,
-                                          child: Container(
-                                            height: 50,
-                                            color: Colors.white,
-                                          ),
-                                          duration: Duration(milliseconds: 300),
-                                        )
-                                      ],
+                          Stack(
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5, spreadRadius: 0)]),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPaddingDraggable, vertical: horizontalPaddingDraggable),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(bottom: distanceSectionContent),
+                                      child: Text(
+                                        "Your Location",
+                                        style: TextStyle(fontSize: 12, color: Colors.black38),
+                                      ),
                                     ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                                    Container(
+                                      margin: EdgeInsets.only(bottom: 18),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Icon(Icons.location_on),
+                                          SizedBox(
+                                            width: 12,
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              child: Text(
+                                                state.address + "\n",
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: state is LoadingCurrentLocationState || state is ErrorCurrentLocationState
+                                          ? () {}
+                                          : () {
+                                              //implement get home page data here
+                                              BlocProvider.of<HomeBloc>(context).add(
+                                                  GetHomeDataByLatLng(loginState.user.token, state.lat, state.lng));
+                                              Navigator.pushReplacementNamed(context, "/home");
+                                            },
+                                      child: Stack(
+                                        children: <Widget>[
+                                          Container(
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFFFB531),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              "CONFIRM LOCATION",
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          ),
+                                          AnimatedOpacity(
+                                            opacity: state is LoadingCurrentLocationState ||
+                                                    state is ErrorCurrentLocationState
+                                                ? 0.5
+                                                : 0.0,
+                                            child: Container(
+                                              height: 50,
+                                              color: Colors.white,
+                                            ),
+                                            duration: Duration(milliseconds: 300),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              state is LoadingCurrentLocationState ? LinearProgressIndicator() : SizedBox(),
+                            ],
+                          )
                         ],
                       ),
                     ),
-                    BlocBuilder<LocationBloc, LocationState>(
-                      builder: (context, state) {
-                        if (state is LoadingLocation ||
-                            state is UpdatingLocation) {
-                          return LinearProgressIndicator();
-                        }
-                        return SizedBox();
-                      },
+                    Positioned(
+                      top: AppUtil.getToolbarHeight(context) / 2,
+                      left: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black45),
+                            height: 30,
+                            width: 30,
+                            child: SvgPicture.asset(
+                              "assets/back.svg",
+                              color: Colors.white,
+                            )),
+                      ),
                     ),
                   ],
-                )
-              ],
-            ),
+                ),
+              );
+            },
           ),
-          Positioned(
-            top: AppUtil.getToolbarHeight(context) / 2,
-            left: 0,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.black45),
-                  height: 30,
-                  width: 30,
-                  child: SvgPicture.asset(
-                    "assets/back.svg",
-                    color: Colors.white,
-                  )),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Future<void> _animateCameraToPosition(LatLng latLng) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: latLng, zoom: 15.5)));
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: latLng, zoom: 15.5)));
   }
 }

@@ -40,6 +40,8 @@ class _AddressPageState extends State<AddressPage> {
   void initState() {
     super.initState();
 
+    AppUtil.checkLocationServiceAndPermission();
+
     if (widget.address != null) {
       switch (widget.address.type) {
         case AddressType.home:

@@ -72,7 +72,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Stream<LoginState> mapLogOutToState() async* {
     try {
-      bool isLoggedOut = await _repository.removeSavedToken();
+      bool isLoggedOut = await _repository.removeData();
       if (isLoggedOut) {
         yield LoggedOut();
       }

@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clients/bloc/currentorder/current_order_bloc.dart';
-import 'package:clients/bloc/location/bloc.dart';
 import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/page/home.dart';
@@ -15,12 +14,11 @@ import 'package:clients/page/order_history_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'bloc/location/location_bloc.dart';
+import 'bloc/location/home/home_bloc.dart';
 import 'bloc/notification/bloc.dart';
 
 void main() {
   runApp(MyApp());
-  AppUtil.checkLocationServiceAndPermission();
 }
 
 class MyApp extends StatelessWidget {
@@ -29,9 +27,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(providers: [
-      BlocProvider<LocationBloc>(
+      BlocProvider<HomeBloc>(
         create: (context) {
-          return LocationBloc();
+          return HomeBloc();
         },
       ),
       BlocProvider<NotificationBloc>(

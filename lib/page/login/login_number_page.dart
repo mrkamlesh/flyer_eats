@@ -1,3 +1,4 @@
+import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/bloc/notification/bloc.dart';
 import 'package:clients/page/notifications_list_page.dart';
 import 'package:clients/page/track_order_page.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:clients/bloc/currentorder/current_order_bloc.dart';
 import 'package:clients/bloc/currentorder/current_order_event.dart';
-import 'package:clients/bloc/location/bloc.dart';
 import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/bloc/login/checkphoneexist/bloc.dart';
 import 'package:clients/classes/app_util.dart';
@@ -78,10 +78,12 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                   }));
                 }
                 BlocProvider.of<NotificationBloc>(context).add(ResetMessage());
-                BlocProvider.of<LocationBloc>(context).add(GetCurrentLocation(state.user.token));
+                BlocProvider.of<HomeBloc>(context).add(InitGetData(state.user.token));
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
                   return Home();
                 }));
+              } else if (state is NotLoggedIn) {
+                AppUtil.checkLocationServiceAndPermission();
               }
             },
             builder: (context, state) {

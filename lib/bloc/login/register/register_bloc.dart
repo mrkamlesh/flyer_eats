@@ -75,7 +75,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         name: event.name,
         email: event.email,
         contactPhone: event.phoneNumber,
-        countryId: event.phoneNumber.substring(0, 2) == "+91" ? "IN" : "SG",
+        countryId: event.phoneNumber.substring(0, 3) == "+91" ? "IN" : "SG",
         devicePlatform: devicePlatform,
         deviceId: deviceId,
         appVersion: "5.0",

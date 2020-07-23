@@ -336,6 +336,22 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                       state is ErrorPlaceOrder) {
                                     return SliverToBoxAdapter(child: SizedBox());
                                   }
+
+                                  if (loginState.user.defaultAddress == null) {
+                                    return SliverToBoxAdapter(
+                                      child: Container(
+                                        margin: EdgeInsets.only(bottom: 20),
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                            color: Colors.red[700], borderRadius: BorderRadius.circular(5)),
+                                        child: Text(
+                                          "No Address Found",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
                                   return SliverToBoxAdapter(
                                     child: !state.placeOrderPickup.isValid
                                         ? Container(
@@ -370,7 +386,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                       child: Column(
                         children: <Widget>[
                           PickUpDeliveryInformation(
-                            address: state.placeOrderPickup.address,
+                            address: loginState.user.defaultAddress,
                             token: loginState.user.token,
                             orderPickupBloc: _orderPickupBloc,
                             addressBloc: _addressBloc,
@@ -601,11 +617,16 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
             ]),
             child: GestureDetector(
               onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Address address = await Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return AddressPage(
                     forcedDefault: true,
                   );
                 }));
+
+                if (address != null) {
+                  BlocProvider.of<LoginBloc>(context).add(UpdateDefaultAddress(address));
+                  widget.orderPickupBloc.add(ChangeAddress(address));
+                }
                 //widget.addressBloc.add(InitDefaultAddress());
               },
               child: Column(
@@ -620,7 +641,7 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        margin: EdgeInsets.only(right: 20),
+                        margin: EdgeInsets.only(right: 10),
                         child: Icon(
                           Icons.add,
                           size: 20,

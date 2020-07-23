@@ -221,7 +221,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                               widget.restaurant.name,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           SizedBox(

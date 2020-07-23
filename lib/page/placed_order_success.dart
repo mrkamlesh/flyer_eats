@@ -11,6 +11,7 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/page/order_detail_page.dart';
 import 'package:clients/widget/promo_list.dart';
+import 'package:share/share.dart';
 
 class PlacedOrderSuccessPage extends StatefulWidget {
   final String placeOrderId;
@@ -110,7 +111,7 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                   top: 30,
                                   left: horizontalPaddingDraggable,
                                   right: horizontalPaddingDraggable,
-                                  bottom: 20),
+                                  bottom: 10),
                               child: Center(
                                 child: Text(
                                   "You will get order notification in some time",
@@ -146,106 +147,116 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                 ),
                               ),
                             ),
-                            Container(
-                              margin: EdgeInsets.only(top: 20, bottom: 20),
-                              height: 0.16 * AppUtil.getScreenHeight(context),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFFC94B),
-                                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)],
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    width: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                    height: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                    margin: EdgeInsets.all(10),
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.3),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        SvgPicture.asset(
-                                          "assets/order success icon 2.svg",
-                                          height: 40,
-                                          width: 40,
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          "Refer Now",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                      child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          "REFER A FRIEND AND EARN",
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              "Get a coupon worth",
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            SvgPicture.asset(
-                                              "assets/rupee.svg",
-                                            ),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              "100",
-                                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                        FittedBox(
-                                          fit: BoxFit.none,
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                            BlocBuilder<PlacedOrderSuccessBloc, PlacedOrderSuccessState>(
+                              builder: (context, state) {
+                                if (state is SuccessAds) {
+                                  return InkWell(
+                                    onTap: () {
+                                      final RenderBox box = context.findRenderObject();
+                                      Share.share('flyereats.in',
+                                          subject: 'Flyer Eats',
+                                          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 20, bottom: 20),
+                                      height: 0.16 * AppUtil.getScreenHeight(context),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFFFC94B),
+                                        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)],
+                                      ),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Container(
+                                            width: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                            height: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                            margin: EdgeInsets.all(10),
+                                            padding: EdgeInsets.all(10),
                                             decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(4),
+                                              color: Colors.white.withOpacity(0.3),
                                             ),
-                                            child: Row(
+                                            child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
                                               children: <Widget>[
-                                                Text(
-                                                  "Use Referal Code: ",
-                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                SvgPicture.asset(
+                                                  "assets/order success icon 2.svg",
+                                                  height: 0.16 * AppUtil.getScreenHeight(context) - 60,
+                                                  width: 0.16 * AppUtil.getScreenHeight(context) - 60,
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
                                                 ),
                                                 Text(
-                                                  "HHHHHH",
-                                                  style: TextStyle(
-                                                    color: primary3,
-                                                    fontSize: 12,
-                                                  ),
+                                                  "Refer Now",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
                                                 )
                                               ],
                                             ),
                                           ),
-                                        )
-                                      ],
+                                          Expanded(
+                                              child: Container(
+                                            padding: EdgeInsets.all(10),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Text(
+                                                  "REFER A FRIEND AND EARN",
+                                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Get a coupon worth",
+                                                      style: TextStyle(fontSize: 12),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                      state.referralAmount,
+                                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                                FittedBox(
+                                                  fit: BoxFit.none,
+                                                  child: Container(
+                                                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(4),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "Use Referal Code: ",
+                                                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                        ),
+                                                        Text(
+                                                          state.referralCode,
+                                                          style: TextStyle(
+                                                            color: primary3,
+                                                            fontSize: 12,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ))
+                                        ],
+                                      ),
                                     ),
-                                  ))
-                                ],
-                              ),
+                                  );
+                                } else {
+                                  return SizedBox();
+                                }
+                              },
                             ),
                             BlocBuilder<PlacedOrderSuccessBloc, PlacedOrderSuccessState>(builder: (context, state) {
                               if (state is LoadingAds) {

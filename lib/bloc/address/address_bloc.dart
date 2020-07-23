@@ -146,7 +146,11 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     yield LoadingAddressInformation();
     try {
       bool isAdded = await addressRepository.addAddress(address, token);
-      yield AddressAdded(isAdded);
+      if (isAdded) {
+        yield AddressAdded(isAdded, address);
+      } else {
+        yield ErrorLoadingListAddress("Error");
+      }
     } catch (e) {
       yield ErrorLoadingListAddress(e.toString());
     }

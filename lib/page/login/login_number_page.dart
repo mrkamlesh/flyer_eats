@@ -160,7 +160,8 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                           Container(
                                             margin: EdgeInsets.only(bottom: 20),
                                             child: Text(
-                                              "Enter your 10 digit phone number to kick start",
+                                              "Enter your phone number to kick start",
+                                              textAlign: TextAlign.center,
                                               style: TextStyle(fontSize: 18, color: Colors.black38),
                                             ),
                                           ),

@@ -28,6 +28,7 @@ class RestaurantListPage extends StatefulWidget {
   final RestaurantListType type;
   final MerchantType merchantType;
   final String category;
+  final bool isFilterEnabled;
 
   const RestaurantListPage(
       {Key key,
@@ -37,7 +38,8 @@ class RestaurantListPage extends StatefulWidget {
       this.location,
       this.type,
       this.category,
-      this.merchantType})
+      this.merchantType,
+      this.isFilterEnabled = true})
       : super(key: key);
 
   @override
@@ -251,6 +253,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> with SingleTick
                                     _bloc.add(ChangeVegOnly(loginState.user.token, widget.location.address,
                                         widget.merchantType, widget.type, widget.category, value));
                                   },
+                                  isFilterEnabled: widget.isFilterEnabled,
                                   isVegOnly: state.isVeg,
                                   title: widget.title,
                                   isListSelected: _isListMode,
@@ -524,6 +527,7 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
   final String title;
   final Function(bool) onChange;
   final bool isVegOnly;
+  final bool isFilterEnabled;
 
   ListRestaurantFilterWidget({
     this.onChange,
@@ -533,6 +537,7 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
     this.onGridButtonTap,
     this.isListSelected,
     this.size,
+    this.isFilterEnabled,
   });
 
   @override
@@ -549,26 +554,34 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text(
-              title,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Expanded(
+              flex: 1,
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
-            Row(
-              children: <Widget>[
-                Text(
-                  "Veg Only",
-                  style: TextStyle(color: Colors.black, fontSize: 12),
-                ),
-                Transform.scale(
-                  scale: 0.7,
-                  child: CupertinoSwitch(
-                    value: isVegOnly,
-                    onChanged: onChange,
-                    activeColor: Colors.green,
-                  ),
-                ),
-              ],
-            ),
+            isFilterEnabled
+                ? Expanded(
+                    flex: 1,
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          "Veg Only",
+                          style: TextStyle(color: Colors.black, fontSize: 12),
+                        ),
+                        Transform.scale(
+                          scale: 0.7,
+                          child: CupertinoSwitch(
+                            value: isVegOnly,
+                            onChanged: onChange,
+                            activeColor: Colors.green,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : SizedBox(),
             Container(
               height: size,
               decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(6)),

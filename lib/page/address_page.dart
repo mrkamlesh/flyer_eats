@@ -201,8 +201,8 @@ class _AddressPageState extends State<AddressPage> {
                                           actions: <Widget>[
                                             FlatButton(
                                                 onPressed: () {
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
+                                                  Navigator.pop(context, state.address);
+                                                  Navigator.pop(context, state.address);
                                                 },
                                                 child: Text("OK"))
                                           ],

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:clients/classes/data_repository.dart';
-import 'package:clients/model/ads.dart';
 import './bloc.dart';
 
 class PlacedOrderSuccessBloc extends Bloc<PlacedOrderSuccessEvent, PlacedOrderSuccessState> {
@@ -24,8 +23,8 @@ class PlacedOrderSuccessBloc extends Bloc<PlacedOrderSuccessEvent, PlacedOrderSu
 
     try {
       var result = await repository.getAds(token, address);
-      if (result is List<Ads>) {
-        yield SuccessAds(result);
+      if (result is Map) {
+        yield SuccessAds(result['list'], result['referral_code'], result['referral_amount']);
       } else {
         yield ErrorAds("Error get Ads");
       }

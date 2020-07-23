@@ -1,4 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/page/home.dart';
+import 'package:clients/page/offers_list_page.dart';
+import 'package:clients/page/order_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -139,12 +142,26 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                         BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
                       ],
                       onItemSelected: (index) {
-                        setState(() {
+                        setState(() async {
                           _currentIndex = index;
-                          if (index == 2) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return SearchPage();
+                          if (index == 0) {
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return Home();
                             }));
+                            _currentIndex = 2;
+                          } else if (index == 1) {
+                            await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                              return OfferListPage(
+                                address: widget.address,
+                              );
+                            }));
+                            _currentIndex = 0;
+                            _currentIndex = 2;
+                          } else if (index == 3) {
+                            await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                              return OrderHistoryPage();
+                            }));
+                            _currentIndex = 2;
                           }
                         });
                       },

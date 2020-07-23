@@ -129,6 +129,8 @@ class _OtpPageState extends State<OtpPage> {
                               autoFocus: true,
                               pinTheme: PinTheme(
                                   shape: PinCodeFieldShape.box,
+                                  fieldWidth: (AppUtil.getScreenWidth(context) - 50 - 2 * horizontalPaddingDraggable) / 6,
+                                  fieldHeight: (AppUtil.getScreenWidth(context) - 50 - 2 * horizontalPaddingDraggable) / 6,
                                   selectedColor: primary2,
                                   borderRadius: BorderRadius.circular(8),
                                   inactiveColor: primary2),

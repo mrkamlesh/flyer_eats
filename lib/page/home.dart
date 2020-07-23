@@ -35,6 +35,7 @@ import 'package:clients/widget/restaurant_list.dart';
 import 'package:clients/widget/shop_category_list.dart';
 import 'package:clients/classes/example_model.dart';
 import 'package:scratcher/scratcher.dart';
+import 'package:share/share.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -379,6 +380,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           isExternalImage: false,
                                           title: "All Restaurants",
                                           location: Location(address: _homePageData.location.address),
+                                          isFilterEnabled: true,
                                         );
                                       }));
                                     } else if (i == 1) {
@@ -389,6 +391,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           isExternalImage: false,
                                           title: "All Grocery",
                                           location: Location(address: _homePageData.location.address),
+                                          isFilterEnabled: false,
                                         );
                                       }));
                                     } else if (i == 2) {
@@ -399,6 +402,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           isExternalImage: false,
                                           title: "All Merchants",
                                           location: Location(address: _homePageData.location.address),
+                                          isFilterEnabled: false,
                                         );
                                       }));
                                     } else if (i == 3) {
@@ -409,6 +413,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                           isExternalImage: false,
                                           title: "All Merchants",
                                           location: Location(address: _homePageData.location.address),
+                                          isFilterEnabled: false,
                                         );
                                       }));
                                     }
@@ -577,105 +582,107 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                   : Container(
                                       margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                     ),
-                              Container(
-                                margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
-                                height: 0.16 * AppUtil.getScreenHeight(context),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFFFC94B),
-                                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)],
-                                ),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      width: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                      height: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                      margin: EdgeInsets.all(10),
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.3),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          SvgPicture.asset(
-                                            "assets/order success icon 2.svg",
-                                            height: 40,
-                                            width: 40,
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            "Refer Now",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                        child: Container(
-                                      padding: EdgeInsets.all(10),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            "REFER A FRIEND AND EARN",
-                                            style: TextStyle(fontWeight: FontWeight.bold),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Text(
-                                                "Get a coupon worth",
-                                                style: TextStyle(fontSize: 12),
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              SvgPicture.asset(
-                                                "assets/rupee.svg",
-                                              ),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              Text(
-                                                "100",
-                                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                              ),
-                                            ],
-                                          ),
-                                          FittedBox(
-                                            fit: BoxFit.none,
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(4),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    "Use Referal Code: ",
-                                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                                  ),
-                                                  Text(
-                                                    "HHHHHH",
-                                                    style: TextStyle(
-                                                      color: primary3,
-                                                      fontSize: 12,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
+                              InkWell(
+                                onTap: () {
+                                  final RenderBox box = context.findRenderObject();
+                                  Share.share('flyereats.in',
+                                      subject: 'Flyer Eats',
+                                      sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
+                                  height: 0.16 * AppUtil.getScreenHeight(context),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFFFC94B),
+                                    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)],
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Container(
+                                        width: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                        height: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                        margin: EdgeInsets.all(10),
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.3),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            SvgPicture.asset(
+                                              "assets/order success icon 2.svg",
+                                              height: 0.16 * AppUtil.getScreenHeight(context) - 60,
+                                              width: 0.16 * AppUtil.getScreenHeight(context) - 60,
                                             ),
-                                          )
-                                        ],
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              "Refer Now",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ))
-                                  ],
+                                      Expanded(
+                                          child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Text(
+                                              "REFER A FRIEND AND EARN",
+                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(
+                                                  "Get a coupon worth",
+                                                  style: TextStyle(fontSize: 12),
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  _homePageData.referralDiscount,
+                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            FittedBox(
+                                              fit: BoxFit.none,
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(4),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Use Referal Code: ",
+                                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      _homePageData.referralCode,
+                                                      style: TextStyle(
+                                                        color: primary3,
+                                                        fontSize: 12,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ))
+                                    ],
+                                  ),
                                 ),
                               ),
                               _homePageData.ads.isNotEmpty

@@ -5,6 +5,7 @@ import 'package:clients/bloc/login/login_event.dart';
 import 'package:clients/bloc/login/login_state.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/classes/push_notification_manager.dart';
+import 'package:clients/model/address.dart';
 import 'package:clients/model/user.dart';
 import 'package:package_info/package_info.dart';
 
@@ -28,6 +29,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield* mapUpdateUserProfileToState(event.user);
     } else if (event is UpdatePrimaryContact) {
       yield* mapUpdatePrimaryContactToState(event.contact);
+    } else if (event is UpdateDefaultAddress) {
+      yield* mapUpdateDefaultAddressToState(event.address);
     }
   }
 
@@ -97,5 +100,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<String> _getVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     return packageInfo.version;
+  }
+
+  Stream<LoginState> mapUpdateDefaultAddressToState(Address address) async* {
+    yield LoginState(isValid: state.isValid, user: state.user.copyWith(defaultAddress: address));
   }
 }

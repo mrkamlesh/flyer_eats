@@ -1,3 +1,4 @@
+import 'package:clients/model/address.dart';
 import 'package:equatable/equatable.dart';
 import 'package:clients/model/user.dart';
 import 'package:meta/meta.dart';
@@ -47,4 +48,13 @@ class UpdatePrimaryContact extends LoginEvent {
 
   @override
   List<Object> get props => [contact];
+}
+
+class UpdateDefaultAddress extends LoginEvent {
+  final Address address;
+
+  const UpdateDefaultAddress(this.address);
+
+  @override
+  List<Object> get props => [address];
 }

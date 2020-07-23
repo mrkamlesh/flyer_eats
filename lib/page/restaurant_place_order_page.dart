@@ -292,7 +292,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                 right: horizontalPaddingDraggable,
                                                 bottom: kBottomNavigationBarHeight + 160),
                                             child: Container(
-                                              child: Text(state.placeOrder.message),
+                                              child: loginState.user.defaultAddress == null
+                                                  ? Text("No Address Found")
+                                                  : Text(state.placeOrder.message),
                                             ),
                                           ));
                                         } else {
@@ -688,7 +690,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                               children: <Widget>[
                                 state.placeOrder.transactionType == "delivery"
                                     ? FoodListDeliveryInformation(
-                                        address: state.placeOrder.address,
+                                        address: loginState.user.defaultAddress,
                                         token: state.placeOrder.user.token,
                                         foodOrderBloc: _foodOrderBloc,
                                         addressBloc: _addressBloc,
@@ -1450,7 +1452,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
                               food.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                             ),
                           ),
                           food.description != null && food.description != ""
@@ -1568,11 +1570,16 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
             ]),
             child: GestureDetector(
               onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Address address = await Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return AddressPage(
                     forcedDefault: true,
                   );
                 }));
+
+                if (address != null) {
+                  BlocProvider.of<LoginBloc>(context).add(UpdateDefaultAddress(address));
+                  widget.foodOrderBloc.add(ChangeAddress(address));
+                }
                 //widget.addressBloc.add(InitDefaultAddress());
               },
               child: Column(
@@ -1587,7 +1594,7 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        margin: EdgeInsets.only(right: 20),
+                        margin: EdgeInsets.only(right: 10),
                         child: Icon(
                           Icons.add,
                           size: 20,
@@ -1710,8 +1717,7 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
     showModalBottomSheet(
         isScrollControlled: false,
         shape: RoundedRectangleBorder(
-            borderRadius:
-            BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         context: context,
         builder: (context) {
           return BlocBuilder<AddressBloc, AddressState>(
@@ -1730,14 +1736,12 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
                   child: Stack(
                     children: <Widget>[
                       SingleChildScrollView(
                         child: Container(
-                          padding: EdgeInsets.only(
-                              left: 20, right: 20, bottom: kBottomNavigationBarHeight, top: 20),
+                          padding: EdgeInsets.only(left: 20, right: 20, bottom: kBottomNavigationBarHeight, top: 20),
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1760,8 +1764,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                         child: Container(
                             width: AppUtil.getScreenWidth(context),
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                                borderRadius:
+                                    BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
                                 color: Colors.white),
                             padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
                             child: Text(
@@ -1798,10 +1802,7 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                                   ),
                                   Text(
                                     "ADD NEW ADDRESS",
-                                    style: TextStyle(
-                                        color: Colors.orange,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
+                                    style: TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold),
                                   )
                                 ],
                               ),
@@ -1822,14 +1823,13 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                 return Container(
                   child: Center(
                       child: SpinKitCircle(
-                        color: Colors.black38,
-                        size: 30,
-                      )),
+                    color: Colors.black38,
+                    size: 30,
+                  )),
                 );
               } else if (state is ErrorLoadingListAddress) {
                 return Container(
-                    margin: EdgeInsets.symmetric(vertical: 20),
-                    child: Center(child: Text("Fail load addresses")));
+                    margin: EdgeInsets.symmetric(vertical: 20), child: Center(child: Text("Fail load addresses")));
               }
               return Container();
             },

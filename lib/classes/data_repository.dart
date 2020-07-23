@@ -386,11 +386,17 @@ class DataRepository {
     final response = await _provider.getHomePageData(
         address: address, adsPage: 0, dblPage: 0, foodCategoryPage: 0, token: token, topRestaurantPage: 0);
     if (response['code'] == 1) {
+      Map<String, dynamic> map = Map();
       var listAds = response['details']['ads'] as List;
       List<Ads> ads = listAds.map((i) {
         return Ads.fromJson(i);
       }).toList();
-      return ads;
+
+      map['list'] = ads;
+      map['referral_code'] = response['details']['referral_code'];
+      map['referral_amount'] = response['details']['referral_discount'];
+
+      return map;
     } else {
       return response['msg'];
     }

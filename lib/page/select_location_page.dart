@@ -106,7 +106,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Text(
-                                  "SELECT LOCATION",
+                                  "Search Location",
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                                 InkWell(
@@ -147,7 +147,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                       width: 10,
                                     ),
                                     Text(
-                                      "CURRENT LOCATION",
+                                      "Current Location",
                                       style: TextStyle(color: primary3, fontSize: 16),
                                     ),
                                   ],
@@ -269,13 +269,13 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                             ],
                           ),
                         ),
-                        Container(
+                        /*Container(
                           margin: EdgeInsets.only(
                               left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: 20),
                           padding: EdgeInsets.all(5),
                           decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(4)),
                           child: Text("Select your town or city here"),
-                        ),
+                        ),*/
                         Expanded(
                           child: BlocBuilder<LocationBloc, LocationState>(
                             condition: (oldState, state) {

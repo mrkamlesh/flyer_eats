@@ -113,7 +113,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                     crossAxisCount: 2,
                     mainAxisSpacing: 20,
                     crossAxisSpacing: 20,
-                    childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 240)));
+                    childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 235)));
       case FoodListViewType.search:
         return SliverPadding(
             padding: widget.padding,
@@ -142,7 +142,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                     crossAxisCount: 2,
                     mainAxisSpacing: 20,
                     crossAxisSpacing: 20,
-                    childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 240)));
+                    childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 235)));
       default:
         return SliverToBoxAdapter();
     }
@@ -344,7 +344,7 @@ class FoodList extends StatelessWidget {
                                     food.title,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
@@ -499,7 +499,7 @@ class FoodList extends StatelessWidget {
                                   food.title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                                 ),
                               ),
                               food.description != null && food.description != ""
@@ -648,7 +648,7 @@ class FoodList extends StatelessWidget {
                                     food.title,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],

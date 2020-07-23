@@ -62,7 +62,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         placeOrder: state.placeOrder.copyWith(contact: contact, isChangePrimaryContact: isChangePrimaryContact));
   }
 
-  Stream<FoodOrderState> mapChangeQuantityFoodCartToState(String id, Food food, int quantity, int selectedPrice) async* {
+  Stream<FoodOrderState> mapChangeQuantityFoodCartToState(
+      String id, Food food, int quantity, int selectedPrice) async* {
     FoodCart newCart = state.placeOrder.foodCart;
     newCart.changeQuantity(id, food, quantity, selectedPrice);
 

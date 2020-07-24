@@ -1,3 +1,4 @@
+import 'package:clients/page/login/login_email_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:clients/bloc/login/checkemailexist/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
-import 'package:clients/page/login/otp_page.dart';
 import 'package:clients/page/login/register_page.dart';
 
 class LoginFacebookGmail extends StatefulWidget {
@@ -20,12 +20,12 @@ class LoginFacebookGmail extends StatefulWidget {
 class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
   ScrollController _controller;
   TextEditingController _emailController;
-  LoginEmailBloc _loginEmailBloc;
+  CheckEmailBloc _loginEmailBloc;
 
   @override
   void initState() {
     super.initState();
-    _loginEmailBloc = LoginEmailBloc();
+    _loginEmailBloc = CheckEmailBloc();
     _controller = ScrollController();
     _emailController = TextEditingController();
     _emailController.addListener(() {
@@ -41,25 +41,26 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0.0 &&
-        _controller.hasClients) {
-      _controller.animateTo(100,
-          duration: Duration(milliseconds: 200), curve: Curves.ease);
+    if (MediaQuery.of(context).viewInsets.bottom > 0.0 && _controller.hasClients) {
+      _controller.animateTo(100, duration: Duration(milliseconds: 200), curve: Curves.ease);
     }
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<LoginEmailBloc>(
+        BlocProvider<CheckEmailBloc>(
           create: (context) {
             return _loginEmailBloc;
           },
         ),
       ],
-      child: BlocConsumer<LoginEmailBloc, LoginEmailState>(
+      child: BlocConsumer<CheckEmailBloc, CheckEmailState>(
         listener: (context, state) {
           if (state is EmailIsExist) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return OtpPage(phoneNumber: widget.phoneNumber);
+              return LoginEmailPage(
+                phoneNumber: widget.phoneNumber,
+                email: state.email,
+              );
             }));
           } else if (state is EmailIsNotExist) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -117,8 +118,7 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                   "assets/flyereatslogo.png",
                                   alignment: Alignment.center,
                                   width: AppUtil.getScreenWidth(context) - 140,
-                                  height: 0.46 *
-                                      (AppUtil.getScreenWidth(context) - 140),
+                                  height: 0.46 * (AppUtil.getScreenWidth(context) - 140),
                                 )),
                           ),
                         ),
@@ -127,13 +127,10 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                             margin: EdgeInsets.only(top: 10),
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(32),
-                                    topLeft: Radius.circular(32))),
+                                borderRadius:
+                                    BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                             padding: EdgeInsets.only(
-                                top: 20,
-                                left: horizontalPaddingDraggable,
-                                right: horizontalPaddingDraggable),
+                                top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                             alignment: Alignment.center,
                             child: Column(
                               children: <Widget>[
@@ -143,9 +140,7 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                   ),
                                   child: Text(
                                     "DETAILS",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
+                                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 Container(
@@ -160,12 +155,10 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                     controller: _emailController,
                                     keyboardType: TextInputType.emailAddress,
                                     decoration: InputDecoration(
-                                      contentPadding:
-                                          EdgeInsets.symmetric(vertical: 15),
+                                      contentPadding: EdgeInsets.symmetric(vertical: 15),
                                       border: InputBorder.none,
                                       hintText: "Enter your email",
-                                      hintStyle: TextStyle(
-                                          fontSize: 16, color: Colors.black38),
+                                      hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
                                     ),
                                   ),
                                 ),
@@ -181,11 +174,9 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       GestureDetector(
-                                          child: SvgPicture.asset(
-                                              "assets/facebook.svg"),
+                                          child: SvgPicture.asset("assets/facebook.svg"),
                                           onTap: () {
-                                            _loginEmailBloc
-                                                .add(LoginByFacebook());
+                                            _loginEmailBloc.add(LoginByFacebook());
                                           }),
                                       SizedBox(
                                         width: 30,
@@ -194,27 +185,23 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                           onTap: () {
                                             _loginEmailBloc.add(LoginByGmail());
                                           },
-                                          child: SvgPicture.asset(
-                                              "assets/gmail.svg")),
+                                          child: SvgPicture.asset("assets/gmail.svg")),
                                     ],
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap:
-                                      state.email != null && state.email != ""
-                                          ? () {
-                                              _loginEmailBloc
-                                                  .add(CheckEmailExist());
-                                            }
-                                          : () {},
+                                  onTap: state.email != null && state.email != ""
+                                      ? () {
+                                          _loginEmailBloc.add(CheckEmailExist());
+                                        }
+                                      : () {},
                                   child: Stack(
                                     children: <Widget>[
                                       Container(
                                         height: 50,
                                         decoration: BoxDecoration(
                                           color: Color(0xFFFFB531),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         alignment: Alignment.center,
                                         child: Text(
@@ -223,10 +210,7 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                                         ),
                                       ),
                                       AnimatedOpacity(
-                                        opacity: state.email != null &&
-                                                state.email != ""
-                                            ? 0.0
-                                            : 0.5,
+                                        opacity: state.email != null && state.email != "" ? 0.0 : 0.5,
                                         child: Container(
                                           height: 50,
                                           color: Colors.white,
@@ -244,13 +228,12 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                     ),
                   ),
                 ),
-                BlocBuilder<LoginEmailBloc, LoginEmailState>(
+                BlocBuilder<CheckEmailBloc, CheckEmailState>(
                   bloc: _loginEmailBloc,
                   builder: (context, state) {
                     if (state is LoadingCheckEmailExist) {
                       return Container(
-                        decoration:
-                            BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                        decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
                         child: Center(
                           child: SpinKitCircle(
                             color: Colors.white,

@@ -73,6 +73,15 @@ class DataRepository {
     }
   }
 
+  Future<LoginStatus> loginByEmail(String email, String password) async {
+    final response = await _provider.loginByEmail(email, password);
+    if (response['code'] == 1) {
+      return LoginStatus(response['msg'], true);
+    } else {
+      throw Exception(response['msg']);
+    }
+  }
+
   Future<dynamic> verifyOtp(
       String contactPhone, String otp, String firebaseToken, String platform, String version) async {
     final response = await _provider.verifyOtp(contactPhone, otp, firebaseToken, platform, version);

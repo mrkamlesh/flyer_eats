@@ -9,15 +9,15 @@ import './bloc.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as JSON;
 
-class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
+class CheckEmailBloc extends Bloc<CheckEmailEvent, CheckEmailState> {
   DataRepository repository = DataRepository();
 
   @override
-  LoginEmailState get initialState => InitialLoginEmailState();
+  CheckEmailState get initialState => InitialLoginEmailState();
 
   @override
-  Stream<LoginEmailState> mapEventToState(
-    LoginEmailEvent event,
+  Stream<CheckEmailState> mapEventToState(
+    CheckEmailEvent event,
   ) async* {
     if (event is CheckEmailExist) {
       yield* mapCheckEmailExistToState();
@@ -33,7 +33,7 @@ class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
     }
   }
 
-  Stream<LoginEmailState> mapCheckEmailExistToState() async* {
+  Stream<CheckEmailState> mapCheckEmailExistToState() async* {
     yield LoadingCheckEmailExist(state.email);
 
     try {
@@ -48,7 +48,7 @@ class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
     }
   }
 
-  Stream<LoginEmailState> mapLoginByFacebookToState() async* {
+  Stream<CheckEmailState> mapLoginByFacebookToState() async* {
     yield LoadingCheckEmailExist(state.email);
     try {
       final facebookLogin = FacebookLogin();
@@ -67,7 +67,7 @@ class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
               name: profile['name']));
           break;
         case FacebookLoginStatus.cancelledByUser:
-          yield LoginEmailState(email: state.email);
+          yield CheckEmailState(email: state.email);
           break;
         case FacebookLoginStatus.error:
           yield ErrorCheckEmailExist(result.errorMessage);
@@ -78,7 +78,7 @@ class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
     }
   }
 
-  Stream<LoginEmailState> mapCheckFacebookProfileToState(
+  Stream<CheckEmailState> mapCheckFacebookProfileToState(
       String email, String name, String avatar) async* {
     yield LoadingCheckEmailExist(state.email);
     try {
@@ -93,7 +93,7 @@ class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
     }
   }
 
-  Stream<LoginEmailState> mapLoginByGmailToState() async* {
+  Stream<CheckEmailState> mapLoginByGmailToState() async* {
     yield LoadingCheckEmailExist(state.email);
 
     try {
@@ -129,7 +129,7 @@ class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
     }
   }
 
-  Stream<LoginEmailState> mapChangeEmailToState(String email) async* {
-    yield LoginEmailState(email: email);
+  Stream<CheckEmailState> mapChangeEmailToState(String email) async* {
+    yield CheckEmailState(email: email);
   }
 }

@@ -132,6 +132,25 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> loginByEmail(String email, String password) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/checkAccount?json=true&api_key=flyereats";
+
+    var formData = {"email_address": email, "password": password};
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> verifyOtp(
       String contactPhone, String otp, String firebaseToken, String platform, String version) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/verifyOtp?json=true&api_key=flyereats";

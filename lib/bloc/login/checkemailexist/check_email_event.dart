@@ -2,11 +2,11 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-abstract class LoginEmailEvent extends Equatable {
-  const LoginEmailEvent();
+abstract class CheckEmailEvent extends Equatable {
+  const CheckEmailEvent();
 }
 
-class CheckEmailExist extends LoginEmailEvent {
+class CheckEmailExist extends CheckEmailEvent {
 
   const CheckEmailExist();
 
@@ -14,7 +14,7 @@ class CheckEmailExist extends LoginEmailEvent {
   List<Object> get props => [];
 }
 
-class ChangeEmail extends LoginEmailEvent {
+class ChangeEmail extends CheckEmailEvent {
   final String email;
 
   const ChangeEmail(this.email);
@@ -23,21 +23,21 @@ class ChangeEmail extends LoginEmailEvent {
   List<Object> get props => [email];
 }
 
-class LoginByFacebook extends LoginEmailEvent {
+class LoginByFacebook extends CheckEmailEvent {
   const LoginByFacebook();
 
   @override
   List<Object> get props => [];
 }
 
-class LoginByGmail extends LoginEmailEvent {
+class LoginByGmail extends CheckEmailEvent {
   const LoginByGmail();
 
   @override
   List<Object> get props => [];
 }
 
-class CheckSocialMediaProfile extends LoginEmailEvent {
+class CheckSocialMediaProfile extends CheckEmailEvent {
   final String email;
   final String name;
   final String avatar;

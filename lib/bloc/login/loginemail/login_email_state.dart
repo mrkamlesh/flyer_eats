@@ -26,7 +26,9 @@ class ErrorState extends LoginEmailState {
 }
 
 class SuccessForgotPassword extends LoginEmailState {
-  SuccessForgotPassword({String password}) : super(password: password);
+  final String message;
+
+  SuccessForgotPassword(this.message, {String password}) : super(password: password);
 }
 
 class ErrorForgotPassword extends LoginEmailState {

@@ -6,11 +6,12 @@ import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/page/account_page.dart';
-import 'package:clients/page/app_settings_page.dart';
 import 'package:clients/page/help_page.dart';
 import 'package:clients/page/my_wallet_page.dart';
 import 'package:clients/page/notifications_list_page.dart';
 import 'package:clients/page/order_history_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 class EndDrawer extends StatelessWidget {
   final String image;
@@ -39,33 +40,49 @@ class EndDrawer extends StatelessWidget {
                 return AccountPage();
               }));
             },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
-                  child: FittedBox(
-                    fit: BoxFit.none,
-                    child: SvgPicture.asset(
-                      "assets/account.svg",
-                      height: 20,
-                      width: 20,
-                      color: Colors.black,
+            child: BlocBuilder<LoginBloc, LoginState>(
+              builder: (context, loginState){
+                return Row(
+                  children: <Widget>[
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
+                      child: loginState.user.avatar != null && loginState.user.avatar != "" ? ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: loginState.user.avatar,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                          placeholder: (context, url) {
+                            return Shimmer.fromColors(
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  color: Colors.black,
+                                ),
+                                baseColor: Colors.grey[300],
+                                highlightColor: Colors.grey[100]);
+                          },
+                        ),
+                      ) : FittedBox(
+                        fit: BoxFit.none,
+                        child: SvgPicture.asset(
+                          "assets/account.svg",
+                          height: 20,
+                          width: 20,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: BlocBuilder<LoginBloc, LoginState>(
-                    builder: (context, state) {
-                      return Column(
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            state.user.name,
+                            loginState.user.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -74,18 +91,18 @@ class EndDrawer extends StatelessWidget {
                             height: 5,
                           ),
                           Text(
-                            state.user.phone,
+                            loginState.user.phone,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: TextStyle(fontSize: 16, color: Colors.black45),
                           ),
                         ],
-                      );
-                    },
-                  ),
-                ),
-                Icon(Icons.keyboard_arrow_right),
-              ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right),
+                  ],
+                );
+              },
             ),
           ),
           SizedBox(
@@ -188,15 +205,15 @@ class EndDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
+              /*Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return AppSettingsPage();
-              }));
+              }));*/
             },
             child: Row(
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    "App Settings",
+                    "Refer A Friend",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),

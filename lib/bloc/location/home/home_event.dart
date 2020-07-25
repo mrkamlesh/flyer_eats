@@ -30,8 +30,9 @@ class GetHomeDataByLatLng extends HomeEvent {
 
 class InitGetData extends HomeEvent {
   final String token;
+  final Location location;
 
-  InitGetData(this.token);
+  InitGetData(this.token, this.location);
 
   @override
   List<Object> get props => [];

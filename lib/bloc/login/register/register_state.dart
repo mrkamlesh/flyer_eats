@@ -1,10 +1,11 @@
+import 'package:clients/model/location.dart';
 import 'package:clients/model/login_status.dart';
 import 'package:meta/meta.dart';
 import 'package:clients/model/register_post.dart';
 
 @immutable
 class RegisterState {
-  final List<String> listLocations;
+  final List<Location> listLocations;
   final RegisterPost registerPost;
 
   RegisterState({this.listLocations, this.registerPost});
@@ -15,33 +16,33 @@ class InitialRegisterState extends RegisterState {
 }
 
 class LoadingRegister extends RegisterState {
-  LoadingRegister({List<String> listLocations, RegisterPost registerPost})
+  LoadingRegister({List<Location> listLocations, RegisterPost registerPost})
       : super(listLocations: listLocations, registerPost: registerPost);
 }
 
 class SuccessRegister extends RegisterState {
   final LoginStatus status;
 
-  SuccessRegister(this.status, {List<String> listLocations, RegisterPost registerPost})
+  SuccessRegister(this.status, {List<Location> listLocations, RegisterPost registerPost})
       : super(listLocations: listLocations, registerPost: registerPost);
 }
 
 class ErrorRegister extends RegisterState {
   final String message;
 
-  ErrorRegister(this.message, {List<String> listLocations, RegisterPost registerPost})
+  ErrorRegister(this.message, {List<Location> listLocations, RegisterPost registerPost})
       : super(listLocations: listLocations, registerPost: registerPost);
 }
 
 class LoadingLocations extends RegisterState {
-  LoadingLocations({List<String> listLocations, RegisterPost registerPost})
+  LoadingLocations({List<Location> listLocations, RegisterPost registerPost})
       : super(listLocations: listLocations, registerPost: registerPost);
 }
 
 class ErrorLocations extends RegisterState {
   final String message;
 
-  ErrorLocations(this.message, {List<String> listLocations, RegisterPost registerPost})
+  ErrorLocations(this.message, {List<Location> listLocations, RegisterPost registerPost})
       : super(listLocations: listLocations, registerPost: registerPost);
 }
 

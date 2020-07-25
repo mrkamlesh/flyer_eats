@@ -55,7 +55,49 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
         listener: (context, state) {
           if (state is ErrorState) {
             showDialog(
-                barrierDismissible: false,
+                barrierDismissible: true,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    title: Text(
+                      "Error",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    content: Text(state.message),
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("OK"))
+                    ],
+                  );
+                });
+          } else if (state is SuccessForgotPassword) {
+            showDialog(
+                barrierDismissible: true,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    title: Text(
+                      "Success",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    content: Text(state.message),
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("OK"))
+                    ],
+                  );
+                });
+          } else if (state is ErrorForgotPassword) {
+            showDialog(
+                barrierDismissible: true,
                 context: context,
                 builder: (context) {
                   return AlertDialog(
@@ -76,7 +118,10 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                 });
           } else if (state is SuccessState) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return OtpPage(phoneNumber: widget.phoneNumber);
+              return OtpPage(
+                phoneNumber: widget.phoneNumber,
+                isShowContactConfirmationSheet: true,
+              );
             }));
           }
         },
@@ -168,7 +213,9 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                   ),
                                 ),
                                 InkWell(
-
+                                  onTap: () {
+                                    _bloc.add(ForgotPassword(widget.email));
+                                  },
                                   child: Container(
                                     width: AppUtil.getScreenWidth(context),
                                     alignment: Alignment.centerRight,

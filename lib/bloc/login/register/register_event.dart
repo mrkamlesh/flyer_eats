@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clients/model/location.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -50,7 +51,7 @@ class ChangeAvatar extends RegisterEvent {
 }
 
 class ChangeLocation extends RegisterEvent {
-  final String location;
+  final Location location;
 
   const ChangeLocation(
     this.location,

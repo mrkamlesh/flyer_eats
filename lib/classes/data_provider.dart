@@ -47,7 +47,7 @@ class DataProvider {
       "referral_code": registerPost.isUseReferral ? registerPost.referral : "",
       "full_name": registerPost.name,
       "country_code": registerPost.countryId,
-      "loc_name": registerPost.location,
+      "loc_name": registerPost.location.address,
       "device_id": registerPost.deviceId,
       "app_version": registerPost.appVersion,
       "device_platform": registerPost.devicePlatform,
@@ -142,6 +142,23 @@ class DataProvider {
       final response = await Dio().post(
         url,
         data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> forgotPassword(String email) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apinew/forgotPassword?json=true&api_key=flyereats&email_address=$email";
+
+    var responseJson;
+    try {
+      final response = await Dio().get(
+        url,
       );
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -692,6 +709,27 @@ class DataProvider {
     var responseJson;
     try {
       final response = await Dio().get(url);
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getPredefinedLocationByLatLng(double lat, double lng) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/getPredefinedLocation?json=true&api_key=flyereats";
+
+    Map<String, dynamic> formData = {
+      "lat": lat.toString(),
+      "long": lng.toString(),
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
       responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');

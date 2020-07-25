@@ -272,460 +272,595 @@ class FoodList extends StatelessWidget {
 
     switch (type) {
       case FoodListViewType.grid:
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              /*BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  spreadRadius: 0,
-                  offset: Offset(2, 3))*/
-              BoxShadow(
-                color: shadow,
-                blurRadius: 7,
-                spreadRadius: -3,
-              )
-            ],
-          ),
-          child: Stack(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Container(
-                    //margin: EdgeInsets.only(left: 10, top: 10, right: 10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                      child: CachedNetworkImage(
-                        imageUrl: food.image,
-                        width: (AppUtil.getScreenWidth(context) - 30) / 2,
-                        height: 90,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                        placeholder: (context, url) {
-                          return Shimmer.fromColors(
-                              child: Container(
-                                height: 90,
-                                width: (AppUtil.getScreenWidth(context) - 30) / 2,
-                                color: Colors.black,
-                              ),
-                              baseColor: Colors.grey[300],
-                              highlightColor: Colors.grey[100]);
-                        },
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(left: 10, right: 10),
-                            child: Row(
-                              children: <Widget>[
-                                food.isAvailable
-                                    ? Container(
-                                        height: 12,
-                                        width: 12,
-                                        margin: EdgeInsets.only(right: 10),
-                                        child: SvgPicture.asset(
-                                          "assets/box_circle.svg",
-                                          width: 12,
-                                          height: 12,
-                                        ),
-                                      )
-                                    : Container(),
-                                Expanded(
-                                  child: Text(
-                                    food.title,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          /*food.description != null && food.description != ""
-                              ? Container(
-                                  margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-                                  child: Text(
-                                    food.description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: Colors.black54, fontSize: 10),
-                                  ),
-                                )
-                              : Container(),*/
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 40,
-                    width: (AppUtil.getScreenWidth(context) - 60) / 2,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Expanded(
-                          flex: 5,
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 10),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  food.discount > 0
-                                      ? Text(
-                                          "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
-                                          style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
-                                        )
-                                      : SizedBox(),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SvgPicture.asset(
-                                        "assets/rupee.svg",
-                                        height: 8,
-                                        width: 8,
-                                        color: Colors.black,
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Text(
-                                        "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        quantity == 0
-                            ? Expanded(flex: 5, child: addButton)
-                            : Expanded(flex: 5, child: changeQuantityButton),
-                      ],
-                    ),
-                  ),
+        return Stack(
+          overflow: Overflow.visible,
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  /*BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      spreadRadius: 0,
+                      offset: Offset(2, 3))*/
+                  BoxShadow(
+                    color: shadow,
+                    blurRadius: 7,
+                    spreadRadius: -3,
+                  )
                 ],
               ),
-            ],
-          ),
-        );
-        break;
-      case FoodListViewType.list:
-        return Container(
-          height: 120,
-          margin: EdgeInsets.only(top: 2, bottom: 18, left: 5, right: 5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: shadow,
-                blurRadius: 7,
-                spreadRadius: -3,
-              )
-            ],
-          ),
-          child: Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    child: CachedNetworkImage(
-                      imageUrl: food.image,
-                      height: 120,
-                      width: 120,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                      placeholder: (context, url) {
-                        return Shimmer.fromColors(
-                            child: Container(
-                              height: 120,
-                              width: 120,
-                              color: Colors.black,
-                            ),
-                            baseColor: Colors.grey[300],
-                            highlightColor: Colors.grey[100]);
-                      },
-                    ),
-                  ),
-                ),
-                food.isAvailable
-                    ? Container(
-                        height: 12,
-                        width: 12,
-                        margin: EdgeInsets.only(right: 10, top: 15),
-                        child: SvgPicture.asset(
-                          "assets/box_circle.svg",
-                          width: 12,
-                          height: 12,
-                        ),
-                      )
-                    : Container(
-                        height: 12,
-                        width: 12,
-                        margin: EdgeInsets.only(right: 10),
-                      ),
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(right: 10),
-                                child: Text(
-                                  food.title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              food.description != null && food.description != ""
-                                  ? Container(
-                                      margin: EdgeInsets.only(top: 5, bottom: 10, right: 10),
-                                      child: Text(
-                                        AppUtil.parseHtmlString(food.description),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(color: Colors.black54, fontSize: 10),
-                                      ),
-                                    )
-                                  : SizedBox(),
-                            ],
+              child: Stack(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        //margin: EdgeInsets.only(left: 10, top: 10, right: 10),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                          child: CachedNetworkImage(
+                            imageUrl: food.image,
+                            width: (AppUtil.getScreenWidth(context) - 30) / 2,
+                            height: 90,
+                            fit: BoxFit.cover,
+                            alignment: Alignment.center,
+                            placeholder: (context, url) {
+                              return Shimmer.fromColors(
+                                  child: Container(
+                                    height: 90,
+                                    width: (AppUtil.getScreenWidth(context) - 30) / 2,
+                                    color: Colors.black,
+                                  ),
+                                  baseColor: Colors.grey[300],
+                                  highlightColor: Colors.grey[100]);
+                            },
                           ),
                         ),
-                        Container(
-                          height: 43,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                              Container(
+                                margin: EdgeInsets.only(left: 10, right: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    food.discount > 0
-                                        ? Text(
-                                            "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
-                                            style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                    food.isAvailable
+                                        ? Container(
+                                            height: 12,
+                                            width: 12,
+                                            margin: EdgeInsets.only(right: 10, top: 3),
+                                            child: SvgPicture.asset(
+                                              "assets/box_circle.svg",
+                                              width: 12,
+                                              height: 12,
+                                            ),
                                           )
-                                        : SizedBox(),
-                                    Row(
-                                      children: <Widget>[
-                                        SvgPicture.asset(
-                                          "assets/rupee.svg",
-                                          height: 11,
-                                          width: 11,
-                                          color: Colors.black,
-                                        ),
-                                        SizedBox(
-                                          width: 3,
-                                        ),
-                                        Text(
-                                          "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
+                                        : Container(
+                                            height: 12,
+                                            width: 12,
+                                            margin: EdgeInsets.only(right: 10, top: 3),
+                                            child: SvgPicture.asset(
+                                              "assets/box_circle_red.svg",
+                                              width: 12,
+                                              height: 12,
+                                            ),
+                                          ),
+                                    Expanded(
+                                      child: Text(
+                                        food.title,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Expanded(
-                                flex: 2,
-                                child: SizedBox(),
-                              ),
-                              quantity == 0
-                                  ? Expanded(flex: 6, child: addButton)
-                                  : Expanded(flex: 6, child: changeQuantityButton),
+                              /*food.description != null && food.description != ""
+                                  ? Container(
+                                      margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+                                      child: Text(
+                                        food.description,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: Colors.black54, fontSize: 10),
+                                      ),
+                                    )
+                                  : Container(),*/
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-        break;
-      case FoodListViewType.search:
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              /*BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  spreadRadius: 0,
-                  offset: Offset(2, 3))*/
-              BoxShadow(
-                color: shadow,
-                blurRadius: 7,
-                spreadRadius: -3,
-              )
-            ],
-          ),
-          child: Stack(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Container(
-                    //margin: EdgeInsets.only(left: 10, top: 10, right: 10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                      child: CachedNetworkImage(
-                        imageUrl: food.image,
-                        width: (AppUtil.getScreenWidth(context) - 30) / 2,
-                        height: 90,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                        placeholder: (context, url) {
-                          return Shimmer.fromColors(
+                      ),
+                      Container(
+                        height: 40,
+                        width: (AppUtil.getScreenWidth(context) - 60) / 2,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 5,
                               child: Container(
-                                height: 90,
-                                width: (AppUtil.getScreenWidth(context) - 30) / 2,
-                                color: Colors.black,
-                              ),
-                              baseColor: Colors.grey[300],
-                              highlightColor: Colors.grey[100]);
-                        },
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(left: 10, right: 10),
-                            child: Row(
-                              children: <Widget>[
-                                food.isAvailable
-                                    ? Container(
-                                        height: 12,
-                                        width: 12,
-                                        margin: EdgeInsets.only(right: 10),
-                                        child: SvgPicture.asset(
-                                          "assets/box_circle.svg",
-                                          width: 12,
-                                          height: 12,
-                                        ),
-                                      )
-                                    : Container(),
-                                Expanded(
-                                  child: Text(
-                                    food.title,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          /*food.description != null && food.description != ""
-                              ? Container(
-                                  margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-                                  child: Text(
-                                    food.description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: Colors.black54, fontSize: 10),
-                                  ),
-                                )
-                              : Container(),*/
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 40,
-                    width: (AppUtil.getScreenWidth(context) - 60) / 2,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Expanded(
-                          flex: 5,
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 10),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  food.discount > 0
-                                      ? Text(
-                                          "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
-                                          style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
-                                        )
-                                      : SizedBox(),
-                                  Row(
+                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      SvgPicture.asset(
-                                        "assets/rupee.svg",
-                                        height: 8,
-                                        width: 8,
-                                        color: Colors.black,
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Text(
-                                        "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                      food.discount > 0
+                                          ? Text(
+                                              "\u20b9 " +
+                                                  AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
+                                              style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                            )
+                                          : SizedBox(),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          SvgPicture.asset(
+                                            "assets/rupee.svg",
+                                            height: 8,
+                                            width: 8,
+                                            color: Colors.black,
+                                          ),
+                                          SizedBox(
+                                            width: 3,
+                                          ),
+                                          Text(
+                                            "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
+                            quantity == 0
+                                ? Expanded(flex: 5, child: addButton)
+                                : Expanded(flex: 5, child: changeQuantityButton),
+                          ],
                         ),
-                        quantity == 0
-                            ? Expanded(flex: 5, child: addButton)
-                            : Expanded(flex: 5, child: changeQuantityButton),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            food.badge != null && food.badge != ""
+                ? Positioned(
+                    top: 7,
+                    left: -5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          height: 25,
+                          decoration: BoxDecoration(
+                              color: food.getBadgeColor(),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(2),
+                                  topRight: Radius.circular(2),
+                                  bottomRight: Radius.circular(2))),
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(4),
+                          child: Text(
+                            food.badge,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                        ),
+                        CustomPaint(
+                          size: Size(5, 5),
+                          painter: FoodTrianglePainter(color: food.getBadgeColor()),
+                        )
+                      ],
+                    ),
+                  )
+                : Container(),
+          ],
+        );
+        break;
+      case FoodListViewType.list:
+        return Stack(
+          overflow: Overflow.visible,
+          children: <Widget>[
+            Container(
+              height: 125,
+              margin: EdgeInsets.only(top: 2, bottom: 18, left: 5, right: 5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: shadow,
+                    blurRadius: 7,
+                    spreadRadius: -3,
+                  )
+                ],
+              ),
+              child: Container(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        child: CachedNetworkImage(
+                          imageUrl: food.image,
+                          height: 125,
+                          width: 125,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                          placeholder: (context, url) {
+                            return Shimmer.fromColors(
+                                child: Container(
+                                  height: 125,
+                                  width: 125,
+                                  color: Colors.black,
+                                ),
+                                baseColor: Colors.grey[300],
+                                highlightColor: Colors.grey[100]);
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(right: 10),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          margin: EdgeInsets.only(left: 10, right: 10, top: 3),
+                                          child: SvgPicture.asset(
+                                            food.isAvailable ? "assets/box_circle.svg" : "assets/box_circle_red.svg",
+                                            width: 12,
+                                            height: 12,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            food.title,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  food.description != null && food.description != ""
+                                      ? Container(
+                                          margin: EdgeInsets.only(top: 5, bottom: 10, right: 10, left: 32),
+                                          child: Text(
+                                            AppUtil.parseHtmlString(food.description),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(color: Colors.black54, fontSize: 10),
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: 43,
+                              margin: EdgeInsets.only(left: 32),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        food.discount > 0
+                                            ? Text(
+                                                "\u20b9 " +
+                                                    AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
+                                                style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                              )
+                                            : SizedBox(),
+                                        Row(
+                                          children: <Widget>[
+                                            SvgPicture.asset(
+                                              "assets/rupee.svg",
+                                              height: 11,
+                                              width: 11,
+                                              color: Colors.black,
+                                            ),
+                                            SizedBox(
+                                              width: 3,
+                                            ),
+                                            Text(
+                                              "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: SizedBox(),
+                                  ),
+                                  quantity == 0
+                                      ? Expanded(flex: 6, child: addButton)
+                                      : Expanded(flex: 6, child: changeQuantityButton),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            food.badge != null && food.badge != ""
+                ? Positioned(
+                    top: 7,
+                    left: 0,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          //width: 125,
+                          height: 25,
+                          decoration: BoxDecoration(
+                              color: food.getBadgeColor(),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(2),
+                                  topRight: Radius.circular(2),
+                                  bottomRight: Radius.circular(2))),
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(4),
+                          child: Text(
+                            food.badge,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                        ),
+                        CustomPaint(
+                          size: Size(5, 5),
+                          painter: FoodTrianglePainter(color: food.getBadgeColor()),
+                        )
+                      ],
+                    ),
+                  )
+                : Container(),
+          ],
+        );
+        break;
+      case FoodListViewType.search:
+        return Stack(
+          overflow: Overflow.visible,
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  /*BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      spreadRadius: 0,
+                      offset: Offset(2, 3))*/
+                  BoxShadow(
+                    color: shadow,
+                    blurRadius: 7,
+                    spreadRadius: -3,
+                  )
+                ],
+              ),
+              child: Stack(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        //margin: EdgeInsets.only(left: 10, top: 10, right: 10),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                          child: CachedNetworkImage(
+                            imageUrl: food.image,
+                            width: (AppUtil.getScreenWidth(context) - 30) / 2,
+                            height: 90,
+                            fit: BoxFit.cover,
+                            alignment: Alignment.center,
+                            placeholder: (context, url) {
+                              return Shimmer.fromColors(
+                                  child: Container(
+                                    height: 90,
+                                    width: (AppUtil.getScreenWidth(context) - 30) / 2,
+                                    color: Colors.black,
+                                  ),
+                                  baseColor: Colors.grey[300],
+                                  highlightColor: Colors.grey[100]);
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(left: 10, right: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    food.isAvailable
+                                        ? Container(
+                                            height: 12,
+                                            width: 12,
+                                            margin: EdgeInsets.only(right: 10, top: 3),
+                                            child: SvgPicture.asset(
+                                              "assets/box_circle.svg",
+                                              width: 12,
+                                              height: 12,
+                                            ),
+                                          )
+                                        : Container(
+                                            height: 12,
+                                            width: 12,
+                                            margin: EdgeInsets.only(right: 10, top: 3),
+                                            child: SvgPicture.asset(
+                                              "assets/box_circle_red.svg",
+                                              width: 12,
+                                              height: 12,
+                                            ),
+                                          ),
+                                    Expanded(
+                                      child: Text(
+                                        food.title,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              /*food.description != null && food.description != ""
+                                  ? Container(
+                                      margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+                                      child: Text(
+                                        food.description,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: Colors.black54, fontSize: 10),
+                                      ),
+                                    )
+                                  : Container(),*/
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 40,
+                        width: (AppUtil.getScreenWidth(context) - 60) / 2,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 5,
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      food.discount > 0
+                                          ? Text(
+                                              "\u20b9 " +
+                                                  AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
+                                              style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                            )
+                                          : SizedBox(),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          SvgPicture.asset(
+                                            "assets/rupee.svg",
+                                            height: 8,
+                                            width: 8,
+                                            color: Colors.black,
+                                          ),
+                                          SizedBox(
+                                            width: 3,
+                                          ),
+                                          Text(
+                                            "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            quantity == 0
+                                ? Expanded(flex: 5, child: addButton)
+                                : Expanded(flex: 5, child: changeQuantityButton),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            food.badge != null && food.badge != ""
+                ? Positioned(
+                    top: 7,
+                    left: -5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          height: 25,
+                          decoration: BoxDecoration(
+                              color: food.getBadgeColor(),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(2),
+                                  topRight: Radius.circular(2),
+                                  bottomRight: Radius.circular(2))),
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(4),
+                          child: Text(
+                            food.badge,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                        ),
+                        CustomPaint(
+                          size: Size(5, 5),
+                          painter: FoodTrianglePainter(color: food.getBadgeColor()),
+                        )
+                      ],
+                    ),
+                  )
+                : Container(),
+          ],
         );
       default:
         return Container();
@@ -752,7 +887,7 @@ class FoodListLoadingWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               margin: EdgeInsets.only(top: 2, bottom: 18, left: 5, right: 5),
-              height: 120,
+              height: 125,
               child: SizedBox.expand(),
             ),
             baseColor: Colors.grey[300],
@@ -789,5 +924,30 @@ class FoodGridLoadingWidget extends StatelessWidget {
                 highlightColor: Colors.grey[100]);
           }, childCount: 5)),
     );
+  }
+}
+
+class FoodTrianglePainter extends CustomPainter {
+  final Color color;
+
+  FoodTrianglePainter({this.color = const Color(0xFFCA9312)});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    Path path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(5, 0);
+    path.lineTo(5, 5);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }

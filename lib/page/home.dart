@@ -199,7 +199,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                         action: SnackBarAction(
                           label: "Retry",
                           onPressed: () {
-                            BlocProvider.of<HomeBloc>(context).add(InitGetData(loginState.user.token));
+                            BlocProvider.of<HomeBloc>(context).add(InitGetData(loginState.user.token, null));
                           },
                         ),
                       );
@@ -491,7 +491,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                           ),
                                           Container(
                                             margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                            height: 150,
+                                            height: 170,
                                             child: RestaurantListWidget(
                                               type: RestaurantViewType.orderAgainRestaurant,
                                               restaurants: homeState.homePageData.orderAgainRestaurants,

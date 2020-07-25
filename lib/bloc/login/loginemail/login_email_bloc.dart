@@ -43,8 +43,8 @@ class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
 
     try {
       //Do something here like hit forgot password api
-
-
+      LoginStatus loginStatus = await repository.forgotPassword(email);
+      yield SuccessForgotPassword(loginStatus.message, password: state.password);
     } catch (e) {
       yield ErrorState(e.toString(), password: state.password);
     }

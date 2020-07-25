@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clients/model/location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -72,7 +73,10 @@ class _RegisterPageState extends State<RegisterPage> {
         listener: (context, state) {
           if (state is SuccessRegister) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return OtpPage(phoneNumber: widget.phoneNumber);
+              return OtpPage(
+                phoneNumber: widget.phoneNumber,
+                location: state.registerPost.location,
+              );
             }));
           } else if (state is ErrorRegister) {
             showDialog(
@@ -258,18 +262,18 @@ class _RegisterPageState extends State<RegisterPage> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 margin: EdgeInsets.only(bottom: 10),
-                                child: DropdownButton<String>(
+                                child: DropdownButton<Location>(
                                   underline: Container(),
                                   isExpanded: true,
                                   hint: Text("Select Your Location"),
                                   value: state.registerPost.location,
                                   icon: Icon(Icons.expand_more),
                                   items: state.listLocations
-                                      .map<DropdownMenuItem<String>>((value) => new DropdownMenuItem<String>(
+                                      .map<DropdownMenuItem<Location>>((value) => new DropdownMenuItem<Location>(
                                             value: value,
                                             child: Container(
                                               child: Text(
-                                                value,
+                                                value.address,
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                             ),

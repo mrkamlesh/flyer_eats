@@ -78,7 +78,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                   }));
                 }
                 BlocProvider.of<NotificationBloc>(context).add(ResetMessage());
-                BlocProvider.of<HomeBloc>(context).add(InitGetData(state.user.token));
+                BlocProvider.of<HomeBloc>(context).add(InitGetData(state.user.token, null));
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
                   return Home();
                 }));

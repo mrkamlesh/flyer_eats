@@ -82,6 +82,15 @@ class DataRepository {
     }
   }
 
+  Future<LoginStatus> forgotPassword(String email) async {
+    final response = await _provider.forgotPassword(email);
+    if (response['code'] == 1) {
+      return LoginStatus(response['msg'], true);
+    } else {
+      throw Exception(response['msg']);
+    }
+  }
+
   Future<dynamic> verifyOtp(
       String contactPhone, String otp, String firebaseToken, String platform, String version) async {
     final response = await _provider.verifyOtp(contactPhone, otp, firebaseToken, platform, version);
@@ -323,6 +332,16 @@ class DataRepository {
       return Location.fromJson(i);
     }).toList();
     return locations;
+  }
+
+  Future<Location> getPredefinedLocationByLatLng(double lat, double lng) async {
+    final response = await _provider.getPredefinedLocationByLatLng(lat, lng);
+    if (response['code'] == 1) {
+      if ((response['details'] as Map).containsKey('address')) {
+        return Location.fromHomePageJson(response['details']);
+      }
+    }
+    return null;
   }
 
   Future<List<Voucher>> getPromos(String restaurantId, String token) async {

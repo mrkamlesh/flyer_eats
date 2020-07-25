@@ -605,7 +605,7 @@ class SearchRestaurantWidget extends StatelessWidget {
                           ),
                           CustomPaint(
                             size: Size(5, 5),
-                            painter: TrianglePainter(),
+                            painter: RestaurantTrianglePainter(),
                           )
                         ],
                       ),
@@ -655,7 +655,8 @@ class CustomTextField extends StatelessWidget {
           Expanded(
             child: TextField(
               autofocus: true,
-              onChanged: onChanged,
+              textInputAction: TextInputAction.search,
+              onSubmitted: onChanged,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(vertical: 15),
                 border: InputBorder.none,

@@ -97,6 +97,7 @@ flutter:
     - assets/grid.svg
     - assets/list.svg
     - assets/box_circle.svg
+    - assets/box_circle_red.svg
     - assets/allrestaurant.png
     - assets/pickup.png
     - assets/delivery.svg

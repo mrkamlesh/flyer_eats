@@ -91,7 +91,7 @@ class _AccountPageState extends State<AccountPage> {
                                   child: ClipOval(
                                     child: CachedNetworkImage(
                                       imageUrl: state.user.avatar,
-                                      fit: BoxFit.fill,
+                                      fit: BoxFit.cover,
                                       alignment: Alignment.center,
                                       placeholder: (context, url) {
                                         return Shimmer.fromColors(

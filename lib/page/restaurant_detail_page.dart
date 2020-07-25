@@ -268,14 +268,14 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                                     ],
                                                   ),
                                                 ),
-                                                SizedBox(
+                                                /*SizedBox(
                                                   width: 5,
                                                 ),
                                                 Icon(
                                                   Icons.arrow_forward_ios,
                                                   size: 18,
                                                   color: Colors.black38,
-                                                )
+                                                )*/
                                               ],
                                             ),
                                           ),
@@ -661,7 +661,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                         hintText: "Search here....",
                         hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
                       ),
-                      onChanged: (value) {
+                      textInputAction: TextInputAction.search,
+                      onSubmitted: (value) {
                         _bloc.add(SearchFood(widget.restaurant.id, value));
                       },
                     ),

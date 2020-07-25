@@ -21,7 +21,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is GetHomeDataByLocation) {
       yield* mapGetHomeDataByLocationToState(event.token, event.location);
     } else if (event is InitGetData) {
-      yield* mapInitGetDataToState(event.token);
+      yield* mapInitGetDataToState(event.token, event.location);
     }
   }
 
@@ -110,28 +110,32 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> mapInitGetDataToState(String token) async* {
+  Stream<HomeState> mapInitGetDataToState(String token, Location location) async* {
     yield LoadingCurrentLocation();
 
-    try {
-      String address = await repository.getSavedAddress();
-      if (address != null) {
-        add(GetHomeDataByLocation(Location(address: address), token));
-      } else {
-        try {
-          Position position = await Geolocator()
-              .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
-              .timeout(Duration(seconds: 10), onTimeout: () {
-            throw Exception();
-          });
+    if (location != null) {
+      add(GetHomeDataByLocation(location, token));
+    } else {
+      try {
+        String address = await repository.getSavedAddress();
+        if (address != null) {
+          add(GetHomeDataByLocation(Location(address: address), token));
+        } else {
+          try {
+            Position position = await Geolocator()
+                .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
+                .timeout(Duration(seconds: 10), onTimeout: () {
+              throw Exception();
+            });
 
-          add(GetHomeDataByLatLng(token, position.latitude, position.longitude));
-        } catch (e) {
-          yield ErrorCurrentLocation("Can not get location");
+            add(GetHomeDataByLatLng(token, position.latitude, position.longitude));
+          } catch (e) {
+            yield ErrorCurrentLocation("Can not get location");
+          }
         }
+      } catch (e) {
+        print(e);
       }
-    } catch (e) {
-      print(e);
     }
   }
 

@@ -1,12 +1,14 @@
 import 'dart:io';
 
+import 'package:clients/model/location.dart';
+
 class RegisterPost {
   final String countryId;
   final String appVersion;
   final String devicePlatform;
   final String deviceId;
   final String referral;
-  final String location;
+  final Location location;
   final String email;
   final String name;
   final String imageUrl;
@@ -34,7 +36,7 @@ class RegisterPost {
       String devicePlatform,
       String deviceId,
       String referral,
-      String location,
+      Location location,
       String email,
       String name,
       String imageUrl,
@@ -57,6 +59,6 @@ class RegisterPost {
   }
 
   bool isValid() {
-    return name != null && name != "" && email != null && email != "" && location != null && location != "";
+    return name != null && name != "" && email != null && email != "" && location != null;
   }
 }

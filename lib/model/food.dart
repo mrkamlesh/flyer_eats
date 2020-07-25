@@ -1,5 +1,7 @@
+import 'package:clients/classes/style.dart';
 import 'package:clients/model/menu_category.dart';
 import 'package:clients/model/price.dart';
+import 'package:flutter/material.dart';
 
 class Food {
   final String id;
@@ -10,6 +12,7 @@ class Food {
   final MenuCategory category;
   final List<Price> prices;
   final double discount;
+  final String badge;
 
   Food({
     this.id,
@@ -20,10 +23,11 @@ class Food {
     this.category,
     this.prices,
     this.discount,
+    this.badge,
   });
 
   factory Food.fromJson(Map<String, dynamic> parsedJson) {
-    bool available = parsedJson['not_available'] == "1" ? false : true;
+    bool available = parsedJson['not_available'] == "1" ? true : false;
     var priceJson = parsedJson['prices'] as List;
     List<Price> priceList = priceJson.map((i) {
       return Price.fromJson(i);
@@ -36,8 +40,22 @@ class Food {
         image: parsedJson['photo'],
         isAvailable: available,
         prices: priceList,
+        badge: parsedJson['badge'],
         discount: parsedJson['discount'] != "" ? double.parse(parsedJson['discount']) : 0,
         category: MenuCategory(parsedJson['cat_id'], parsedJson['category_name']));
+  }
+
+  Color getBadgeColor() {
+    switch (this.badge.toLowerCase()) {
+      case "must try":
+        return Colors.green;
+      case "recommended":
+        return Color(0xFFF33953);
+      case "exclusive":
+        return Color(0xFFCE2AA0);
+      default:
+        return primary1;
+    }
   }
 
   double getRealPrice(int index) {

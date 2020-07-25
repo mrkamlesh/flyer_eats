@@ -554,7 +554,7 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                           ),
                           CustomPaint(
                             size: Size(5, 5),
-                            painter: TrianglePainter(),
+                            painter: RestaurantTrianglePainter(),
                           )
                         ],
                       ),
@@ -603,8 +603,8 @@ class RestaurantDetailListWidget extends StatelessWidget {
       child: Opacity(
         opacity: restaurant.isOpen ? 1.0 : 0.3,
         child: Container(
-          height: 130,
-          width: 95,
+          height: 150,
+          width: 110,
           margin:
               EdgeInsets.only(bottom: 10, top: 10, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
           decoration: BoxDecoration(
@@ -633,15 +633,15 @@ class RestaurantDetailListWidget extends StatelessWidget {
                       borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
                       child: CachedNetworkImage(
                         imageUrl: restaurant.image,
-                        height: 130,
-                        width: 95,
+                        height: 150,
+                        width: 110,
                         fit: BoxFit.cover,
                         alignment: Alignment.center,
                         placeholder: (context, url) {
                           return Shimmer.fromColors(
                               child: Container(
-                                height: 130,
-                                width: 95,
+                                height: 150,
+                                width: 110,
                                 color: Colors.black,
                               ),
                               baseColor: Colors.grey[300],
@@ -652,7 +652,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
                   ),
                   Expanded(
                     child: Container(
-                      height: 130,
+                      height: 150,
                       padding: EdgeInsets.only(top: 12, bottom: 12, right: 12),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -667,13 +667,18 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                     : MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 5),
-                                    child: Text(
-                                      restaurant.name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  Expanded(
+                                    child: Container(
+                                      margin: EdgeInsets.only(bottom: 5),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          restaurant.name,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   Container(
@@ -888,7 +893,7 @@ class TopRestaurantHomeWidget extends StatelessWidget {
                           ),
                           CustomPaint(
                             size: Size(5, 5),
-                            painter: TrianglePainter(),
+                            painter: RestaurantTrianglePainter(),
                           )
                         ],
                       ),
@@ -1042,7 +1047,7 @@ class DinnerRestaurantHomeWidget extends StatelessWidget {
   }
 }
 
-class TrianglePainter extends CustomPainter {
+class RestaurantTrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
@@ -1070,6 +1075,7 @@ class LoadingRestaurantListWidget extends StatelessWidget {
       padding: EdgeInsets.only(
           top: distanceSectionContent - 10, bottom: distanceSectionContent + kBottomNavigationBarHeight),
       child: ListView.builder(
+        padding: EdgeInsets.only(top: 0),
           itemBuilder: (context, i) {
             return Shimmer.fromColors(
                 child: Container(
@@ -1079,7 +1085,7 @@ class LoadingRestaurantListWidget extends StatelessWidget {
                   ),
                   margin: EdgeInsets.only(
                       bottom: 10, top: 10, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
-                  height: 130,
+                  height: 150,
                 ),
                 baseColor: Colors.grey[300],
                 highlightColor: Colors.grey[100]);

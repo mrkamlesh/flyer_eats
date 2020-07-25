@@ -1,4 +1,5 @@
 import 'package:clients/bloc/location/home/bloc.dart';
+import 'package:clients/model/location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -12,8 +13,11 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpPage extends StatefulWidget {
   final String phoneNumber;
+  final Location location;
+  final bool isShowContactConfirmationSheet;
 
-  const OtpPage({Key key, this.phoneNumber}) : super(key: key);
+  const OtpPage({Key key, this.phoneNumber, this.location, this.isShowContactConfirmationSheet = false})
+      : super(key: key);
 
   @override
   _OtpPageState createState() => _OtpPageState();
@@ -43,12 +47,12 @@ class _OtpPageState extends State<OtpPage> {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is Success) {
-          BlocProvider.of<HomeBloc>(context).add(InitGetData(state.user.token));
+          BlocProvider.of<HomeBloc>(context).add(InitGetData(state.user.token, widget.location));
           BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(state.user.token));
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
             return Home(
               contactNumber: widget.phoneNumber,
-              isShowContactConfirmationSheet: true,
+              isShowContactConfirmationSheet: widget.isShowContactConfirmationSheet,
             );
           }));
         } else if (state is Error) {

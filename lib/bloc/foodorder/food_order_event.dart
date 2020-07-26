@@ -1,4 +1,3 @@
-import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/user.dart';
 import 'package:equatable/equatable.dart';
@@ -14,7 +13,10 @@ abstract class FoodOrderEvent extends Equatable {
 }
 
 class InitPlaceOrder extends FoodOrderEvent {
-  InitPlaceOrder();
+
+  final User user;
+
+  InitPlaceOrder(this.user);
 
   @override
   List<Object> get props => [];
@@ -88,15 +90,16 @@ class ChangeQuantityWithPayment extends FoodOrderEvent {
 }
 
 class ChangeQuantityNoPayment extends FoodOrderEvent {
+  final Restaurant restaurant;
   final String id;
   final Food food;
   final int quantity;
   final int selectedPrice;
 
-  const ChangeQuantityNoPayment(this.id, this.food, this.quantity, this.selectedPrice);
+  const ChangeQuantityNoPayment(this.restaurant, this.id, this.food, this.quantity, this.selectedPrice);
 
   @override
-  List<Object> get props => [id, food, quantity, selectedPrice];
+  List<Object> get props => [restaurant, id, food, quantity, selectedPrice];
 }
 
 class PlaceOrderEvent extends FoodOrderEvent {
@@ -133,15 +136,10 @@ class ChangeDeliveryTime extends FoodOrderEvent {
   List<Object> get props => [dateTime];
 }
 
-class UpdateCartMainData extends FoodOrderEvent {
-  final Restaurant restaurant;
-  final FoodCart foodCart;
-  final User user;
-
-  UpdateCartMainData(this.restaurant, this.foodCart, this.user);
+class ClearCart extends FoodOrderEvent {
+  ClearCart();
 
   @override
-  List<Object> get props => [restaurant, foodCart, user];
+  List<Object> get props => [];
 }
-
 

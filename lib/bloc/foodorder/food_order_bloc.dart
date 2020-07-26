@@ -21,7 +21,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     FoodOrderEvent event,
   ) async* {
     if (event is InitPlaceOrder) {
-      yield* mapInitPlaceOrderToState();
+      yield* mapInitPlaceOrderToState(event.user);
     } else if (event is ChangeTransactionType) {
       yield* mapChangeTransactionTypeToState(event.transactionType);
     } else if (event is ChangeAddress) {
@@ -31,7 +31,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     } else if (event is ChangeQuantityWithPayment) {
       yield* mapChangeQuantityWithPaymentToState(event.id, event.food, event.quantity, event.selectedPrice);
     } else if (event is ChangeQuantityNoPayment) {
-      yield* mapChangeQuantityNoPaymentToState(event.id, event.food, event.quantity, event.selectedPrice);
+      yield* mapChangeQuantityNoPaymentToState(
+          event.restaurant, event.id, event.food, event.quantity, event.selectedPrice);
     } else if (event is ChangeInstruction) {
       yield* mapChangeInstructionToState(event.instruction);
     } else if (event is GetPaymentOptions) {
@@ -46,8 +47,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapChangeWalletUsageToState(event.isUseWallet);
     } else if (event is ChangeDeliveryTime) {
       yield* mapChangeDeliveryTimeToState(event.dateTime);
-    } else if (event is UpdateCartMainData) {
-      yield* mapUpdateCartMainDataToState(event.restaurant, event.foodCart, event.user);
+    } else if (event is ClearCart) {
+      yield* mapClearCartToState();
     }
   }
 
@@ -80,25 +81,32 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   }
 
   Stream<FoodOrderState> mapChangeQuantityNoPaymentToState(
-      String id, Food food, int quantity, int selectedPrice) async* {
-    FoodCart newCart = state.placeOrder.foodCart;
-    newCart.changeQuantity(id, food, quantity, selectedPrice);
+      Restaurant selectedRestaurant, String id, Food food, int quantity, int selectedPrice) async* {
+    yield FoodOrderState(placeOrder: state.placeOrder);
 
-    if (newCart.cart.length > 0) {
-      yield FoodOrderState(placeOrder: state.placeOrder.copyWith(foodCart: newCart));
+    if (selectedRestaurant.id == state.placeOrder.restaurant.id || state.placeOrder.restaurant.id == null) {
+      FoodCart newCart = state.placeOrder.foodCart;
+      newCart.changeQuantity(id, food, quantity, selectedPrice);
+
+      if (newCart.cart.length > 0) {
+        yield CartChangeState(placeOrder: state.placeOrder.copyWith(foodCart: newCart, restaurant: selectedRestaurant));
+      } else {
+        yield NoItemsInCart();
+      }
     } else {
-      yield NoItemsInCart();
+      yield ConfirmCartState(selectedRestaurant, id, food, quantity, selectedPrice, placeOrder: state.placeOrder);
     }
   }
 
-  Stream<FoodOrderState> mapInitPlaceOrderToState() async* {
+  Stream<FoodOrderState> mapInitPlaceOrderToState(User user) async* {
     if (!(state is NoItemsInCart)) {
       DateTime now = DateTime.now();
       yield FoodOrderState(
         placeOrder: state.placeOrder.copyWith(
+            user: user,
             isValid: true,
-            address: state.placeOrder.user.defaultAddress,
-            contact: state.placeOrder.user.phone,
+            address: user.defaultAddress,
+            contact: user.phone,
             transactionType: 'delivery',
             deliveryInstruction: '',
             deliveryCharges: 0,
@@ -186,7 +194,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     yield FoodOrderState(placeOrder: state.placeOrder.copyWith(selectedDeliveryTime: dateTime));
   }
 
-  Stream<FoodOrderState> mapUpdateCartMainDataToState(Restaurant restaurant, FoodCart foodCart, User user) async* {
-    yield InitialFoodOrderState(placeOrder: PlaceOrder(restaurant: restaurant, user: user, foodCart: foodCart));
+  Stream<FoodOrderState> mapClearCartToState() async* {
+    yield NoItemsInCart();
   }
 }

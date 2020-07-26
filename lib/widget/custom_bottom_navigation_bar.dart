@@ -1,3 +1,4 @@
+import 'package:clients/classes/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,6 +37,7 @@ class CustomBottomNavBar extends StatelessWidget {
             child: AnimatedBottomNavBarItem(
               icon: item.icon,
               title: item.title,
+              badge: item.badge,
               animationDuration: animationDuration,
               normalHeight: normalIconSize,
               isSelected: (index == selectedIndex) ? true : false,
@@ -66,10 +68,12 @@ class AnimatedBottomNavBarItem extends StatelessWidget {
   final double normalHeight;
   final Color selectedColor;
   final Color unselectedColor;
+  final int badge;
 
   const AnimatedBottomNavBarItem(
       {Key key,
       this.icon,
+      this.badge,
       this.title,
       this.isSelected,
       this.animationDuration,
@@ -82,33 +86,57 @@ class AnimatedBottomNavBarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: kBottomNavigationBarHeight,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
+        overflow: Overflow.visible,
         children: <Widget>[
-          AnimatedContainer(
-            curve: Curves.easeInCubic,
-            height: isSelected ? normalHeight : normalHeight - 5,
-            width: isSelected ? normalHeight : normalHeight - 5,
-            duration: animationDuration,
-            child: SvgPicture.asset(icon, color: isSelected ? selectedColor : unselectedColor),
-          ),
-          AnimatedOpacity(
-            curve: Curves.easeInCubic,
-            opacity: isSelected ? 1.0 : 0.0,
-            duration: animationDuration,
-            child: AnimatedDefaultTextStyle(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              AnimatedContainer(
                 curve: Curves.easeInCubic,
-                child: Text(title),
-                style: GoogleFonts.poppins(
-                    textStyle: TextStyle(
-                  color: isSelected ? selectedColor : unselectedColor,
-                  fontSize: isSelected ? 11 : 0,
-                )),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                duration: animationDuration),
-          )
+                height: isSelected ? normalHeight : normalHeight - 5,
+                width: isSelected ? normalHeight : normalHeight - 5,
+                duration: animationDuration,
+                child: SvgPicture.asset(icon, color: isSelected ? selectedColor : unselectedColor),
+              ),
+              AnimatedOpacity(
+                curve: Curves.easeInCubic,
+                opacity: isSelected ? 1.0 : 0.0,
+                duration: animationDuration,
+                child: AnimatedDefaultTextStyle(
+                    curve: Curves.easeInCubic,
+                    child: Text(title),
+                    style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                      color: isSelected ? selectedColor : unselectedColor,
+                      fontSize: isSelected ? 11 : 0,
+                    )),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    duration: animationDuration),
+              )
+            ],
+          ),
+          badge > 0
+              ? Positioned(
+                  top: 8,
+                  left: normalHeight / 2,
+                  child: Container(
+                      height: 20,
+                      width: 20,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: primary3,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "$badge",
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      )),
+                )
+              : SizedBox()
         ],
       ),
     );
@@ -119,8 +147,10 @@ class BottomNavyBarItem {
   final String icon;
   final String title;
   final TextAlign textAlign;
+  final int badge;
 
   BottomNavyBarItem({
+    this.badge = 0,
     @required this.icon,
     @required this.title,
     this.textAlign,

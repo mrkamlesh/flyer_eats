@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/bloc/offerlist/bank/bank_offer_bloc.dart';
 import 'package:clients/bloc/offerlist/bank/bank_offer_event.dart';
@@ -9,6 +10,7 @@ import 'package:clients/classes/style.dart';
 import 'package:clients/model/fe_offer.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/page/home.dart';
+import 'package:clients/page/restaurant_place_order_page.dart';
 import 'package:clients/page/search_page.dart';
 import 'package:clients/widget/custom_bottom_navigation_bar.dart';
 import 'package:clients/widget/restaurant_list.dart';
@@ -18,8 +20,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
-
-import 'order_history_page.dart';
 
 class OfferListPage extends StatefulWidget {
   final String address;
@@ -105,38 +105,29 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider<FeOfferBloc>(
-              create: (context) {
-                return _feOfferBloc..add(GetFEOffer(loginState.user.token, widget.address));
-              },
-            ),
-            BlocProvider<MerchantOfferBloc>(
-              create: (context) {
-                return _merchantOfferBloc;
-              },
-            ),
-            BlocProvider<BankOfferBloc>(
-              create: (context) {
-                return _bankOfferBloc;
-              },
-            ),
-          ],
-          child: Scaffold(
-            backgroundColor: Colors.white,
-            bottomNavigationBar: AnimatedBuilder(
-              animation: _navBarAnimation,
-              builder: (context, child) {
-                return Transform.translate(
-                  offset: _navBarAnimation.value,
-                  child: child,
-                );
-              },
-              child: BottomAppBar(
-                elevation: 8,
-                clipBehavior: Clip.antiAlias,
-                child: AnimatedBuilder(
+        return BlocBuilder<FoodOrderBloc, FoodOrderState>(
+          builder: (context, cartState){
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<FeOfferBloc>(
+                  create: (context) {
+                    return _feOfferBloc..add(GetFEOffer(loginState.user.token, widget.address));
+                  },
+                ),
+                BlocProvider<MerchantOfferBloc>(
+                  create: (context) {
+                    return _merchantOfferBloc;
+                  },
+                ),
+                BlocProvider<BankOfferBloc>(
+                  create: (context) {
+                    return _bankOfferBloc;
+                  },
+                ),
+              ],
+              child: Scaffold(
+                backgroundColor: Colors.white,
+                bottomNavigationBar: AnimatedBuilder(
                   animation: _navBarAnimation,
                   builder: (context, child) {
                     return Transform.translate(
@@ -144,172 +135,191 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                       child: child,
                     );
                   },
-                  child: CustomBottomNavBar(
-                    animationDuration: Duration(milliseconds: 300),
-                    items: [
-                      BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
-                      BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
-                      BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
-                      BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
-                    ],
-                    onItemSelected: (index) async {
-                      _currentIndex = index;
-                      if (index == 0) {
-                        await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
-                          return Home();
-                        }));
-                        _currentIndex = 1;
-                      } else if (index == 2) {
-                        await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
-                          return SearchPage(
-                            address: widget.address,
-                            token: loginState.user.token,
-                          );
-                        }));
-                        _currentIndex = 1;
-                      } else if (index == 3) {
-                        await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
-                          return OrderHistoryPage();
-                        }));
-                        _currentIndex = 1;
-                      }
-                    },
-                    selectedIndex: _currentIndex,
-                    selectedColor: Colors.orange[700],
-                    unselectedColor: Colors.black26,
-                  ),
-                ),
-              ),
-            ),
-            body: Column(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(top: 40, bottom: 20),
-                  padding: EdgeInsets.only(left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
-                  child: DefaultTabController(
-                    length: 3,
-                    initialIndex: 0,
-                    child: Container(
-                      child: TabBar(
-                        controller: _tabController,
-                        onTap: (i) {
-                          if (i == 0) {
-                            _feOfferBloc.add(GetFEOffer(loginState.user.token, widget.address));
-                          } else if (i == 1) {
-                            _merchantOfferBloc.add(GetMerchantOffer(loginState.user.token, widget.address));
-                          } else if (i == 2) {
-                            _bankOfferBloc.add(GetBankOffer(loginState.user.token, widget.address));
+                  child: BottomAppBar(
+                    elevation: 8,
+                    clipBehavior: Clip.antiAlias,
+                    child: AnimatedBuilder(
+                      animation: _navBarAnimation,
+                      builder: (context, child) {
+                        return Transform.translate(
+                          offset: _navBarAnimation.value,
+                          child: child,
+                        );
+                      },
+                      child: CustomBottomNavBar(
+                        animationDuration: Duration(milliseconds: 300),
+                        items: [
+                          BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
+                          BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
+                          BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
+                          BottomNavyBarItem(
+                              icon: "assets/3.svg",
+                              title: "Order",
+                              badge: cartState.placeOrder.foodCart.cartItemNumber())
+                        ],
+                        onItemSelected: (index) async {
+                          _currentIndex = index;
+                          if (index == 0) {
+                            await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                              return Home();
+                            }));
+                            _currentIndex = 1;
+                          } else if (index == 2) {
+                            await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                              return SearchPage(
+                                address: widget.address,
+                                token: loginState.user.token,
+                              );
+                            }));
+                            _currentIndex = 1;
+                          } else if (index == 3) {
+                            await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                              return RestaurantPlaceOrderPage(
+                                location: Location(address: widget.address),
+                                user: loginState.user,
+                              );
+                            }));
+                            _currentIndex = 1;
                           }
                         },
-                        //isScrollable: true,
-                        labelColor: Colors.black,
-                        unselectedLabelColor: Colors.black26,
-                        indicatorColor: Colors.yellow[600],
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        labelStyle: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.bold)),
-                        indicatorPadding: EdgeInsets.only(left: 0, right: 15, bottom: 2, top: 0),
-                        labelPadding: EdgeInsets.only(left: 0, right: 15, bottom: 0),
-                        tabs: [
-                          Tab(text: "FE Offers"),
-                          Tab(text: "Merchant"),
-                          Tab(text: "Bank"),
-                        ],
+                        selectedIndex: _currentIndex,
+                        selectedColor: Colors.orange[700],
+                        unselectedColor: Colors.black26,
                       ),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: <Widget>[
-                      BlocBuilder<FeOfferBloc, FeOfferState>(
-                        builder: (context, state) {
-                          if (state is LoadingFEOfferState) {
-                            return LoadingWidget();
-                          } else if (state is ErrorFEOfferState) {
-                            return ErrorWidget(
-                              message: state.message,
-                              onTapRetry: () {
+                body: Column(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 40, bottom: 20),
+                      padding: EdgeInsets.only(left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                      child: DefaultTabController(
+                        length: 3,
+                        initialIndex: 0,
+                        child: Container(
+                          child: TabBar(
+                            controller: _tabController,
+                            onTap: (i) {
+                              if (i == 0) {
                                 _feOfferBloc.add(GetFEOffer(loginState.user.token, widget.address));
-                              },
-                            );
-                          }
-                          if (state.feOffers.isEmpty) {
-                            return ErrorWidget(
-                              message: "No Offers Available",
-                            );
-                          } else {
-                            return FEOfferListWidget(offers: state.feOffers);
-                          }
-                        },
-                      ),
-                      BlocBuilder<MerchantOfferBloc, MerchantOfferState>(
-                        builder: (context, state) {
-                          if (state is LoadingMerchantOfferState) {
-                            return LoadingWidget();
-                          } else if (state is ErrorMerchantOfferState) {
-                            return ErrorWidget(
-                              message: state.message,
-                              onTapRetry: () {
+                              } else if (i == 1) {
                                 _merchantOfferBloc.add(GetMerchantOffer(loginState.user.token, widget.address));
-                              },
-                            );
-                          }
-                          if (state.merchants.isEmpty) {
-                            return ErrorWidget(
-                              message: "No Offers Available",
-                            );
-                          } else {
-                            return CustomScrollView(
-                              slivers: <Widget>[
-                                RestaurantListWidget(
-                                  type: RestaurantViewType.offerpage,
-                                  location: Location(address: widget.address),
-                                  fade: 0.4,
-                                  scale: 0.95,
-                                  restaurants: state.merchants,
-                                ),
-                              ],
-                            );
-                          }
-                        },
-                      ),
-                      BlocBuilder<BankOfferBloc, BankOfferState>(builder: (context, state) {
-                        if (state is LoadingBankOfferState) {
-                          return LoadingWidget();
-                        } else if (state is ErrorBankOfferState) {
-                          return ErrorWidget(
-                            message: state.message,
-                            onTapRetry: () {
-                              _bankOfferBloc.add(GetBankOffer(loginState.user.token, widget.address));
+                              } else if (i == 2) {
+                                _bankOfferBloc.add(GetBankOffer(loginState.user.token, widget.address));
+                              }
                             },
-                          );
-                        }
-                        if (state.banks.isEmpty) {
-                          return ErrorWidget(
-                            message: "No Offers Available",
-                          );
-                        } else {
-                          return CustomScrollView(
-                            slivers: <Widget>[
-                              SliverList(
-                                  delegate: SliverChildBuilderDelegate((context, i) {
-                                return Container(
-                                  padding: EdgeInsets.only(
-                                      left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: 15),
-                                  child: Text(state.banks[i].text),
-                                );
-                              }, childCount: state.banks.length)),
+                            //isScrollable: true,
+                            labelColor: Colors.black,
+                            unselectedLabelColor: Colors.black26,
+                            indicatorColor: Colors.yellow[600],
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            labelStyle: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                            indicatorPadding: EdgeInsets.only(left: 0, right: 15, bottom: 2, top: 0),
+                            labelPadding: EdgeInsets.only(left: 0, right: 15, bottom: 0),
+                            tabs: [
+                              Tab(text: "FE Offers"),
+                              Tab(text: "Merchant"),
+                              Tab(text: "Bank"),
                             ],
-                          );
-                        }
-                      }),
-                    ],
-                  ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: <Widget>[
+                          BlocBuilder<FeOfferBloc, FeOfferState>(
+                            builder: (context, state) {
+                              if (state is LoadingFEOfferState) {
+                                return LoadingWidget();
+                              } else if (state is ErrorFEOfferState) {
+                                return ErrorWidget(
+                                  message: state.message,
+                                  onTapRetry: () {
+                                    _feOfferBloc.add(GetFEOffer(loginState.user.token, widget.address));
+                                  },
+                                );
+                              }
+                              if (state.feOffers.isEmpty) {
+                                return ErrorWidget(
+                                  message: "No Offers Available",
+                                );
+                              } else {
+                                return FEOfferListWidget(offers: state.feOffers);
+                              }
+                            },
+                          ),
+                          BlocBuilder<MerchantOfferBloc, MerchantOfferState>(
+                            builder: (context, state) {
+                              if (state is LoadingMerchantOfferState) {
+                                return LoadingWidget();
+                              } else if (state is ErrorMerchantOfferState) {
+                                return ErrorWidget(
+                                  message: state.message,
+                                  onTapRetry: () {
+                                    _merchantOfferBloc.add(GetMerchantOffer(loginState.user.token, widget.address));
+                                  },
+                                );
+                              }
+                              if (state.merchants.isEmpty) {
+                                return ErrorWidget(
+                                  message: "No Offers Available",
+                                );
+                              } else {
+                                return CustomScrollView(
+                                  slivers: <Widget>[
+                                    RestaurantListWidget(
+                                      type: RestaurantViewType.offerpage,
+                                      location: Location(address: widget.address),
+                                      fade: 0.4,
+                                      scale: 0.95,
+                                      restaurants: state.merchants,
+                                    ),
+                                  ],
+                                );
+                              }
+                            },
+                          ),
+                          BlocBuilder<BankOfferBloc, BankOfferState>(builder: (context, state) {
+                            if (state is LoadingBankOfferState) {
+                              return LoadingWidget();
+                            } else if (state is ErrorBankOfferState) {
+                              return ErrorWidget(
+                                message: state.message,
+                                onTapRetry: () {
+                                  _bankOfferBloc.add(GetBankOffer(loginState.user.token, widget.address));
+                                },
+                              );
+                            }
+                            if (state.banks.isEmpty) {
+                              return ErrorWidget(
+                                message: "No Offers Available",
+                              );
+                            } else {
+                              return CustomScrollView(
+                                slivers: <Widget>[
+                                  SliverList(
+                                      delegate: SliverChildBuilderDelegate((context, i) {
+                                        return Container(
+                                          padding: EdgeInsets.only(
+                                              left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: 15),
+                                          child: Text(state.banks[i].text),
+                                        );
+                                      }, childCount: state.banks.length)),
+                                ],
+                              );
+                            }
+                          }),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

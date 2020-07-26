@@ -82,7 +82,44 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
 
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
-        return BlocBuilder<FoodOrderBloc, FoodOrderState>(
+        return BlocConsumer<FoodOrderBloc, FoodOrderState>(
+          listener: (context, cartState) {
+            if (cartState is ConfirmCartState) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      title: Text(
+                        "Clear Cart?",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      content: Text(
+                        "Would you like to clear current cart?",
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                            onPressed: () {
+                              BlocProvider.of<FoodOrderBloc>(context)
+                                ..add(ClearCart())
+                                ..add(ChangeQuantityNoPayment(cartState.tempSelectedRestaurant, cartState.tempId,
+                                    cartState.tempFood, cartState.tempQuantity, cartState.tempSelectedPrice));
+
+                              Navigator.pop(context);
+                            },
+                            child: Text("YES")),
+                        FlatButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("NO")),
+                      ],
+                    );
+                  },
+                  barrierDismissible: true);
+            }
+          },
           builder: (context, cartState) {
             return BlocProvider<DetailPageBloc>(
               create: (context) {
@@ -107,20 +144,23 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                             child: child,
                           );
                         },
-                        child: RestaurantDetailBottomNavBar(
-                          isValid: cartState.placeOrder.foodCart.cartItemNumber() > 0 ? true : false,
-                          totalAmount: cartState.placeOrder.foodCart.getAmount(),
-                          totalItem: cartState.placeOrder.foodCart.cartItemNumber(),
-                          buttonText: "CHECK OUT",
-                          onButtonTap: () async {
-                            BlocProvider.of<FoodOrderBloc>(context).add(
-                                UpdateCartMainData(widget.restaurant, cartState.placeOrder.foodCart, loginState.user));
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return RestaurantPlaceOrderPage(
-                                location: widget.location,
-                              );
-                            }));
-                          },
+                        child: AnimatedOpacity(
+                          opacity: widget.restaurant.id == cartState.placeOrder.restaurant.id ? 1.0 : 0.0,
+                          duration: Duration(milliseconds: 300),
+                          child: RestaurantDetailBottomNavBar(
+                            isValid: cartState.placeOrder.foodCart.cartItemNumber() > 0 ? true : false,
+                            totalAmount: cartState.placeOrder.foodCart.getAmount(),
+                            totalItem: cartState.placeOrder.foodCart.cartItemNumber(),
+                            buttonText: "CHECK OUT",
+                            onButtonTap: () async {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return RestaurantPlaceOrderPage(
+                                  location: widget.location,
+                                  user: loginState.user,
+                                );
+                              }));
+                            },
+                          ),
                         ),
                       ),
                       body: Stack(
@@ -158,7 +198,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                       drawer: "assets/drawer.svg",
                                       title: widget.location.address,
                                       onTapLeading: () {
-                                        //_onBackPressed(state.foodCart.cartItemNumber());
+                                        Navigator.pop(context);
                                       },
                                       onTapDrawer: () {
                                         Scaffold.of(context).openEndDrawer();
@@ -456,11 +496,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                         }
                                         return FoodListWidget(
                                           onAdd: (i) {
+                                            _animationController.reverse().orCancel;
                                             if (!cartState.placeOrder.foodCart.isFoodExist(state.foodList[i].id) &&
                                                 state.foodList[i].prices.length > 1) {
                                               _showAddOns(state.foodList[i]);
                                             } else {
                                               BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                                  widget.restaurant,
                                                   state.foodList[i].id,
                                                   state.foodList[i],
                                                   (cartState.placeOrder.foodCart.getQuantity(state.foodList[i].id) + 1),
@@ -469,7 +511,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                             }
                                           },
                                           onRemove: (i) {
+                                            _animationController.reverse().orCancel;
                                             BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                                widget.restaurant,
                                                 state.foodList[i].id,
                                                 state.foodList[i],
                                                 (cartState.placeOrder.foodCart.getQuantity(state.foodList[i].id) - 1),
@@ -567,7 +611,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
               value: i,
               onChanged: (i) {
                 Navigator.pop(context);
-                BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(food.id, food, 1, i));
+                BlocProvider.of<FoodOrderBloc>(context)
+                    .add(ChangeQuantityNoPayment(widget.restaurant, food.id, food, 1, i));
               },
               groupValue: null,
             ));
@@ -703,6 +748,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                               return FoodListWidget(
                                 onAdd: (i) {
                                   BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                      widget.restaurant,
                                       state.result[i].id,
                                       state.result[i],
                                       (cartState.placeOrder.foodCart.getQuantity(state.result[i].id) + 1),
@@ -710,6 +756,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                 },
                                 onRemove: (i) {
                                   BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                      widget.restaurant,
                                       state.result[i].id,
                                       state.result[i],
                                       (cartState.placeOrder.foodCart.getQuantity(state.result[i].id) - 1),

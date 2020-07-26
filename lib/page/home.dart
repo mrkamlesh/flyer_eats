@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/page/offers_list_page.dart';
 import 'package:clients/page/restaurant_place_order_page.dart';
@@ -79,825 +80,838 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
-        return Scaffold(
-          extendBody: true,
-          extendBodyBehindAppBar: true,
-          endDrawer: EndDrawer(),
-          bottomNavigationBar: AnimatedBuilder(
-            animation: _navBarAnimation,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: _navBarAnimation.value,
-                child: child,
-              );
-            },
-            child: BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, homeState) {
-                if (homeState is LoadingCurrentLocation ||
-                    homeState is ErrorCurrentLocation ||
-                    homeState is NoHomepageData ||
-                    homeState is ErrorHomeState ||
-                    homeState is LoadingHomeState) {
-                  return SizedBox(
-                    height: 0,
+        return BlocBuilder<FoodOrderBloc, FoodOrderState>(
+          builder: (context, cartState) {
+            return Scaffold(
+              extendBody: true,
+              extendBodyBehindAppBar: true,
+              endDrawer: EndDrawer(),
+              bottomNavigationBar: AnimatedBuilder(
+                animation: _navBarAnimation,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: _navBarAnimation.value,
+                    child: child,
                   );
-                }
-
-                return BottomAppBar(
-                  elevation: 8,
-                  clipBehavior: Clip.antiAlias,
-                  child: AnimatedBuilder(
-                    animation: _navBarAnimation,
-                    builder: (context, child) {
-                      return Transform.translate(
-                        offset: _navBarAnimation.value,
-                        child: child,
+                },
+                child: BlocBuilder<HomeBloc, HomeState>(
+                  builder: (context, homeState) {
+                    if (homeState is LoadingCurrentLocation ||
+                        homeState is ErrorCurrentLocation ||
+                        homeState is NoHomepageData ||
+                        homeState is ErrorHomeState ||
+                        homeState is LoadingHomeState) {
+                      return SizedBox(
+                        height: 0,
                       );
-                    },
-                    child: BlocConsumer<LoginBloc, LoginState>(
-                      listener: (context, state) {
-                        if (state is LoggedOut) {
-                          Navigator.pushReplacementNamed(context, "/");
-                        }
-                      },
-                      builder: (context, loginState) {
-                        return CustomBottomNavBar(
-                          animationDuration: Duration(milliseconds: 300),
-                          items: [
-                            BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
-                            BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
-                            BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
-                            BottomNavyBarItem(icon: "assets/3.svg", title: "Order")
-                          ],
-                          onItemSelected: (index) async {
-                            _currentIndex = index;
-                            if (index == 1) {
-                              await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
-                                return OfferListPage(
-                                  address: homeState.homePageData.location.address,
-                                );
-                              }));
-                              _currentIndex = 0;
-                            } else if (index == 2) {
-                              await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
-                                return SearchPage(
-                                  address: homeState.homePageData.location.address,
-                                  token: loginState.user.token,
-                                );
-                              }));
-                              _currentIndex = 0;
-                            } else if (index == 3) {
-                              await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
-                                return RestaurantPlaceOrderPage(
-                                  location: homeState.homePageData.location,
-                                );
-                              }));
-                              _currentIndex = 0;
+                    }
+
+                    return BottomAppBar(
+                      elevation: 8,
+                      clipBehavior: Clip.antiAlias,
+                      child: AnimatedBuilder(
+                        animation: _navBarAnimation,
+                        builder: (context, child) {
+                          return Transform.translate(
+                            offset: _navBarAnimation.value,
+                            child: child,
+                          );
+                        },
+                        child: BlocConsumer<LoginBloc, LoginState>(
+                          listener: (context, state) {
+                            if (state is LoggedOut) {
+                              Navigator.pushReplacementNamed(context, "/");
                             }
                           },
-                          selectedIndex: _currentIndex,
-                          selectedColor: Colors.orange[700],
-                          unselectedColor: Colors.black26,
-                        );
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          body: Stack(
-            children: <Widget>[
-              BlocBuilder<HomeBloc, HomeState>(builder: (context, homeState) {
-                if (homeState is LoadingCurrentLocation ||
-                    homeState is ErrorCurrentLocation ||
-                    homeState is LoadingHomeState ||
-                    homeState is NoHomepageData ||
-                    homeState is ErrorHomeState) {
-                  return DefaultBanner();
-                }
-
-                if (homeState.homePageData.promos.isEmpty) {
-                  return DefaultBanner();
-                }
-                return Positioned(
-                  top: 0,
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: BannerListWidget(
-                      location: homeState.homePageData.location,
-                      bannerList: homeState.homePageData.promos,
-                    ),
-                  ),
-                );
-              }),
-              Align(
-                alignment: Alignment.topCenter,
-                child: BlocConsumer<HomeBloc, HomeState>(
-                  listener: (context, homeState) {
-                    if (homeState is ErrorCurrentLocation) {
-                      final snackBar = SnackBar(
-                        content: Text(homeState.message),
-                        duration: Duration(days: 365),
-                        action: SnackBarAction(
-                          label: "Retry",
-                          onPressed: () {
-                            BlocProvider.of<HomeBloc>(context).add(InitGetData(loginState.user.token, null));
+                          builder: (context, loginState) {
+                            return CustomBottomNavBar(
+                              animationDuration: Duration(milliseconds: 300),
+                              items: [
+                                BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
+                                BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
+                                BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
+                                BottomNavyBarItem(
+                                    icon: "assets/3.svg",
+                                    title: "Order",
+                                    badge: cartState.placeOrder.foodCart.cartItemNumber())
+                              ],
+                              onItemSelected: (index) async {
+                                _currentIndex = index;
+                                if (index == 1) {
+                                  await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                                    return OfferListPage(
+                                      address: homeState.homePageData.location.address,
+                                    );
+                                  }));
+                                  _currentIndex = 0;
+                                } else if (index == 2) {
+                                  await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                                    return SearchPage(
+                                      address: homeState.homePageData.location.address,
+                                      token: loginState.user.token,
+                                    );
+                                  }));
+                                  _currentIndex = 0;
+                                } else if (index == 3) {
+                                  await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                                    return RestaurantPlaceOrderPage(
+                                      location: homeState.homePageData.location,
+                                      user: loginState.user,
+                                    );
+                                  }));
+                                  _currentIndex = 0;
+                                }
+                              },
+                              selectedIndex: _currentIndex,
+                              selectedColor: Colors.orange[700],
+                              unselectedColor: Colors.black26,
+                            );
                           },
                         ),
-                      );
-                      Scaffold.of(context).showSnackBar(snackBar);
-                    } else if (homeState is NoHomepageData) {
-                      final snackBar = SnackBar(
-                        content: Text("We are not available yet in your location"),
-                      );
-                      Scaffold.of(context).showSnackBar(snackBar);
-                    }
-                  },
-                  builder: (context, state) {
-                    return Builder(
-                      builder: (context) {
-                        return CustomAppBar(
-                          isDropDownButtonVisible: state.isAppBarDropDownVisible,
-                          drawer: "assets/drawer.svg",
-                          title: state.appBarTitle,
-                          isLoading: state.isAppBarLoading,
-                          leading: state.leading,
-                          isFlag: state.isFlagVisible,
-                          onTapTitle: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return SelectLocationPage();
-                            }));
-                          },
-                          onTapLeading: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return SelectLocationPage();
-                            }));
-                          },
-                          onTapDrawer: () {
-                            Scaffold.of(context).openEndDrawer();
-                          },
-                        );
-                      },
+                      ),
                     );
                   },
                 ),
               ),
-              BlocBuilder<HomeBloc, HomeState>(
-                builder: (context, homeState) {
-                  if (homeState is LoadingCurrentLocation || homeState is LoadingHomeState) {
-                    return Center(child: HomeLoadingWidget());
-                  } else if (homeState is ErrorCurrentLocation || homeState is ErrorHomeState) {
-                    return Center(child: HomeErrorWidget("Can Not Get Location"));
-                  } else if (homeState is NoHomepageData) {
-                    return HomeErrorWidget("No Available Location");
-                  }
-                  return DraggableScrollableSheet(
-                    initialChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
-                    minChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
-                    maxChildSize: 1.0,
-                    builder: (context, controller) {
-                      controller.addListener(() {
-                        if (controller.position.userScrollDirection == ScrollDirection.reverse) {
-                          if (!_isScrollingDown) {
-                            _isScrollingDown = true;
-                            setState(() {
-                              _animationController.forward().orCancel;
-                            });
-                          }
+              body: Stack(
+                children: <Widget>[
+                  BlocBuilder<HomeBloc, HomeState>(builder: (context, homeState) {
+                    if (homeState is LoadingCurrentLocation ||
+                        homeState is ErrorCurrentLocation ||
+                        homeState is LoadingHomeState ||
+                        homeState is NoHomepageData ||
+                        homeState is ErrorHomeState) {
+                      return DefaultBanner();
+                    }
+
+                    if (homeState.homePageData.promos.isEmpty) {
+                      return DefaultBanner();
+                    }
+                    return Positioned(
+                      top: 0,
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: BannerListWidget(
+                          location: homeState.homePageData.location,
+                          bannerList: homeState.homePageData.promos,
+                        ),
+                      ),
+                    );
+                  }),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: BlocConsumer<HomeBloc, HomeState>(
+                      listener: (context, homeState) {
+                        if (homeState is ErrorCurrentLocation) {
+                          final snackBar = SnackBar(
+                            content: Text(homeState.message),
+                            duration: Duration(days: 365),
+                            action: SnackBarAction(
+                              label: "Retry",
+                              onPressed: () {
+                                BlocProvider.of<HomeBloc>(context).add(InitGetData(loginState.user.token, null));
+                              },
+                            ),
+                          );
+                          Scaffold.of(context).showSnackBar(snackBar);
+                        } else if (homeState is NoHomepageData) {
+                          final snackBar = SnackBar(
+                            content: Text("We are not available yet in your location"),
+                          );
+                          Scaffold.of(context).showSnackBar(snackBar);
                         }
-                        if ((controller.position.userScrollDirection == ScrollDirection.forward) |
-                            (controller.offset >= controller.position.maxScrollExtent - kBottomNavigationBarHeight &&
-                                !controller.position.outOfRange)) {
-                          if (_isScrollingDown) {
-                            _isScrollingDown = false;
-                            setState(() {
-                              _animationController.reverse().orCancel;
-                            });
-                          }
-                        }
-                      });
-                      return SingleChildScrollView(
-                          controller: controller,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                            padding: EdgeInsets.only(top: 10, bottom: 32),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable - 5),
-                                  margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                  height: 115,
-                                  child: ShopCategoryListWidget(
-                                    onTap: (i) {
-                                      if (i == 0) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                          return RestaurantListPage(
-                                            image: "assets/allrestaurant.png",
-                                            merchantType: MerchantType.restaurant,
-                                            isExternalImage: false,
-                                            title: "All Restaurants",
-                                            location: Location(address: homeState.homePageData.location.address),
-                                            isFilterEnabled: true,
-                                          );
-                                        }));
-                                      } else if (i == 1) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                          return RestaurantListPage(
-                                            image: "assets/allrestaurant.png",
-                                            merchantType: MerchantType.grocery,
-                                            isExternalImage: false,
-                                            title: "All Grocery",
-                                            location: Location(address: homeState.homePageData.location.address),
-                                            isFilterEnabled: false,
-                                          );
-                                        }));
-                                      } else if (i == 2) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                          return RestaurantListPage(
-                                            image: "assets/allrestaurant.png",
-                                            merchantType: MerchantType.vegFruits,
-                                            isExternalImage: false,
-                                            title: "All Merchants",
-                                            location: Location(address: homeState.homePageData.location.address),
-                                            isFilterEnabled: false,
-                                          );
-                                        }));
-                                      } else if (i == 3) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                          return RestaurantListPage(
-                                            image: "assets/allrestaurant.png",
-                                            merchantType: MerchantType.meat,
-                                            isExternalImage: false,
-                                            title: "All Merchants",
-                                            location: Location(address: homeState.homePageData.location.address),
-                                            isFilterEnabled: false,
-                                          );
-                                        }));
-                                      }
-                                    },
-                                    shopCategories: ExampleModel.getShopCategories(),
-                                  ),
-                                ),
-                                Container(
-                                    margin: EdgeInsets.only(
-                                        left: horizontalPaddingDraggable,
-                                        right: horizontalPaddingDraggable,
-                                        bottom: distanceSectionContent,
-                                        top: 5),
-                                    child: HomeActionWidget(location: homeState.homePageData.location)),
-                                homeState.homePageData.topRestaurants.isNotEmpty
-                                    ? Column(
-                                        children: <Widget>[
-                                          Container(
-                                            padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
-                                            margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text(
-                                                  "Top Restaurants",
-                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                      return RestaurantListPage(
-                                                        title: "Top Restaurants",
-                                                        location:
-                                                            Location(address: homeState.homePageData.location.address),
-                                                        type: RestaurantListType.top,
-                                                        merchantType: MerchantType.restaurant,
-                                                        isExternalImage: false,
-                                                        image: "assets/allrestaurant.png",
-                                                      );
-                                                    }));
-                                                  },
-                                                  child: Container(
-                                                    width: 70,
-                                                    height: 20,
-                                                    alignment: Alignment.centerRight,
-                                                    child: Text(
-                                                      "See All",
-                                                      textAlign: TextAlign.end,
-                                                      style: TextStyle(color: primary3, fontSize: 14),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: distanceBetweenSection - 20),
-                                            height: 170,
-                                            child: RestaurantListWidget(
-                                              type: RestaurantViewType.topRestaurant,
-                                              restaurants: homeState.homePageData.topRestaurants,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(
-                                        margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
+                      },
+                      builder: (context, state) {
+                        return Builder(
+                          builder: (context) {
+                            return CustomAppBar(
+                              isDropDownButtonVisible: state.isAppBarDropDownVisible,
+                              drawer: "assets/drawer.svg",
+                              title: state.appBarTitle,
+                              isLoading: state.isAppBarLoading,
+                              leading: state.leading,
+                              isFlag: state.isFlagVisible,
+                              onTapTitle: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  return SelectLocationPage();
+                                }));
+                              },
+                              onTapLeading: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  return SelectLocationPage();
+                                }));
+                              },
+                              onTapDrawer: () {
+                                Scaffold.of(context).openEndDrawer();
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  BlocBuilder<HomeBloc, HomeState>(
+                    builder: (context, homeState) {
+                      if (homeState is LoadingCurrentLocation || homeState is LoadingHomeState) {
+                        return Center(child: HomeLoadingWidget());
+                      } else if (homeState is ErrorCurrentLocation || homeState is ErrorHomeState) {
+                        return Center(child: HomeErrorWidget("Can Not Get Location"));
+                      } else if (homeState is NoHomepageData) {
+                        return HomeErrorWidget("No Available Location");
+                      }
+                      return DraggableScrollableSheet(
+                        initialChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
+                        minChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
+                        maxChildSize: 1.0,
+                        builder: (context, controller) {
+                          controller.addListener(() {
+                            if (controller.position.userScrollDirection == ScrollDirection.reverse) {
+                              if (!_isScrollingDown) {
+                                _isScrollingDown = true;
+                                setState(() {
+                                  _animationController.forward().orCancel;
+                                });
+                              }
+                            }
+                            if ((controller.position.userScrollDirection == ScrollDirection.forward) |
+                                (controller.offset >=
+                                        controller.position.maxScrollExtent - kBottomNavigationBarHeight &&
+                                    !controller.position.outOfRange)) {
+                              if (_isScrollingDown) {
+                                _isScrollingDown = false;
+                                setState(() {
+                                  _animationController.reverse().orCancel;
+                                });
+                              }
+                            }
+                          });
+                          return SingleChildScrollView(
+                              controller: controller,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                padding: EdgeInsets.only(top: 10, bottom: 32),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable - 5),
+                                      margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
+                                      height: 115,
+                                      child: ShopCategoryListWidget(
+                                        onTap: (i) {
+                                          if (i == 0) {
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                              return RestaurantListPage(
+                                                image: "assets/allrestaurant.png",
+                                                merchantType: MerchantType.restaurant,
+                                                isExternalImage: false,
+                                                title: "All Restaurants",
+                                                location: Location(address: homeState.homePageData.location.address),
+                                                isFilterEnabled: true,
+                                              );
+                                            }));
+                                          } else if (i == 1) {
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                              return RestaurantListPage(
+                                                image: "assets/allrestaurant.png",
+                                                merchantType: MerchantType.grocery,
+                                                isExternalImage: false,
+                                                title: "All Grocery",
+                                                location: Location(address: homeState.homePageData.location.address),
+                                                isFilterEnabled: false,
+                                              );
+                                            }));
+                                          } else if (i == 2) {
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                              return RestaurantListPage(
+                                                image: "assets/allrestaurant.png",
+                                                merchantType: MerchantType.vegFruits,
+                                                isExternalImage: false,
+                                                title: "All Merchants",
+                                                location: Location(address: homeState.homePageData.location.address),
+                                                isFilterEnabled: false,
+                                              );
+                                            }));
+                                          } else if (i == 3) {
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                              return RestaurantListPage(
+                                                image: "assets/allrestaurant.png",
+                                                merchantType: MerchantType.meat,
+                                                isExternalImage: false,
+                                                title: "All Merchants",
+                                                location: Location(address: homeState.homePageData.location.address),
+                                                isFilterEnabled: false,
+                                              );
+                                            }));
+                                          }
+                                        },
+                                        shopCategories: ExampleModel.getShopCategories(),
                                       ),
-                                homeState.homePageData.categories.isNotEmpty
-                                    ? Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Container(
-                                            padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
-                                            margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                            child: Text(
-                                              "Food Categories",
-                                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
-                                            height: 130,
-                                            decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                                              BoxShadow(
-                                                  offset: Offset(2, 2),
-                                                  color: Colors.black26,
-                                                  spreadRadius: 0,
-                                                  blurRadius: 5)
-                                            ]),
-                                            child: FoodCategoryListWidget(
-                                              onTap: (category) {
-                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                  return RestaurantListPage(
-                                                    title: category.name,
-                                                    image: category.image,
-                                                    merchantType: MerchantType.restaurant,
-                                                    category: category.id,
-                                                    isExternalImage: true,
-                                                    location:
-                                                        Location(address: homeState.homePageData.location.address),
-                                                  );
-                                                }));
-                                              },
-                                              foodCategoryList: homeState.homePageData.categories,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(
-                                        margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
-                                      ),
-                                homeState.homePageData.orderAgainRestaurants.isNotEmpty
-                                    ? Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Container(
-                                            padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
-                                            margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text(
-                                                  "Order Again",
-                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                      return RestaurantListPage(
-                                                        title: "Order Again",
-                                                        merchantType: MerchantType.restaurant,
-                                                        type: RestaurantListType.orderAgain,
-                                                        location:
-                                                            Location(address: homeState.homePageData.location.address),
-                                                        isExternalImage: false,
-                                                        image: "assets/allrestaurant.png",
-                                                      );
-                                                    }));
-                                                  },
-                                                  child: Container(
-                                                    height: 20,
-                                                    width: 70,
-                                                    alignment: Alignment.centerRight,
-                                                    child: Text(
-                                                      "See All",
-                                                      textAlign: TextAlign.end,
-                                                      style: TextStyle(color: primary3, fontSize: 14),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                            height: 170,
-                                            child: RestaurantListWidget(
-                                              type: RestaurantViewType.orderAgainRestaurant,
-                                              restaurants: homeState.homePageData.orderAgainRestaurants,
-                                              isExpand: true,
-                                              location: Location(address: homeState.homePageData.location.address),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(
-                                        margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                      ),
-                                InkWell(
-                                  onTap: () {
-                                    final RenderBox box = context.findRenderObject();
-                                    Share.share('flyereats.in',
-                                        subject: 'Flyer Eats',
-                                        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
-                                    height: 0.16 * AppUtil.getScreenHeight(context),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFFFC94B),
-                                      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)],
                                     ),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Container(
-                                          width: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                          height: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                          margin: EdgeInsets.all(10),
-                                          padding: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white.withOpacity(0.3),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                    Container(
+                                        margin: EdgeInsets.only(
+                                            left: horizontalPaddingDraggable,
+                                            right: horizontalPaddingDraggable,
+                                            bottom: distanceSectionContent,
+                                            top: 5),
+                                        child: HomeActionWidget(location: homeState.homePageData.location)),
+                                    homeState.homePageData.topRestaurants.isNotEmpty
+                                        ? Column(
                                             children: <Widget>[
-                                              SvgPicture.asset(
-                                                "assets/order success icon 2.svg",
-                                                height: 0.16 * AppUtil.getScreenHeight(context) - 60,
-                                                width: 0.16 * AppUtil.getScreenHeight(context) - 60,
+                                              Container(
+                                                padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                                margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Top Restaurants",
+                                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                          return RestaurantListPage(
+                                                            title: "Top Restaurants",
+                                                            location: Location(
+                                                                address: homeState.homePageData.location.address),
+                                                            type: RestaurantListType.top,
+                                                            merchantType: MerchantType.restaurant,
+                                                            isExternalImage: false,
+                                                            image: "assets/allrestaurant.png",
+                                                          );
+                                                        }));
+                                                      },
+                                                      child: Container(
+                                                        width: 70,
+                                                        height: 20,
+                                                        alignment: Alignment.centerRight,
+                                                        child: Text(
+                                                          "See All",
+                                                          textAlign: TextAlign.end,
+                                                          style: TextStyle(color: primary3, fontSize: 14),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
                                               ),
-                                              SizedBox(
-                                                height: 5,
+                                              Container(
+                                                margin: EdgeInsets.only(bottom: distanceBetweenSection - 20),
+                                                height: 170,
+                                                child: RestaurantListWidget(
+                                                  type: RestaurantViewType.topRestaurant,
+                                                  restaurants: homeState.homePageData.topRestaurants,
+                                                ),
                                               ),
-                                              Text(
-                                                "Refer Now",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
-                                              )
                                             ],
+                                          )
+                                        : Container(
+                                            margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
                                           ),
-                                        ),
-                                        Expanded(
-                                            child: Container(
-                                          padding: EdgeInsets.all(10),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    homeState.homePageData.categories.isNotEmpty
+                                        ? Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
-                                              Text(
-                                                "REFER A FRIEND AND EARN",
-                                                style: TextStyle(fontWeight: FontWeight.bold),
+                                              Container(
+                                                padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                                margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
+                                                child: Text(
+                                                  "Food Categories",
+                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                ),
                                               ),
-                                              Row(
+                                              Container(
+                                                margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
+                                                height: 130,
+                                                decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                                                  BoxShadow(
+                                                      offset: Offset(2, 2),
+                                                      color: Colors.black26,
+                                                      spreadRadius: 0,
+                                                      blurRadius: 5)
+                                                ]),
+                                                child: FoodCategoryListWidget(
+                                                  onTap: (category) {
+                                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                      return RestaurantListPage(
+                                                        title: category.name,
+                                                        image: category.image,
+                                                        merchantType: MerchantType.restaurant,
+                                                        category: category.id,
+                                                        isExternalImage: true,
+                                                        location:
+                                                            Location(address: homeState.homePageData.location.address),
+                                                      );
+                                                    }));
+                                                  },
+                                                  foodCategoryList: homeState.homePageData.categories,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Container(
+                                            margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
+                                          ),
+                                    homeState.homePageData.orderAgainRestaurants.isNotEmpty
+                                        ? Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                                margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Order Again",
+                                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                          return RestaurantListPage(
+                                                            title: "Order Again",
+                                                            merchantType: MerchantType.restaurant,
+                                                            type: RestaurantListType.orderAgain,
+                                                            location: Location(
+                                                                address: homeState.homePageData.location.address),
+                                                            isExternalImage: false,
+                                                            image: "assets/allrestaurant.png",
+                                                          );
+                                                        }));
+                                                      },
+                                                      child: Container(
+                                                        height: 20,
+                                                        width: 70,
+                                                        alignment: Alignment.centerRight,
+                                                        child: Text(
+                                                          "See All",
+                                                          textAlign: TextAlign.end,
+                                                          style: TextStyle(color: primary3, fontSize: 14),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
+                                                height: 170,
+                                                child: RestaurantListWidget(
+                                                  type: RestaurantViewType.orderAgainRestaurant,
+                                                  restaurants: homeState.homePageData.orderAgainRestaurants,
+                                                  isExpand: true,
+                                                  location: Location(address: homeState.homePageData.location.address),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Container(
+                                            margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
+                                          ),
+                                    InkWell(
+                                      onTap: () {
+                                        final RenderBox box = context.findRenderObject();
+                                        Share.share('flyereats.in',
+                                            subject: 'Flyer Eats',
+                                            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
+                                        height: 0.16 * AppUtil.getScreenHeight(context),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFFFC94B),
+                                          boxShadow: [
+                                            BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)
+                                          ],
+                                        ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Container(
+                                              width: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                              height: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                              margin: EdgeInsets.all(10),
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white.withOpacity(0.3),
+                                              ),
+                                              child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: <Widget>[
-                                                  Text(
-                                                    "Get a coupon worth",
-                                                    style: TextStyle(fontSize: 12),
+                                                  SvgPicture.asset(
+                                                    "assets/order success icon 2.svg",
+                                                    height: 0.16 * AppUtil.getScreenHeight(context) - 60,
+                                                    width: 0.16 * AppUtil.getScreenHeight(context) - 60,
                                                   ),
                                                   SizedBox(
-                                                    width: 10,
+                                                    height: 5,
                                                   ),
                                                   Text(
-                                                    loginState.user.referralDiscount,
-                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                                  ),
+                                                    "Refer Now",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+                                                  )
                                                 ],
                                               ),
-                                              FittedBox(
-                                                fit: BoxFit.none,
+                                            ),
+                                            Expanded(
                                                 child: Container(
-                                                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(4),
+                                              padding: EdgeInsets.all(10),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: <Widget>[
+                                                  Text(
+                                                    "REFER A FRIEND AND EARN",
+                                                    style: TextStyle(fontWeight: FontWeight.bold),
                                                   ),
-                                                  child: Row(
+                                                  Row(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: <Widget>[
                                                       Text(
-                                                        "Use Referal Code: ",
-                                                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                        "Get a coupon worth",
+                                                        style: TextStyle(fontSize: 12),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
                                                       ),
                                                       Text(
-                                                        loginState.user.referralCode,
-                                                        style: TextStyle(
-                                                          color: primary3,
-                                                          fontSize: 12,
-                                                        ),
-                                                      )
+                                                        loginState.user.referralDiscount,
+                                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                      ),
                                                     ],
                                                   ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ))
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                homeState.homePageData.ads.isNotEmpty
-                                    ? Container(
-                                        margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
-                                        height: 140,
-                                        child: PromoListWidget(
-                                          promoList: homeState.homePageData.ads,
-                                        ),
-                                      )
-                                    : Container(
-                                        margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
-                                      ),
-                                homeState.homePageData.dblRestaurants.isNotEmpty
-                                    ? Container(
-                                        margin:
-                                            EdgeInsets.only(bottom: distanceBetweenSection + distanceSectionContent),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Container(
-                                              padding: EdgeInsets.only(
-                                                  bottom: distanceSectionContent - 10,
-                                                  right: horizontalPaddingDraggable,
-                                                  left: horizontalPaddingDraggable),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    "It's Dinner Time",
-                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                        return RestaurantListPage(
-                                                          title: "It's Dinner Time",
-                                                          merchantType: MerchantType.restaurant,
-                                                          location: Location(
-                                                              address: homeState.homePageData.location.address),
-                                                          type: RestaurantListType.dbl,
-                                                          isExternalImage: false,
-                                                          image: "assets/allrestaurant.png",
-                                                        );
-                                                      }));
-                                                    },
+                                                  FittedBox(
+                                                    fit: BoxFit.none,
                                                     child: Container(
-                                                      width: 70,
-                                                      height: 20,
-                                                      alignment: Alignment.centerRight,
-                                                      child: Text(
-                                                        "See All",
-                                                        textAlign: TextAlign.end,
-                                                        style: TextStyle(color: primary3, fontSize: 14),
+                                                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(4),
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: <Widget>[
+                                                          Text(
+                                                            "Use Referal Code: ",
+                                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                          ),
+                                                          Text(
+                                                            loginState.user.referralCode,
+                                                            style: TextStyle(
+                                                              color: primary3,
+                                                              fontSize: 12,
+                                                            ),
+                                                          )
+                                                        ],
                                                       ),
                                                     ),
                                                   )
                                                 ],
                                               ),
-                                            ),
-                                            Container(
-                                              height: 225,
-                                              padding: EdgeInsets.only(
-                                                  top: distanceSectionContent, bottom: distanceSectionContent),
-                                              margin: EdgeInsets.only(bottom: distanceSectionContent),
-                                              decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                                                BoxShadow(
-                                                    offset: Offset(2, 2),
-                                                    color: Colors.black26,
-                                                    spreadRadius: 0,
-                                                    blurRadius: 5)
-                                              ]),
-                                              alignment: Alignment.center,
-                                              child: RestaurantListWidget(
-                                                type: RestaurantViewType.dinnerTimeRestaurant,
-                                                restaurants: homeState.homePageData.dblRestaurants,
-                                                location: Location(address: homeState.homePageData.location.address),
-                                              ),
-                                            ),
+                                            ))
                                           ],
                                         ),
-                                      )
-                                    : Container(
-                                        margin:
-                                            EdgeInsets.only(bottom: distanceBetweenSection + distanceSectionContent),
-                                      ),
-                              ],
-                            ),
-                          ));
-                    },
-                  );
-                },
-              ),
-              Positioned(
-                bottom: kBottomNavigationBarHeight,
-                child: BlocBuilder<LoginBloc, LoginState>(
-                  builder: (context, loginState) {
-                    return BlocConsumer<CurrentOrderBloc, CurrentOrderState>(
-                      listener: (context, state) {
-                        if (state is DeliveredOrderState) {
-                          if (state.currentOrder.isShowReview) {
-                            _showReviewSheet(loginState.user.token, state.currentOrder.orderId);
-                          }
-                          if (state.currentOrder.isShowScratch && state.currentOrder.scratchCard != null) {
-                            _showScratchCard(loginState.user.token, state.currentOrder.scratchCard);
-                          }
-                        } else if (state is CancelledOrderState) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return CancelledOrderPage(
-                              token: loginState.user.token,
-                              orderId: state.currentOrder.orderId,
-                              address: state.currentOrder.merchantCity + " " + state.currentOrder.merchantState,
-                              merchantId: state.currentOrder.merchantId,
-                            );
-                          }));
-                        }
-                      },
-                      builder: (context, state) {
-                        if (state is ErrorState) {
-                          return AnimatedBuilder(
-                            animation: _orderInformationAnimation,
-                            builder: (context, child) {
-                              return Opacity(
-                                opacity: _orderInformationAnimation.value,
-                                child: child,
-                              );
-                            },
-                            child: Container(
-                              height: 90,
-                              width: AppUtil.getScreenWidth(context),
-                              decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
-                              padding: EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 7,
-                                    child: Text(
-                                      "Connection Error getting active order",
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                  SizedBox(width: 20),
-                                  Expanded(
-                                    flex: 3,
-                                    child: InkWell(
-                                      onTap: () {
-                                        BlocProvider.of<CurrentOrderBloc>(context).add(Retry(loginState.user.token));
-                                      },
-                                      child: Container(
-                                        decoration:
-                                            BoxDecoration(color: primary3, borderRadius: BorderRadius.circular(10)),
-                                        child: Center(
-                                          child: Text(
-                                            "RETRY",
-                                            style: TextStyle(color: Colors.white, fontSize: 20),
-                                          ),
-                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        } else if (state is LoadingState) {
-                          return AnimatedBuilder(
-                            animation: _orderInformationAnimation,
-                            builder: (context, child) {
-                              return Opacity(
-                                opacity: _orderInformationAnimation.value,
-                                child: child,
-                              );
-                            },
-                            child: Container(
-                              height: 90,
-                              width: AppUtil.getScreenWidth(context),
-                              decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
-                              padding: EdgeInsets.only(top: 20, bottom: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    "Retrying...",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  SizedBox(width: 20),
-                                  SpinKitCircle(
-                                    color: Colors.white,
-                                    size: 30,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                        if (state.currentOrder.statusOrder == null ||
-                            state is NoActiveOrderState ||
-                            state is DeliveredOrderState ||
-                            state is CancelledOrderState) {
-                          return SizedBox();
-                        }
-                        return AnimatedBuilder(
-                          animation: _orderInformationAnimation,
-                          builder: (context, child) {
-                            return Opacity(
-                              opacity: _orderInformationAnimation.value,
-                              child: child,
-                            );
-                          },
-                          child: Stack(
-                            children: <Widget>[
-                              Container(
-                                height: 90,
-                                width: AppUtil.getScreenWidth(context),
-                                decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
-                                padding: EdgeInsets.only(top: 15, bottom: 15),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width: 40,
-                                    ),
-                                    SvgPicture.asset(
-                                      state.currentOrder.statusOrder.getIconAssets(),
-                                      width: 45,
-                                      height: 45,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            "ORDER NO - " + state.currentOrder.orderId,
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          SizedBox(
-                                            height: 7,
-                                          ),
-                                          Text(
-                                            state.currentOrder.statusOrder.status,
-                                            style: TextStyle(color: Colors.white, fontSize: 18),
+                                    homeState.homePageData.ads.isNotEmpty
+                                        ? Container(
+                                            margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
+                                            height: 140,
+                                            child: PromoListWidget(
+                                              promoList: homeState.homePageData.ads,
+                                            ),
                                           )
-                                        ],
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                          return TrackOrderPage();
-                                        }));
-                                      },
-                                      child: Container(
-                                        child: Text(
-                                          "Track Order",
-                                          style: TextStyle(color: primary3),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
+                                        : Container(
+                                            margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
+                                          ),
+                                    homeState.homePageData.dblRestaurants.isNotEmpty
+                                        ? Container(
+                                            margin: EdgeInsets.only(
+                                                bottom: distanceBetweenSection + distanceSectionContent),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: distanceSectionContent - 10,
+                                                      right: horizontalPaddingDraggable,
+                                                      left: horizontalPaddingDraggable),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "It's Dinner Time",
+                                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                            return RestaurantListPage(
+                                                              title: "It's Dinner Time",
+                                                              merchantType: MerchantType.restaurant,
+                                                              location: Location(
+                                                                  address: homeState.homePageData.location.address),
+                                                              type: RestaurantListType.dbl,
+                                                              isExternalImage: false,
+                                                              image: "assets/allrestaurant.png",
+                                                            );
+                                                          }));
+                                                        },
+                                                        child: Container(
+                                                          width: 70,
+                                                          height: 20,
+                                                          alignment: Alignment.centerRight,
+                                                          child: Text(
+                                                            "See All",
+                                                            textAlign: TextAlign.end,
+                                                            style: TextStyle(color: primary3, fontSize: 14),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  height: 225,
+                                                  padding: EdgeInsets.only(
+                                                      top: distanceSectionContent, bottom: distanceSectionContent),
+                                                  margin: EdgeInsets.only(bottom: distanceSectionContent),
+                                                  decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                                                    BoxShadow(
+                                                        offset: Offset(2, 2),
+                                                        color: Colors.black26,
+                                                        spreadRadius: 0,
+                                                        blurRadius: 5)
+                                                  ]),
+                                                  alignment: Alignment.center,
+                                                  child: RestaurantListWidget(
+                                                    type: RestaurantViewType.dinnerTimeRestaurant,
+                                                    restaurants: homeState.homePageData.dblRestaurants,
+                                                    location:
+                                                        Location(address: homeState.homePageData.location.address),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            margin: EdgeInsets.only(
+                                                bottom: distanceBetweenSection + distanceSectionContent),
+                                          ),
                                   ],
                                 ),
-                              ),
-                              /*Container(
-                                padding: EdgeInsets.all(5),
-                                child: Align(
-                                  alignment: Alignment.topRight,
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Colors.white,
+                              ));
+                        },
+                      );
+                    },
+                  ),
+                  Positioned(
+                    bottom: kBottomNavigationBarHeight,
+                    child: BlocBuilder<LoginBloc, LoginState>(
+                      builder: (context, loginState) {
+                        return BlocConsumer<CurrentOrderBloc, CurrentOrderState>(
+                          listener: (context, state) {
+                            if (state is DeliveredOrderState) {
+                              if (state.currentOrder.isShowReview) {
+                                _showReviewSheet(loginState.user.token, state.currentOrder.orderId);
+                              }
+                              if (state.currentOrder.isShowScratch && state.currentOrder.scratchCard != null) {
+                                _showScratchCard(loginState.user.token, state.currentOrder.scratchCard);
+                              }
+                            } else if (state is CancelledOrderState) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return CancelledOrderPage(
+                                  token: loginState.user.token,
+                                  orderId: state.currentOrder.orderId,
+                                  address: state.currentOrder.merchantCity + " " + state.currentOrder.merchantState,
+                                  merchantId: state.currentOrder.merchantId,
+                                );
+                              }));
+                            }
+                          },
+                          builder: (context, state) {
+                            if (state is ErrorState) {
+                              return AnimatedBuilder(
+                                animation: _orderInformationAnimation,
+                                builder: (context, child) {
+                                  return Opacity(
+                                    opacity: _orderInformationAnimation.value,
+                                    child: child,
+                                  );
+                                },
+                                child: Container(
+                                  height: 90,
+                                  width: AppUtil.getScreenWidth(context),
+                                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                                  padding: EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 20),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Expanded(
+                                        flex: 7,
+                                        child: Text(
+                                          "Connection Error getting active order",
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                      SizedBox(width: 20),
+                                      Expanded(
+                                        flex: 3,
+                                        child: InkWell(
+                                          onTap: () {
+                                            BlocProvider.of<CurrentOrderBloc>(context)
+                                                .add(Retry(loginState.user.token));
+                                          },
+                                          child: Container(
+                                            decoration:
+                                                BoxDecoration(color: primary3, borderRadius: BorderRadius.circular(10)),
+                                            child: Center(
+                                              child: Text(
+                                                "RETRY",
+                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              )*/
-                            ],
-                          ),
+                              );
+                            } else if (state is LoadingState) {
+                              return AnimatedBuilder(
+                                animation: _orderInformationAnimation,
+                                builder: (context, child) {
+                                  return Opacity(
+                                    opacity: _orderInformationAnimation.value,
+                                    child: child,
+                                  );
+                                },
+                                child: Container(
+                                  height: 90,
+                                  width: AppUtil.getScreenWidth(context),
+                                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                                  padding: EdgeInsets.only(top: 20, bottom: 20),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        "Retrying...",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      SizedBox(width: 20),
+                                      SpinKitCircle(
+                                        color: Colors.white,
+                                        size: 30,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                            if (state.currentOrder.statusOrder == null ||
+                                state is NoActiveOrderState ||
+                                state is DeliveredOrderState ||
+                                state is CancelledOrderState) {
+                              return SizedBox();
+                            }
+                            return AnimatedBuilder(
+                              animation: _orderInformationAnimation,
+                              builder: (context, child) {
+                                return Opacity(
+                                  opacity: _orderInformationAnimation.value,
+                                  child: child,
+                                );
+                              },
+                              child: Stack(
+                                children: <Widget>[
+                                  Container(
+                                    height: 90,
+                                    width: AppUtil.getScreenWidth(context),
+                                    decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                                    padding: EdgeInsets.only(top: 15, bottom: 15),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 40,
+                                        ),
+                                        SvgPicture.asset(
+                                          state.currentOrder.statusOrder.getIconAssets(),
+                                          width: 45,
+                                          height: 45,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                "ORDER NO - " + state.currentOrder.orderId,
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                              SizedBox(
+                                                height: 7,
+                                              ),
+                                              Text(
+                                                state.currentOrder.statusOrder.status,
+                                                style: TextStyle(color: Colors.white, fontSize: 18),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                              return TrackOrderPage();
+                                            }));
+                                          },
+                                          child: Container(
+                                            child: Text(
+                                              "Track Order",
+                                              style: TextStyle(color: primary3),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  /*Container(
+                                  padding: EdgeInsets.all(5),
+                                  child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: Icon(
+                                      Icons.clear,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )*/
+                                ],
+                              ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

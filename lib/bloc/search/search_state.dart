@@ -1,4 +1,3 @@
-import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/restaurant.dart';
 
 class SearchState {
@@ -6,79 +5,50 @@ class SearchState {
   final int page;
   final String searchText;
   final bool hasReachedMax;
-  final FoodCart foodCart;
-  final Restaurant selectedRestaurant;
 
-  SearchState(
-      {this.restaurants, this.page, this.searchText, this.hasReachedMax, this.foodCart, this.selectedRestaurant});
+  SearchState({this.restaurants, this.page, this.searchText, this.hasReachedMax});
 }
 
 class InitialSearchState extends SearchState {
-  InitialSearchState({FoodCart foodCart, Restaurant selectedRestaurant})
-      : super(foodCart: foodCart, selectedRestaurant: selectedRestaurant);
+  InitialSearchState() : super();
 }
 
 class LoadingNewSearch extends SearchState {
-  LoadingNewSearch({FoodCart foodCart, Restaurant selectedRestaurant})
-      : super(foodCart: foodCart, selectedRestaurant: selectedRestaurant);
+  LoadingNewSearch() : super();
 }
 
 class ErrorNewSearch extends SearchState {
   final String message;
 
-  ErrorNewSearch(this.message, {FoodCart foodCart, Restaurant selectedRestaurant})
-      : super(foodCart: foodCart, selectedRestaurant: selectedRestaurant);
+  ErrorNewSearch(this.message) : super();
 }
 
 class LoadingMore extends SearchState {
-  LoadingMore(
-      {List<Restaurant> restaurants,
-      int page,
-      String searchText,
-      bool hasReachedMax,
-      FoodCart foodCart,
-      Restaurant selectedRestaurant})
+  LoadingMore({List<Restaurant> restaurants, int page, String searchText, bool hasReachedMax})
       : super(
             restaurants: restaurants,
             page: page,
             searchText: searchText,
-            hasReachedMax: hasReachedMax,
-            foodCart: foodCart,
-            selectedRestaurant: selectedRestaurant);
+            hasReachedMax: hasReachedMax);
 }
 
 class ErrorLoadingMore extends SearchState {
   final String message;
 
   ErrorLoadingMore(this.message,
-      {List<Restaurant> restaurants,
-      int page,
-      String searchText,
-      bool hasReachedMax,
-      FoodCart foodCart,
-      Restaurant selectedRestaurant})
+      {List<Restaurant> restaurants, int page, String searchText, bool hasReachedMax})
       : super(
             restaurants: restaurants,
             page: page,
             searchText: searchText,
-            hasReachedMax: hasReachedMax,
-            foodCart: foodCart,
-            selectedRestaurant: selectedRestaurant);
+            hasReachedMax: hasReachedMax);
 }
 
 class CartState extends SearchState {
-  CartState(
-      {List<Restaurant> restaurants,
-      int page,
-      String searchText,
-      bool hasReachedMax,
-      FoodCart foodCart,
-      Restaurant selectedRestaurant})
+  CartState({List<Restaurant> restaurants, int page, String searchText, bool hasReachedMax})
       : super(
             restaurants: restaurants,
             page: page,
             searchText: searchText,
-            hasReachedMax: hasReachedMax,
-            foodCart: foodCart,
-            selectedRestaurant: selectedRestaurant);
+            hasReachedMax: hasReachedMax);
 }

@@ -127,7 +127,7 @@ class _ReviewPageState extends State<ReviewPage> {
                                     onRated: (v) {},
                                     starCount: 5,
                                     rating:
-                                        double.parse(widget.restaurant.review),
+                                        double.parse(widget.restaurant.rating.rating),
                                     size: 20.0,
                                     isReadOnly: true,
                                     color: primary3,

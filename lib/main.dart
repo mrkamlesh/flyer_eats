@@ -1,3 +1,4 @@
+import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/classes/push_notification_manager.dart';
 import 'package:clients/page/notifications_list_page.dart';
 import 'package:clients/page/track_order_page.dart';
@@ -29,6 +30,11 @@ class MyApp extends StatelessWidget {
       BlocProvider<HomeBloc>(
         create: (context) {
           return HomeBloc();
+        },
+      ),
+      BlocProvider<FoodOrderBloc>(
+        create: (context) {
+          return FoodOrderBloc();
         },
       ),
       BlocProvider<NotificationBloc>(

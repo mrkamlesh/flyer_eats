@@ -15,7 +15,6 @@ import 'package:clients/model/food.dart';
 import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/model/place_order.dart';
-import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/voucher.dart';
 import 'package:clients/page/address_page.dart';
 import 'package:clients/page/apply_coupon_page.dart';
@@ -28,11 +27,10 @@ import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart';
 
 class RestaurantPlaceOrderPage extends StatefulWidget {
-  final Restaurant restaurant;
-  final FoodCart foodCart;
+
   final Location location;
 
-  const RestaurantPlaceOrderPage({Key key, this.restaurant, this.foodCart, this.location}) : super(key: key);
+  const RestaurantPlaceOrderPage({Key key, this.location}) : super(key: key);
 
   @override
   _RestaurantPlaceOrderPageState createState() => _RestaurantPlaceOrderPageState();
@@ -40,7 +38,6 @@ class RestaurantPlaceOrderPage extends StatefulWidget {
 
 class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> with SingleTickerProviderStateMixin {
   AddressBloc _addressBloc;
-  FoodOrderBloc _foodOrderBloc;
 
   Razorpay _razorpay;
 
@@ -48,17 +45,17 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
   void initState() {
     super.initState();
     _addressBloc = AddressBloc(AddressRepository());
-    _foodOrderBloc = FoodOrderBloc();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlerPaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlerPaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handlerExternalWallet);
+
+    BlocProvider.of<FoodOrderBloc>(context)..add(InitPlaceOrder());
   }
 
   @override
   void dispose() {
     _addressBloc.close();
-    _foodOrderBloc.close();
     _razorpay.clear();
     super.dispose();
   }
@@ -67,19 +64,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider<FoodOrderBloc>(
-              create: (context) {
-                return _foodOrderBloc..add(InitPlaceOrder(widget.restaurant, widget.foodCart, loginState.user));
-              },
-            ),
-            BlocProvider<AddressBloc>(
-              create: (context) {
-                return _addressBloc;
-              },
-            )
-          ],
+        return BlocProvider<AddressBloc>(
+          create: (context){
+            return _addressBloc;
+          },
           child: BlocBuilder<FoodOrderBloc, FoodOrderState>(
             builder: (context, state) {
               return WillPopScope(
@@ -105,8 +93,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                   height: AppUtil.getBannerHeight(context),
                                   child: FittedBox(
                                       fit: BoxFit.cover,
-                                      child: CachedNetworkImage(
-                                        imageUrl: widget.restaurant.image,
+                                      child: Image.asset(
+                                        "assets/allrestaurant.png",
                                         fit: BoxFit.cover,
                                         alignment: Alignment.center,
                                       )),
@@ -128,7 +116,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                       leading: "assets/back.svg",
                                       title: "",
                                       onTapLeading: () {
-                                        _onBackPressed(state.placeOrder);
+                                        //_onBackPressed(state.placeOrder);
                                       },
                                       backgroundColor: Colors.transparent,
                                     ),
@@ -201,7 +189,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                 child: FittedBox(
                                     fit: BoxFit.cover,
                                     child: CachedNetworkImage(
-                                      imageUrl: widget.restaurant.image,
+                                      imageUrl: state.placeOrder.restaurant.image,
                                       fit: BoxFit.cover,
                                       alignment: Alignment.center,
                                     )),
@@ -221,7 +209,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                   builder: (context) {
                                     return CustomAppBar(
                                       leading: "assets/back.svg",
-                                      title: widget.restaurant.name +
+                                      title: state.placeOrder.restaurant.name +
                                           " (" +
                                           state.placeOrder.foodCart.cart.length.toString() +
                                           ")",
@@ -256,7 +244,6 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                     ),
                                     FoodListPlaceOrder(),
                                     BlocBuilder<FoodOrderBloc, FoodOrderState>(
-                                      bloc: _foodOrderBloc,
                                       builder: (context, state) {
                                         if (state is LoadingGetPayments) {
                                           return SliverToBoxAdapter(
@@ -307,12 +294,12 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                     Voucher result = await Navigator.push(context,
                                                         MaterialPageRoute(builder: (context) {
                                                           return ApplyCouponPage(
-                                                            restaurant: widget.restaurant,
+                                                            restaurant: state.placeOrder.restaurant,
                                                             totalOrder: state.placeOrder.getTotal(),
                                                           );
                                                         }));
 
-                                                    _foodOrderBloc.add(ApplyVoucher(result));
+                                                    BlocProvider.of<FoodOrderBloc>(context).add(ApplyVoucher(result));
                                                   },
                                                   child: Container(
                                                     height: 55,
@@ -394,7 +381,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                       top: 20,
                                                       left: horizontalPaddingDraggable,
                                                       right: horizontalPaddingDraggable),
-                                                  padding: EdgeInsets.only(top: 17, bottom: 17, left: 17, right: 17),
+                                                  padding: EdgeInsets.only(top: 10, bottom: 10, left: 17, right: 17),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius: BorderRadius.circular(10),
@@ -407,6 +394,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                     ],
                                                   ),
                                                   child: Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
                                                     children: <Widget>[
                                                       SizedBox(
                                                         width: 25,
@@ -414,7 +402,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                             activeColor: Colors.green,
                                                             value: state.placeOrder.isUseWallet,
                                                             onChanged: (value) {
-                                                              _foodOrderBloc.add(ChangeWalletUsage(value));
+                                                              BlocProvider.of<FoodOrderBloc>(context).add(ChangeWalletUsage(value));
                                                             }),
                                                       ),
                                                       SizedBox(
@@ -427,11 +415,12 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                         ),
                                                       ),
                                                       Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: <Widget>[
                                                           SvgPicture.asset(
                                                             "assets/rupee.svg",
-                                                            height: 12,
-                                                            width: 12,
+                                                            height: 10,
+                                                            width: 10,
                                                           ),
                                                           SizedBox(
                                                             width: 5,
@@ -440,7 +429,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                             AppUtil.doubleRemoveZeroTrailing(
                                                                 state.placeOrder.walletAmount -
                                                                     state.placeOrder.getWalletUsed()),
-                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                                           )
                                                         ],
                                                       )
@@ -562,7 +551,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                       ),
                                                       TextField(
                                                         onChanged: (value) {
-                                                          _foodOrderBloc.add(ChangeInstruction(value));
+                                                          BlocProvider.of<FoodOrderBloc>(context).add(ChangeInstruction(value));
                                                         },
                                                         maxLines: 2,
                                                         decoration: InputDecoration(
@@ -694,10 +683,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                     ? FoodListDeliveryInformation(
                                   address: loginState.user.defaultAddress,
                                   token: state.placeOrder.user.token,
-                                  foodOrderBloc: _foodOrderBloc,
+                                  foodOrderBloc: BlocProvider.of<FoodOrderBloc>(context),
                                   addressBloc: _addressBloc,
                                   contact: state.placeOrder.contact,
-                                  deliveryEstimation: widget.restaurant.deliveryEstimation,
+                                  deliveryEstimation: state.placeOrder.restaurant.deliveryEstimation,
                                 )
                                     : Container(),
                                 OrderBottomNavBar(
@@ -817,7 +806,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                   newState(() {
                                     groupValue = value;
                                   });
-                                  _foodOrderBloc.add(ChangeDeliveryTime(value));
+                                  BlocProvider.of<FoodOrderBloc>(context).add(ChangeDeliveryTime(value));
                                   Navigator.pop(context);
                                 },
                                 groupValue: groupValue,
@@ -994,7 +983,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) {
-    _foodOrderBloc.add(PlaceOrderEvent());
+    BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderEvent());
   }
 
   void handlerPaymentError(PaymentFailureResponse response) {
@@ -1029,15 +1018,15 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
     if ((placeOrder.getTotal() - placeOrder.getWalletUsed()) > 0.0) {
       showPaymentMethodOptions(placeOrder);
     } else {
-      _foodOrderBloc.add(ChangePaymentMethod("wallet"));
-      _foodOrderBloc.add(PlaceOrderEvent());
+      BlocProvider.of<FoodOrderBloc>(context).add(ChangePaymentMethod("wallet"));
+      BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderEvent());
     }
   }
 
   void _onPaymentOptionsSelected(PlaceOrder placeOrder, selectedPaymentMethod) {
-    _foodOrderBloc.add(ChangePaymentMethod(selectedPaymentMethod));
+    BlocProvider.of<FoodOrderBloc>(context).add(ChangePaymentMethod(selectedPaymentMethod));
     if (selectedPaymentMethod == "cod") {
-      _foodOrderBloc.add(PlaceOrderEvent());
+      BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderEvent());
     } else if (selectedPaymentMethod == "rzr") {
       openRazorPayCheckOut(placeOrder);
       Navigator.pop(context);
@@ -1262,7 +1251,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                             .reverse()
                             .orCancel
                             .whenComplete(() {
-                          BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityFoodCart(
+                          BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(
                               foodList[i].id,
                               foodList[i],
                               (state.placeOrder.foodCart.getQuantity(foodList[i].id) - 1),
@@ -1282,7 +1271,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                             .reverse()
                             .orCancel
                             .whenComplete(() {
-                          BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityFoodCart(
+                          BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(
                               foodList[i].id,
                               foodList[i],
                               (state.placeOrder.foodCart.getQuantity(foodList[i].id) + 1),

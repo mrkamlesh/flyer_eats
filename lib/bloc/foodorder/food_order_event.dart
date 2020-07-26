@@ -1,10 +1,10 @@
+import 'package:clients/model/food_cart.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/model/user.dart';
 import 'package:equatable/equatable.dart';
 import 'package:clients/model/address.dart';
 import 'package:clients/model/food.dart';
-import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/place_order.dart';
-import 'package:clients/model/restaurant.dart';
-import 'package:clients/model/user.dart';
 import 'package:clients/model/voucher.dart';
 import 'package:meta/meta.dart';
 
@@ -14,14 +14,10 @@ abstract class FoodOrderEvent extends Equatable {
 }
 
 class InitPlaceOrder extends FoodOrderEvent {
-  final Restaurant restaurant;
-  final FoodCart foodCart;
-  final User user;
-
-  InitPlaceOrder(this.restaurant, this.foodCart, this.user);
+  InitPlaceOrder();
 
   @override
-  List<Object> get props => [restaurant, foodCart, user];
+  List<Object> get props => [];
 }
 
 class ChangeTransactionType extends FoodOrderEvent {
@@ -79,14 +75,25 @@ class ApplyVoucher extends FoodOrderEvent {
   List<Object> get props => [voucher];
 }
 
-class ChangeQuantityFoodCart extends FoodOrderEvent {
+class ChangeQuantityWithPayment extends FoodOrderEvent {
   final String id;
   final Food food;
   final int quantity;
-
   final int selectedPrice;
 
-  const ChangeQuantityFoodCart(this.id, this.food, this.quantity, this.selectedPrice);
+  const ChangeQuantityWithPayment(this.id, this.food, this.quantity, this.selectedPrice);
+
+  @override
+  List<Object> get props => [id, food, quantity, selectedPrice];
+}
+
+class ChangeQuantityNoPayment extends FoodOrderEvent {
+  final String id;
+  final Food food;
+  final int quantity;
+  final int selectedPrice;
+
+  const ChangeQuantityNoPayment(this.id, this.food, this.quantity, this.selectedPrice);
 
   @override
   List<Object> get props => [id, food, quantity, selectedPrice];
@@ -125,3 +132,16 @@ class ChangeDeliveryTime extends FoodOrderEvent {
   @override
   List<Object> get props => [dateTime];
 }
+
+class UpdateCartMainData extends FoodOrderEvent {
+  final Restaurant restaurant;
+  final FoodCart foodCart;
+  final User user;
+
+  UpdateCartMainData(this.restaurant, this.foodCart, this.user);
+
+  @override
+  List<Object> get props => [restaurant, foodCart, user];
+}
+
+

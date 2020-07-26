@@ -213,8 +213,8 @@ class _RestaurantListPageState extends State<RestaurantListPage> with SingleTick
                         double currentScroll = controller.position.pixels;
 
                         if (currentScroll == maxScroll)
-                          _bloc.add(LoadMore(loginState.user.token, widget.location.address, widget.merchantType,
-                              widget.type, widget.category));
+                          /*_bloc.add(LoadMore(loginState.user.token, widget.location.address, widget.merchantType,
+                              widget.type, widget.category));*/
 
                         if (controller.position.userScrollDirection == ScrollDirection.reverse) {
                           if (!_isScrollingDown) {

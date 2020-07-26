@@ -423,17 +423,11 @@ class DataRepository {
     final response = await _provider.getHomePageData(
         address: address, adsPage: 0, dblPage: 0, foodCategoryPage: 0, token: token, topRestaurantPage: 0);
     if (response['code'] == 1) {
-      Map<String, dynamic> map = Map();
       var listAds = response['details']['ads'] as List;
       List<Ads> ads = listAds.map((i) {
         return Ads.fromJson(i);
       }).toList();
-
-      map['list'] = ads;
-      map['referral_code'] = response['details']['referral_code'];
-      map['referral_amount'] = response['details']['referral_discount'];
-
-      return map;
+      return ads;
     } else {
       return response['msg'];
     }
@@ -500,6 +494,13 @@ class DataRepository {
         return Restaurant.fromJson(i);
       }).toList();
 
+      restaurants.sort((a, b) {
+        if (a.isOpen) {
+          return -1;
+        }
+        return 1;
+      });
+
       map['restaurants'] = restaurants;
 
       var listSortBY = response['details']['sortoptions'];
@@ -533,6 +534,14 @@ class DataRepository {
       List<Restaurant> restaurants = listLocations.map((i) {
         return Restaurant.fromJson(i);
       }).toList();
+
+      restaurants.sort((a, b) {
+        if (a.isOpen) {
+          return -1;
+        }
+        return 1;
+      });
+
       return restaurants;
     } else {
       return List();

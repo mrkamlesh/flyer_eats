@@ -1,11 +1,12 @@
 import 'package:clients/model/food.dart';
+import 'package:clients/model/ratings.dart';
 
 class Restaurant {
   final String id;
   final String name;
   final String image;
   final String deliveryEstimation;
-  final String review;
+  final Rating rating;
   final String cuisine;
   final String address;
   final String discountTitle;
@@ -15,7 +16,7 @@ class Restaurant {
   final List<Food> searchFoodList;
 
   Restaurant(
-      this.id, this.name, this.deliveryEstimation, this.review, this.image, this.cuisine, this.address, this.isOpen,
+      this.id, this.name, this.deliveryEstimation, this.rating, this.image, this.cuisine, this.address, this.isOpen,
       {this.discountTitle, this.discountDescription, this.searchFoodList});
 
   factory Restaurant.fromJson(Map<String, dynamic> parsedJson) {
@@ -25,7 +26,7 @@ class Restaurant {
       parsedJson['merchant_id'],
       parsedJson['restaurant_name'],
       parsedJson['delivery_estimation'],
-      parsedJson['ratings']['ratings'].toString(),
+      Rating.fromJson(parsedJson['ratings']),
       parsedJson['logo'],
       parsedJson['cuisine'],
       parsedJson['address'],
@@ -38,7 +39,7 @@ class Restaurant {
   factory Restaurant.fromJsonTopRestaurant(Map<String, dynamic> parsedJson) {
     String promoTitle = (parsedJson['offers'] as List).isNotEmpty ? parsedJson['offers'][0] : "";
 
-    return Restaurant(parsedJson['merchant_id'], parsedJson['restaurant_name'], "", "", parsedJson['logo'], "", "",
+    return Restaurant(parsedJson['merchant_id'], parsedJson['restaurant_name'], "", null, parsedJson['logo'], "", "",
         parsedJson['is_open'] == "open" ? true : false,
         discountTitle: promoTitle, discountDescription: "");
   }
@@ -46,7 +47,7 @@ class Restaurant {
   factory Restaurant.fromJsonDblRestaurant(Map<String, dynamic> parsedJson) {
     String promoTitle = (parsedJson['offers'] as List).isNotEmpty ? parsedJson['offers'][0] : "";
 
-    return Restaurant(parsedJson['merchant_id'], parsedJson['restaurant_name'], "", "", parsedJson['logo'], "", "",
+    return Restaurant(parsedJson['merchant_id'], parsedJson['restaurant_name'], "", null, parsedJson['logo'], "", "",
         parsedJson['is_open'] == "open" ? true : false,
         discountTitle: promoTitle, discountDescription: "");
   }
@@ -58,7 +59,7 @@ class Restaurant {
         parsedJson['merchant_id'],
         parsedJson['restaurant_name'],
         parsedJson['delivery_est'],
-        parsedJson['ratings']['ratings'].toString(),
+        Rating.fromJson(parsedJson['ratings']),
         parsedJson['logo'],
         parsedJson['cuisine'],
         "",
@@ -78,7 +79,7 @@ class Restaurant {
         parsedJson['merchant_id'],
         parsedJson['restaurant_name'],
         parsedJson['delivery_estimation'],
-        parsedJson['ratings']['ratings'].toString(),
+        Rating.fromJson(parsedJson['ratings']),
         parsedJson['logo'],
         parsedJson['cuisine'],
         parsedJson['address'],

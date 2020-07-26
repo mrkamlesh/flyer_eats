@@ -188,8 +188,6 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                   onButtonTap: () async {
                     FoodCart newCart = await Navigator.push(context, MaterialPageRoute(builder: (context) {
                       return RestaurantPlaceOrderPage(
-                        foodCart: state.foodCart,
-                        restaurant: state.selectedRestaurant,
                         location: Location(address: widget.address),
                       );
                     }));
@@ -563,7 +561,7 @@ class SearchRestaurantWidget extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-                                    restaurant.review,
+                                    restaurant.rating.rating,
                                     style: TextStyle(
                                       fontSize: 12,
                                     ),

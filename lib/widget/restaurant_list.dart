@@ -512,7 +512,7 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                                     width: 5,
                                   ),
                                   Text(
-                                    restaurant.review,
+                                    restaurant.rating.rating,
                                     style: TextStyle(
                                       fontSize: 12,
                                     ),
@@ -759,7 +759,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                             width: 5,
                                           ),
                                           Text(
-                                            restaurant.review,
+                                            restaurant.rating.rating,
                                             style: TextStyle(
                                               fontSize: 12,
                                             ),

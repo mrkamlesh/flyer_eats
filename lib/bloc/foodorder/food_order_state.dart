@@ -1,4 +1,6 @@
+import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/place_order.dart';
+import 'package:clients/model/restaurant.dart';
 
 class FoodOrderState {
   final PlaceOrder placeOrder;
@@ -7,7 +9,7 @@ class FoodOrderState {
 }
 
 class InitialFoodOrderState extends FoodOrderState {
-  InitialFoodOrderState() : super();
+  InitialFoodOrderState({PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
 }
 
 class LoadingGetPayments extends FoodOrderState {
@@ -22,7 +24,13 @@ class LoadingGetPayments extends FoodOrderState {
 }*/
 
 class NoItemsInCart extends FoodOrderState {
-  NoItemsInCart() : super();
+  NoItemsInCart()
+      : super(
+            placeOrder: PlaceOrder(
+                restaurant: Restaurant(null, null, null, null, null, null, null, false),
+                foodCart: FoodCart(
+                  Map(),
+                )));
 }
 
 class LoadingPlaceOrder extends FoodOrderState {
@@ -36,6 +44,5 @@ class SuccessPlaceOrder extends FoodOrderState {
 class ErrorPlaceOrder extends FoodOrderState {
   final String message;
 
-  ErrorPlaceOrder(this.message, {PlaceOrder placeOrder})
-      : super(placeOrder: placeOrder);
+  ErrorPlaceOrder(this.message, {PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
 }

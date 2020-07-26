@@ -756,7 +756,7 @@ class DataProvider {
     Map<String, dynamic> formData = {
       "client_token": token,
       "address": address,
-      "page": page.toString(),
+      //"page": page.toString(),
       "merchant_type": merchantTypeParams,
       "is_veg": isVegOnly ? "1" : "0", //1 for true, 0 for false
     };

@@ -23,8 +23,8 @@ class PlacedOrderSuccessBloc extends Bloc<PlacedOrderSuccessEvent, PlacedOrderSu
 
     try {
       var result = await repository.getAds(token, address);
-      if (result is Map) {
-        yield SuccessAds(result['list'], result['referral_code'], result['referral_amount']);
+      if (result is List) {
+        yield SuccessAds(result);
       } else {
         yield ErrorAds("Error get Ads");
       }

@@ -108,7 +108,7 @@ class DetailOrder {
         foodCart: foodCart,
         createdDate: parsedJson['date_created'],
         orderInstruction: parsedJson['delivery_instruction'],
-        restaurant: Restaurant(parsedJson['merchant_id'], parsedJson['marchant_name'], parsedJson['delivery_time'], "",
+        restaurant: Restaurant(parsedJson['merchant_id'], parsedJson['marchant_name'], parsedJson['delivery_time'], null,
             parsedJson['marchant_logo'], "", parsedJson['address'], true),
         deliveryAddress: parsedJson['info']['Deliver to'],
         deliveryAddressName: parsedJson['info']['Location Name'],

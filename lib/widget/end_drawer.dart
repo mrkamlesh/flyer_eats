@@ -11,6 +11,7 @@ import 'package:clients/page/my_wallet_page.dart';
 import 'package:clients/page/notifications_list_page.dart';
 import 'package:clients/page/order_history_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:share/share.dart';
 import 'package:shimmer/shimmer.dart';
 
 class EndDrawer extends StatelessWidget {
@@ -41,38 +42,40 @@ class EndDrawer extends StatelessWidget {
               }));
             },
             child: BlocBuilder<LoginBloc, LoginState>(
-              builder: (context, loginState){
+              builder: (context, loginState) {
                 return Row(
                   children: <Widget>[
                     Container(
                       height: 40,
                       width: 40,
                       decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
-                      child: loginState.user.avatar != null && loginState.user.avatar != "" ? ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: loginState.user.avatar,
-                          fit: BoxFit.cover,
-                          alignment: Alignment.center,
-                          placeholder: (context, url) {
-                            return Shimmer.fromColors(
-                                child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  color: Colors.black,
-                                ),
-                                baseColor: Colors.grey[300],
-                                highlightColor: Colors.grey[100]);
-                          },
-                        ),
-                      ) : FittedBox(
-                        fit: BoxFit.none,
-                        child: SvgPicture.asset(
-                          "assets/account.svg",
-                          height: 20,
-                          width: 20,
-                          color: Colors.black,
-                        ),
-                      ),
+                      child: loginState.user.avatar != null && loginState.user.avatar != ""
+                          ? ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: loginState.user.avatar,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                                placeholder: (context, url) {
+                                  return Shimmer.fromColors(
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        color: Colors.black,
+                                      ),
+                                      baseColor: Colors.grey[300],
+                                      highlightColor: Colors.grey[100]);
+                                },
+                              ),
+                            )
+                          : FittedBox(
+                              fit: BoxFit.none,
+                              child: SvgPicture.asset(
+                                "assets/account.svg",
+                                height: 20,
+                                width: 20,
+                                color: Colors.black,
+                              ),
+                            ),
                     ),
                     SizedBox(
                       width: 10,
@@ -209,16 +212,27 @@ class EndDrawer extends StatelessWidget {
                 return AppSettingsPage();
               }));*/
             },
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    "Refer A Friend",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            child: BlocBuilder<LoginBloc, LoginState>(
+              builder: (context, loginState) {
+                return InkWell(
+                  onTap: () {
+                    final RenderBox box = context.findRenderObject();
+                    Share.share('flyereats.in',
+                        subject: 'Flyer Eats', sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                  },
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          "Refer A Friend",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                      Icon(Icons.keyboard_arrow_right),
+                    ],
                   ),
-                ),
-                Icon(Icons.keyboard_arrow_right),
-              ],
+                );
+              },
             ),
           ),
           SizedBox(

@@ -1,5 +1,5 @@
+import 'package:clients/model/restaurant.dart';
 import 'package:equatable/equatable.dart';
-import 'package:clients/model/food.dart';
 import 'package:clients/model/food_cart.dart';
 import 'package:meta/meta.dart';
 
@@ -46,28 +46,6 @@ class FilterList extends DetailPageEvent {
   List<Object> get props => [];
 }
 
-class ChangeQuantity extends DetailPageEvent {
-  final String id;
-  final Food food;
-  final int quantity;
-
-  final int selectedPrice;
-
-  const ChangeQuantity(this.id, this.food, this.quantity, this.selectedPrice);
-
-  @override
-  List<Object> get props => [id, food, quantity, selectedPrice];
-}
-
-class UpdateCart extends DetailPageEvent {
-  final FoodCart foodCart;
-
-  UpdateCart(this.foodCart);
-
-  @override
-  List<Object> get props => [foodCart];
-}
-
 class SearchFood extends DetailPageEvent {
   final String restaurantId;
   final String keyword;
@@ -76,4 +54,14 @@ class SearchFood extends DetailPageEvent {
 
   @override
   List<Object> get props => [restaurantId, keyword];
+}
+
+class UpdateCurrentCart extends DetailPageEvent {
+  final Restaurant cartRestaurant;
+  final FoodCart foodCart;
+
+  UpdateCurrentCart(this.foodCart, this.cartRestaurant);
+
+  @override
+  List<Object> get props => [foodCart, cartRestaurant];
 }

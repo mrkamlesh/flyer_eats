@@ -14,22 +14,24 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   DataRepository repository = DataRepository();
 
   @override
-  FoodOrderState get initialState => InitialFoodOrderState();
+  FoodOrderState get initialState => NoItemsInCart();
 
   @override
   Stream<FoodOrderState> mapEventToState(
     FoodOrderEvent event,
   ) async* {
     if (event is InitPlaceOrder) {
-      yield* mapInitPlaceOrderToState(event.restaurant, event.foodCart, event.user);
+      yield* mapInitPlaceOrderToState();
     } else if (event is ChangeTransactionType) {
       yield* mapChangeTransactionTypeToState(event.transactionType);
     } else if (event is ChangeAddress) {
       yield* mapChangeAddressToState(event.address);
     } else if (event is ChangeContactPhone) {
       yield* mapChangeContactPhoneToState(event.isChangePrimaryContact, event.contact);
-    } else if (event is ChangeQuantityFoodCart) {
-      yield* mapChangeQuantityFoodCartToState(event.id, event.food, event.quantity, event.selectedPrice);
+    } else if (event is ChangeQuantityWithPayment) {
+      yield* mapChangeQuantityWithPaymentToState(event.id, event.food, event.quantity, event.selectedPrice);
+    } else if (event is ChangeQuantityNoPayment) {
+      yield* mapChangeQuantityNoPaymentToState(event.id, event.food, event.quantity, event.selectedPrice);
     } else if (event is ChangeInstruction) {
       yield* mapChangeInstructionToState(event.instruction);
     } else if (event is GetPaymentOptions) {
@@ -44,6 +46,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapChangeWalletUsageToState(event.isUseWallet);
     } else if (event is ChangeDeliveryTime) {
       yield* mapChangeDeliveryTimeToState(event.dateTime);
+    } else if (event is UpdateCartMainData) {
+      yield* mapUpdateCartMainDataToState(event.restaurant, event.foodCart, event.user);
     }
   }
 
@@ -62,7 +66,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         placeOrder: state.placeOrder.copyWith(contact: contact, isChangePrimaryContact: isChangePrimaryContact));
   }
 
-  Stream<FoodOrderState> mapChangeQuantityFoodCartToState(
+  Stream<FoodOrderState> mapChangeQuantityWithPaymentToState(
       String id, Food food, int quantity, int selectedPrice) async* {
     FoodCart newCart = state.placeOrder.foodCart;
     newCart.changeQuantity(id, food, quantity, selectedPrice);
@@ -75,34 +79,45 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     }
   }
 
-  Stream<FoodOrderState> mapInitPlaceOrderToState(Restaurant restaurant, FoodCart foodCart, User user) async* {
-    DateTime now = DateTime.now();
-    yield FoodOrderState(
-      placeOrder: PlaceOrder(
-          isValid: true,
-          restaurant: restaurant,
-          foodCart: foodCart,
-          user: user,
-          address: user.defaultAddress,
-          contact: user.phone,
-          transactionType: 'delivery',
-          deliveryInstruction: '',
-          deliveryCharges: 0,
-          voucher: Voucher(amount: 0, rate: 0),
-          selectedPaymentMethod: "",
-          discountOrder: 0,
-          discountOrderPrettyString: "DISCOUNT ORDER",
-          taxCharges: 0,
-          packagingCharges: 0,
-          taxPrettyString: "Tax",
-          isUseWallet: false,
-          walletAmount: 0,
-          isChangePrimaryContact: false,
-          now: now,
-          selectedDeliveryTime: now.add(Duration(minutes: 45))),
-    );
+  Stream<FoodOrderState> mapChangeQuantityNoPaymentToState(
+      String id, Food food, int quantity, int selectedPrice) async* {
+    FoodCart newCart = state.placeOrder.foodCart;
+    newCart.changeQuantity(id, food, quantity, selectedPrice);
 
-    add(GetPaymentOptions(state.placeOrder));
+    if (newCart.cart.length > 0) {
+      yield FoodOrderState(placeOrder: state.placeOrder.copyWith(foodCart: newCart));
+    } else {
+      yield NoItemsInCart();
+    }
+  }
+
+  Stream<FoodOrderState> mapInitPlaceOrderToState() async* {
+    if (!(state is NoItemsInCart)) {
+      DateTime now = DateTime.now();
+      yield FoodOrderState(
+        placeOrder: state.placeOrder.copyWith(
+            isValid: true,
+            address: state.placeOrder.user.defaultAddress,
+            contact: state.placeOrder.user.phone,
+            transactionType: 'delivery',
+            deliveryInstruction: '',
+            deliveryCharges: 0,
+            voucher: Voucher(amount: 0, rate: 0),
+            selectedPaymentMethod: "",
+            discountOrder: 0,
+            discountOrderPrettyString: "DISCOUNT ORDER",
+            taxCharges: 0,
+            packagingCharges: 0,
+            taxPrettyString: "Tax",
+            isUseWallet: false,
+            walletAmount: 0,
+            isChangePrimaryContact: false,
+            now: now,
+            selectedDeliveryTime: now.add(Duration(minutes: 45))),
+      );
+
+      add(GetPaymentOptions(state.placeOrder));
+    }
   }
 
   Stream<FoodOrderState> mapChangeInstructionToState(String instruction) async* {
@@ -125,7 +140,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
                 packagingCharges: result.packagingCharges,
                 taxPrettyString: result.taxPrettyString,
                 discountOrder: result.discountOrder,
-                discountPrettyString: result.discountOrderPrettyString,
+                discountOrderPrettyString: result.discountOrderPrettyString,
                 deliveryCharges: result.deliveryCharges,
                 walletAmount: result.walletAmount,
                 listPaymentMethod: result.listPaymentMethod));
@@ -169,5 +184,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
 
   Stream<FoodOrderState> mapChangeDeliveryTimeToState(DateTime dateTime) async* {
     yield FoodOrderState(placeOrder: state.placeOrder.copyWith(selectedDeliveryTime: dateTime));
+  }
+
+  Stream<FoodOrderState> mapUpdateCartMainDataToState(Restaurant restaurant, FoodCart foodCart, User user) async* {
+    yield InitialFoodOrderState(placeOrder: PlaceOrder(restaurant: restaurant, user: user, foodCart: foodCart));
   }
 }

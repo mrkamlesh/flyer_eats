@@ -8,8 +8,19 @@ class User {
   final String avatar;
   final Address defaultAddress;
   final String username;
+  final String referralCode;
+  final String referralDiscount;
 
-  User({this.avatar, this.name, this.phone, this.hasAddress, this.token, this.defaultAddress, this.username});
+  User(
+      {this.referralCode,
+      this.referralDiscount,
+      this.avatar,
+      this.name,
+      this.phone,
+      this.hasAddress,
+      this.token,
+      this.defaultAddress,
+      this.username});
 
   factory User.fromJson(Map<String, dynamic> parsedJson) {
     Address defaultAddress = parsedJson['default_address'] == false
@@ -28,6 +39,8 @@ class User {
           );
 
     return User(
+        referralDiscount: parsedJson['referral_discount'],
+        referralCode: parsedJson['referral_code'],
         name: parsedJson['client_name_cookie'],
         phone: parsedJson['contact_phone'],
         avatar: parsedJson['avatar'],
@@ -37,7 +50,8 @@ class User {
         defaultAddress: defaultAddress);
   }
 
-  User copyWith({String name,
+  User copyWith(
+      {String name,
       String phone,
       bool hasAddress,
       String token,

@@ -1,18 +1,17 @@
 import 'package:clients/model/food.dart';
 import 'package:clients/model/food_category.dart';
-import 'package:clients/model/banner.dart';
 import 'package:clients/model/shop_category.dart';
 import 'package:clients/model/address.dart';
 import 'package:clients/model/location.dart';
 
 class ExampleModel {
-  static List<BannerItem> getPromos() {
+/*  static List<BannerItem> getPromos() {
     List<BannerItem> _promos = [];
-/*    _promos.add(Promo(
+*//*    _promos.add(Promo(
       "Promo Title",
       "https://lh3.googleusercontent.com/proxy/tC_9v1lUe2qoF2tdzqVDVX9XrCM1JW0JEqudJkR0UWbkaUHZ-2-ARg3E3NVQeX44QYu9Glci0vlE3l0xO-G_AesczDZf1NShZ17zJwRfuEMuGYO0L1LH4vWN1Cglk7F9m9oeCLiqbw-v",
       "On selected beverages",
-    ));*/
+    ));*//*
     _promos.add(BannerItem(
       "Promo Title",
       "https://www.bca.co.id/~/media/Images/Default/201904/20190424-sakukupromo-banner",
@@ -25,7 +24,7 @@ class ExampleModel {
     ));
 
     return _promos;
-  }
+  }*/
 
 /*  static List<Restaurant> getRestaurants() {
     List<Restaurant> _topRestaurants = [];

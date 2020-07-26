@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/bloc/foodorder/bloc.dart';
+import 'package:clients/bloc/login/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -13,7 +15,6 @@ import 'package:clients/bloc/food/detail_page_state.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/food.dart';
-import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/page/restaurant_place_order_page.dart';
@@ -59,7 +60,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
     int i = 0;
     _timer = Timer.periodic(Duration(seconds: 3), (t) {
       i++;
-      _rankPageController.animateToPage(i % 2, duration: Duration(milliseconds: 700), curve: Curves.ease);
+      _rankPageController.animateToPage(i % widget.restaurant.rating.getRollingText().length,
+          duration: Duration(milliseconds: 700), curve: Curves.ease);
     });
 
     _bloc = DetailPageBloc();
@@ -78,432 +80,438 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
   Widget build(BuildContext context) {
     double offset = MediaQuery.of(context).padding.top;
 
-    return BlocProvider<DetailPageBloc>(
-      create: (context) {
-        return _bloc..add(PageDetailRestaurantOpen(widget.restaurant.id));
-      },
-      child: BlocBuilder<DetailPageBloc, DetailPageState>(
-        builder: (context, state) {
-          return WillPopScope(
-            onWillPop: () async {
-              _onBackPressed(state.foodCart.cartItemNumber());
-              return true;
-            },
-            child: Scaffold(
-              extendBody: true,
-              extendBodyBehindAppBar: true,
-              endDrawer: EndDrawer(),
-              bottomNavigationBar: AnimatedBuilder(
-                animation: _navBarAnimation,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: _navBarAnimation.value,
-                    child: child,
-                  );
-                },
-                child: RestaurantDetailBottomNavBar(
-                  isValid: state.foodCart.cartItemNumber() > 0 ? true : false,
-                  totalAmount: state.foodCart.getAmount(),
-                  totalItem: state.foodCart.cartItemNumber(),
-                  buttonText: "CHECK OUT",
-                  onButtonTap: () async {
-                    FoodCart newCart = await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return RestaurantPlaceOrderPage(
-                        foodCart: state.foodCart,
-                        restaurant: widget.restaurant,
-                        location: widget.location,
-                      );
-                    }));
-
-                    _bloc.add(UpdateCart(newCart));
-                  },
-                ),
-              ),
-              body: Stack(
-                children: <Widget>[
-                  Positioned(
-                    top: 0,
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Container(
-                        width: AppUtil.getScreenWidth(context),
-                        height: AppUtil.getBannerHeight(context),
-                        child: FittedBox(
-                            fit: BoxFit.cover,
-                            child: CachedNetworkImage(
-                              imageUrl: widget.restaurant.image,
-                              fit: BoxFit.cover,
-                              alignment: Alignment.center,
-                            )),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(color: Colors.black54),
-                    width: AppUtil.getScreenWidth(context),
-                    height: AppUtil.getBannerHeight(context),
-                  ),
-                  Column(
-                    children: <Widget>[
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Builder(
-                          builder: (context) {
-                            return CustomAppBar(
-                              leading: "assets/back.svg",
-                              drawer: "assets/drawer.svg",
-                              title: widget.location.address,
-                              onTapLeading: () {
-                                _onBackPressed(state.foodCart.cartItemNumber());
-                              },
-                              onTapDrawer: () {
-                                Scaffold.of(context).openEndDrawer();
-                              },
-                              backgroundColor: Colors.transparent,
-                            );
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, loginState) {
+        return BlocBuilder<FoodOrderBloc, FoodOrderState>(
+          builder: (context, cartState) {
+            return BlocProvider<DetailPageBloc>(
+              create: (context) {
+                return _bloc..add(PageDetailRestaurantOpen(widget.restaurant.id));
+              },
+              child: BlocBuilder<DetailPageBloc, DetailPageState>(
+                builder: (context, state) {
+                  return WillPopScope(
+                    onWillPop: () async {
+                      //_onBackPressed(state.foodCart.cartItemNumber());
+                      return true;
+                    },
+                    child: Scaffold(
+                      extendBody: true,
+                      extendBodyBehindAppBar: true,
+                      endDrawer: EndDrawer(),
+                      bottomNavigationBar: AnimatedBuilder(
+                        animation: _navBarAnimation,
+                        builder: (context, child) {
+                          return Transform.translate(
+                            offset: _navBarAnimation.value,
+                            child: child,
+                          );
+                        },
+                        child: RestaurantDetailBottomNavBar(
+                          isValid: cartState.placeOrder.foodCart.cartItemNumber() > 0 ? true : false,
+                          totalAmount: cartState.placeOrder.foodCart.getAmount(),
+                          totalItem: cartState.placeOrder.foodCart.cartItemNumber(),
+                          buttonText: "CHECK OUT",
+                          onButtonTap: () async {
+                            BlocProvider.of<FoodOrderBloc>(context).add(
+                                UpdateCartMainData(widget.restaurant, cartState.placeOrder.foodCart, loginState.user));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return RestaurantPlaceOrderPage(
+                                location: widget.location,
+                              );
+                            }));
                           },
                         ),
                       ),
-                    ],
-                  ),
-                  DraggableScrollableSheet(
-                    initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
-                        AppUtil.getScreenHeight(context),
-                    minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
-                        AppUtil.getScreenHeight(context),
-                    maxChildSize: 1.0,
-                    builder: (context, controller) {
-                      controller.addListener(() {
-                        if (controller.position.userScrollDirection == ScrollDirection.reverse) {
-                          if (!_isScrollingDown) {
-                            _isScrollingDown = true;
-                            setState(() {
-                              _animationController.forward().orCancel;
-                            });
-                          }
-                        }
-                        if ((controller.position.userScrollDirection == ScrollDirection.forward) |
-                            (controller.offset >= controller.position.maxScrollExtent - kBottomNavigationBarHeight &&
-                                !controller.position.outOfRange)) {
-                          if (_isScrollingDown) {
-                            _isScrollingDown = false;
-                            setState(() {
-                              _animationController.reverse().orCancel;
-                            });
-                          }
-                        }
-                      });
-                      return Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                        child: CustomScrollView(
-                          controller: controller,
-                          shrinkWrap: false,
-                          slivers: <Widget>[
-                            SliverToBoxAdapter(
-                              child: Transform.translate(
-                                offset: Offset(0, 20),
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          left: horizontalPaddingDraggable,
-                                          right: horizontalPaddingDraggable,
-                                          bottom: 5),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Text(
-                                              widget.restaurant.name,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                return ReviewPage(
-                                                  restaurant: widget.restaurant,
-                                                );
-                                              }));
-                                            },
-                                            child: Row(
-                                              children: <Widget>[
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                            color: Colors.black38,
-                                                            offset: Offset(1, 1),
-                                                            spreadRadius: -1,
-                                                            blurRadius: 4)
-                                                      ],
-                                                      border: Border.all(color: Colors.orange)),
-                                                  child: Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.star,
-                                                        size: 14,
-                                                        color: Colors.orange,
-                                                      ),
-                                                      Text(
-                                                        widget.restaurant.review,
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: Colors.orange,
-                                                        ),
-                                                      ),
-                                                    ],
+                      body: Stack(
+                        children: <Widget>[
+                          Positioned(
+                            top: 0,
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Container(
+                                width: AppUtil.getScreenWidth(context),
+                                height: AppUtil.getBannerHeight(context),
+                                child: FittedBox(
+                                    fit: BoxFit.cover,
+                                    child: CachedNetworkImage(
+                                      imageUrl: widget.restaurant.image,
+                                      fit: BoxFit.cover,
+                                      alignment: Alignment.center,
+                                    )),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(color: Colors.black54),
+                            width: AppUtil.getScreenWidth(context),
+                            height: AppUtil.getBannerHeight(context),
+                          ),
+                          Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Builder(
+                                  builder: (context) {
+                                    return CustomAppBar(
+                                      leading: "assets/back.svg",
+                                      drawer: "assets/drawer.svg",
+                                      title: widget.location.address,
+                                      onTapLeading: () {
+                                        //_onBackPressed(state.foodCart.cartItemNumber());
+                                      },
+                                      onTapDrawer: () {
+                                        Scaffold.of(context).openEndDrawer();
+                                      },
+                                      backgroundColor: Colors.transparent,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          DraggableScrollableSheet(
+                            initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                                AppUtil.getScreenHeight(context),
+                            minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                                AppUtil.getScreenHeight(context),
+                            maxChildSize: 1.0,
+                            builder: (context, controller) {
+                              controller.addListener(() {
+                                if (controller.position.userScrollDirection == ScrollDirection.reverse) {
+                                  if (!_isScrollingDown) {
+                                    _isScrollingDown = true;
+                                    setState(() {
+                                      _animationController.forward().orCancel;
+                                    });
+                                  }
+                                }
+                                if ((controller.position.userScrollDirection == ScrollDirection.forward) |
+                                    (controller.offset >=
+                                            controller.position.maxScrollExtent - kBottomNavigationBarHeight &&
+                                        !controller.position.outOfRange)) {
+                                  if (_isScrollingDown) {
+                                    _isScrollingDown = false;
+                                    setState(() {
+                                      _animationController.reverse().orCancel;
+                                    });
+                                  }
+                                }
+                              });
+                              return Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                child: CustomScrollView(
+                                  controller: controller,
+                                  shrinkWrap: false,
+                                  slivers: <Widget>[
+                                    SliverToBoxAdapter(
+                                      child: Transform.translate(
+                                        offset: Offset(0, 20),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  left: horizontalPaddingDraggable,
+                                                  right: horizontalPaddingDraggable,
+                                                  bottom: 5),
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    child: Text(
+                                                      widget.restaurant.name,
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                    ),
                                                   ),
+                                                  SizedBox(
+                                                    width: 15,
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                        return ReviewPage(
+                                                          restaurant: widget.restaurant,
+                                                        );
+                                                      }));
+                                                    },
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Container(
+                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                                          decoration: BoxDecoration(
+                                                              color: Colors.white,
+                                                              borderRadius: BorderRadius.circular(10),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                    color: Colors.black38,
+                                                                    offset: Offset(1, 1),
+                                                                    spreadRadius: -1,
+                                                                    blurRadius: 4)
+                                                              ],
+                                                              border: Border.all(color: Colors.orange)),
+                                                          child: Row(
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: <Widget>[
+                                                              Icon(
+                                                                Icons.star,
+                                                                size: 14,
+                                                                color: Colors.orange,
+                                                              ),
+                                                              Text(
+                                                                widget.restaurant.rating.rating,
+                                                                style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  color: Colors.orange,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        /*SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Icon(
+                                                        Icons.arrow_forward_ios,
+                                                        size: 18,
+                                                        color: Colors.black38,
+                                                      )*/
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                                              margin: EdgeInsets.symmetric(
+                                                  vertical: 5, horizontal: horizontalPaddingDraggable),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    child: Text(
+                                                      widget.restaurant.cuisine,
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(fontSize: 12, color: Colors.black54),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    height: 20,
+                                                    width: 100,
+                                                    alignment: Alignment.centerRight,
+                                                    child: PageView.builder(
+                                                      controller: _rankPageController,
+                                                      scrollDirection: Axis.vertical,
+                                                      itemCount: widget.restaurant.rating.getRollingText().length,
+                                                      itemBuilder: (context, i) {
+                                                        return Text(
+                                                          widget.restaurant.rating.getRollingText()[i],
+                                                          textAlign: TextAlign.end,
+                                                          style: TextStyle(fontSize: 12),
+                                                        );
+                                                      },
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(color: Colors.white),
+                                              margin: EdgeInsets.symmetric(
+                                                  vertical: 5, horizontal: horizontalPaddingDraggable),
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    child: Text(
+                                                      widget.restaurant.address,
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(fontSize: 12, color: Colors.black54),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Text(
+                                                    widget.restaurant.deliveryEstimation,
+                                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            widget.restaurant.discountDescription != null &&
+                                                    widget.restaurant.discountDescription != ""
+                                                ? Container(
+                                                    margin: EdgeInsets.only(
+                                                      top: 5,
+                                                      left: horizontalPaddingDraggable,
+                                                      right: horizontalPaddingDraggable,
+                                                    ),
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(color: Colors.yellow[600]),
+                                                    padding: EdgeInsets.all(10),
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      AppUtil.parseHtmlString(widget.restaurant.discountDescription),
+                                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            Container(
+                                              height: 20,
+                                              color: Colors.white,
+                                              child: Container(
+                                                margin: EdgeInsets.only(
+                                                    left: horizontalPaddingDraggable,
+                                                    right: horizontalPaddingDraggable,
+                                                    top: distanceSectionContent),
+                                                child: Divider(
+                                                  height: 1,
+                                                  color: Colors.grey,
                                                 ),
-                                                /*SizedBox(
-                                                  width: 5,
-                                                ),
-                                                Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  size: 18,
-                                                  color: Colors.black38,
-                                                )*/
-                                              ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-                                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: horizontalPaddingDraggable),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Text(
-                                              widget.restaurant.cuisine,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 12, color: Colors.black54),
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 15,
-                                            width: 50,
-                                            alignment: Alignment.centerRight,
-                                            child: PageView(
-                                              controller: _rankPageController,
-                                              scrollDirection: Axis.vertical,
-                                              children: <Widget>[
-                                                Text(
-                                                  "100+ ratings",
-                                                  textAlign: TextAlign.end,
-                                                  style: TextStyle(fontSize: 12),
-                                                ),
-                                                Text(
-                                                  "#1 Rank",
-                                                  textAlign: TextAlign.end,
-                                                  style: TextStyle(fontSize: 12),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(color: Colors.white),
-                                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: horizontalPaddingDraggable),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Text(
-                                              widget.restaurant.address,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 12, color: Colors.black54),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            widget.restaurant.deliveryEstimation,
-                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    widget.restaurant.discountDescription != null &&
-                                            widget.restaurant.discountDescription != ""
-                                        ? Container(
-                                            margin: EdgeInsets.only(
-                                              top: 5,
-                                              left: horizontalPaddingDraggable,
-                                              right: horizontalPaddingDraggable,
-                                            ),
-                                            width: double.infinity,
-                                            decoration: BoxDecoration(color: Colors.yellow[600]),
-                                            padding: EdgeInsets.all(10),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              AppUtil.parseHtmlString(widget.restaurant.discountDescription),
-                                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                            ),
-                                          )
-                                        : Container(),
-                                    Container(
-                                      height: 20,
-                                      color: Colors.white,
-                                      child: Container(
-                                        margin: EdgeInsets.only(
-                                            left: horizontalPaddingDraggable,
-                                            right: horizontalPaddingDraggable,
-                                            top: distanceSectionContent),
-                                        child: Divider(
-                                          height: 1,
-                                          color: Colors.grey,
+                                          ],
                                         ),
                                       ),
                                     ),
+                                    SliverPersistentHeader(
+                                      pinned: true,
+                                      delegate: DetailRestaurantFilterTabs(
+                                        widget.restaurant.id,
+                                        onSearchTap: _onSearchTap,
+                                        offset: offset,
+                                        isListSelected: _isListMode,
+                                        onListButtonTap: () {
+                                          setState(
+                                            () {
+                                              if (!_isListMode) {
+                                                _isListMode = true;
+                                              }
+                                            },
+                                          );
+                                        },
+                                        onGridButtonTap: () {
+                                          setState(
+                                            () {
+                                              if (_isListMode) {
+                                                _isListMode = false;
+                                              }
+                                            },
+                                          );
+                                        },
+                                        onSwitchChanged: (value) {
+                                          _bloc.add(SwitchVegOnly(widget.restaurant.id, value));
+                                        },
+                                        isVegOnly: state.isVegOnly,
+                                        size: 27,
+                                      ),
+                                    ),
+                                    BlocConsumer<DetailPageBloc, DetailPageState>(
+                                      listener: (context, state) {
+                                        if (state is CartState) {
+                                          _isScrollingDown = false;
+                                          _animationController.reverse().orCancel;
+                                        }
+                                      },
+                                      builder: (context, state) {
+                                        if (state is OnDataLoading) {
+                                          return _isListMode ? FoodListLoadingWidget() : FoodGridLoadingWidget();
+                                        } else if (state is NoFoodAvailable) {
+                                          return SliverToBoxAdapter(
+                                            child: Container(
+                                                padding: EdgeInsets.all(horizontalPaddingDraggable),
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    SvgPicture.asset(
+                                                      "assets/no food.svg",
+                                                      height: AppUtil.getScreenHeight(context) / 5,
+                                                      width: AppUtil.getScreenHeight(context) / 5,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    Text(
+                                                      "No Food Available",
+                                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                    )
+                                                  ],
+                                                )),
+                                          );
+                                        }
+                                        return FoodListWidget(
+                                          onAdd: (i) {
+                                            if (!cartState.placeOrder.foodCart.isFoodExist(state.foodList[i].id) &&
+                                                state.foodList[i].prices.length > 1) {
+                                              _showAddOns(state.foodList[i]);
+                                            } else {
+                                              BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                                  state.foodList[i].id,
+                                                  state.foodList[i],
+                                                  (cartState.placeOrder.foodCart.getQuantity(state.foodList[i].id) + 1),
+                                                  cartState.placeOrder.foodCart
+                                                      .getSelectedPrice(state.foodList[i].id)));
+                                            }
+                                          },
+                                          onRemove: (i) {
+                                            BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                                state.foodList[i].id,
+                                                state.foodList[i],
+                                                (cartState.placeOrder.foodCart.getQuantity(state.foodList[i].id) - 1),
+                                                cartState.placeOrder.foodCart.getSelectedPrice(state.foodList[i].id)));
+                                          },
+                                          padding: _isListMode
+                                              ? EdgeInsets.only(
+                                                  left: horizontalPaddingDraggable - 5,
+                                                  right: horizontalPaddingDraggable - 5,
+                                                  top: 10,
+                                                  bottom: kBottomNavigationBarHeight)
+                                              : EdgeInsets.only(
+                                                  left: horizontalPaddingDraggable,
+                                                  right: horizontalPaddingDraggable,
+                                                  top: 10,
+                                                  bottom: 20 + kBottomNavigationBarHeight),
+                                          cart: cartState.placeOrder.foodCart,
+                                          listFood: state.foodList,
+                                          type: _isListMode ? FoodListViewType.list : FoodListViewType.grid,
+                                          scale: 0.90,
+                                        );
+                                      },
+                                    ),
                                   ],
                                 ),
-                              ),
-                            ),
-                            SliverPersistentHeader(
-                              pinned: true,
-                              delegate: DetailRestaurantFilterTabs(
-                                widget.restaurant.id,
-                                onSearchTap: _onSearchTap,
-                                offset: offset,
-                                isListSelected: _isListMode,
-                                onListButtonTap: () {
-                                  setState(
-                                    () {
-                                      if (!_isListMode) {
-                                        _isListMode = true;
-                                      }
-                                    },
-                                  );
-                                },
-                                onGridButtonTap: () {
-                                  setState(
-                                    () {
-                                      if (_isListMode) {
-                                        _isListMode = false;
-                                      }
-                                    },
-                                  );
-                                },
-                                onSwitchChanged: (value) {
-                                  _bloc.add(SwitchVegOnly(widget.restaurant.id, value));
-                                },
-                                isVegOnly: state.isVegOnly,
-                                size: 27,
-                              ),
-                            ),
-                            BlocConsumer<DetailPageBloc, DetailPageState>(
-                              listener: (context, state) {
-                                if (state is CartState) {
-                                  _isScrollingDown = false;
-                                  _animationController.reverse().orCancel;
-                                }
-                              },
-                              builder: (context, state) {
-                                if (state is OnDataLoading) {
-                                  return _isListMode ? FoodListLoadingWidget() : FoodGridLoadingWidget();
-                                } else if (state is NoFoodAvailable) {
-                                  return SliverToBoxAdapter(
-                                    child: Container(
-                                        padding: EdgeInsets.all(horizontalPaddingDraggable),
-                                        child: Column(
-                                          children: <Widget>[
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            SvgPicture.asset(
-                                              "assets/no food.svg",
-                                              height: AppUtil.getScreenHeight(context) / 5,
-                                              width: AppUtil.getScreenHeight(context) / 5,
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            Text(
-                                              "No Food Available",
-                                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                            )
-                                          ],
-                                        )),
-                                  );
-                                }
-                                return FoodListWidget(
-                                  onAdd: (i) {
-                                    if (!state.foodCart.isFoodExist(state.foodList[i].id) &&
-                                        state.foodList[i].prices.length > 1) {
-                                      _showAddOns(state.foodList[i]);
-                                    } else {
-                                      _bloc.add(ChangeQuantity(
-                                          state.foodList[i].id,
-                                          state.foodList[i],
-                                          (state.foodCart.getQuantity(state.foodList[i].id) + 1),
-                                          state.foodCart.getSelectedPrice(state.foodList[i].id)));
-                                    }
-                                  },
-                                  onRemove: (i) {
-                                    _bloc.add(ChangeQuantity(
-                                        state.foodList[i].id,
-                                        state.foodList[i],
-                                        (state.foodCart.getQuantity(state.foodList[i].id) - 1),
-                                        state.foodCart.getSelectedPrice(state.foodList[i].id)));
-                                  },
-                                  padding: _isListMode
-                                      ? EdgeInsets.only(
-                                          left: horizontalPaddingDraggable - 5,
-                                          right: horizontalPaddingDraggable - 5,
-                                          top: 10,
-                                          bottom: kBottomNavigationBarHeight)
-                                      : EdgeInsets.only(
-                                          left: horizontalPaddingDraggable,
-                                          right: horizontalPaddingDraggable,
-                                          top: 10,
-                                          bottom: 20 + kBottomNavigationBarHeight),
-                                  cart: state.foodCart,
-                                  listFood: state.foodList,
-                                  type: _isListMode ? FoodListViewType.list : FoodListViewType.grid,
-                                  scale: 0.90,
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
-  _onBackPressed(int cartItemNumber) {
+  /*_onBackPressed(int cartItemNumber) {
     if (cartItemNumber > 0) {
       showDialog(
           context: context,
@@ -537,7 +545,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
     } else {
       Navigator.pop(context);
     }
-  }
+  }*/
 
   _showAddOns(Food food) {
     showModalBottomSheet(
@@ -559,7 +567,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
               value: i,
               onChanged: (i) {
                 Navigator.pop(context);
-                _bloc.add(ChangeQuantity(food.id, food, 1, i));
+                BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(food.id, food, 1, i));
               },
               groupValue: null,
             ));
@@ -690,30 +698,34 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                       );
                     }
                     return state.result != null
-                        ? FoodListWidget(
-                            onAdd: (i) {
-                              _bloc.add(ChangeQuantity(
-                                  state.result[i].id,
-                                  state.result[i],
-                                  (state.foodCart.getQuantity(state.result[i].id) + 1),
-                                  state.foodCart.getSelectedPrice(state.result[i].id)));
+                        ? BlocBuilder<FoodOrderBloc, FoodOrderState>(
+                            builder: (context, cartState) {
+                              return FoodListWidget(
+                                onAdd: (i) {
+                                  BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                      state.result[i].id,
+                                      state.result[i],
+                                      (cartState.placeOrder.foodCart.getQuantity(state.result[i].id) + 1),
+                                      cartState.placeOrder.foodCart.getSelectedPrice(state.result[i].id)));
+                                },
+                                onRemove: (i) {
+                                  BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                      state.result[i].id,
+                                      state.result[i],
+                                      (cartState.placeOrder.foodCart.getQuantity(state.result[i].id) - 1),
+                                      cartState.placeOrder.foodCart.getSelectedPrice(state.result[i].id)));
+                                },
+                                padding: EdgeInsets.only(
+                                    left: horizontalPaddingDraggable - 5,
+                                    right: horizontalPaddingDraggable - 5,
+                                    top: 10,
+                                    bottom: kBottomNavigationBarHeight),
+                                cart: cartState.placeOrder.foodCart,
+                                listFood: state.result,
+                                type: FoodListViewType.list,
+                                scale: 0.90,
+                              );
                             },
-                            onRemove: (i) {
-                              _bloc.add(ChangeQuantity(
-                                  state.result[i].id,
-                                  state.result[i],
-                                  (state.foodCart.getQuantity(state.result[i].id) - 1),
-                                  state.foodCart.getSelectedPrice(state.result[i].id)));
-                            },
-                            padding: EdgeInsets.only(
-                                left: horizontalPaddingDraggable - 5,
-                                right: horizontalPaddingDraggable - 5,
-                                top: 10,
-                                bottom: kBottomNavigationBarHeight),
-                            cart: state.foodCart,
-                            listFood: state.result,
-                            type: FoodListViewType.list,
-                            scale: 0.90,
                           )
                         : SliverToBoxAdapter(
                             child: SizedBox(),

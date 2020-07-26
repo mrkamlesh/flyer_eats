@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/model/location.dart';
+import 'package:clients/page/restaurant_detail_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:clients/classes/app_util.dart';
@@ -9,8 +11,9 @@ import 'package:shimmer/shimmer.dart';
 
 class BannerListWidget extends StatefulWidget {
   final List<BannerItem> bannerList;
+  final Location location;
 
-  const BannerListWidget({Key key, this.bannerList}) : super(key: key);
+  const BannerListWidget({Key key, this.bannerList, this.location}) : super(key: key);
 
   @override
   _BannerListWidgetState createState() => _BannerListWidgetState();
@@ -65,23 +68,33 @@ class _BannerListWidgetState extends State<BannerListWidget> {
               },
               itemCount: widget.bannerList.length,
               itemBuilder: (context, i) {
-                return FittedBox(
-                    fit: BoxFit.cover,
-                    child: CachedNetworkImage(
-                      imageUrl: widget.bannerList[i].image,
+                return InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context){
+                      return RestaurantDetailPage(
+                        restaurant: widget.bannerList[i].restaurant,
+                        location: widget.location,
+                      );
+                    }));
+                  },
+                  child: FittedBox(
                       fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                      placeholder: (context, url) {
-                        return Shimmer.fromColors(
-                            child: Container(
-                              height: 80,
-                              width: 80,
-                              color: Colors.black,
-                            ),
-                            baseColor: Colors.grey[300],
-                            highlightColor: Colors.grey[100]);
-                      },
-                    ));
+                      child: CachedNetworkImage(
+                        imageUrl: widget.bannerList[i].image,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        placeholder: (context, url) {
+                          return Shimmer.fromColors(
+                              child: Container(
+                                height: 80,
+                                width: 80,
+                                color: Colors.black,
+                              ),
+                              baseColor: Colors.grey[300],
+                              highlightColor: Colors.grey[100]);
+                        },
+                      )),
+                );
               }),
           /*Positioned(
             bottom: 0,

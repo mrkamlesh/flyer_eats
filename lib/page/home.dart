@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/page/offers_list_page.dart';
-import 'package:clients/page/order_history_page.dart';
+import 'package:clients/page/restaurant_place_order_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -148,7 +148,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                               _currentIndex = 0;
                             } else if (index == 3) {
                               await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
-                                return OrderHistoryPage();
+                                return RestaurantPlaceOrderPage(
+                                  location: homeState.homePageData.location,
+                                );
                               }));
                               _currentIndex = 0;
                             }
@@ -175,7 +177,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                   return DefaultBanner();
                 }
 
-                if (homeState.homePageData.promos.isEmpty){
+                if (homeState.homePageData.promos.isEmpty) {
                   return DefaultBanner();
                 }
                 return Positioned(
@@ -183,6 +185,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: BannerListWidget(
+                      location: homeState.homePageData.location,
                       bannerList: homeState.homePageData.promos,
                     ),
                   ),
@@ -569,7 +572,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                                     width: 10,
                                                   ),
                                                   Text(
-                                                    homeState.homePageData.referralDiscount,
+                                                    loginState.user.referralDiscount,
                                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                                   ),
                                                 ],
@@ -590,7 +593,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                                       ),
                                                       Text(
-                                                        homeState.homePageData.referralCode,
+                                                        loginState.user.referralCode,
                                                         style: TextStyle(
                                                           color: primary3,
                                                           fontSize: 12,
@@ -875,15 +878,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                   ],
                                 ),
                               ),
-                              Container(
-                                  padding: EdgeInsets.all(5),
-                                  child: Align(
-                                    alignment: Alignment.topRight,
-                                    child: Icon(
-                                      Icons.clear,
-                                      color: Colors.white,
-                                    ),
-                                  ))
+                              /*Container(
+                                padding: EdgeInsets.all(5),
+                                child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: Icon(
+                                    Icons.clear,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )*/
                             ],
                           ),
                         );

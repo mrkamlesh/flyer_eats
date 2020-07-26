@@ -7,8 +7,6 @@ import 'package:clients/model/restaurant.dart';
 class HomePageData {
   final Location location;
   final String countryId;
-  final String referralCode;
-  final String referralDiscount;
   final List<BannerItem> promos;
   final List<Restaurant> topRestaurants;
   final List<FoodCategory> categories;
@@ -19,8 +17,6 @@ class HomePageData {
   HomePageData(
       {this.location,
       this.countryId,
-      this.referralCode,
-      this.referralDiscount,
       this.promos,
       this.topRestaurants,
       this.categories,
@@ -61,8 +57,6 @@ class HomePageData {
 
     return HomePageData(
         location: Location.fromHomePageJson(parsedJson['location']),
-        referralCode: parsedJson['referral_code'],
-        referralDiscount: parsedJson['referral_discount'],
         countryId: parsedJson['location']['country_code'],
         promos: promos,
         topRestaurants: top,

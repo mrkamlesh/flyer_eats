@@ -118,6 +118,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                       title: "",
                                       onTapLeading: () {
                                         //_onBackPressed(state.placeOrder);
+                                        Navigator.pop(context);
                                       },
                                       backgroundColor: Colors.transparent,
                                     ),

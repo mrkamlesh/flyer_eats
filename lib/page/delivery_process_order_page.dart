@@ -88,7 +88,7 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                     isValid: state.pickUp.isValid(),
                     amount: length,
                     description: "Items",
-                    buttonText: "VIEW CHART",
+                    buttonText: "VIEW CART",
                     showRupee: false,
                     onButtonTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) {

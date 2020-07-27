@@ -82,7 +82,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
 
   Stream<FoodOrderState> mapChangeQuantityNoPaymentToState(
       Restaurant selectedRestaurant, String id, Food food, int quantity, int selectedPrice) async* {
-    yield FoodOrderState(placeOrder: state.placeOrder);
+    //yield FoodOrderState(placeOrder: state.placeOrder);
 
     if (selectedRestaurant.id == state.placeOrder.restaurant.id || state.placeOrder.restaurant.id == null) {
       FoodCart newCart = state.placeOrder.foodCart;

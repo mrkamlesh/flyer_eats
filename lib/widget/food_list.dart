@@ -70,7 +70,6 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                 type: widget.type,
                 index: i,
                 scale: _scaleAnimation,
-                selectedPrice: widget.cart.getSelectedPrice(widget.listFood[i].id),
                 selectedIndex: _selectedFood,
                 food: widget.listFood[i],
                 quantity: widget.cart.getQuantity(widget.listFood[i].id),
@@ -95,7 +94,6 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                       type: widget.type,
                       index: i,
                       quantity: widget.cart.getQuantity(widget.listFood[i].id),
-                      selectedPrice: widget.cart.getSelectedPrice(widget.listFood[i].id),
                       scale: _scaleAnimation,
                       selectedIndex: _selectedFood,
                       food: widget.listFood[i],
@@ -124,7 +122,6 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                       type: widget.type,
                       index: i,
                       quantity: widget.cart.getQuantity(widget.listFood[i].id),
-                      selectedPrice: widget.cart.getSelectedPrice(widget.listFood[i].id),
                       scale: _scaleAnimation,
                       selectedIndex: _selectedFood,
                       food: widget.listFood[i],
@@ -180,7 +177,6 @@ class FoodList extends StatelessWidget {
   final Animation<double> scale;
   final int quantity;
   final FoodListViewType type;
-  final int selectedPrice;
 
   const FoodList(
       {Key key,
@@ -191,8 +187,7 @@ class FoodList extends StatelessWidget {
       this.onTapRemove,
       this.scale,
       this.quantity,
-      this.type,
-      this.selectedPrice})
+      this.type})
       : super(key: key);
 
   @override
@@ -396,7 +391,7 @@ class FoodList extends StatelessWidget {
                                       food.discount > 0
                                           ? Text(
                                               "\u20b9 " +
-                                                  AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
+                                                  AppUtil.doubleRemoveZeroTrailing(food.price.price),
                                               style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
                                             )
                                           : SizedBox(),
@@ -413,7 +408,7 @@ class FoodList extends StatelessWidget {
                                             width: 3,
                                           ),
                                           Text(
-                                            "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
+                                            "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             textAlign: TextAlign.center,
@@ -582,7 +577,7 @@ class FoodList extends StatelessWidget {
                                         food.discount > 0
                                             ? Text(
                                                 "\u20b9 " +
-                                                    AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
+                                                    AppUtil.doubleRemoveZeroTrailing(food.price.price),
                                                 style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
                                               )
                                             : SizedBox(),
@@ -598,7 +593,7 @@ class FoodList extends StatelessWidget {
                                               width: 3,
                                             ),
                                             Text(
-                                              "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
+                                              "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -787,7 +782,7 @@ class FoodList extends StatelessWidget {
                                       food.discount > 0
                                           ? Text(
                                               "\u20b9 " +
-                                                  AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
+                                                  AppUtil.doubleRemoveZeroTrailing(food.price.price),
                                               style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
                                             )
                                           : SizedBox(),
@@ -804,7 +799,7 @@ class FoodList extends StatelessWidget {
                                             width: 3,
                                           ),
                                           Text(
-                                            "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
+                                            "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             textAlign: TextAlign.center,

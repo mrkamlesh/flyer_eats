@@ -11,7 +11,6 @@ import 'package:clients/page/my_wallet_page.dart';
 import 'package:clients/page/notifications_list_page.dart';
 import 'package:clients/page/order_history_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:share/share.dart';
 import 'package:shimmer/shimmer.dart';
 
 class EndDrawer extends StatelessWidget {
@@ -216,9 +215,8 @@ class EndDrawer extends StatelessWidget {
               builder: (context, loginState) {
                 return InkWell(
                   onTap: () {
-                    final RenderBox box = context.findRenderObject();
-                    Share.share('flyereats.in',
-                        subject: 'Flyer Eats', sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                    AppUtil.share(
+                        context, loginState.user.referralCode, loginState.user.referralDiscount);
                   },
                   child: Row(
                     children: <Widget>[

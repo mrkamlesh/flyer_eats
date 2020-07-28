@@ -1,4 +1,6 @@
+import 'package:clients/model/add_on.dart';
 import 'package:clients/model/food.dart';
+import 'package:clients/model/price.dart';
 
 class FoodCart {
   final Map<String, FoodCartItem> cart;
@@ -9,8 +11,8 @@ class FoodCart {
     return cart.containsKey(id);
   }
 
-  void addFoodToCart(String id, Food food, int quantity, int selectedPrice) {
-    cart[id] = FoodCartItem(id, food, quantity, selectedPrice);
+  void addFoodToCart(String id, Food food, int quantity, Price price, List<AddOn> addOns) {
+    cart[id] = FoodCartItem(id, food, quantity, price, addOns);
   }
 
   int getQuantity(String id) {
@@ -27,17 +29,9 @@ class FoodCart {
     }
   }
 
-  int getSelectedPrice(String foodId) {
-    if (isFoodExist(foodId)) {
-      return cart[foodId].selectedPrice;
-    } else {
-      return 0;
-    }
-  }
-
-  void changeQuantity(String id, Food food, int quantity, int selectedPrice) {
+  void changeQuantity(String id, Food food, int quantity, Price price, List<AddOn> addOns) {
     if (!isFoodExist(id)) {
-      addFoodToCart(id, food, 1, selectedPrice);
+      addFoodToCart(id, food, 1, price, addOns);
     } else {
       cart[id].quantity = quantity;
       if (quantity <= 0) {
@@ -49,7 +43,7 @@ class FoodCart {
   double getAmount() {
     double amount = 0;
     this.cart.forEach((i, item) {
-      amount = amount + item.food.getRealPrice(item.selectedPrice) * item.quantity;
+      amount = amount + (item.price.price - item.food.discount) * item.quantity;
     });
 
     return amount;
@@ -64,7 +58,8 @@ class FoodCartItem {
   final String id;
   final Food food;
   int quantity;
-  final int selectedPrice;
+  final Price price;
+  final List<AddOn> addOns;
 
-  FoodCartItem(this.id, this.food, this.quantity, this.selectedPrice);
+  FoodCartItem(this.id, this.food, this.quantity, this.price, this.addOns);
 }

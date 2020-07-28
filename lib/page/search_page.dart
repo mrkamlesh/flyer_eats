@@ -122,8 +122,13 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                               onPressed: () {
                                 BlocProvider.of<FoodOrderBloc>(context)
                                   ..add(ClearCart())
-                                  ..add(ChangeQuantityNoPayment(cartState.tempSelectedRestaurant, cartState.tempId,
-                                      cartState.tempFood, cartState.tempQuantity, cartState.tempSelectedPrice));
+                                  ..add(ChangeQuantityNoPayment(
+                                      cartState.tempSelectedRestaurant,
+                                      cartState.tempId,
+                                      cartState.tempFood,
+                                      cartState.tempQuantity,
+                                      cartState.tempPrice,
+                                      cartState.tempAddOns));
 
                                 Navigator.pop(context);
                               },
@@ -412,7 +417,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                           (cartState.placeOrder.foodCart
                                                   .getQuantity(state.restaurants[i].searchFoodList[j].id) +
                                               1),
-                                          0));
+                                          state.restaurants[i].searchFoodList[j].price,
+                                          []));
                                     },
                                     onRemove: (j) {
                                       /*if (state.restaurants[i].id == state.selectedRestaurant.id ||
@@ -433,8 +439,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                           (cartState.placeOrder.foodCart
                                                   .getQuantity(state.restaurants[i].searchFoodList[j].id) -
                                               1),
-                                          cartState.placeOrder.foodCart
-                                              .getSelectedPrice(state.restaurants[i].searchFoodList[j].id)));
+                                          state.restaurants[i].searchFoodList[j].price,
+                                          []));
                                     },
                                     padding: EdgeInsets.only(
                                       left: horizontalPaddingDraggable,

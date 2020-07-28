@@ -84,17 +84,18 @@ class DetailOrder {
             title: foodCartItemJson[i]['item_name'],
             category: MenuCategory(foodCartItemJson[i]['category_id'], foodCartItemJson[i]['category_name']),
             discount: double.parse(foodCartItemJson[i]['discount'].toString()),
-            prices: [Price(price: double.parse(foodCartItemJson[i]['normal_price'].toString()))],
+            price: Price(price: double.parse(foodCartItemJson[i]['normal_price'].toString())),
           ),
           int.parse(foodCartItemJson[i]['qty'].toString()),
-          0);
+          Price(price: double.parse(foodCartItemJson[i]['normal_price'].toString())),
+          []);
     }
 
     double discountTotal = 0;
     double totalOrder = 0;
     foodCart.cart.forEach((key, item) {
       discountTotal = discountTotal + item.quantity * item.food.discount;
-      totalOrder = totalOrder + item.quantity * item.food.prices[0].price;
+      totalOrder = totalOrder + item.quantity * item.food.price.price;
     });
     double subTotalOrder = totalOrder - discountTotal;
 
@@ -108,8 +109,8 @@ class DetailOrder {
         foodCart: foodCart,
         createdDate: parsedJson['date_created'],
         orderInstruction: parsedJson['delivery_instruction'],
-        restaurant: Restaurant(parsedJson['merchant_id'], parsedJson['marchant_name'], parsedJson['delivery_time'], null,
-            parsedJson['marchant_logo'], "", parsedJson['address'], true),
+        restaurant: Restaurant(parsedJson['merchant_id'], parsedJson['marchant_name'], parsedJson['delivery_time'],
+            null, parsedJson['marchant_logo'], "", parsedJson['address'], true),
         deliveryAddress: parsedJson['info']['Deliver to'],
         deliveryAddressName: parsedJson['info']['Location Name'],
         deliveryContact: parsedJson['info']['Contact Number'],

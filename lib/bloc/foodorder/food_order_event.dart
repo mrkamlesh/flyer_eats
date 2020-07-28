@@ -1,3 +1,5 @@
+import 'package:clients/model/add_on.dart';
+import 'package:clients/model/price.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/user.dart';
 import 'package:equatable/equatable.dart';
@@ -13,7 +15,6 @@ abstract class FoodOrderEvent extends Equatable {
 }
 
 class InitPlaceOrder extends FoodOrderEvent {
-
   final User user;
 
   InitPlaceOrder(this.user);
@@ -81,12 +82,13 @@ class ChangeQuantityWithPayment extends FoodOrderEvent {
   final String id;
   final Food food;
   final int quantity;
-  final int selectedPrice;
+  final Price price;
+  final List<AddOn> addOns;
 
-  const ChangeQuantityWithPayment(this.id, this.food, this.quantity, this.selectedPrice);
+  const ChangeQuantityWithPayment(this.id, this.food, this.quantity, this.price, this.addOns);
 
   @override
-  List<Object> get props => [id, food, quantity, selectedPrice];
+  List<Object> get props => [id, food, quantity, price, addOns];
 }
 
 class ChangeQuantityNoPayment extends FoodOrderEvent {
@@ -94,12 +96,13 @@ class ChangeQuantityNoPayment extends FoodOrderEvent {
   final String id;
   final Food food;
   final int quantity;
-  final int selectedPrice;
+  final Price price;
+  final List<AddOn> addOns;
 
-  const ChangeQuantityNoPayment(this.restaurant, this.id, this.food, this.quantity, this.selectedPrice);
+  const ChangeQuantityNoPayment(this.restaurant, this.id, this.food, this.quantity, this.price, this.addOns);
 
   @override
-  List<Object> get props => [restaurant, id, food, quantity, selectedPrice];
+  List<Object> get props => [restaurant, id, food, quantity, price, addOns];
 }
 
 class PlaceOrderEvent extends FoodOrderEvent {
@@ -143,3 +146,11 @@ class ClearCart extends FoodOrderEvent {
   List<Object> get props => [];
 }
 
+class GetFoodDetail extends FoodOrderEvent {
+  final foodId;
+
+  GetFoodDetail(this.foodId);
+
+  @override
+  List<Object> get props => [foodId];
+}

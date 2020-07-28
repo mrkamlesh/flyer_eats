@@ -1,6 +1,9 @@
+import 'package:clients/model/add_on.dart';
 import 'package:clients/model/food.dart';
 import 'package:clients/model/food_cart.dart';
+import 'package:clients/model/food_detail.dart';
 import 'package:clients/model/place_order.dart';
+import 'package:clients/model/price.dart';
 import 'package:clients/model/restaurant.dart';
 
 class FoodOrderState {
@@ -28,10 +31,7 @@ class NoItemsInCart extends FoodOrderState {
   NoItemsInCart()
       : super(
             placeOrder: PlaceOrder(
-                restaurant: Restaurant(null, null, null, null, null, null, null, false),
-                foodCart: FoodCart(
-                  Map(),
-                )));
+                restaurant: Restaurant(null, null, null, null, null, null, null, false), foodCart: FoodCart(Map())));
 }
 
 class LoadingPlaceOrder extends FoodOrderState {
@@ -57,9 +57,27 @@ class ConfirmCartState extends FoodOrderState {
   final String tempId;
   final Food tempFood;
   final int tempQuantity;
-  final int tempSelectedPrice;
+  final Price tempPrice;
+  final List<AddOn> tempAddOns;
 
-  ConfirmCartState(this.tempSelectedRestaurant, this.tempId, this.tempFood, this.tempQuantity, this.tempSelectedPrice,
+  ConfirmCartState(
+      this.tempSelectedRestaurant, this.tempId, this.tempFood, this.tempQuantity, this.tempPrice, this.tempAddOns,
       {PlaceOrder placeOrder})
       : super(placeOrder: placeOrder);
+}
+
+class LoadingGetFoodDetail extends FoodOrderState {
+  LoadingGetFoodDetail({PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+}
+
+class SuccessGetFoodDetail extends FoodOrderState {
+  final FoodDetail foodDetail;
+
+  SuccessGetFoodDetail(this.foodDetail, {PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+}
+
+class ErrorGetFoodDetail extends FoodOrderState {
+  final String message;
+
+  ErrorGetFoodDetail(this.message, {PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
 }

@@ -1236,7 +1236,6 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
             (context, i) {
               return FoodItemPlaceOrder(
                 index: i,
-                selectedPrice: state.placeOrder.foodCart.getSelectedPrice(foodList[i].id),
                 scale: _scaleAnimation,
                 selectedIndex: _selectedFood,
                 food: foodList[i],
@@ -1247,11 +1246,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                   });
                   _animationController.forward().orCancel.whenComplete(() {
                     _animationController.reverse().orCancel.whenComplete(() {
-                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(
-                          foodList[i].id,
-                          foodList[i],
-                          (state.placeOrder.foodCart.getQuantity(foodList[i].id) - 1),
-                          state.placeOrder.foodCart.getSelectedPrice(foodList[i].id)));
+                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(foodList[i].id, foodList[i],
+                          (state.placeOrder.foodCart.getQuantity(foodList[i].id) - 1), foodList[i].price, []));
                     });
                   });
                 },
@@ -1261,11 +1257,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                   });
                   _animationController.forward().orCancel.whenComplete(() {
                     _animationController.reverse().orCancel.whenComplete(() {
-                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(
-                          foodList[i].id,
-                          foodList[i],
-                          (state.placeOrder.foodCart.getQuantity(foodList[i].id) + 1),
-                          state.placeOrder.foodCart.getSelectedPrice(foodList[i].id)));
+                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(foodList[i].id, foodList[i],
+                          (state.placeOrder.foodCart.getQuantity(foodList[i].id) + 1), foodList[i].price, []));
                     });
                   });
                 },
@@ -1287,7 +1280,6 @@ class FoodItemPlaceOrder extends StatelessWidget {
   final Function onTapRemove;
   final Animation<double> scale;
   final int quantity;
-  final int selectedPrice;
 
   const FoodItemPlaceOrder({
     Key key,
@@ -1298,7 +1290,6 @@ class FoodItemPlaceOrder extends StatelessWidget {
     this.onTapRemove,
     this.scale,
     this.quantity,
-    this.selectedPrice,
   }) : super(key: key);
 
   @override
@@ -1479,7 +1470,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
                               children: <Widget>[
                                 food.discount > 0
                                     ? Text(
-                                        "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.prices[selectedPrice].price),
+                                        "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price.price),
                                         style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
                                       )
                                     : SizedBox(),
@@ -1495,7 +1486,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
                                       width: 3,
                                     ),
                                     Text(
-                                      "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice(selectedPrice))}",
+                                      "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

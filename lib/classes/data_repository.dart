@@ -6,6 +6,7 @@ import 'package:clients/model/detail_order.dart';
 import 'package:clients/model/fe_offer.dart';
 import 'package:clients/model/filter.dart';
 import 'package:clients/model/food.dart';
+import 'package:clients/model/food_detail.dart';
 import 'package:clients/model/home_page_data.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/model/login_status.dart';
@@ -571,6 +572,16 @@ class DataRepository {
       return foods;
     } else {
       return List();
+    }
+  }
+
+  Future<dynamic> getFoodDetail(String foodId) async {
+    final response = await _provider.getFoodDetail(foodId);
+    if (response['code'] == 1) {
+      FoodDetail foodDetail = FoodDetail.fromJson(response['details']);
+      return foodDetail;
+    } else {
+      return response['msg'];
     }
   }
 

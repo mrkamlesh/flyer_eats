@@ -2,10 +2,13 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/add_on.dart';
 import 'package:clients/model/address.dart';
 import 'package:clients/model/food.dart';
 import 'package:clients/model/food_cart.dart';
+import 'package:clients/model/food_detail.dart';
 import 'package:clients/model/place_order.dart';
+import 'package:clients/model/price.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/user.dart';
 import 'package:clients/model/voucher.dart';
@@ -29,10 +32,10 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     } else if (event is ChangeContactPhone) {
       yield* mapChangeContactPhoneToState(event.isChangePrimaryContact, event.contact);
     } else if (event is ChangeQuantityWithPayment) {
-      yield* mapChangeQuantityWithPaymentToState(event.id, event.food, event.quantity, event.selectedPrice);
+      yield* mapChangeQuantityWithPaymentToState(event.id, event.food, event.quantity, event.price, event.addOns);
     } else if (event is ChangeQuantityNoPayment) {
       yield* mapChangeQuantityNoPaymentToState(
-          event.restaurant, event.id, event.food, event.quantity, event.selectedPrice);
+          event.restaurant, event.id, event.food, event.quantity, event.price, event.addOns);
     } else if (event is ChangeInstruction) {
       yield* mapChangeInstructionToState(event.instruction);
     } else if (event is GetPaymentOptions) {
@@ -49,6 +52,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapChangeDeliveryTimeToState(event.dateTime);
     } else if (event is ClearCart) {
       yield* mapClearCartToState();
+    } else if (event is GetFoodDetail) {
+      yield* mapGetFoodDetailToState(event.foodId);
     }
   }
 
@@ -68,9 +73,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   }
 
   Stream<FoodOrderState> mapChangeQuantityWithPaymentToState(
-      String id, Food food, int quantity, int selectedPrice) async* {
+      String id, Food food, int quantity, Price price, List<AddOn> addOns) async* {
     FoodCart newCart = state.placeOrder.foodCart;
-    newCart.changeQuantity(id, food, quantity, selectedPrice);
+    newCart.changeQuantity(id, food, quantity, price, addOns);
 
     if (newCart.cart.length > 0) {
       yield FoodOrderState(placeOrder: state.placeOrder.copyWith(foodCart: newCart));
@@ -81,12 +86,12 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   }
 
   Stream<FoodOrderState> mapChangeQuantityNoPaymentToState(
-      Restaurant selectedRestaurant, String id, Food food, int quantity, int selectedPrice) async* {
+      Restaurant selectedRestaurant, String id, Food food, int quantity, Price price, List<AddOn> addOns) async* {
     //yield FoodOrderState(placeOrder: state.placeOrder);
 
     if (selectedRestaurant.id == state.placeOrder.restaurant.id || state.placeOrder.restaurant.id == null) {
       FoodCart newCart = state.placeOrder.foodCart;
-      newCart.changeQuantity(id, food, quantity, selectedPrice);
+      newCart.changeQuantity(id, food, quantity, price, addOns);
 
       if (newCart.cart.length > 0) {
         yield CartChangeState(placeOrder: state.placeOrder.copyWith(foodCart: newCart, restaurant: selectedRestaurant));
@@ -94,7 +99,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         yield NoItemsInCart();
       }
     } else {
-      yield ConfirmCartState(selectedRestaurant, id, food, quantity, selectedPrice, placeOrder: state.placeOrder);
+      yield ConfirmCartState(selectedRestaurant, id, food, quantity, price, addOns, placeOrder: state.placeOrder);
     }
   }
 
@@ -196,5 +201,20 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
 
   Stream<FoodOrderState> mapClearCartToState() async* {
     yield NoItemsInCart();
+  }
+
+  Stream<FoodOrderState> mapGetFoodDetailToState(foodId) async* {
+    yield LoadingGetFoodDetail(placeOrder: state.placeOrder);
+
+    try {
+      var result = await repository.getFoodDetail(foodId);
+      if (result is FoodDetail) {
+        yield SuccessGetFoodDetail(result, placeOrder: state.placeOrder);
+      } else {
+        yield ErrorGetFoodDetail(result as String, placeOrder: state.placeOrder);
+      }
+    } catch (e) {
+      yield ErrorGetFoodDetail(e.toString(), placeOrder: state.placeOrder);
+    }
   }
 }

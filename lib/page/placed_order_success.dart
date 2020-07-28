@@ -12,7 +12,6 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/page/order_detail_page.dart';
 import 'package:clients/widget/promo_list.dart';
-import 'package:share/share.dart';
 
 class PlacedOrderSuccessPage extends StatefulWidget {
   final String placeOrderId;
@@ -155,10 +154,8 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                     if (state is SuccessAds) {
                                       return InkWell(
                                         onTap: () {
-                                          final RenderBox box = context.findRenderObject();
-                                          Share.share('flyereats.in',
-                                              subject: 'Flyer Eats',
-                                              sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                                          AppUtil.share(
+                                              context, loginState.user.referralCode, loginState.user.referralDiscount);
                                         },
                                         child: Container(
                                           margin: EdgeInsets.only(top: 20, bottom: 20),

@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/bloc/login/bloc.dart';
+import 'package:clients/model/add_on.dart';
+import 'package:clients/model/add_ons_type.dart';
+import 'package:clients/model/food.dart';
+import 'package:clients/model/price.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -14,7 +18,6 @@ import 'package:clients/bloc/food/detail_page_event.dart';
 import 'package:clients/bloc/food/detail_page_state.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
-import 'package:clients/model/food.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/page/restaurant_place_order_page.dart';
@@ -103,8 +106,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                             onPressed: () {
                               BlocProvider.of<FoodOrderBloc>(context)
                                 ..add(ClearCart())
-                                ..add(ChangeQuantityNoPayment(cartState.tempSelectedRestaurant, cartState.tempId,
-                                    cartState.tempFood, cartState.tempQuantity, cartState.tempSelectedPrice));
+                                ..add(ChangeQuantityNoPayment(
+                                    cartState.tempSelectedRestaurant,
+                                    cartState.tempId,
+                                    cartState.tempFood,
+                                    cartState.tempQuantity,
+                                    cartState.tempPrice,
+                                    cartState.tempAddOns));
 
                               Navigator.pop(context);
                             },
@@ -497,17 +505,16 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                         return FoodListWidget(
                                           onAdd: (i) {
                                             _animationController.reverse().orCancel;
-                                            if (!cartState.placeOrder.foodCart.isFoodExist(state.foodList[i].id) &&
-                                                state.foodList[i].prices.length > 1) {
-                                              _showAddOns(state.foodList[i]);
-                                            } else {
+
+                                            if (state.foodList[i].isSingleItem) {
                                               BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
                                                   widget.restaurant,
                                                   state.foodList[i].id,
                                                   state.foodList[i],
                                                   (cartState.placeOrder.foodCart.getQuantity(state.foodList[i].id) + 1),
-                                                  cartState.placeOrder.foodCart
-                                                      .getSelectedPrice(state.foodList[i].id)));
+                                                  state.foodList[i].price, []));
+                                            } else {
+                                              _showAddOns(state.foodList[i]);
                                             }
                                           },
                                           onRemove: (i) {
@@ -517,7 +524,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                                 state.foodList[i].id,
                                                 state.foodList[i],
                                                 (cartState.placeOrder.foodCart.getQuantity(state.foodList[i].id) - 1),
-                                                cartState.placeOrder.foodCart.getSelectedPrice(state.foodList[i].id)));
+                                                state.foodList[i].price, []));
                                           },
                                           padding: _isListMode
                                               ? EdgeInsets.only(
@@ -555,97 +562,348 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
     );
   }
 
-  /*_onBackPressed(int cartItemNumber) {
-    if (cartItemNumber > 0) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              title: Text(
-                "Cancel Order?",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              content: Text(
-                "Would you like to cancel order?",
-                style: TextStyle(color: Colors.black54),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    child: Text("YES")),
-                FlatButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("NO")),
-              ],
-            );
-          },
-          barrierDismissible: true);
-    } else {
-      Navigator.pop(context);
-    }
-  }*/
-
   _showAddOns(Food food) {
-    showModalBottomSheet(
-        isScrollControlled: false,
+    Price price;
+    Map<int, AddOn> multipleAddOns = Map();
+    Map<int, List<TextEditingController>> textControllersMap = Map();
+    int quantity = 1;
+
+    BlocProvider.of<FoodOrderBloc>(context).add(GetFoodDetail(food.id));
+    showMaterialModalBottomSheet(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,
         context: context,
-        builder: (context) {
-          List<Widget> sizeWidget = List();
-          for (int i = 0; i < food.prices.length; i++) {
-            sizeWidget.add(RadioListTile<int>(
-              title: Row(
-                children: <Widget>[
-                  Expanded(child: Text(food.prices[i].size)),
-                  Text("\u20b9 " + food.getRealPrice(i).toString())
-                ],
-              ),
-              value: i,
-              onChanged: (i) {
-                Navigator.pop(context);
-                BlocProvider.of<FoodOrderBloc>(context)
-                    .add(ChangeQuantityNoPayment(widget.restaurant, food.id, food, 1, i));
-              },
-              groupValue: null,
-            ));
-          }
+        expand: false,
+        builder: (context, controller) {
+          return StatefulBuilder(
+            builder: (context, newState) {
+              return Container(
+                height: AppUtil.getScreenHeight(context) * 3 / 4,
+                width: AppUtil.getScreenWidth(context),
+                padding: EdgeInsets.only(top: 25),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                child: BlocConsumer<FoodOrderBloc, FoodOrderState>(
+                  listener: (context, cartState) {
+                    if (cartState is SuccessGetFoodDetail) {
+                      price = cartState.foodDetail.prices[0];
+                      for (int i = 0; i < cartState.foodDetail.addOnsTypes.length; i++) {
+                        if (cartState.foodDetail.addOnsTypes[i].options == "one") {
+                          textControllersMap[i] = List<TextEditingController>();
+                          for (int j = 0; j < cartState.foodDetail.addOnsTypes[i].addOns.length; j++) {
+                            TextEditingController textController = TextEditingController(text: 1.toString());
+                            textControllersMap[i].add(textController);
+                          }
+                        }
+                      }
+                    }
+                  },
+                  builder: (context, cartState) {
+                    if (cartState is LoadingGetFoodDetail) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (cartState is ErrorGetFoodDetail) {
+                      return Center(
+                        child: Text(cartState.message),
+                      );
+                    } else if (cartState is SuccessGetFoodDetail) {
+                      List<Widget> sizeWidget = List();
+                      for (int i = 0; i < cartState.foodDetail.prices.length; i++) {
+                        sizeWidget.add(RadioListTile<int>(
+                          title: Row(
+                            children: <Widget>[
+                              Expanded(child: Text(cartState.foodDetail.prices[i].size)),
+                              Text("\u20b9 " + (cartState.foodDetail.prices[i].price - food.discount).toString())
+                            ],
+                          ),
+                          value: i,
+                          onChanged: (i) {},
+                          groupValue: null,
+                        ));
+                      }
 
-          return Container(
-            padding: EdgeInsets.only(bottom: 20, top: 25),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.only(
-                        left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, top: 15, bottom: 15),
-                    decoration: BoxDecoration(color: Color(0xFFF3F3F3)),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(child: Text("SIZE")),
-                        InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
+                      List<Widget> listWidget = List();
+                      listWidget.add(
+                        SliverToBoxAdapter(
+                          child: Container(
+                            padding: EdgeInsets.only(left: horizontalPaddingDraggable, top: 10, bottom: 10),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "SIZE",
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                )),
+                            decoration: BoxDecoration(color: Colors.black12),
+                          ),
+                        ),
+                      );
+                      listWidget.add(SliverList(
+                        delegate: SliverChildBuilderDelegate((context, i) {
+                          return RadioListTile<Price>(
+                            title: Row(
+                              children: <Widget>[
+                                Expanded(child: Text(cartState.foodDetail.prices[i].size)),
+                                Text("\u20b9 " + (cartState.foodDetail.prices[i].discountedPrice).toString())
+                              ],
+                            ),
+                            value: cartState.foodDetail.prices[i],
+                            onChanged: (i) {
+                              newState(() {
+                                price = i;
+                              });
                             },
-                            child: Icon(Icons.clear))
-                      ],
-                    ),
-                  ),
-                  Column(children: sizeWidget),
-                ],
-              ),
-            ),
+                            groupValue: price,
+                          );
+                        }, childCount: cartState.foodDetail.prices.length),
+                      ));
+
+                      for (int i = 0; i < cartState.foodDetail.addOnsTypes.length; i++) {
+                        listWidget.add(SliverToBoxAdapter(
+                          child: Container(
+                            padding: EdgeInsets.only(
+                                left: horizontalPaddingDraggable,
+                                right: horizontalPaddingDraggable,
+                                top: 10,
+                                bottom: 10),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  cartState.foodDetail.addOnsTypes[i].name,
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                )),
+                            decoration: BoxDecoration(color: Colors.black12),
+                          ),
+                        ));
+                        if (cartState.foodDetail.addOnsTypes[i].options == "one") {
+                          // one is check box with number inside
+                          listWidget.add(SliverList(
+                            delegate: SliverChildBuilderDelegate((context, j) {
+                              return CheckboxListTile(
+                                onChanged: (bool) {
+                                  newState(() {
+                                    cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected = bool;
+                                  });
+                                },
+                                value: cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected,
+                                controlAffinity: ListTileControlAffinity.leading,
+                                title: Row(
+                                  children: <Widget>[
+                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Container(
+                                      width: 50,
+                                      margin: EdgeInsets.only(right: 10),
+                                      child: TextField(
+                                        textAlign: TextAlign.center,
+                                        controller: textControllersMap[i][j],
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (text) {
+                                          newState(() {
+                                            if (text == "") {
+                                              cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 0;
+                                            } else {
+                                              cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = int.parse(text);
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    Text("\u20b9 " + (cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString())
+                                  ],
+                                ),
+                              );
+                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
+                          ));
+                        } else if (cartState.foodDetail.addOnsTypes[i].options == "multiple") {
+                          // multiple is radio button
+                          listWidget.add(SliverList(
+                            delegate: SliverChildBuilderDelegate((context, j) {
+                              return RadioListTile<AddOn>(
+                                title: Row(
+                                  children: <Widget>[
+                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Text("\u20b9 " + (cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString())
+                                  ],
+                                ),
+                                value: cartState.foodDetail.addOnsTypes[i].addOns[j],
+                                onChanged: (addOn) {
+                                  newState(() {
+                                    multipleAddOns[i] = addOn;
+                                    cartState.foodDetail.addOnsTypes[i].addOns.forEach((e) {
+                                      e.isSelected = false;
+                                    });
+                                    addOn.isSelected = true;
+                                  });
+                                },
+                                groupValue: multipleAddOns[i],
+                              );
+                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
+                          ));
+                        } else if (cartState.foodDetail.addOnsTypes[i].options == "custom") {
+                          // custom is check box only
+                          listWidget.add(SliverList(
+                            delegate: SliverChildBuilderDelegate((context, j) {
+                              return CheckboxListTile(
+                                onChanged: (bool) {
+                                  newState(() {
+                                    cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected = bool;
+                                    if (bool) {
+                                      cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 1;
+                                    } else {
+                                      cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 0;
+                                    }
+                                  });
+                                },
+                                value: cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected,
+                                controlAffinity: ListTileControlAffinity.leading,
+                                title: Row(
+                                  children: <Widget>[
+                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Text("\u20b9 " + (cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString())
+                                  ],
+                                ),
+                              );
+                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
+                          ));
+                        }
+                      }
+
+                      listWidget.add(SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: kBottomNavigationBarHeight + 30,
+                        ),
+                      ));
+
+                      return Stack(
+                        children: <Widget>[
+                          CustomScrollView(
+                            controller: controller,
+                            slivers: listWidget,
+                          ),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              height: kBottomNavigationBarHeight,
+                              width: AppUtil.getScreenWidth(context),
+                              decoration: BoxDecoration(
+                                  color: Colors.white, border: Border(top: BorderSide(color: Colors.yellow[600]))),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 4,
+                                    child: price == null || quantity == 0
+                                        ? SizedBox()
+                                        : Container(
+                                            padding: EdgeInsets.only(left: 10, right: 10),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: quantity > 1
+                                                      ? InkWell(
+                                                          onTap: () {
+                                                            newState(() {
+                                                              quantity--;
+                                                            });
+                                                          },
+                                                          child: Icon(Icons.remove))
+                                                      : SizedBox(),
+                                                ),
+                                                Expanded(
+                                                  child: Center(
+                                                    child: Text(
+                                                      "$quantity",
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(fontSize: 16),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: InkWell(
+                                                      onTap: () {
+                                                        newState(() {
+                                                          quantity++;
+                                                        });
+                                                      },
+                                                      child: Icon(Icons.add)),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                  ),
+                                  Expanded(
+                                      flex: 6,
+                                      child: GestureDetector(
+                                        onTap: price == null || quantity == 0
+                                            ? () {}
+                                            : () {
+                                                //do something add item here
+
+                                                Navigator.pop(context);
+                                              },
+                                        child: SizedBox.expand(
+                                          child: Stack(
+                                            children: <Widget>[
+                                              Container(
+                                                alignment: Alignment.center,
+                                                padding: EdgeInsets.only(left: 10, right: 10),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.yellow[600],
+                                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(18))),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: <Widget>[
+                                                          SvgPicture.asset(
+                                                            "assets/rupee.svg",
+                                                            width: 15,
+                                                            height: 15,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Text(
+                                                            AppUtil.doubleRemoveZeroTrailing(_getTotalFoodDetail(
+                                                                price, quantity, cartState.foodDetail.addOnsTypes)),
+                                                            style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        "ADD ITEM",
+                                                        style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              AnimatedOpacity(
+                                                opacity: price == null || quantity == 0 ? 0.65 : 0.0,
+                                                child: Container(
+                                                  color: Colors.white,
+                                                ),
+                                                duration: Duration(milliseconds: 300),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ))
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    }
+                    return SizedBox();
+                  },
+                ),
+              );
+            },
           );
         });
   }
@@ -752,7 +1010,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                       state.result[i].id,
                                       state.result[i],
                                       (cartState.placeOrder.foodCart.getQuantity(state.result[i].id) + 1),
-                                      cartState.placeOrder.foodCart.getSelectedPrice(state.result[i].id)));
+                                      state.result[i].price, []));
                                 },
                                 onRemove: (i) {
                                   BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
@@ -760,7 +1018,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                       state.result[i].id,
                                       state.result[i],
                                       (cartState.placeOrder.foodCart.getQuantity(state.result[i].id) - 1),
-                                      cartState.placeOrder.foodCart.getSelectedPrice(state.result[i].id)));
+                                      state.result[i].price, []));
                                 },
                                 padding: EdgeInsets.only(
                                     left: horizontalPaddingDraggable - 5,
@@ -783,6 +1041,24 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
             ),
           );
         });
+  }
+
+  double _getTotalFoodDetail(Price price, int quantity, List<AddOnsType> addOnsTypes) {
+    double totalAmount = 0;
+
+    if (price == null || quantity == 0) {
+      return 0;
+    } else {
+      totalAmount = totalAmount + price.discountedPrice;
+
+      addOnsTypes.forEach((element) {
+        totalAmount = totalAmount + element.getAmount();
+      });
+
+      totalAmount = totalAmount * quantity;
+    }
+
+    return totalAmount;
   }
 }
 

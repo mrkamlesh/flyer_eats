@@ -33,7 +33,6 @@ import 'package:clients/widget/restaurant_list.dart';
 import 'package:clients/widget/shop_category_list.dart';
 import 'package:clients/classes/example_model.dart';
 import 'package:scratcher/scratcher.dart';
-import 'package:share/share.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:after_layout/after_layout.dart';
@@ -517,10 +516,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                           ),
                                     InkWell(
                                       onTap: () {
-                                        final RenderBox box = context.findRenderObject();
-                                        Share.share('flyereats.in',
-                                            subject: 'Flyer Eats',
-                                            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                                        AppUtil.share(
+                                            context, loginState.user.referralCode, loginState.user.referralDiscount);
                                       },
                                       child: Container(
                                         margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
@@ -920,6 +917,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
   void _showReviewSheet(String token, String orderId) {
     showModalBottomSheet(
         isScrollControlled: true,
+        enableDrag: false,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,
@@ -1158,6 +1156,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
     double opacity = 0.0;
     showModalBottomSheet(
         isScrollControlled: true,
+        enableDrag: false,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,

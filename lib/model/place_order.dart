@@ -211,8 +211,7 @@ class PlaceOrder {
       Map<String, dynamic> cartItem = Map();
       cartItem['item_id'] = item.food.id;
       cartItem['qty'] = item.quantity;
-      cartItem['price'] =
-          item.food.prices[item.selectedPrice].price.toString() + "|" + item.food.prices[item.selectedPrice].size;
+      cartItem['price'] = item.price.price.toString() + "|" + item.food.price.size;
       cartItem['sub_item'] = [];
       cartItem['cooking_ref'] = [];
       cartItem['ingredients'] = [];
@@ -232,7 +231,7 @@ class PlaceOrder {
     double subTotal = 0;
 
     foodCart.cart.forEach((key, item) {
-      subTotal = subTotal + item.quantity * item.food.getRealPrice(item.selectedPrice);
+      subTotal = subTotal + item.quantity * item.food.getRealPrice();
     });
 
     return subTotal;

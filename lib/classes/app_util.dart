@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:html/parser.dart';
+import 'package:share/share.dart';
 
 class AppUtil {
   static double getScreenHeight(context) {
@@ -47,8 +48,6 @@ class AppUtil {
         return;
       }
     }
-
-
   }
 
   static String parseHtmlString(String htmlString) {
@@ -60,9 +59,14 @@ class AppUtil {
   }
 
   static String doubleRemoveZeroTrailing(double value) {
-    return value
-        .toStringAsFixed(2)
-        .toString()
-        .replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+    return value.toStringAsFixed(2).toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+  }
+
+  static share(BuildContext context, String referralCode, String referralAmount) {
+    final RenderBox box = context.findRenderObject();
+    Share.share(
+        'Install the FLYER EATS app now http://flyereats.app.link/mOvNgVSbm7 Use Referral code in Signup page - $referralCode We will give you $referralAmount & your buddy $referralAmount in your wallet after your orders above ₹99',
+        subject: 'Flyer Eats',
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }
 }

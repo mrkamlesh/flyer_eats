@@ -625,6 +625,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   void _showReviewSheet() {
     showModalBottomSheet(
         isScrollControlled: true,
+        enableDrag: false,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,
@@ -840,7 +841,7 @@ class FoodCartItemWidget extends StatelessWidget {
                     " ( " +
                     item.quantity.toString() +
                     " X \u20b9 " +
-                    AppUtil.doubleRemoveZeroTrailing(item.food.getRealPrice(0)) +
+                    AppUtil.doubleRemoveZeroTrailing(item.food.getRealPrice()) +
                     " )",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
@@ -848,7 +849,7 @@ class FoodCartItemWidget extends StatelessWidget {
             Expanded(
                 flex: 3,
                 child: Text(
-                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing((item.quantity * item.food.getRealPrice(0))),
+                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing((item.quantity * item.food.getRealPrice())),
                   textAlign: TextAlign.end,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ))

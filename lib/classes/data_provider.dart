@@ -975,6 +975,25 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> getFoodDetail(String foodId) async {
+    String url = "${developmentServerUrl}mobileapp/apiRest/getItemDetails?json=true&api_key=flyereats";
+
+    var formData = {
+      "item_id": foodId,
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(url, data: FormData.fromMap(formData), options: Options(contentType: 'JSON'));
+
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   dynamic _returnResponse(var response) {
     switch (response.statusCode) {
       case 200:

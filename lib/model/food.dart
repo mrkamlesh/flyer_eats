@@ -10,9 +10,10 @@ class Food {
   final String image;
   final bool isAvailable;
   final MenuCategory category;
-  final List<Price> prices;
+  final Price price;
   final double discount;
   final String badge;
+  final bool isSingleItem;
 
   Food({
     this.id,
@@ -21,17 +22,15 @@ class Food {
     this.image,
     this.isAvailable,
     this.category,
-    this.prices,
+    this.price,
     this.discount,
     this.badge,
+    this.isSingleItem,
   });
 
   factory Food.fromJson(Map<String, dynamic> parsedJson) {
     bool available = parsedJson['not_available'] == "1" ? true : false;
-    var priceJson = parsedJson['prices'] as List;
-    List<Price> priceList = priceJson.map((i) {
-      return Price.fromJson(i);
-    }).toList();
+    bool isSingleItem = parsedJson['single_item'] == 2 ? true : false;
 
     return Food(
         id: parsedJson['item_id'],
@@ -39,10 +38,15 @@ class Food {
         description: parsedJson['item_description'],
         image: parsedJson['photo'],
         isAvailable: available,
-        prices: priceList,
+        price: Price.fromJson(parsedJson['prices'][0]),
         badge: parsedJson['badge'],
+        isSingleItem: isSingleItem,
         discount: parsedJson['discount'] != "" ? double.parse(parsedJson['discount']) : 0,
         category: MenuCategory(parsedJson['cat_id'], parsedJson['category_name']));
+  }
+
+  double getRealPrice() {
+    return this.price.price - this.discount;
   }
 
   Color getBadgeColor() {
@@ -56,21 +60,5 @@ class Food {
       default:
         return primary1;
     }
-  }
-
-  double getRealPrice(int index) {
-    return this.prices[index].price - this.discount;
-  }
-
-  Food changeSelectedPrice(int index) {
-    return Food(
-        id: this.id,
-        title: this.title,
-        category: this.category,
-        description: this.description,
-        discount: this.discount,
-        image: this.image,
-        isAvailable: this.isAvailable,
-        prices: this.prices);
   }
 }

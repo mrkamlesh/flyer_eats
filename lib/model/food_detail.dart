@@ -11,7 +11,7 @@ class FoodDetail {
   factory FoodDetail.fromJson(Map<String, dynamic> parsedJson) {
     var pricesJson = parsedJson['prices'] as List;
     List<Price> prices = pricesJson.map((i) {
-      return Price.fromJsonFoodDetail(i);
+      return Price.fromJson(i);
     }).toList();
 
     var addOnsTypesJson = parsedJson['addon_item'] as List;

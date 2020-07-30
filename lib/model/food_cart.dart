@@ -1,56 +1,153 @@
+import 'dart:convert';
+
 import 'package:clients/model/add_on.dart';
 import 'package:clients/model/food.dart';
 import 'package:clients/model/price.dart';
 
 class FoodCart {
-  final Map<String, FoodCartItem> cart;
+  final Map<String, FoodCartItem> singleItemCart;
+  final List<FoodCartItem> multipleItemCart;
 
-  FoodCart(this.cart);
+  FoodCart(this.singleItemCart, this.multipleItemCart);
 
-  bool isFoodExist(String id) {
-    return cart.containsKey(id);
+  bool isSingleItemFoodExist(String id) {
+    return singleItemCart.containsKey(id);
   }
 
-  void addFoodToCart(String id, Food food, int quantity, Price price, List<AddOn> addOns) {
-    cart[id] = FoodCartItem(id, food, quantity, price, addOns);
+  void addSingleItemFoodToCart(String id, Food food, int quantity, Price price, List<AddOn> addOns) {
+    singleItemCart[id] = FoodCartItem(id, food, quantity, price, addOns);
   }
 
-  int getQuantity(String id) {
-    if (!isFoodExist(id)) {
+  int getSingleItemFoodQuantity(String id) {
+    if (!isSingleItemFoodExist(id)) {
       return 0;
     } else {
-      return cart[id].quantity;
+      return singleItemCart[id].quantity;
     }
   }
 
-  void removeFood(String id) {
-    if (isFoodExist(id)) {
-      cart.remove(id);
+  void removeSingleItemFood(String id) {
+    if (isSingleItemFoodExist(id)) {
+      singleItemCart.remove(id);
     }
   }
 
-  void changeQuantity(String id, Food food, int quantity, Price price, List<AddOn> addOns) {
-    if (!isFoodExist(id)) {
-      addFoodToCart(id, food, 1, price, addOns);
+  void changeSingleItemFoodQuantity(String id, Food food, int quantity, Price price, List<AddOn> addOns) {
+    if (!isSingleItemFoodExist(id)) {
+      addSingleItemFoodToCart(id, food, 1, price, addOns);
     } else {
-      cart[id].quantity = quantity;
+      singleItemCart[id].quantity = quantity;
       if (quantity <= 0) {
-        cart.remove(id);
+        singleItemCart.remove(id);
       }
+    }
+  }
+
+  void addMultipleItemFoodToCart(Food food, int quantity, Price price, List<AddOn> addOns) {
+    multipleItemCart.add(FoodCartItem("", food, quantity, price, addOns));
+  }
+
+  void removeMultipleItemFoodFromCart(Food food) {
+    int removeIndex = multipleItemCart.lastIndexWhere((element) {
+      if (element.food.id == food.id) {
+        return true;
+      }
+      return false;
+    });
+
+    multipleItemCart.removeAt(removeIndex);
+  }
+
+  int getMultipleItemFoodQuantity(String foodId) {
+    int total = 0;
+    multipleItemCart.forEach((element) {
+      if (element.food.id == foodId) {
+        total = total + element.quantity;
+      }
+    });
+
+    return total;
+  }
+
+  int getFoodQuantity(Food food) {
+    if (food.isSingleItem) {
+      return getSingleItemFoodQuantity(food.id);
+    } else {
+      return getMultipleItemFoodQuantity(food.id);
     }
   }
 
   double getAmount() {
     double amount = 0;
-    this.cart.forEach((i, item) {
-      amount = amount + (item.price.price - item.food.discount) * item.quantity;
+
+    this.getAllFoodCartItem().forEach((foodCartItem) {
+      amount = amount + foodCartItem.food.getRealPrice() * foodCartItem.quantity;
+
+      foodCartItem.addOns.forEach((addOn) {
+        amount = amount + addOn.price * addOn.quantity;
+      });
     });
 
     return amount;
   }
 
   int cartItemNumber() {
-    return this.cart.length;
+    return this.getAllFoodCartItem().length;
+  }
+
+  List<FoodCartItem> getAllFoodCartItem() {
+    return this.singleItemCart.entries.map((e) => e.value).toList() + this.multipleItemCart;
+  }
+
+  String cartToString() {
+    String cartString;
+
+    List<Map<String, dynamic>> list = List();
+
+    this.getAllFoodCartItem().forEach((foodCartItem) {
+      Map<String, dynamic> cartItem = Map();
+      cartItem['item_id'] = foodCartItem.food.id;
+      cartItem['qty'] = foodCartItem.quantity;
+      cartItem['price'] = foodCartItem.price.price.toString() + "|" + foodCartItem.food.price.size;
+      //cartItem['sub_item'] = List<Map<String, dynamic>>();
+      List<Map<String, dynamic>> addOnList = List();
+      foodCartItem.addOns.forEach((addOn) {
+        Map<String, dynamic> addOnMap = Map();
+        addOnMap['subcat_id'] = addOn.addOnsTypeId;
+        addOnMap['value'] = addOn.id + "|" + addOn.price.toString() + "|" + addOn.name;
+        addOnMap['qty'] = "itemqty"; //addOn.quantity;
+        addOnMap['price'] = addOn.price;
+        addOnList.add(addOnMap);
+      });
+
+      cartItem['sub_item'] = addOnList;
+      cartItem['cooking_ref'] = [];
+      cartItem['ingredients'] = [];
+      cartItem['order_notes'] = '';
+      cartItem['discount'] = foodCartItem.food.discount.toString();
+      cartItem['category_id'] = foodCartItem.food.category.id;
+
+      list.add(cartItem);
+    });
+
+    this.singleItemCart.forEach((key, item) {
+      Map<String, dynamic> cartItem = Map();
+      cartItem['item_id'] = item.food.id;
+      cartItem['qty'] = item.quantity;
+      cartItem['price'] = item.price.price.toString() + "|" + item.food.price.size;
+      cartItem['sub_item'] = Map<String, dynamic>();
+      cartItem['cooking_ref'] = [];
+      cartItem['ingredients'] = [];
+      cartItem['order_notes'] = '';
+      cartItem['discount'] = item.food.discount.toString();
+      cartItem['category_id'] = item.food.category.id;
+
+      list.add(cartItem);
+    });
+
+    cartString = jsonEncode(list);
+
+    return cartString;
   }
 }
 

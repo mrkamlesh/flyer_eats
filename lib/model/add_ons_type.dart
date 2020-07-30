@@ -11,7 +11,7 @@ class AddOnsType {
   factory AddOnsType.fromJson(Map<String, dynamic> parsedJson) {
     var adOnsJson = parsedJson['sub_item'] as List;
     List<AddOn> list = adOnsJson.map((i) {
-      return AddOn.fromJson(i);
+      return AddOn.fromJson(i, parsedJson['subcat_id']);
     }).toList();
 
     return AddOnsType(
@@ -33,11 +33,11 @@ class AddOnsType {
     return amount;
   }
 
-  List<AddOn> getSelectedAddOn(){
+  List<AddOn> getSelectedAddOn() {
     List<AddOn> list = List();
 
     this.addOns.forEach((e) {
-      if (e.isSelected){
+      if (e.isSelected) {
         list.add(e);
       }
     });

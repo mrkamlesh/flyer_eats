@@ -35,7 +35,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapChangeQuantityWithPaymentToState(event.id, event.food, event.quantity, event.price, event.addOns);
     } else if (event is ChangeQuantityNoPayment) {
       yield* mapChangeQuantityNoPaymentToState(
-          event.restaurant, event.id, event.food, event.quantity, event.price, event.addOns);
+          event.restaurant, event.id, event.food, event.quantity, event.price, event.addOns, event.isIncrease);
     } else if (event is ChangeInstruction) {
       yield* mapChangeInstructionToState(event.instruction);
     } else if (event is GetPaymentOptions) {
@@ -75,9 +75,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   Stream<FoodOrderState> mapChangeQuantityWithPaymentToState(
       String id, Food food, int quantity, Price price, List<AddOn> addOns) async* {
     FoodCart newCart = state.placeOrder.foodCart;
-    newCart.changeQuantity(id, food, quantity, price, addOns);
+    newCart.changeSingleItemFoodQuantity(id, food, quantity, price, addOns);
 
-    if (newCart.cart.length > 0) {
+    if (newCart.singleItemCart.length > 0) {
       yield FoodOrderState(placeOrder: state.placeOrder.copyWith(foodCart: newCart));
       add(GetPaymentOptions(state.placeOrder));
     } else {
@@ -85,15 +85,24 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     }
   }
 
-  Stream<FoodOrderState> mapChangeQuantityNoPaymentToState(
-      Restaurant selectedRestaurant, String id, Food food, int quantity, Price price, List<AddOn> addOns) async* {
+  Stream<FoodOrderState> mapChangeQuantityNoPaymentToState(Restaurant selectedRestaurant, String id, Food food,
+      int quantity, Price price, List<AddOn> addOns, bool isIncrease) async* {
     //yield FoodOrderState(placeOrder: state.placeOrder);
 
     if (selectedRestaurant.id == state.placeOrder.restaurant.id || state.placeOrder.restaurant.id == null) {
       FoodCart newCart = state.placeOrder.foodCart;
-      newCart.changeQuantity(id, food, quantity, price, addOns);
 
-      if (newCart.cart.length > 0) {
+      if (food.isSingleItem) {
+        newCart.changeSingleItemFoodQuantity(id, food, quantity, price, addOns);
+      } else {
+        if (isIncrease) {
+          newCart.addMultipleItemFoodToCart(food, quantity, price, addOns);
+        } else {
+          newCart.removeMultipleItemFoodFromCart(food);
+        }
+      }
+
+      if (newCart.cartItemNumber() > 0) {
         yield CartChangeState(placeOrder: state.placeOrder.copyWith(foodCart: newCart, restaurant: selectedRestaurant));
       } else {
         yield NoItemsInCart();

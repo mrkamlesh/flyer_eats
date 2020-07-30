@@ -74,10 +74,10 @@ class DetailOrder {
   }
 
   factory DetailOrder.fromJson(Map<String, dynamic> parsedJson) {
-    FoodCart foodCart = new FoodCart(Map<String, FoodCartItem>());
+    FoodCart foodCart = new FoodCart(Map<String, FoodCartItem>(), List());
     var foodCartItemJson = parsedJson['html']['item'] as List;
     for (int i = 0; i < foodCartItemJson.length; i++) {
-      foodCart.addFoodToCart(
+      foodCart.addSingleItemFoodToCart(
           foodCartItemJson[i]['item_id'] + i.toString(),
           Food(
             id: foodCartItemJson[i]['id'],
@@ -93,7 +93,7 @@ class DetailOrder {
 
     double discountTotal = 0;
     double totalOrder = 0;
-    foodCart.cart.forEach((key, item) {
+    foodCart.singleItemCart.forEach((key, item) {
       discountTotal = discountTotal + item.quantity * item.food.discount;
       totalOrder = totalOrder + item.quantity * item.food.price.price;
     });

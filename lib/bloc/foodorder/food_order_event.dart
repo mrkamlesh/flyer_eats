@@ -98,11 +98,12 @@ class ChangeQuantityNoPayment extends FoodOrderEvent {
   final int quantity;
   final Price price;
   final List<AddOn> addOns;
+  final bool isIncrease;
 
-  const ChangeQuantityNoPayment(this.restaurant, this.id, this.food, this.quantity, this.price, this.addOns);
+  const ChangeQuantityNoPayment(this.restaurant, this.id, this.food, this.quantity, this.price, this.addOns, this.isIncrease);
 
   @override
-  List<Object> get props => [restaurant, id, food, quantity, price, addOns];
+  List<Object> get props => [restaurant, id, food, quantity, price, addOns, isIncrease];
 }
 
 class PlaceOrderEvent extends FoodOrderEvent {

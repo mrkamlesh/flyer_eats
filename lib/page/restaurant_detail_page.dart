@@ -112,7 +112,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                     cartState.tempFood,
                                     cartState.tempQuantity,
                                     cartState.tempPrice,
-                                    cartState.tempAddOns));
+                                    cartState.tempAddOns,
+                                    true));
 
                               Navigator.pop(context);
                             },
@@ -511,8 +512,11 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                                   widget.restaurant,
                                                   state.foodList[i].id,
                                                   state.foodList[i],
-                                                  (cartState.placeOrder.foodCart.getQuantity(state.foodList[i].id) + 1),
-                                                  state.foodList[i].price, []));
+                                                  (cartState.placeOrder.foodCart.getFoodQuantity(state.foodList[i]) +
+                                                      1),
+                                                  state.foodList[i].price,
+                                                  [],
+                                                  true));
                                             } else {
                                               _showAddOns(state.foodList[i]);
                                             }
@@ -523,8 +527,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                                 widget.restaurant,
                                                 state.foodList[i].id,
                                                 state.foodList[i],
-                                                (cartState.placeOrder.foodCart.getQuantity(state.foodList[i].id) - 1),
-                                                state.foodList[i].price, []));
+                                                (cartState.placeOrder.foodCart.getFoodQuantity(state.foodList[i]) - 1),
+                                                state.foodList[i].price,
+                                                [],
+                                                false));
                                           },
                                           padding: _isListMode
                                               ? EdgeInsets.only(
@@ -608,21 +614,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                         child: Text(cartState.message),
                       );
                     } else if (cartState is SuccessGetFoodDetail) {
-                      List<Widget> sizeWidget = List();
-                      for (int i = 0; i < cartState.foodDetail.prices.length; i++) {
-                        sizeWidget.add(RadioListTile<int>(
-                          title: Row(
-                            children: <Widget>[
-                              Expanded(child: Text(cartState.foodDetail.prices[i].size)),
-                              Text("\u20b9 " + (cartState.foodDetail.prices[i].price - food.discount).toString())
-                            ],
-                          ),
-                          value: i,
-                          onChanged: (i) {},
-                          groupValue: null,
-                        ));
-                      }
-
                       List<Widget> listWidget = List();
                       listWidget.add(
                         SliverToBoxAdapter(
@@ -837,8 +828,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                             ? () {}
                                             : () {
                                                 //do something add item here
-
                                                 Navigator.pop(context);
+                                                BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                                    widget.restaurant,
+                                                    "",
+                                                    food,
+                                                    quantity,
+                                                    price,
+                                                    _getAddOns(cartState.foodDetail.addOnsTypes),
+                                                    true));
                                               },
                                         child: SizedBox.expand(
                                           child: Stack(
@@ -1009,16 +1007,20 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                       widget.restaurant,
                                       state.result[i].id,
                                       state.result[i],
-                                      (cartState.placeOrder.foodCart.getQuantity(state.result[i].id) + 1),
-                                      state.result[i].price, []));
+                                      (cartState.placeOrder.foodCart.getFoodQuantity(state.result[i]) + 1),
+                                      state.result[i].price,
+                                      [],
+                                      true));
                                 },
                                 onRemove: (i) {
                                   BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
                                       widget.restaurant,
                                       state.result[i].id,
                                       state.result[i],
-                                      (cartState.placeOrder.foodCart.getQuantity(state.result[i].id) - 1),
-                                      state.result[i].price, []));
+                                      (cartState.placeOrder.foodCart.getFoodQuantity(state.result[i]) - 1),
+                                      state.result[i].price,
+                                      [],
+                                      false));
                                 },
                                 padding: EdgeInsets.only(
                                     left: horizontalPaddingDraggable - 5,
@@ -1059,6 +1061,16 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
     }
 
     return totalAmount;
+  }
+
+  List<AddOn> _getAddOns(List<AddOnsType> addOnsTypes) {
+    List<AddOn> list = List();
+
+    addOnsTypes.forEach((element) {
+      list = list + element.getSelectedAddOn();
+    });
+
+    return list;
   }
 }
 

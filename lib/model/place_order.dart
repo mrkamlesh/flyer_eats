@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:clients/model/address.dart';
 import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/payment_method.dart';
@@ -198,49 +196,14 @@ class PlaceOrder {
     return list;
   }
 
-  String cartToString() {
-    if (foodCart.cart.length == 0) {
-      return "";
-    }
-
-    String cartString;
-
-    List<Map<String, dynamic>> list = List();
-
-    foodCart.cart.forEach((key, item) {
-      Map<String, dynamic> cartItem = Map();
-      cartItem['item_id'] = item.food.id;
-      cartItem['qty'] = item.quantity;
-      cartItem['price'] = item.price.price.toString() + "|" + item.food.price.size;
-      cartItem['sub_item'] = [];
-      cartItem['cooking_ref'] = [];
-      cartItem['ingredients'] = [];
-      cartItem['order_notes'] = '';
-      cartItem['discount'] = item.food.discount.toString();
-      cartItem['category_id'] = item.food.category.id;
-
-      list.add(cartItem);
-    });
-
-    cartString = jsonEncode(list);
-
-    return cartString;
-  }
-
   double subTotal() {
-    double subTotal = 0;
-
-    foodCart.cart.forEach((key, item) {
-      subTotal = subTotal + item.quantity * item.food.getRealPrice();
-    });
-
-    return subTotal;
+    return this.foodCart.getAmount();
   }
 
   double getDiscountFoodTotal() {
     double discountTotal = 0;
 
-    foodCart.cart.forEach((key, item) {
+    foodCart.getAllFoodCartItem().forEach((item) {
       discountTotal = discountTotal + item.quantity * item.food.discount;
     });
 

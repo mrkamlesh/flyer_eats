@@ -10,22 +10,11 @@ class Price {
 
   factory Price.fromJson(Map<String, dynamic> parsedJson) {
     return Price(
-      price: double.parse(parsedJson['price'].toString()),
-      formattedPrice: parsedJson['formatted_price'],
-      formattedDiscountPrice: parsedJson['price_discount_pretty'],
-      size: parsedJson['size'],
-      sizeId: parsedJson['size_id'].toString(),
-    );
-  }
-
-  factory Price.fromJsonFoodDetail(Map<String, dynamic> parsedJson) {
-    return Price(
-      price: double.parse(parsedJson['price'].toString()),
-      formattedPrice: parsedJson['formatted_price'],
-      formattedDiscountPrice: parsedJson['price_discount_pretty'],
-      size: parsedJson['size'],
-      sizeId: parsedJson['size_id'].toString(),
-      discountedPrice: double.parse(parsedJson['discounted_price'].toString()),
-    );
+        price: double.parse(parsedJson['price'].toString()),
+        formattedPrice: parsedJson['formatted_price'],
+        formattedDiscountPrice: parsedJson['price_discount_pretty'],
+        size: parsedJson['size'],
+        sizeId: parsedJson['size_id'].toString(),
+        discountedPrice: double.parse(parsedJson['discounted_price'].toString()));
   }
 }

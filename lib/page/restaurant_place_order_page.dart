@@ -12,7 +12,6 @@ import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/address.dart';
-import 'package:clients/model/food.dart';
 import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/model/place_order.dart';
@@ -213,7 +212,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                       leading: "assets/back.svg",
                                       title: state.placeOrder.restaurant.name +
                                           " (" +
-                                          state.placeOrder.foodCart.cart.length.toString() +
+                                          state.placeOrder.foodCart.singleItemCart.length.toString() +
                                           ")",
                                       onTapLeading: () {
                                         Navigator.pop(context);
@@ -290,6 +289,54 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                           return SliverToBoxAdapter(
                                             child: Column(
                                               children: <Widget>[
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: horizontalPaddingDraggable,
+                                                      horizontal: horizontalPaddingDraggable),
+                                                  margin: EdgeInsets.only(
+                                                      left: horizontalPaddingDraggable,
+                                                      right: horizontalPaddingDraggable,
+                                                      bottom: 20),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(18),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: shadow,
+                                                        blurRadius: 7,
+                                                        spreadRadius: -3,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "DELIVERY INSTRUCTION",
+                                                        style: TextStyle(fontSize: 16),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Divider(
+                                                        color: Colors.black12,
+                                                      ),
+                                                      TextField(
+                                                        onChanged: (value) {
+                                                          BlocProvider.of<FoodOrderBloc>(context)
+                                                              .add(ChangeInstruction(value));
+                                                        },
+                                                        maxLines: 2,
+                                                        decoration: InputDecoration(
+                                                            contentPadding:
+                                                                EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                                                            hintText: "Enter your instruction here",
+                                                            hintStyle: TextStyle(fontSize: 12),
+                                                            border: InputBorder.none),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                                 state.placeOrder.voucher.id == null
                                                     ? GestureDetector(
                                                         onTap: () async {
@@ -465,7 +512,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                   child: Column(
                                                     children: <Widget>[
                                                       OrderRowItem(
-                                                        title: "ORDER",
+                                                        title: "Order",
                                                         color: Colors.black,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.subTotal()),
@@ -477,13 +524,13 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                             state.placeOrder.taxCharges),
                                                       ),
                                                       OrderRowItem(
-                                                        title: "PACKAGING",
+                                                        title: "Packaging",
                                                         color: Colors.black,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.packagingCharges),
                                                       ),
                                                       OrderRowItem(
-                                                        title: "DELIVERY FEE",
+                                                        title: "Delivery Fee",
                                                         color: Colors.black,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.deliveryCharges),
@@ -501,7 +548,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                             state.placeOrder.discountOrder),
                                                       ),
                                                       OrderRowItem(
-                                                        title: "COUPON/VOUCHER",
+                                                        title: "Coupon/Voucher",
                                                         color: Colors.green,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.voucher.amount),
@@ -514,58 +561,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                         ),
                                                       ),
                                                       OrderRowItem(
-                                                          title: "TOTAL",
+                                                          title: "TOTAL ORDER AMOUNT",
                                                           color: Colors.black,
                                                           amount: AppUtil.doubleRemoveZeroTrailing(
                                                               state.placeOrder.getTotal())),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: horizontalPaddingDraggable,
-                                                      horizontal: horizontalPaddingDraggable),
-                                                  margin: EdgeInsets.only(
-                                                      left: horizontalPaddingDraggable,
-                                                      right: horizontalPaddingDraggable,
-                                                      bottom: 20),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(18),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: shadow,
-                                                        blurRadius: 7,
-                                                        spreadRadius: -3,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        "DELIVERY INSTRUCTION",
-                                                        style: TextStyle(fontSize: 16),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      Divider(
-                                                        color: Colors.black12,
-                                                      ),
-                                                      TextField(
-                                                        onChanged: (value) {
-                                                          BlocProvider.of<FoodOrderBloc>(context)
-                                                              .add(ChangeInstruction(value));
-                                                        },
-                                                        maxLines: 2,
-                                                        decoration: InputDecoration(
-                                                            contentPadding:
-                                                                EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                                                            hintText: "Enter your instruction here",
-                                                            hintStyle: TextStyle(fontSize: 12),
-                                                            border: InputBorder.none),
-                                                      ),
                                                     ],
                                                   ),
                                                 ),
@@ -1039,7 +1038,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
   }
 
   void _onBackPressed(PlaceOrder placeOrder) {
-    Navigator.pop(context, placeOrder == null ? FoodCart(Map()) : placeOrder.foodCart);
+    Navigator.pop(context, placeOrder == null ? FoodCart(Map(), List()) : placeOrder.foodCart);
   }
 }
 
@@ -1097,10 +1096,10 @@ class DeliveryOptions extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 80;
+  double get maxExtent => 100;
 
   @override
-  double get minExtent => 80;
+  double get minExtent => 100;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
@@ -1149,7 +1148,7 @@ class RadioCustom extends StatelessWidget {
                 ),
                 Text(
                   subtitle,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 10, color: Colors.black45),
                 ),
@@ -1226,8 +1225,6 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
   Widget build(BuildContext context) {
     return BlocBuilder<FoodOrderBloc, FoodOrderState>(
       builder: (context, state) {
-        List<Food> foodList = List();
-        state.placeOrder.foodCart.cart.forEach((id, food) => foodList.add(food.food));
         return SliverPadding(
           padding: EdgeInsets.only(
               top: 20, bottom: 10, right: horizontalPaddingDraggable - 5, left: horizontalPaddingDraggable - 5),
@@ -1238,16 +1235,23 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                 index: i,
                 scale: _scaleAnimation,
                 selectedIndex: _selectedFood,
-                food: foodList[i],
-                quantity: state.placeOrder.foodCart.getQuantity(foodList[i].id),
+                foodCartItem: state.placeOrder.foodCart.getAllFoodCartItem()[i],
+                quantity:
+                    state.placeOrder.foodCart.getFoodQuantity(state.placeOrder.foodCart.getAllFoodCartItem()[i].food),
                 onTapRemove: () {
                   setState(() {
                     _selectedFood = i;
                   });
                   _animationController.forward().orCancel.whenComplete(() {
                     _animationController.reverse().orCancel.whenComplete(() {
-                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(foodList[i].id, foodList[i],
-                          (state.placeOrder.foodCart.getQuantity(foodList[i].id) - 1), foodList[i].price, []));
+                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(
+                          state.placeOrder.foodCart.getAllFoodCartItem()[i].food.id,
+                          state.placeOrder.foodCart.getAllFoodCartItem()[i].food,
+                          (state.placeOrder.foodCart
+                                  .getFoodQuantity(state.placeOrder.foodCart.getAllFoodCartItem()[i].food) -
+                              1),
+                          state.placeOrder.foodCart.getAllFoodCartItem()[i].food.price,
+                          []));
                     });
                   });
                 },
@@ -1257,14 +1261,20 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                   });
                   _animationController.forward().orCancel.whenComplete(() {
                     _animationController.reverse().orCancel.whenComplete(() {
-                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(foodList[i].id, foodList[i],
-                          (state.placeOrder.foodCart.getQuantity(foodList[i].id) + 1), foodList[i].price, []));
+                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(
+                          state.placeOrder.foodCart.getAllFoodCartItem()[i].food.id,
+                          state.placeOrder.foodCart.getAllFoodCartItem()[i].food,
+                          (state.placeOrder.foodCart
+                                  .getFoodQuantity(state.placeOrder.foodCart.getAllFoodCartItem()[i].food) +
+                              1),
+                          state.placeOrder.foodCart.getAllFoodCartItem()[i].food.price,
+                          []));
                     });
                   });
                 },
               );
             },
-            childCount: foodList.length,
+            childCount: state.placeOrder.foodCart.getAllFoodCartItem().length,
           )),
         );
       },
@@ -1273,7 +1283,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
 }
 
 class FoodItemPlaceOrder extends StatelessWidget {
-  final Food food;
+  final FoodCartItem foodCartItem;
   final int index;
   final int selectedIndex;
   final Function onTapAdd;
@@ -1283,7 +1293,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
 
   const FoodItemPlaceOrder({
     Key key,
-    this.food,
+    this.foodCartItem,
     this.index,
     this.selectedIndex,
     this.onTapAdd,
@@ -1387,7 +1397,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 child: CachedNetworkImage(
-                  imageUrl: food.image,
+                  imageUrl: foodCartItem.food.image,
                   height: 125,
                   width: 125,
                   fit: BoxFit.cover,
@@ -1425,14 +1435,16 @@ class FoodItemPlaceOrder extends StatelessWidget {
                                 Container(
                                   margin: EdgeInsets.only(left: 10, right: 10, top: 3),
                                   child: SvgPicture.asset(
-                                    food.isAvailable ? "assets/box_circle.svg" : "assets/box_circle_red.svg",
+                                    foodCartItem.food.isAvailable
+                                        ? "assets/box_circle.svg"
+                                        : "assets/box_circle_red.svg",
                                     width: 12,
                                     height: 12,
                                   ),
                                 ),
                                 Expanded(
                                   child: Text(
-                                    food.title,
+                                    foodCartItem.food.title + " " + foodCartItem.price.size,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
@@ -1441,11 +1453,11 @@ class FoodItemPlaceOrder extends StatelessWidget {
                               ],
                             ),
                           ),
-                          food.description != null && food.description != ""
+                          foodCartItem.food.description != null && foodCartItem.food.description != ""
                               ? Container(
                                   margin: EdgeInsets.only(top: 5, bottom: 10, right: 10, left: 32),
                                   child: Text(
-                                    food.description,
+                                    foodCartItem.food.description,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(color: Colors.black54, fontSize: 10),
@@ -1462,47 +1474,46 @@ class FoodItemPlaceOrder extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                food.discount > 0
-                                    ? Text(
-                                        "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price.price),
-                                        style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
-                                      )
-                                    : SizedBox(),
-                                Row(
-                                  children: <Widget>[
-                                    SvgPicture.asset(
-                                      "assets/rupee.svg",
-                                      height: 11,
-                                      width: 11,
-                                      color: Colors.black,
-                                    ),
-                                    SizedBox(
-                                      width: 3,
-                                    ),
-                                    Text(
-                                      "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                          Expanded(
+                            flex: 9,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  /*foodCartItem.food.discount > 0
+                                      ? Text(
+                                          "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(foodCartItem.food.price.price),
+                                          style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                        )
+                                      : SizedBox(),*/
+                                  Row(
+                                    children: <Widget>[
+                                      SvgPicture.asset(
+                                        "assets/rupee.svg",
+                                        height: 11,
+                                        width: 11,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Text(
+                                        "${AppUtil.doubleRemoveZeroTrailing(foodCartItem.food.getRealPrice())}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          Expanded(
-                            flex: 2,
-                            child: SizedBox(),
-                          ),
                           quantity == 0
-                              ? Expanded(flex: 6, child: addButton)
-                              : Expanded(flex: 6, child: changeQuantityButton),
+                              ? Expanded(flex: 11, child: addButton)
+                              : Expanded(flex: 11, child: changeQuantityButton),
                         ],
                       ),
                     ),
@@ -1623,7 +1634,7 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                     Expanded(child: Container()),
                     GestureDetector(
                       onTap: () {
-                        _showChangeAddressSheet();
+                        _showChangeAddressSheet(BlocProvider.of<LoginBloc>(context));
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
@@ -1698,7 +1709,7 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
           );
   }
 
-  void _showChangeAddressSheet() {
+  void _showChangeAddressSheet(LoginBloc loginBloc) {
     BlocProvider.of<AddressBloc>(context).add(OpenListAddress(widget.token));
 
     showModalBottomSheet(
@@ -1763,11 +1774,18 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                       Positioned(
                           bottom: 0,
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return AddressPage();
+                              Address address = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return AddressPage(
+                                  forcedDefault: true,
+                                );
                               }));
+
+                              if (address != null) {
+                                loginBloc.add(UpdateDefaultAddress(address));
+                                widget.foodOrderBloc.add(ChangeAddress(address));
+                              }
                             },
                             child: Container(
                               width: AppUtil.getScreenWidth(context),

@@ -224,7 +224,7 @@ class DataProvider {
       "merchant_id": order.restaurant.id,
       "client_token": order.user.token,
       "transaction_type": order.transactionType,
-      "cart": order.cartToString(),
+      "cart": order.foodCart.cartToString(),
     };
 
     var responseJson;
@@ -248,7 +248,7 @@ class DataProvider {
       "merchant_id": order.restaurant.id,
       "client_token": order.user.token,
       "transaction_type": order.transactionType,
-      "cart": order.cartToString(),
+      "cart": order.foodCart.cartToString(),
       "formatted_address": order.address.address,
       "google_lat": order.address.latitude,
       "google_lng": order.address.longitude,

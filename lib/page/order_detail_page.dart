@@ -583,7 +583,7 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
   List<Widget> _foodCartWidgets(FoodCart cart) {
     List<Widget> widgets = List();
 
-    cart.cart.forEach((key, value) {
+    cart.singleItemCart.forEach((key, value) {
       widgets.add(FoodCartItemWidget(
         item: value,
       ));

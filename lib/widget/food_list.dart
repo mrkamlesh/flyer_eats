@@ -72,7 +72,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                 scale: _scaleAnimation,
                 selectedIndex: _selectedFood,
                 food: widget.listFood[i],
-                quantity: widget.cart.getQuantity(widget.listFood[i].id),
+                quantity: widget.cart.getFoodQuantity(widget.listFood[i]),
                 onTapRemove: () {
                   _onTapRemove(i);
                 },
@@ -93,7 +93,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                     return FoodList(
                       type: widget.type,
                       index: i,
-                      quantity: widget.cart.getQuantity(widget.listFood[i].id),
+                      quantity: widget.cart.getFoodQuantity(widget.listFood[i]),
                       scale: _scaleAnimation,
                       selectedIndex: _selectedFood,
                       food: widget.listFood[i],
@@ -121,7 +121,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                     return FoodList(
                       type: widget.type,
                       index: i,
-                      quantity: widget.cart.getQuantity(widget.listFood[i].id),
+                      quantity: widget.cart.getFoodQuantity(widget.listFood[i]),
                       scale: _scaleAnimation,
                       selectedIndex: _selectedFood,
                       food: widget.listFood[i],
@@ -568,48 +568,50 @@ class FoodList extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        food.discount > 0
-                                            ? Text(
-                                                "\u20b9 " +
-                                                    AppUtil.doubleRemoveZeroTrailing(food.price.price),
-                                                style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
-                                              )
-                                            : SizedBox(),
-                                        Row(
+                                  Expanded(
+                                    flex: 9,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: FittedBox(
+                                        fit: BoxFit.none,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
                                           children: <Widget>[
-                                            SvgPicture.asset(
-                                              "assets/rupee.svg",
-                                              height: 11,
-                                              width: 11,
-                                              color: Colors.black,
-                                            ),
-                                            SizedBox(
-                                              width: 3,
-                                            ),
-                                            Text(
-                                              "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                            food.discount > 0
+                                                ? Text(
+                                                    "\u20b9 " +
+                                                        AppUtil.doubleRemoveZeroTrailing(food.price.price),
+                                                    style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                                  )
+                                                : SizedBox(),
+                                            Row(
+                                              children: <Widget>[
+                                                SvgPicture.asset(
+                                                  "assets/rupee.svg",
+                                                  height: 11,
+                                                  width: 11,
+                                                  color: Colors.black,
+                                                ),
+                                                SizedBox(
+                                                  width: 3,
+                                                ),
+                                                Text(
+                                                  "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: SizedBox(),
-                                  ),
                                   quantity == 0
-                                      ? Expanded(flex: 6, child: addButton)
-                                      : Expanded(flex: 6, child: changeQuantityButton),
+                                      ? Expanded(flex: 11, child: addButton)
+                                      : Expanded(flex: 11, child: changeQuantityButton),
                                 ],
                               ),
                             ),

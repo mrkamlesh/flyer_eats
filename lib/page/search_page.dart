@@ -128,7 +128,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                       cartState.tempFood,
                                       cartState.tempQuantity,
                                       cartState.tempPrice,
-                                      cartState.tempAddOns));
+                                      cartState.tempAddOns, true));
 
                                 Navigator.pop(context);
                               },
@@ -351,96 +351,28 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                   slivers.add(FoodListWidget(
                                     onAdd: (j) {
                                       FocusScope.of(context).unfocus();
-/*                                  bool ableToAdd = false;
-                                    if (state.selectedRestaurant == null) {
-                                      ableToAdd = true;
-                                    } else {
-                                      if (state.restaurants[i].id == state.selectedRestaurant.id ||
-                                          state.foodCart.cartItemNumber() == 0) {
-                                        ableToAdd = true;
-                                      } else {
-                                        ableToAdd = false;
-                                      }
-                                    }
-
-                                    if (ableToAdd) {
-                                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
-                                          state.restaurants[i].searchFoodList[j].id,
-                                          state.restaurants[i].searchFoodList[j],
-                                          (cartState.placeOrder.foodCart.getQuantity(state.restaurants[i].searchFoodList[j].id) + 1),
-                                          0));
-                                    } else {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                              title: Text(
-                                                "Clear Order?",
-                                                style: TextStyle(fontWeight: FontWeight.bold),
-                                              ),
-                                              content: Text(
-                                                "Currently we only support order from same restaurant, would you like to add this item and clear your cart?",
-                                                style: TextStyle(color: Colors.black54),
-                                              ),
-                                              actions: <Widget>[
-                                                FlatButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                      BlocProvider.of<FoodOrderBloc>(context)
-                                                        //..add(ClearCart())
-                                                        ..add(ChangeQuantityNoPayment(
-                                                            state.restaurants[i].searchFoodList[j].id,
-                                                            state.restaurants[i].searchFoodList[j],
-                                                            (cartState.placeOrder.foodCart
-                                                                .getQuantity(state.restaurants[i].searchFoodList[j].id) +
-                                                                1),
-                                                            cartState.placeOrder.foodCart.getSelectedPrice(
-                                                                state.restaurants[i].searchFoodList[j].id)));
-                                                    },
-                                                    child: Text("YES")),
-                                                FlatButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text("NO")),
-                                              ],
-                                            );
-                                          },
-                                          barrierDismissible: true);
-                                    }*/
                                       _animationController.reverse().orCancel;
                                       BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
                                           state.restaurants[i],
                                           state.restaurants[i].searchFoodList[j].id,
                                           state.restaurants[i].searchFoodList[j],
                                           (cartState.placeOrder.foodCart
-                                                  .getQuantity(state.restaurants[i].searchFoodList[j].id) +
+                                                  .getFoodQuantity(state.restaurants[i].searchFoodList[j]) +
                                               1),
                                           state.restaurants[i].searchFoodList[j].price,
-                                          []));
+                                          [], true));
                                     },
                                     onRemove: (j) {
-                                      /*if (state.restaurants[i].id == state.selectedRestaurant.id ||
-                                        state.foodCart.cartItemNumber() == 0) {
-                                      _bloc.add(ChangeQuantity(
-                                          state.restaurants[i].searchFoodList[j].id,
-                                          state.restaurants[i].searchFoodList[j],
-                                          (state.foodCart.getQuantity(state.restaurants[i].searchFoodList[j].id) - 1),
-                                          state.restaurants[i],
-                                          state.foodCart.getSelectedPrice(state.restaurants[i].searchFoodList[j].id)));
-                                    }*/
-
                                       _animationController.reverse().orCancel;
                                       BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
                                           state.restaurants[i],
                                           state.restaurants[i].searchFoodList[j].id,
                                           state.restaurants[i].searchFoodList[j],
                                           (cartState.placeOrder.foodCart
-                                                  .getQuantity(state.restaurants[i].searchFoodList[j].id) -
+                                                  .getFoodQuantity(state.restaurants[i].searchFoodList[j]) -
                                               1),
                                           state.restaurants[i].searchFoodList[j].price,
-                                          []));
+                                          [], false));
                                     },
                                     padding: EdgeInsets.only(
                                       left: horizontalPaddingDraggable,

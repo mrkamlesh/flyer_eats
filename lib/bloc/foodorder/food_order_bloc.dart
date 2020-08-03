@@ -32,7 +32,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     } else if (event is ChangeContactPhone) {
       yield* mapChangeContactPhoneToState(event.isChangePrimaryContact, event.contact);
     } else if (event is ChangeQuantityWithPayment) {
-      yield* mapChangeQuantityWithPaymentToState(event.id, event.food, event.quantity, event.price, event.addOns);
+      yield* mapChangeQuantityWithPaymentToState(event.foodCartItem, event.quantity);
     } else if (event is ChangeQuantityNoPayment) {
       yield* mapChangeQuantityNoPaymentToState(
           event.restaurant, event.id, event.food, event.quantity, event.price, event.addOns, event.isIncrease);
@@ -72,12 +72,23 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         placeOrder: state.placeOrder.copyWith(contact: contact, isChangePrimaryContact: isChangePrimaryContact));
   }
 
-  Stream<FoodOrderState> mapChangeQuantityWithPaymentToState(
-      String id, Food food, int quantity, Price price, List<AddOn> addOns) async* {
+  Stream<FoodOrderState> mapChangeQuantityWithPaymentToState(FoodCartItem foodCartItem, int quantity) async* {
     FoodCart newCart = state.placeOrder.foodCart;
-    newCart.changeSingleItemFoodQuantity(id, food, quantity, price, addOns);
 
-    if (newCart.singleItemCart.length > 0) {
+    if (foodCartItem.food.isSingleItem) {
+      newCart.changeSingleItemFoodQuantity(
+          foodCartItem.id, foodCartItem.food, quantity, foodCartItem.price, foodCartItem.addOns);
+    } else {
+      int index = newCart.multipleItemCart.indexOf(foodCartItem);
+      if (quantity == 0) {
+        newCart.multipleItemCart.removeAt(index);
+      } else {
+        foodCartItem.quantity = quantity;
+        newCart.multipleItemCart[index] = foodCartItem;
+      }
+    }
+
+    if (newCart.cartItemNumber() > 0) {
       yield FoodOrderState(placeOrder: state.placeOrder.copyWith(foodCart: newCart));
       add(GetPaymentOptions(state.placeOrder));
     } else {

@@ -1,4 +1,5 @@
 import 'package:clients/model/add_on.dart';
+import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/price.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/user.dart';
@@ -79,16 +80,13 @@ class ApplyVoucher extends FoodOrderEvent {
 }
 
 class ChangeQuantityWithPayment extends FoodOrderEvent {
-  final String id;
-  final Food food;
+  final FoodCartItem foodCartItem;
   final int quantity;
-  final Price price;
-  final List<AddOn> addOns;
 
-  const ChangeQuantityWithPayment(this.id, this.food, this.quantity, this.price, this.addOns);
+  const ChangeQuantityWithPayment(this.foodCartItem, this.quantity);
 
   @override
-  List<Object> get props => [id, food, quantity, price, addOns];
+  List<Object> get props => [foodCartItem];
 }
 
 class ChangeQuantityNoPayment extends FoodOrderEvent {
@@ -100,7 +98,8 @@ class ChangeQuantityNoPayment extends FoodOrderEvent {
   final List<AddOn> addOns;
   final bool isIncrease;
 
-  const ChangeQuantityNoPayment(this.restaurant, this.id, this.food, this.quantity, this.price, this.addOns, this.isIncrease);
+  const ChangeQuantityNoPayment(
+      this.restaurant, this.id, this.food, this.quantity, this.price, this.addOns, this.isIncrease);
 
   @override
   List<Object> get props => [restaurant, id, food, quantity, price, addOns, isIncrease];

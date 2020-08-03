@@ -410,7 +410,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                                     ),
                                                     width: double.infinity,
                                                     decoration: BoxDecoration(color: Colors.yellow[600]),
-                                                    padding: EdgeInsets.all(10),
+                                                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
                                                     alignment: Alignment.center,
                                                     child: Text(
                                                       AppUtil.parseHtmlString(widget.restaurant.discountDescription),

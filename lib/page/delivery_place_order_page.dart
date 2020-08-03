@@ -386,7 +386,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                       child: Column(
                         children: <Widget>[
                           PickUpDeliveryInformation(
-                            address: loginState.user.defaultAddress,
+                            address: state.placeOrderPickup.address,
                             token: loginState.user.token,
                             orderPickupBloc: _orderPickupBloc,
                             addressBloc: _addressBloc,

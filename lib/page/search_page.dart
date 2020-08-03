@@ -128,7 +128,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                       cartState.tempFood,
                                       cartState.tempQuantity,
                                       cartState.tempPrice,
-                                      cartState.tempAddOns, true));
+                                      cartState.tempAddOns,
+                                      true));
 
                                 Navigator.pop(context);
                               },
@@ -324,6 +325,15 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                   style: TextStyle(color: Colors.black38, fontSize: 14),
                                 ),
                               );
+                            } else if (state is ErrorNewSearch) {
+                              return Container(
+                                margin: EdgeInsets.only(
+                                    top: 30, right: horizontalPaddingDraggable, left: horizontalPaddingDraggable),
+                                child: Text(
+                                  state.message,
+                                  style: TextStyle(color: Colors.black38, fontSize: 14),
+                                ),
+                              );
                             }
 
                             if (state.restaurants.isEmpty) {
@@ -360,7 +370,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                                   .getFoodQuantity(state.restaurants[i].searchFoodList[j]) +
                                               1),
                                           state.restaurants[i].searchFoodList[j].price,
-                                          [], true));
+                                          [],
+                                          true));
                                     },
                                     onRemove: (j) {
                                       _animationController.reverse().orCancel;
@@ -372,7 +383,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                                   .getFoodQuantity(state.restaurants[i].searchFoodList[j]) -
                                               1),
                                           state.restaurants[i].searchFoodList[j].price,
-                                          [], false));
+                                          [],
+                                          false));
                                     },
                                     padding: EdgeInsets.only(
                                       left: horizontalPaddingDraggable,

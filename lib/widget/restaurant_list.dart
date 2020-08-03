@@ -20,7 +20,7 @@ enum RestaurantViewType {
   detailList,
   detailGrid,
   searchResult,
-  offerpage
+  offerPage
 }
 
 class RestaurantListWidget extends StatefulWidget {
@@ -265,7 +265,7 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget> with Single
                   crossAxisCount: 2,
                   crossAxisSpacing: 20,
                   mainAxisSpacing: 20,
-                  childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 260,
+                  childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 245,
                 ),
               ),
             );
@@ -324,7 +324,7 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget> with Single
             );
           },
         );
-      case RestaurantViewType.offerpage:
+      case RestaurantViewType.offerPage:
         return SliverPadding(
           padding: EdgeInsets.only(
               top: distanceSectionContent - 10, bottom: distanceSectionContent + kBottomNavigationBarHeight),
@@ -448,7 +448,7 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                       children: <Widget>[
                         Expanded(
                           child: Container(
-                            margin: EdgeInsets.only(right: 10, left: 10, top: 7, bottom: 7),
+                            margin: EdgeInsets.only(right: 10, left: 10, top: 7),
                             alignment: Alignment.centerLeft,
                             child: Text(
                               restaurant.name,
@@ -476,10 +476,10 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                         ),
                         Container(
                           margin: EdgeInsets.only(
-                            bottom: 10,
+                            bottom: 5,
                             right: 10,
                             left: 10,
-                            top: 10,
+                            top: 5,
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,

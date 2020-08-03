@@ -271,7 +271,7 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                                 return CustomScrollView(
                                   slivers: <Widget>[
                                     RestaurantListWidget(
-                                      type: RestaurantViewType.offerpage,
+                                      type: RestaurantViewType.offerPage,
                                       location: Location(address: widget.address),
                                       fade: 0.4,
                                       scale: 0.95,

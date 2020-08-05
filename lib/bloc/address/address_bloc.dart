@@ -143,7 +143,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   }
 
   Stream<AddressState> mapAddAddressToState(Address address, String token) async* {
-    yield LoadingAddressInformation();
+    yield LoadingTemporaryAddress();
     try {
       bool isAdded = await addressRepository.addAddress(address, token);
       if (isAdded) {
@@ -160,7 +160,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     yield LoadingTemporaryAddress();
     try {
       bool isUpdated = await addressRepository.updateAddress(address, token);
-      yield AddressUpdated(isUpdated);
+      yield AddressUpdated(address, isUpdated);
     } catch (e) {
       yield ErrorLoadingListAddress(e.toString());
     }

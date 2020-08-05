@@ -1,3 +1,4 @@
+import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/page/login/login_number_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -211,13 +212,15 @@ class EndDrawer extends StatelessWidget {
                 return AppSettingsPage();
               }));*/
             },
-            child: BlocBuilder<LoginBloc, LoginState>(
-              builder: (context, loginState) {
+            child: BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, homeState) {
                 return InkWell(
-                  onTap: () {
-                    AppUtil.share(
-                        context, loginState.user.referralCode, loginState.user.referralDiscount);
-                  },
+                  onTap: homeState.homePageData != null
+                      ? () {
+                          AppUtil.share(
+                              context, homeState.homePageData.referralCode, homeState.homePageData.referralDiscount);
+                        }
+                      : () {},
                   child: Row(
                     children: <Widget>[
                       Expanded(

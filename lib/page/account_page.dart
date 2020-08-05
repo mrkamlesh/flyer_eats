@@ -408,15 +408,11 @@ class AddressItemWidget extends StatelessWidget {
                         margin: EdgeInsets.only(bottom: 10),
                         child: Text(
                           address.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Text(
                         address.address,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 14, color: Colors.black45),
                       )
                     ],

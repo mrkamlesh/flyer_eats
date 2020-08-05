@@ -13,16 +13,21 @@ class HomePageData {
   final List<Restaurant> dblRestaurants;
   final List<Restaurant> orderAgainRestaurants;
   final List<Ads> ads;
+  final String referralCode;
+  final String referralDiscount;
 
-  HomePageData(
-      {this.location,
-      this.countryId,
-      this.promos,
-      this.topRestaurants,
-      this.categories,
-      this.dblRestaurants,
-      this.orderAgainRestaurants,
-      this.ads});
+  HomePageData({
+    this.location,
+    this.countryId,
+    this.promos,
+    this.topRestaurants,
+    this.categories,
+    this.dblRestaurants,
+    this.orderAgainRestaurants,
+    this.ads,
+    this.referralCode,
+    this.referralDiscount,
+  });
 
   factory HomePageData.fromJson(Map<String, dynamic> parsedJson) {
     var listPromos = parsedJson['offers'] as List;
@@ -58,6 +63,8 @@ class HomePageData {
     return HomePageData(
         location: Location.fromHomePageJson(parsedJson['location']),
         countryId: parsedJson['location']['country_code'],
+        referralDiscount: parsedJson['referral_discount'],
+        referralCode: parsedJson['referral_code'],
         promos: promos,
         topRestaurants: top,
         categories: foodCategories,

@@ -26,6 +26,8 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
       yield* mapAddReviewToState(event.token, event.orderId);
     } else if (event is ScratchCardEvent) {
       yield* mapScratchCardEventToState(event.token, event.cardId);
+    } else if (event is CloseStatusBox) {
+      yield* mapCloseStatusBoxToState();
     }
   }
 
@@ -33,7 +35,11 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
     try {
       CurrentOrder currentOrder = await repository.getActiveOrder(token);
       if (currentOrder.isActive) {
-        yield SuccessState(currentOrder: currentOrder);
+        bool isShowStatus = state.currentOrder.statusOrder == null
+            ? true
+            : state.currentOrder.statusOrder.status != currentOrder.statusOrder.status ? true : state.isShowStatus;
+
+        yield SuccessState(currentOrder: currentOrder, isShowStatus: isShowStatus);
         Future.delayed(Duration(seconds: 3), () {
           add(GetActiveOrder(token));
         });
@@ -53,7 +59,7 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
         }
       }
     } catch (e) {
-      yield ErrorState(e.toString(), currentOrder: state.currentOrder);
+      yield ErrorState(e.toString(), currentOrder: state.currentOrder, isShowStatus: true);
       /*Future.delayed(Duration(seconds: 3), () {
         add(GetActiveOrder(token));
       });*/
@@ -61,11 +67,11 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
   }
 
   Stream<CurrentOrderState> mapRetryToState(String token) async* {
-    yield LoadingState(currentOrder: state.currentOrder);
+    yield LoadingState(currentOrder: state.currentOrder, isShowStatus: true);
     try {
       CurrentOrder currentOrder = await repository.getActiveOrder(token);
       if (currentOrder.isActive) {
-        yield SuccessState(currentOrder: currentOrder);
+        yield SuccessState(currentOrder: currentOrder, isShowStatus: true);
         Future.delayed(Duration(seconds: 3), () {
           add(GetActiveOrder(token));
         });
@@ -140,5 +146,9 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
         hasGivenStar: state.hasGivenStar,
         comment: state.comment,
         currentOrder: state.currentOrder);*/
+  }
+
+  Stream<CurrentOrderState> mapCloseStatusBoxToState() async* {
+    yield SuccessState(currentOrder: state.currentOrder, isShowStatus: false);
   }
 }

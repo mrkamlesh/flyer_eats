@@ -52,7 +52,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
   bool _isScrollingDown = false;
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
-  Animation<double> _orderInformationAnimation;
+  Animation<double> _orderInformationFadeAnimation;
+  Animation<double> _orderInformationScaleAnimation;
 
   @override
   initState() {
@@ -64,8 +65,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
     );
     _navBarAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
         .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
-    _orderInformationAnimation =
-        Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _orderInformationFadeAnimation = Tween<double>(begin: 1.0, end: 0.0)
+        .animate(CurvedAnimation(parent: _animationController, curve: Interval(0.0, 0.95, curve: Curves.ease)));
+    _orderInformationScaleAnimation = Tween<double>(begin: 1.0, end: 0.0)
+        .animate(CurvedAnimation(parent: _animationController, curve: Interval(0.95, 1.0, curve: Curves.ease)));
   }
 
   @override
@@ -516,8 +519,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                           ),
                                     InkWell(
                                       onTap: () {
-                                        AppUtil.share(
-                                            context, loginState.user.referralCode, loginState.user.referralDiscount);
+                                        AppUtil.share(context, homeState.homePageData.referralCode,
+                                            homeState.homePageData.referralDiscount);
                                       },
                                       child: Container(
                                         margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
@@ -579,7 +582,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                                         width: 10,
                                                       ),
                                                       Text(
-                                                        loginState.user.referralDiscount,
+                                                        homeState.homePageData.referralDiscount ?? "",
                                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                                       ),
                                                     ],
@@ -600,7 +603,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                                             style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                                           ),
                                                           Text(
-                                                            loginState.user.referralCode,
+                                                            homeState.homePageData.referralCode ?? "",
                                                             style: TextStyle(
                                                               color: primary3,
                                                               fontSize: 12,
@@ -621,8 +624,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                         ? Container(
                                             margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
                                             height: 140,
-                                            child: PromoListWidget(
-                                              promoList: homeState.homePageData.ads,
+                                            child: AdsListWidget(
+                                              adsList: homeState.homePageData.ads,
                                             ),
                                           )
                                         : Container(
@@ -737,10 +740,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                           builder: (context, state) {
                             if (state is ErrorState) {
                               return AnimatedBuilder(
-                                animation: _orderInformationAnimation,
+                                animation: _orderInformationFadeAnimation,
                                 builder: (context, child) {
                                   return Opacity(
-                                    opacity: _orderInformationAnimation.value,
+                                    opacity: _orderInformationFadeAnimation.value,
                                     child: child,
                                   );
                                 },
@@ -786,10 +789,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                               );
                             } else if (state is LoadingState) {
                               return AnimatedBuilder(
-                                animation: _orderInformationAnimation,
+                                animation: _orderInformationFadeAnimation,
                                 builder: (context, child) {
                                   return Opacity(
-                                    opacity: _orderInformationAnimation.value,
+                                    opacity: _orderInformationFadeAnimation.value,
                                     child: child,
                                   );
                                 },
@@ -821,83 +824,101 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                 state is CancelledOrderState) {
                               return SizedBox();
                             }
-                            return AnimatedBuilder(
-                              animation: _orderInformationAnimation,
-                              builder: (context, child) {
-                                return Opacity(
-                                  opacity: _orderInformationAnimation.value,
-                                  child: child,
-                                );
-                              },
-                              child: Stack(
-                                children: <Widget>[
-                                  Container(
-                                    height: 90,
-                                    width: AppUtil.getScreenWidth(context),
-                                    decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
-                                    padding: EdgeInsets.only(top: 15, bottom: 15),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          width: 40,
-                                        ),
-                                        SvgPicture.asset(
-                                          state.currentOrder.statusOrder.getIconAssets(),
-                                          width: 45,
-                                          height: 45,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(
-                                                "ORDER NO - " + state.currentOrder.orderId,
-                                                style: TextStyle(color: Colors.white),
+                            return AnimatedOpacity(
+                              opacity: state.isShowStatus ? 1.0 : 0.0,
+                              duration: Duration(milliseconds: 300),
+                              child: AnimatedBuilder(
+                                animation: _orderInformationScaleAnimation,
+                                builder: (context, child) {
+                                  return Transform.scale(
+                                    scale: _orderInformationScaleAnimation.value,
+                                    child: child,
+                                  );
+                                },
+                                child: AnimatedBuilder(
+                                  animation: _orderInformationFadeAnimation,
+                                  builder: (context, child) {
+                                    return Opacity(
+                                      opacity: _orderInformationFadeAnimation.value,
+                                      child: child,
+                                    );
+                                  },
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Container(
+                                        height: 90,
+                                        width: AppUtil.getScreenWidth(context),
+                                        decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                                        padding: EdgeInsets.only(top: 15, bottom: 15),
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            SizedBox(
+                                              width: 40,
+                                            ),
+                                            SvgPicture.asset(
+                                              state.currentOrder.statusOrder.getIconAssets(),
+                                              width: 45,
+                                              height: 45,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    "ORDER NO - " + state.currentOrder.orderId,
+                                                    style: TextStyle(color: Colors.white),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 7,
+                                                  ),
+                                                  Text(
+                                                    state.currentOrder.statusOrder.status,
+                                                    style: TextStyle(color: Colors.white, fontSize: 18),
+                                                  )
+                                                ],
                                               ),
-                                              SizedBox(
-                                                height: 7,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                  return TrackOrderPage();
+                                                }));
+                                              },
+                                              child: Container(
+                                                child: Text(
+                                                  "Track Order",
+                                                  style: TextStyle(color: primary3),
+                                                ),
                                               ),
-                                              Text(
-                                                state.currentOrder.statusOrder.status,
-                                                style: TextStyle(color: Colors.white, fontSize: 18),
-                                              )
-                                            ],
-                                          ),
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                          ],
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                              return TrackOrderPage();
-                                            }));
-                                          },
-                                          child: Container(
-                                            child: Text(
-                                              "Track Order",
-                                              style: TextStyle(color: primary3),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          BlocProvider.of<CurrentOrderBloc>(context).add(CloseStatusBox());
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(5),
+                                          child: Align(
+                                            alignment: Alignment.topRight,
+                                            child: Icon(
+                                              Icons.clear,
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                      ],
-                                    ),
+                                      )
+                                    ],
                                   ),
-                                  /*Container(
-                                  padding: EdgeInsets.all(5),
-                                  child: Align(
-                                    alignment: Alignment.topRight,
-                                    child: Icon(
-                                      Icons.clear,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                )*/
-                                ],
+                                ),
                               ),
                             );
                           },

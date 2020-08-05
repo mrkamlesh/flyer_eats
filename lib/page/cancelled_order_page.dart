@@ -328,8 +328,8 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                     return Container(
                                       margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
                                       height: 140,
-                                      child: PromoListWidget(
-                                        promoList: state.ads,
+                                      child: AdsListWidget(
+                                        adsList: state.ads,
                                       ),
                                     );
                                   }

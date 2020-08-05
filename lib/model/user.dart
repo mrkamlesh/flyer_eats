@@ -8,12 +8,8 @@ class User {
   final String avatar;
   final Address defaultAddress;
   final String username;
-  final String referralCode;
-  final String referralDiscount;
 
-  User(
-      {this.referralCode,
-      this.referralDiscount,
+  User({
       this.avatar,
       this.name,
       this.phone,
@@ -39,8 +35,6 @@ class User {
           );
 
     return User(
-        referralDiscount: parsedJson['referral_discount'],
-        referralCode: parsedJson['referral_code'],
         name: parsedJson['client_name_cookie'],
         phone: parsedJson['contact_phone'],
         avatar: parsedJson['avatar'],
@@ -57,7 +51,9 @@ class User {
       String token,
       String avatar,
       Address defaultAddress,
-      String username}) {
+      String username,
+      String referralCode,
+      String referralDiscount}) {
     return User(
         name: name ?? this.name,
         phone: phone ?? this.phone,
@@ -65,6 +61,6 @@ class User {
         username: username ?? this.username,
         token: token ?? this.token,
         hasAddress: hasAddress ?? this.hasAddress,
-        defaultAddress: defaultAddress ?? this.defaultAddress);
+        defaultAddress: defaultAddress ?? this.defaultAddress,);
   }
 }

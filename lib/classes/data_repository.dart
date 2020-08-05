@@ -345,8 +345,8 @@ class DataRepository {
     return null;
   }
 
-  Future<List<Voucher>> getPromos(String restaurantId, String token) async {
-    final response = await _provider.getPromos(restaurantId, token);
+  Future<List<Voucher>> getCoupons(String restaurantId, String token) async {
+    final response = await _provider.getCoupons(restaurantId, token);
     if (response['code'] == 1) {
       var listResponse = response['details']['promos'] as List;
       List<Voucher> list = listResponse.map((e) {

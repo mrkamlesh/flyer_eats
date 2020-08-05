@@ -4,11 +4,12 @@ import 'package:meta/meta.dart';
 @immutable
 class CurrentOrderState {
   final CurrentOrder currentOrder;
+  final bool isShowStatus;
   final String comment;
   final double rating;
   final bool hasGivenStar;
 
-  CurrentOrderState({this.comment, this.rating, this.hasGivenStar, this.currentOrder});
+  CurrentOrderState({this.comment, this.rating, this.hasGivenStar, this.currentOrder, this.isShowStatus});
 
   bool isReviewValid() {
     return hasGivenStar && comment != null && comment != "";
@@ -16,15 +17,17 @@ class CurrentOrderState {
 }
 
 class InitialCurrentOrderState extends CurrentOrderState {
-  InitialCurrentOrderState() : super(currentOrder: CurrentOrder(isActive: false));
+  InitialCurrentOrderState() : super(currentOrder: CurrentOrder(isActive: false), isShowStatus: true);
 }
 
 class LoadingState extends CurrentOrderState {
-  LoadingState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
+  LoadingState({CurrentOrder currentOrder, bool isShowStatus})
+      : super(currentOrder: currentOrder, isShowStatus: isShowStatus);
 }
 
 class SuccessState extends CurrentOrderState {
-  SuccessState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
+  SuccessState({CurrentOrder currentOrder, bool isShowStatus})
+      : super(currentOrder: currentOrder, isShowStatus: isShowStatus);
 }
 
 class NoActiveOrderState extends CurrentOrderState {
@@ -42,7 +45,8 @@ class CancelledOrderState extends CurrentOrderState {
 class ErrorState extends CurrentOrderState {
   final String message;
 
-  ErrorState(this.message, {CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
+  ErrorState(this.message, {CurrentOrder currentOrder, bool isShowStatus})
+      : super(currentOrder: currentOrder, isShowStatus: isShowStatus);
 }
 
 class LoadingAddReview extends CurrentOrderState {
@@ -63,7 +67,6 @@ class ErrorAddReview extends CurrentOrderState {
 }
 
 class CardScratched extends CurrentOrderState {
-
   CardScratched({CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
       : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
 }

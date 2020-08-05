@@ -144,6 +144,9 @@ class _AddressPageState extends State<AddressPage> {
                                 }
                               } else if (state is AddressUpdated) {
                                 if (state.isUpdated) {
+                                  if (state.address.isDefault) {
+                                    BlocProvider.of<LoginBloc>(context).add(UpdateDefaultAddress(state.address));
+                                  }
                                   showDialog(
                                       barrierDismissible: false,
                                       context: context,
@@ -189,6 +192,9 @@ class _AddressPageState extends State<AddressPage> {
                                 }
                               } else if (state is AddressAdded) {
                                 if (state.isAdded) {
+                                  if (state.address.isDefault) {
+                                    BlocProvider.of<LoginBloc>(context).add(UpdateDefaultAddress(state.address));
+                                  }
                                   showDialog(
                                       barrierDismissible: false,
                                       context: context,

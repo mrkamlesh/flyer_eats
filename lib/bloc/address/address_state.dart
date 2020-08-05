@@ -90,12 +90,13 @@ class PriceCalculateError extends AddressState {
 }
 
 class AddressUpdated extends AddressState {
+  final Address address;
   final bool isUpdated;
 
-  const AddressUpdated(this.isUpdated);
+  const AddressUpdated(this.address, this.isUpdated);
 
   @override
-  List<Object> get props => [isUpdated];
+  List<Object> get props => [address, isUpdated];
 }
 
 class AddressAdded extends AddressState {

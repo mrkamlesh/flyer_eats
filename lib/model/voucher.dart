@@ -5,8 +5,19 @@ class Voucher {
   final double amount;
   final double rate;
   final String code;
+  final String image;
+  final String text;
 
-  Voucher({this.id, this.name, this.type, this.amount, this.code, this.rate});
+  Voucher({
+    this.id,
+    this.name,
+    this.type,
+    this.amount,
+    this.code,
+    this.rate,
+    this.image,
+    this.text,
+  });
 
   factory Voucher.fromJson(Map<String, dynamic> parsedJson) {
     return Voucher(
@@ -21,6 +32,8 @@ class Voucher {
     return Voucher(
         code: parsedJson['coupon_name'],
         name: parsedJson['voucher'],
-        type: parsedJson['voucher_type']);
+        type: parsedJson['voucher_type'],
+        image: parsedJson['image'],
+        text: parsedJson['promo_text']);
   }
 }

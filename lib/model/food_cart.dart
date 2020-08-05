@@ -130,21 +130,6 @@ class FoodCart {
       list.add(cartItem);
     });
 
-    this.singleItemCart.forEach((key, item) {
-      Map<String, dynamic> cartItem = Map();
-      cartItem['item_id'] = item.food.id;
-      cartItem['qty'] = item.quantity;
-      cartItem['price'] = item.price.price.toString() + "|" + item.food.price.size;
-      cartItem['sub_item'] = Map<String, dynamic>();
-      cartItem['cooking_ref'] = [];
-      cartItem['ingredients'] = [];
-      cartItem['order_notes'] = '';
-      cartItem['discount'] = item.food.discount.toString();
-      cartItem['category_id'] = item.food.category.id;
-
-      list.add(cartItem);
-    });
-
     cartString = jsonEncode(list);
 
     return cartString;

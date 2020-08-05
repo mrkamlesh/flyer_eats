@@ -225,6 +225,7 @@ class DataProvider {
       "client_token": order.user.token,
       "transaction_type": order.transactionType,
       "cart": order.foodCart.cartToString(),
+      "voucher_code": order.voucher.code ?? ""
     };
 
     var responseJson;
@@ -332,7 +333,7 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getPromos(String restaurantId, String token) async {
+  Future<dynamic> getCoupons(String restaurantId, String token) async {
     String url = "${developmentServerUrl}mobileapp/apiRest/loadPromos?json=true&api_key=flyereats";
 
     var formData = {

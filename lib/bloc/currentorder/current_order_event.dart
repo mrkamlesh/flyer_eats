@@ -61,3 +61,10 @@ class ScratchCardEvent extends CurrentOrderEvent {
   @override
   List<Object> get props => [token, cardId];
 }
+
+class CloseStatusBox extends CurrentOrderEvent {
+  CloseStatusBox();
+
+  @override
+  List<Object> get props => [];
+}

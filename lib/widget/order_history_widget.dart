@@ -150,13 +150,13 @@ class FoodOrderHistoryWidget extends StatelessWidget {
                   )
                 ],
               ),
-              Container(
+              /*Container(
                 padding: EdgeInsets.only(top: 5, bottom: 15),
                 child: Text(
                   "REORDER",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: primary3),
                 ),
-              )
+              )*/
             ],
           )
         ],

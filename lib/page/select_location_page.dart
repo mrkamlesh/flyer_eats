@@ -213,7 +213,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                       Expanded(
                                                         child: Text(
                                                           "IND",
-                                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                                                         ),
                                                       )
                                                     ],
@@ -239,7 +239,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                       Expanded(
                                                         child: Text(
                                                           "SNG",
-                                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                                                         ),
                                                       )
                                                     ],
@@ -259,6 +259,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                             padding: EdgeInsets.symmetric(horizontal: 20),
                                             child: TextField(
                                               controller: _controller,
+                                              autofocus: true,
                                               onChanged: (filter) {
                                                 _bloc.add(FilterLocations(filter));
                                               },

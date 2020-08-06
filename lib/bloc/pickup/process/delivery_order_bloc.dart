@@ -70,8 +70,9 @@ class DeliveryOrderBloc extends Bloc<DeliveryOrderEvent, DeliveryOrderState> {
   Stream<DeliveryOrderState> mapGetInfoToState(String token, String address) async* {
     yield LoadingInfo(pickUpInfo: state.pickUpInfo, pickUp: state.pickUp);
     try {
-      String result = await repository.getPickupInfo(token, address);
-      yield DeliveryOrderState(pickUp: state.pickUp, pickUpInfo: result);
+      Map<String, dynamic> result = await repository.getPickupInfo(token, address);
+      yield DeliveryOrderState(
+          pickUp: state.pickUp, pickUpInfo: result['description'], topPickUpInfo: result['top_description']);
     } catch (e) {
       yield ErrorInfo(e.toString(), pickUpInfo: state.pickUpInfo, pickUp: state.pickUp);
     }

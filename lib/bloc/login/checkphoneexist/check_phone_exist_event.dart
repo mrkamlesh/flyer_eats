@@ -31,3 +31,11 @@ class ChangeNumber extends LoginPhoneEvent {
   @override
   List<Object> get props => [number];
 }
+
+class GetAutoLocation extends LoginPhoneEvent {
+
+  const GetAutoLocation();
+
+  @override
+  List<Object> get props => [];
+}

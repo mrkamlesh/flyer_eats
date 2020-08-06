@@ -24,8 +24,7 @@ class CheckEmailBloc extends Bloc<CheckEmailEvent, CheckEmailState> {
     } else if (event is LoginByFacebook) {
       yield* mapLoginByFacebookToState();
     } else if (event is CheckSocialMediaProfile) {
-      yield* mapCheckFacebookProfileToState(
-          event.email, event.name, event.avatar);
+      yield* mapCheckFacebookProfileToState(event.email, event.name, event.avatar);
     } else if (event is LoginByGmail) {
       yield* mapLoginByGmailToState();
     } else if (event is ChangeEmail) {
@@ -52,7 +51,7 @@ class CheckEmailBloc extends Bloc<CheckEmailEvent, CheckEmailState> {
     yield LoadingCheckEmailExist(state.email);
     try {
       final facebookLogin = FacebookLogin();
-      final result = await facebookLogin.logIn(['email']);
+      final result = await facebookLogin.logIn(['email', "public_profile", "user_friends"]);
 
       switch (result.status) {
         case FacebookLoginStatus.loggedIn:
@@ -62,9 +61,7 @@ class CheckEmailBloc extends Bloc<CheckEmailEvent, CheckEmailState> {
               'https://graph.facebook.com/v2.12/me?fields=name,picture.width(300).height(300),email&access_token=$token');
           final profile = JSON.jsonDecode(graphResponse.body);
           add(CheckSocialMediaProfile(
-              email: profile['email'],
-              avatar: profile['picture']['data']['url'],
-              name: profile['name']));
+              email: profile['email'], avatar: profile['picture']['data']['url'], name: profile['name']));
           break;
         case FacebookLoginStatus.cancelledByUser:
           yield CheckEmailState(email: state.email);
@@ -78,8 +75,7 @@ class CheckEmailBloc extends Bloc<CheckEmailEvent, CheckEmailState> {
     }
   }
 
-  Stream<CheckEmailState> mapCheckFacebookProfileToState(
-      String email, String name, String avatar) async* {
+  Stream<CheckEmailState> mapCheckFacebookProfileToState(String email, String name, String avatar) async* {
     yield LoadingCheckEmailExist(state.email);
     try {
       LoginStatus status = await repository.checkEmailExist(email);
@@ -100,18 +96,15 @@ class CheckEmailBloc extends Bloc<CheckEmailEvent, CheckEmailState> {
       final FirebaseAuth _auth = FirebaseAuth.instance;
       final GoogleSignIn googleSignIn = GoogleSignIn();
       await googleSignIn.signOut(); //dsjadkjasdas;dlkasdl sdkasd a;kda  a Ini Aneh!!!
-      final GoogleSignInAccount googleSignInAccount =
-          await googleSignIn.signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
+      final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
 
-      final AuthResult authResult =
-          await _auth.signInWithCredential(credential);
+      final AuthResult authResult = await _auth.signInWithCredential(credential);
       final FirebaseUser user = authResult.user;
 
       assert(!user.isAnonymous);

@@ -162,18 +162,25 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                       child: CustomScrollView(
                         controller: controller,
                         slivers: <Widget>[
-                          SliverToBoxAdapter(
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                bottom: 30,
-                                left: horizontalPaddingDraggable,
-                                right: horizontalPaddingDraggable,
-                              ),
-                              child: Text(
-                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras scelerisque, nisi in sodales ornare, dolor erat vehicula nibh, et vulputate sapien sapien ut risus. ",
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
+                          BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(
+                            builder: (context, state) {
+                              if (state.topPickUpInfo != "" && state.topPickUpInfo != null) {
+                                return SliverToBoxAdapter(
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                      bottom: 30,
+                                      left: horizontalPaddingDraggable,
+                                      right: horizontalPaddingDraggable,
+                                    ),
+                                    child: Text(
+                                      state.topPickUpInfo,
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return SliverToBoxAdapter();
+                            },
                           ),
                           SliverToBoxAdapter(
                             child: BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(

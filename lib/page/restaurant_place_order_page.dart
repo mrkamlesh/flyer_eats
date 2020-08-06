@@ -219,9 +219,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                     return CustomAppBar(
                                       leading: "assets/back.svg",
                                       title: state.placeOrder.restaurant.name +
-                                          " (" +
-                                          state.placeOrder.foodCart.cartItemNumber().toString() +
-                                          ")",
+                                          " " +
+                                          state.placeOrder.foodCart.cartItemNumber().toString(),
                                       onTapLeading: () {
                                         Navigator.pop(context);
                                       },
@@ -1626,12 +1625,21 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                     SizedBox(
                       width: 10,
                     ),
-                    Container(
-                      padding: EdgeInsets.all(3),
-                      decoration: BoxDecoration(color: Colors.yellow[600], borderRadius: BorderRadius.circular(2)),
-                      child: Text(widget.address.title),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(3),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(2)),
+                        child: Text(
+                          widget.address.title,
+                          maxLines: 1,
+                          style: TextStyle(backgroundColor: Colors.yellow[600]),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ),
-                    Expanded(child: Container()),
+                    SizedBox(
+                      width: 10,
+                    ),
                     GestureDetector(
                       onTap: () {
                         _showChangeAddressSheet(BlocProvider.of<LoginBloc>(context));
@@ -1639,7 +1647,6 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                       child: Container(
                         alignment: Alignment.centerRight,
                         height: 30,
-                        width: 60,
                         child: Text(
                           "Change",
                           textAlign: TextAlign.end,
@@ -1694,7 +1701,6 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                       child: Container(
                         alignment: Alignment.centerRight,
                         height: 30,
-                        width: 60,
                         child: Text(
                           "Change",
                           textAlign: TextAlign.end,

@@ -675,12 +675,18 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                     SizedBox(
                       width: 10,
                     ),
-                    Container(
-                      padding: EdgeInsets.all(3),
-                      decoration: BoxDecoration(color: Colors.yellow[600], borderRadius: BorderRadius.circular(2)),
-                      child: Text(widget.address.title),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(3),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(2)),
+                        child: Text(
+                          widget.address.title,
+                          maxLines: 1,
+                          style: TextStyle(backgroundColor: Colors.yellow[600]),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ),
-                    Expanded(child: Container()),
                     GestureDetector(
                       onTap: () {
                         _showChangeAddressSheet();
@@ -688,7 +694,6 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                       child: Container(
                         alignment: Alignment.centerRight,
                         height: 30,
-                        width: 60,
                         child: Text(
                           "Change",
                           textAlign: TextAlign.end,
@@ -733,7 +738,6 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                       child: Container(
                         alignment: Alignment.centerRight,
                         height: 30,
-                        width: 60,
                         child: Text(
                           "Change",
                           textAlign: TextAlign.end,

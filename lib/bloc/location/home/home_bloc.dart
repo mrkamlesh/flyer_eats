@@ -66,7 +66,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         String postalCode =
             (placeMark[0].postalCode != "" && placeMark[0].postalCode != null) ? placeMark[0].postalCode + " " : "";
 
+        String leading = getLeading(placeMark[0].isoCountryCode);
+
         yield NoHomepageData(
+          leading: leading != "" ? leading : null,
+          isFlagVisible: leading != "" ? true : false,
           appBarTitle: thoroughfare +
               subThoroughfare +
               subLocality +

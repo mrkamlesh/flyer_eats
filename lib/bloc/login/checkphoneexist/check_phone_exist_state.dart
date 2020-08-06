@@ -9,8 +9,8 @@ class InitialLoginPhoneState extends LoginPhoneState {
   InitialLoginPhoneState() : super(countryCode: "+91", number: "");
 }
 
-class LoadingCheckPhoneExist extends LoginPhoneState {
-  LoadingCheckPhoneExist({String countryCode, String number})
+class LoadingLoginPhoneState extends LoginPhoneState {
+  LoadingLoginPhoneState({String countryCode, String number})
       : super(countryCode: countryCode, number: number);
 }
 

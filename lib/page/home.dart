@@ -1418,7 +1418,7 @@ class _HomeActionWidgetState extends State<HomeActionWidget> with SingleTickerPr
                         height: 5,
                       ),
                       Text(
-                        "Sample dummy text to be replaced here",
+                        "SAVE your Time, Energy, Fuel and Money",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: Colors.white, fontSize: 13),

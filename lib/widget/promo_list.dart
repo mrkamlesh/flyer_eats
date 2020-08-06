@@ -83,7 +83,7 @@ class AdsWidget extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(32),
                   child: CachedNetworkImage(
-                    imageUrl: ads.thumbnail,
+                    imageUrl: ads.content,
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                     placeholder: (context, url) {
@@ -104,9 +104,9 @@ class AdsWidget extends StatelessWidget {
         margin: EdgeInsets.only(right: 20),
         height: 60,
         decoration: BoxDecoration(
-            boxShadow: [BoxShadow(offset: Offset(2, 2), color: Colors.black26, spreadRadius: 0, blurRadius: 5)],
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.red[700]),
+          boxShadow: [BoxShadow(offset: Offset(2, 2), color: Colors.black26, spreadRadius: 0, blurRadius: 5)],
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: CachedNetworkImage(

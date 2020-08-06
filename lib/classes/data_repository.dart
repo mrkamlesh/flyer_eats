@@ -295,10 +295,13 @@ class DataRepository {
     }
   }
 
-  Future<String> getPickupInfo(String token, String address) async {
+  Future<Map<String, dynamic>> getPickupInfo(String token, String address) async {
     final response = await _provider.getPickupInfo(token, address);
     if (response['code'] == 1) {
-      return response['details']['description'];
+      Map<String, dynamic> map = Map();
+      map['description'] = response['details']['description'];
+      map['top_description'] = response['details']['top_description'];
+      return map;
     } else {
       throw Exception(response['msg']);
     }

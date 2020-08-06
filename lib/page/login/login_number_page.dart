@@ -65,9 +65,9 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
       child: BlocBuilder<NotificationBloc, NotificationState>(
         builder: (context, notificationState) {
           return BlocConsumer<LoginBloc, LoginState>(
-            listener: (context, state) async {
-              if (state is LoggedIn) {
-                BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(state.user.token));
+            listener: (context, loginState) async {
+              if (loginState is LoggedIn) {
+                BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(loginState.user.token));
                 if (notificationState is ReceiveOrderNotification) {
                   await Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return TrackOrderPage();
@@ -78,12 +78,12 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                   }));
                 }
                 BlocProvider.of<NotificationBloc>(context).add(ResetMessage());
-                BlocProvider.of<HomeBloc>(context).add(InitGetData(state.user.token, null));
+                BlocProvider.of<HomeBloc>(context).add(InitGetData(loginState.user.token, null));
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
                   return Home();
                 }));
-              } else if (state is NotLoggedIn) {
-                AppUtil.checkLocationServiceAndPermission();
+              } else if (loginState is NotLoggedIn) {
+                _bloc.add(GetAutoLocation());
               }
             },
             builder: (context, state) {
@@ -320,7 +320,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                               ),
                             ),
                           ),
-                          state is LoadingCheckPhoneExist
+                          state is LoadingLoginPhoneState
                               ? Container(
                                   decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
                                   child: Center(

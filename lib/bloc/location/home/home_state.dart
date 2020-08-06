@@ -45,13 +45,14 @@ class ErrorHomeState extends HomeState {
 }
 
 class NoHomepageData extends HomeState {
-  NoHomepageData({HomePageData homePageData, String appBarTitle})
+  NoHomepageData({HomePageData homePageData, String appBarTitle, String leading, bool isFlagVisible})
       : super(
             homePageData: homePageData,
+            leading: leading,
             appBarTitle: appBarTitle,
             isAppBarLoading: false,
             isAppBarDropDownVisible: true,
-            isFlagVisible: false);
+            isFlagVisible: isFlagVisible ?? false);
 }
 
 class LoadingCurrentLocation extends HomeState {

@@ -33,7 +33,8 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: MediaQuery.of(context).padding.top),
+      padding: EdgeInsets.only(
+          left: 16, right: 16, top: MediaQuery.of(context).padding.top),
       height: AppUtil.getToolbarHeight(context),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -90,7 +91,10 @@ class CustomAppBar extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                 ),
               ),
             ),
@@ -122,14 +126,13 @@ class CustomAppBar extends StatelessWidget {
               ? GestureDetector(
                   onTap: onTapDrawer,
                   child: Container(
-                    height: kToolbarHeight,
-                    width: 40,
-                    child: SvgPicture.asset(
-                      drawer,
-                      color: Colors.white,
-                      width: 20,
-                      height: 20,
-                      fit: BoxFit.none,
+                    margin: EdgeInsets.only(left: 10, right: 10),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        drawer,
+                        width: 18,
+                        height: 18,
+                      ),
                     ),
                   ),
                 )

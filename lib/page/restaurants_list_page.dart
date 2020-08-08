@@ -122,7 +122,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> with SingleTick
                           BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
                           BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
                           BottomNavyBarItem(
-                              icon: "assets/3.svg", title: "Order", badge: cartState.placeOrder.foodCart.cartItemNumber())
+                              icon: "assets/3.svg", title: "Order", badge: cartState.placeOrder.foodCart.cartItemTotal())
                         ],
                         onItemSelected: (index) async {
                           _currentIndex = index;

@@ -197,7 +197,7 @@ class PlaceOrder {
   }
 
   double subTotal() {
-    return this.foodCart.getAmount();
+    return this.foodCart.getCartTotalAmount();
   }
 
   double getDiscountFoodTotal() {

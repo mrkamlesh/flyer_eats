@@ -28,7 +28,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   sliding_up_panel: ^1.0.2
-  flutter_svg: ^0.17.4
+  flutter_svg: ^0.18.0
   after_layout: ^1.0.7+2
   font_awesome_flutter: ^8.8.1
   shimmer: ^1.1.1
@@ -45,7 +45,6 @@ dependencies:
   google_map_location_picker: ^3.3.1
   flutter_spinkit: ^4.1.2+1
   pin_code_fields: ^3.0.1
-  flutter_html: ^1.0.0
   shared_preferences: ^0.5.7+3
   smooth_star_rating: 1.1.1
   package_info: ^0.4.1
@@ -62,6 +61,7 @@ dependencies:
   firebase_messaging: ^6.0.9
   flutter_local_notifications: ^1.4.4+2
   share: ^0.6.4+3
+  video_player: ^0.10.11+2
 
 dev_dependencies:
   flutter_test:
@@ -142,12 +142,17 @@ flutter:
     - assets/food preparing icon.svg
     - assets/order placed icon.svg
     - assets/no available items cart.svg
-    - assets/no available items cart.png
+    - assets/no available items cart.jpg
     - assets/dropdown home.svg
     - assets/in process icon.svg
     - assets/calendar.svg
     - assets/clock.svg
     - assets/pending icon.svg
+    - assets/sg dollar.svg
+    - assets/no offers available icon.svg
+    - assets/office address.svg
+    - assets/others address.svg
+    - assets/home address.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

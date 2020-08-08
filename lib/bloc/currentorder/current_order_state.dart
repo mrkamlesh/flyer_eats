@@ -9,7 +9,12 @@ class CurrentOrderState {
   final double rating;
   final bool hasGivenStar;
 
-  CurrentOrderState({this.comment, this.rating, this.hasGivenStar, this.currentOrder, this.isShowStatus});
+  CurrentOrderState(
+      {this.comment,
+      this.rating,
+      this.hasGivenStar,
+      this.currentOrder,
+      this.isShowStatus});
 
   bool isReviewValid() {
     return hasGivenStar && comment != null && comment != "";
@@ -17,7 +22,8 @@ class CurrentOrderState {
 }
 
 class InitialCurrentOrderState extends CurrentOrderState {
-  InitialCurrentOrderState() : super(currentOrder: CurrentOrder(isActive: false), isShowStatus: true);
+  InitialCurrentOrderState()
+      : super(currentOrder: CurrentOrder(isActive: false), isShowStatus: true);
 }
 
 class LoadingState extends CurrentOrderState {
@@ -31,15 +37,22 @@ class SuccessState extends CurrentOrderState {
 }
 
 class NoActiveOrderState extends CurrentOrderState {
-  NoActiveOrderState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
+  NoActiveOrderState({CurrentOrder currentOrder})
+      : super(currentOrder: currentOrder, isShowStatus: false);
 }
 
 class DeliveredOrderState extends CurrentOrderState {
-  DeliveredOrderState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder, rating: 0, hasGivenStar: false);
+  DeliveredOrderState({CurrentOrder currentOrder})
+      : super(
+            currentOrder: currentOrder,
+            rating: 0,
+            hasGivenStar: false,
+            isShowStatus: false);
 }
 
 class CancelledOrderState extends CurrentOrderState {
-  CancelledOrderState({CurrentOrder currentOrder}) : super(currentOrder: currentOrder);
+  CancelledOrderState({CurrentOrder currentOrder})
+      : super(currentOrder: currentOrder, isShowStatus: false);
 }
 
 class ErrorState extends CurrentOrderState {
@@ -50,23 +63,57 @@ class ErrorState extends CurrentOrderState {
 }
 
 class LoadingAddReview extends CurrentOrderState {
-  LoadingAddReview({CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
-      : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
+  LoadingAddReview(
+      {CurrentOrder currentOrder,
+      String comment,
+      double rating,
+      bool hasGivenStar})
+      : super(
+            currentOrder: currentOrder,
+            comment: comment,
+            rating: rating,
+            hasGivenStar: hasGivenStar,
+            isShowStatus: false);
 }
 
 class SuccessAddReview extends CurrentOrderState {
-  SuccessAddReview({CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
-      : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
+  SuccessAddReview(
+      {CurrentOrder currentOrder,
+      String comment,
+      double rating,
+      bool hasGivenStar})
+      : super(
+            currentOrder: currentOrder,
+            comment: comment,
+            rating: rating,
+            hasGivenStar: hasGivenStar,
+            isShowStatus: false);
 }
 
 class ErrorAddReview extends CurrentOrderState {
   final String message;
 
-  ErrorAddReview(this.message, {CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
-      : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
+  ErrorAddReview(this.message,
+      {CurrentOrder currentOrder,
+      String comment,
+      double rating,
+      bool hasGivenStar})
+      : super(
+            currentOrder: currentOrder,
+            comment: comment,
+            rating: rating,
+            hasGivenStar: hasGivenStar);
 }
 
 class CardScratched extends CurrentOrderState {
-  CardScratched({CurrentOrder currentOrder, String comment, double rating, bool hasGivenStar})
-      : super(currentOrder: currentOrder, comment: comment, rating: rating, hasGivenStar: hasGivenStar);
+  CardScratched(
+      {CurrentOrder currentOrder,
+      String comment,
+      double rating,
+      bool hasGivenStar})
+      : super(
+            currentOrder: currentOrder,
+            comment: comment,
+            rating: rating,
+            hasGivenStar: hasGivenStar);
 }

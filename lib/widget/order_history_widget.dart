@@ -14,8 +14,10 @@ class FoodOrderHistoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
-          left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: horizontalPaddingDraggable),
-      padding: EdgeInsets.only(left: 15, right: 15, top: 15),
+          left: horizontalPaddingDraggable,
+          right: horizontalPaddingDraggable,
+          bottom: horizontalPaddingDraggable),
+      padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 15),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
@@ -66,7 +68,8 @@ class FoodOrderHistoryWidget extends StatelessWidget {
                         order.restaurant.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
                         height: 5,
@@ -108,7 +111,8 @@ class FoodOrderHistoryWidget extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
               order.itemsString,
-              style: TextStyle(fontSize: 16, color: Colors.black45, height: 1.3),
+              style:
+                  TextStyle(fontSize: 16, color: Colors.black45, height: 1.3),
             ),
           ),
           Container(
@@ -140,7 +144,9 @@ class FoodOrderHistoryWidget extends StatelessWidget {
                   SizedBox(
                       width: 18,
                       height: 18,
-                      child: FittedBox(fit: BoxFit.fill, child: SvgPicture.asset(order.getIcon()))),
+                      child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: SvgPicture.asset(order.getIcon()))),
                   SizedBox(
                     width: 10,
                   ),
@@ -174,7 +180,9 @@ class PickupOrderHistoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
-          left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: horizontalPaddingDraggable),
+          left: horizontalPaddingDraggable,
+          right: horizontalPaddingDraggable,
+          bottom: horizontalPaddingDraggable),
       padding: EdgeInsets.only(left: 15, right: 15, top: 15),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -239,7 +247,8 @@ class PickupOrderHistoryWidget extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
               pickupOrder.getItemString(),
-              style: TextStyle(fontSize: 16, color: Colors.black45, height: 1.3),
+              style:
+                  TextStyle(fontSize: 16, color: Colors.black45, height: 1.3),
             ),
           ),
           Container(
@@ -271,7 +280,9 @@ class PickupOrderHistoryWidget extends StatelessWidget {
                   SizedBox(
                       width: 18,
                       height: 18,
-                      child: FittedBox(fit: BoxFit.fill, child: SvgPicture.asset(pickupOrder.getIcon()))),
+                      child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: SvgPicture.asset(pickupOrder.getIcon()))),
                   SizedBox(
                     width: 10,
                   ),
@@ -285,7 +296,10 @@ class PickupOrderHistoryWidget extends StatelessWidget {
                 padding: EdgeInsets.only(top: 5, bottom: 15),
                 child: Text(
                   "REORDER",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: primary3),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: primary3),
                 ),
               )
             ],

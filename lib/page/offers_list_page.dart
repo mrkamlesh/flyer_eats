@@ -6,6 +6,7 @@ import 'package:clients/bloc/offerlist/bank/bank_offer_event.dart';
 import 'package:clients/bloc/offerlist/bank/bank_offer_state.dart';
 import 'package:clients/bloc/offerlist/feoffer/bloc.dart';
 import 'package:clients/bloc/offerlist/merchant/bloc.dart';
+import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/fe_offer.dart';
 import 'package:clients/model/location.dart';
@@ -18,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -30,7 +32,8 @@ class OfferListPage extends StatefulWidget {
   _OfferListPageState createState() => _OfferListPageState();
 }
 
-class _OfferListPageState extends State<OfferListPage> with TickerProviderStateMixin {
+class _OfferListPageState extends State<OfferListPage>
+    with TickerProviderStateMixin {
   int _currentIndex = 1;
 
   AnimationController _animationController;
@@ -55,8 +58,10 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
       vsync: this,
       duration: Duration(milliseconds: 500),
     );
-    _navBarAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _navBarAnimation = Tween<Offset>(
+            begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
+        .animate(
+            CurvedAnimation(parent: _animationController, curve: Curves.ease));
 
     _scrollController = ScrollController();
     _scrollController.addListener(() {
@@ -65,7 +70,8 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
 
       //if (currentScroll == maxScroll) _bloc.add(LoadMore(widget.token, widget.address));
 
-      if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
         if (!_isScrollingDown) {
           _isScrollingDown = true;
           setState(() {
@@ -106,12 +112,13 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
         return BlocBuilder<FoodOrderBloc, FoodOrderState>(
-          builder: (context, cartState){
+          builder: (context, cartState) {
             return MultiBlocProvider(
               providers: [
                 BlocProvider<FeOfferBloc>(
                   create: (context) {
-                    return _feOfferBloc..add(GetFEOffer(loginState.user.token, widget.address));
+                    return _feOfferBloc
+                      ..add(GetFEOffer(loginState.user.token, widget.address));
                   },
                 ),
                 BlocProvider<MerchantOfferBloc>(
@@ -149,23 +156,29 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                       child: CustomBottomNavBar(
                         animationDuration: Duration(milliseconds: 300),
                         items: [
-                          BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
-                          BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
-                          BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
+                          BottomNavyBarItem(
+                              icon: "assets/2.svg", title: "Flyer Eats"),
+                          BottomNavyBarItem(
+                              icon: "assets/4.svg", title: "Offers"),
+                          BottomNavyBarItem(
+                              icon: "assets/1.svg", title: "Search"),
                           BottomNavyBarItem(
                               icon: "assets/3.svg",
                               title: "Order",
-                              badge: cartState.placeOrder.foodCart.cartItemNumber())
+                              badge: cartState.placeOrder.foodCart
+                                  .cartItemTotal())
                         ],
                         onItemSelected: (index) async {
                           _currentIndex = index;
                           if (index == 0) {
-                            await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                            await Navigator.push(context, PageRouteBuilder(
+                                pageBuilder: (context, anim1, anim2) {
                               return Home();
                             }));
                             _currentIndex = 1;
                           } else if (index == 2) {
-                            await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                            await Navigator.push(context, PageRouteBuilder(
+                                pageBuilder: (context, anim1, anim2) {
                               return SearchPage(
                                 address: widget.address,
                                 token: loginState.user.token,
@@ -173,7 +186,8 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                             }));
                             _currentIndex = 1;
                           } else if (index == 3) {
-                            await Navigator.push(context, PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                            await Navigator.push(context, PageRouteBuilder(
+                                pageBuilder: (context, anim1, anim2) {
                               return RestaurantPlaceOrderPage(
                                 location: Location(address: widget.address),
                                 user: loginState.user,
@@ -193,7 +207,9 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                   children: <Widget>[
                     Container(
                       margin: EdgeInsets.only(top: 40, bottom: 20),
-                      padding: EdgeInsets.only(left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                      padding: EdgeInsets.only(
+                          left: horizontalPaddingDraggable,
+                          right: horizontalPaddingDraggable),
                       child: DefaultTabController(
                         length: 3,
                         initialIndex: 0,
@@ -202,11 +218,14 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                             controller: _tabController,
                             onTap: (i) {
                               if (i == 0) {
-                                _feOfferBloc.add(GetFEOffer(loginState.user.token, widget.address));
+                                _feOfferBloc.add(GetFEOffer(
+                                    loginState.user.token, widget.address));
                               } else if (i == 1) {
-                                _merchantOfferBloc.add(GetMerchantOffer(loginState.user.token, widget.address));
+                                _merchantOfferBloc.add(GetMerchantOffer(
+                                    loginState.user.token, widget.address));
                               } else if (i == 2) {
-                                _bankOfferBloc.add(GetBankOffer(loginState.user.token, widget.address));
+                                _bankOfferBloc.add(GetBankOffer(
+                                    loginState.user.token, widget.address));
                               }
                             },
                             //isScrollable: true,
@@ -214,9 +233,13 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                             unselectedLabelColor: Colors.black26,
                             indicatorColor: Colors.yellow[600],
                             indicatorSize: TabBarIndicatorSize.tab,
-                            labelStyle: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.bold)),
-                            indicatorPadding: EdgeInsets.only(left: 0, right: 15, bottom: 2, top: 0),
-                            labelPadding: EdgeInsets.only(left: 0, right: 15, bottom: 0),
+                            labelStyle: GoogleFonts.poppins(
+                                textStyle:
+                                    TextStyle(fontWeight: FontWeight.bold)),
+                            indicatorPadding: EdgeInsets.only(
+                                left: 0, right: 15, bottom: 2, top: 0),
+                            labelPadding:
+                                EdgeInsets.only(left: 0, right: 15, bottom: 0),
                             tabs: [
                               Tab(text: "FE Offers"),
                               Tab(text: "Merchant"),
@@ -238,16 +261,19 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                                 return ErrorWidget(
                                   message: state.message,
                                   onTapRetry: () {
-                                    _feOfferBloc.add(GetFEOffer(loginState.user.token, widget.address));
+                                    _feOfferBloc.add(GetFEOffer(
+                                        loginState.user.token, widget.address));
                                   },
                                 );
                               }
                               if (state.feOffers.isEmpty) {
                                 return ErrorWidget(
-                                  message: "No Offers Available",
+                                  message:
+                                      "No Offers is Available Now.\n Stay Tune with Us",
                                 );
                               } else {
-                                return FEOfferListWidget(offers: state.feOffers);
+                                return FEOfferListWidget(
+                                    offers: state.feOffers);
                               }
                             },
                           ),
@@ -259,20 +285,23 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                                 return ErrorWidget(
                                   message: state.message,
                                   onTapRetry: () {
-                                    _merchantOfferBloc.add(GetMerchantOffer(loginState.user.token, widget.address));
+                                    _merchantOfferBloc.add(GetMerchantOffer(
+                                        loginState.user.token, widget.address));
                                   },
                                 );
                               }
                               if (state.merchants.isEmpty) {
                                 return ErrorWidget(
-                                  message: "No Offers Available",
+                                  message:
+                                      "No Offers is Available Now.\n Stay Tune with Us",
                                 );
                               } else {
                                 return CustomScrollView(
                                   slivers: <Widget>[
                                     RestaurantListWidget(
                                       type: RestaurantViewType.offerPage,
-                                      location: Location(address: widget.address),
+                                      location:
+                                          Location(address: widget.address),
                                       fade: 0.4,
                                       scale: 0.95,
                                       restaurants: state.merchants,
@@ -282,32 +311,38 @@ class _OfferListPageState extends State<OfferListPage> with TickerProviderStateM
                               }
                             },
                           ),
-                          BlocBuilder<BankOfferBloc, BankOfferState>(builder: (context, state) {
+                          BlocBuilder<BankOfferBloc, BankOfferState>(
+                              builder: (context, state) {
                             if (state is LoadingBankOfferState) {
                               return LoadingWidget();
                             } else if (state is ErrorBankOfferState) {
                               return ErrorWidget(
                                 message: state.message,
                                 onTapRetry: () {
-                                  _bankOfferBloc.add(GetBankOffer(loginState.user.token, widget.address));
+                                  _bankOfferBloc.add(GetBankOffer(
+                                      loginState.user.token, widget.address));
                                 },
                               );
                             }
                             if (state.banks.isEmpty) {
                               return ErrorWidget(
-                                message: "No Offers Available",
+                                message:
+                                    "No Offers is Available Now.\n Stay Tune with Us",
                               );
                             } else {
                               return CustomScrollView(
                                 slivers: <Widget>[
                                   SliverList(
-                                      delegate: SliverChildBuilderDelegate((context, i) {
-                                        return Container(
-                                          padding: EdgeInsets.only(
-                                              left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: 15),
-                                          child: Text(state.banks[i].text),
-                                        );
-                                      }, childCount: state.banks.length)),
+                                      delegate: SliverChildBuilderDelegate(
+                                          (context, i) {
+                                    return Container(
+                                      padding: EdgeInsets.only(
+                                          left: horizontalPaddingDraggable,
+                                          right: horizontalPaddingDraggable,
+                                          bottom: 15),
+                                      child: Text(state.banks[i].text),
+                                    );
+                                  }, childCount: state.banks.length)),
                                 ],
                               );
                             }
@@ -359,7 +394,8 @@ class FEOfferWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-      padding: EdgeInsets.only(left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+      padding: EdgeInsets.only(
+          left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: CachedNetworkImage(
@@ -418,14 +454,29 @@ class ErrorWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(message),
+          onTapRetry == null
+              ? Container(
+                  margin: EdgeInsets.only(bottom: horizontalPaddingDraggable),
+                  child: SvgPicture.asset(
+                    "assets/no offers available icon.svg",
+                    height: AppUtil.getScreenHeight(context) / 5,
+                    width: AppUtil.getScreenHeight(context) / 5,
+                  ),
+                )
+              : SizedBox(),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+          ),
           onTapRetry != null
               ? InkWell(
                   onTap: onTapRetry,
                   child: Container(
                     margin: EdgeInsets.only(top: 20),
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    decoration: BoxDecoration(color: primary3, borderRadius: BorderRadius.circular(10)),
+                    decoration: BoxDecoration(
+                        color: primary3,
+                        borderRadius: BorderRadius.circular(10)),
                     child: Text(
                       "RETRY",
                       style: TextStyle(color: Colors.white),

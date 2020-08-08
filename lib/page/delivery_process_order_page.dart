@@ -25,10 +25,12 @@ class DeliveryProcessOrderPage extends StatefulWidget {
   const DeliveryProcessOrderPage({Key key, this.location}) : super(key: key);
 
   @override
-  _DeliveryProcessOrderPageState createState() => _DeliveryProcessOrderPageState();
+  _DeliveryProcessOrderPageState createState() =>
+      _DeliveryProcessOrderPageState();
 }
 
-class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> with SingleTickerProviderStateMixin {
+class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage>
+    with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
 
@@ -47,8 +49,10 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
       vsync: this,
       duration: Duration(milliseconds: 500),
     );
-    _navBarAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _navBarAnimation = Tween<Offset>(
+            begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
+        .animate(
+            CurvedAnimation(parent: _animationController, curve: Curves.ease));
   }
 
   @override
@@ -63,7 +67,8 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
       builder: (context, loginState) {
         return BlocProvider<DeliveryOrderBloc>(
           create: (context) {
-            return _bloc..add(GetInfo(loginState.user.token, widget.location.address));
+            return _bloc
+              ..add(GetInfo(loginState.user.token, widget.location.address));
           },
           child: Scaffold(
             extendBody: true,
@@ -77,10 +82,12 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                     child: child,
                   );
                 },
-                child: BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(builder: (context, state) {
+                child: BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(
+                    builder: (context, state) {
                   int length = 0;
                   for (int i = 0; i < state.pickUp.items.length; i++) {
-                    if ((state.pickUp.items[i] != null) & (state.pickUp.items[i] != "")) {
+                    if ((state.pickUp.items[i] != null) &
+                        (state.pickUp.items[i] != "")) {
                       length++;
                     }
                   }
@@ -91,7 +98,8 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                     buttonText: "VIEW CART",
                     showRupee: false,
                     onButtonTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
                         return DeliveryPlaceOderPage(
                           pickUp: state.pickUp,
                           pickUpInfo: _getPickUpInfoList(state.pickUpInfo),
@@ -148,23 +156,28 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                   ],
                 ),
                 DraggableScrollableSheet(
-                  initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  initialChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  minChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
                   maxChildSize: 1.0,
                   builder: (context, controller) {
                     return Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(32),
+                              topLeft: Radius.circular(32))),
                       padding: EdgeInsets.only(top: 20),
                       child: CustomScrollView(
                         controller: controller,
                         slivers: <Widget>[
                           BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(
                             builder: (context, state) {
-                              if (state.topPickUpInfo != "" && state.topPickUpInfo != null) {
+                              if (state.topPickUpInfo != "" &&
+                                  state.topPickUpInfo != null) {
                                 return SliverToBoxAdapter(
                                   child: Container(
                                     margin: EdgeInsets.only(
@@ -183,11 +196,13 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                             },
                           ),
                           SliverToBoxAdapter(
-                            child: BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(
+                            child: BlocBuilder<DeliveryOrderBloc,
+                                DeliveryOrderState>(
                               builder: (context, state) {
                                 return GestureDetector(
                                   onTap: () async {
-                                    Shop shop = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                    Shop shop = await Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
                                       return PickShopLocationPage(
                                         shop: state.pickUp.shop,
                                       );
@@ -196,7 +211,8 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                     _bloc.add(ChooseShop(shop));
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
                                     margin: EdgeInsets.only(
                                       bottom: 30,
                                       left: horizontalPaddingDraggable,
@@ -204,21 +220,33 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                     ),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.black12)),
+                                        border:
+                                            Border.all(color: Colors.black12)),
                                     child: Row(
                                       children: <Widget>[
                                         Expanded(
-                                          child: BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(
+                                          child: BlocBuilder<DeliveryOrderBloc,
+                                              DeliveryOrderState>(
                                             builder: (context, state) {
                                               return TextField(
                                                 enabled: false,
-                                                controller: TextEditingController(
-                                                    text: state.pickUp.shop == null ? null : state.pickUp.shop.name),
+                                                controller:
+                                                    TextEditingController(
+                                                        text:
+                                                            state.pickUp.shop ==
+                                                                    null
+                                                                ? null
+                                                                : state.pickUp
+                                                                    .shop.name),
                                                 decoration: InputDecoration(
-                                                  contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          vertical: 15),
                                                   border: InputBorder.none,
                                                   hintText: "SELECT SHOP",
-                                                  hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                                  hintStyle: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black38),
                                                 ),
                                               );
                                             },
@@ -258,39 +286,55 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                     opacity: animation,
                                     child: SizeTransition(
                                       sizeFactor: CurvedAnimation(
-                                          parent: animation.drive(Tween<double>(begin: 0.0, end: 1.0)),
+                                          parent: animation.drive(Tween<double>(
+                                              begin: 0.0, end: 1.0)),
                                           curve: Interval(0.0, 1.0)),
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                horizontalPaddingDraggable),
                                         child: CustomTextField(
                                           controller: _controllers[i],
                                           focusNode: _focusNodes[i],
                                           onRemove: () {
                                             _bloc.add(RemoveItem(i));
-                                            TextEditingController removedController = _controllers.removeAt(i);
-                                            FocusNode removedFocusNode = _focusNodes.removeAt(i);
-                                            _keySliverAnimatedList.currentState.removeItem(
+                                            TextEditingController
+                                                removedController =
+                                                _controllers.removeAt(i);
+                                            FocusNode removedFocusNode =
+                                                _focusNodes.removeAt(i);
+                                            _keySliverAnimatedList.currentState
+                                                .removeItem(
                                               i,
-                                              (BuildContext context, Animation<double> animation) {
+                                              (BuildContext context,
+                                                  Animation<double> animation) {
                                                 return FadeTransition(
-                                                  opacity:
-                                                      CurvedAnimation(parent: animation, curve: Interval(0.5, 1.0)),
+                                                  opacity: CurvedAnimation(
+                                                      parent: animation,
+                                                      curve:
+                                                          Interval(0.5, 1.0)),
                                                   child: SizeTransition(
-                                                    sizeFactor:
-                                                        CurvedAnimation(parent: animation, curve: Interval(0.0, 1.0)),
+                                                    sizeFactor: CurvedAnimation(
+                                                        parent: animation,
+                                                        curve:
+                                                            Interval(0.0, 1.0)),
                                                     axisAlignment: 0.0,
                                                     child: Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                                      padding: EdgeInsets.symmetric(
+                                                          horizontal:
+                                                              horizontalPaddingDraggable),
                                                       child: CustomTextField(
-                                                        focusNode: removedFocusNode,
-                                                        controller: removedController,
+                                                        focusNode:
+                                                            removedFocusNode,
+                                                        controller:
+                                                            removedController,
                                                       ),
                                                     ),
                                                   ),
                                                 );
                                               },
-                                              duration: Duration(milliseconds: 600),
+                                              duration:
+                                                  Duration(milliseconds: 600),
                                             );
                                           },
                                         ),
@@ -307,16 +351,25 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                 child: GestureDetector(
                                   onTap: () {
                                     _keySliverAnimatedList.currentState
-                                        .insertItem(pickup.pickUp.items.length, duration: Duration(milliseconds: 400));
-                                    TextEditingController newController = TextEditingController();
+                                        .insertItem(pickup.pickUp.items.length,
+                                            duration:
+                                                Duration(milliseconds: 400));
+                                    TextEditingController newController =
+                                        TextEditingController();
                                     newController.addListener(() {
-                                      _bloc.add(UpdateItem(_controllers.indexOf(newController), newController.text));
+                                      _bloc.add(UpdateItem(
+                                          _controllers.indexOf(newController),
+                                          newController.text));
                                     });
-                                    _controllers.insert(pickup.pickUp.items.length, newController);
+                                    _controllers.insert(
+                                        pickup.pickUp.items.length,
+                                        newController);
                                     FocusNode focusNode = FocusNode();
                                     focusNode.requestFocus();
-                                    _focusNodes.insert(pickup.pickUp.items.length, focusNode);
-                                    _bloc.add(AddItem(pickup.pickUp.items.length));
+                                    _focusNodes.insert(
+                                        pickup.pickUp.items.length, focusNode);
+                                    _bloc.add(
+                                        AddItem(pickup.pickUp.items.length));
                                   },
                                   child: Container(
                                     margin: EdgeInsets.only(
@@ -326,10 +379,13 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                     ),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.black12)),
+                                        border:
+                                            Border.all(color: Colors.black12)),
                                     child: TextField(
                                       decoration: InputDecoration(
-                                          border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 15)),
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.symmetric(
+                                              vertical: 15)),
                                       enabled: false,
                                     ),
                                   ),
@@ -359,7 +415,9 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                 left: horizontalPaddingDraggable,
                                 right: horizontalPaddingDraggable,
                               ),
-                              child: BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(builder: (context, state) {
+                              child: BlocBuilder<DeliveryOrderBloc,
+                                      DeliveryOrderState>(
+                                  builder: (context, state) {
                                 return AnimatedList(
                                   key: _keyAnimatedList,
                                   itemBuilder: (context, i, animation) {
@@ -371,7 +429,9 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                       );
                                     }
                                     return FadeTransition(
-                                        opacity: animation, child: ImageThumbnail(i, state.pickUp.attachment[i]));
+                                        opacity: animation,
+                                        child: ImageThumbnail(
+                                            i, state.pickUp.attachment[i]));
                                   },
                                   scrollDirection: Axis.horizontal,
                                   initialItemCount: 1,
@@ -382,7 +442,8 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                           SliverToBoxAdapter(
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                  vertical: horizontalPaddingDraggable, horizontal: horizontalPaddingDraggable),
+                                  vertical: horizontalPaddingDraggable,
+                                  horizontal: horizontalPaddingDraggable),
                               margin: EdgeInsets.only(
                                 bottom: 20,
                                 left: horizontalPaddingDraggable,
@@ -414,11 +475,13 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                   ),
                                   TextField(
                                     onChanged: (value) {
-                                      _bloc.add(UpdateDeliveryInstruction(value));
+                                      _bloc.add(
+                                          UpdateDeliveryInstruction(value));
                                     },
                                     maxLines: 2,
                                     decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 0, horizontal: 0),
                                         hintText: "Enter your instruction here",
                                         hintStyle: TextStyle(fontSize: 12),
                                         border: InputBorder.none),
@@ -428,7 +491,8 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                             ),
                           ),
                           SliverToBoxAdapter(
-                            child: BlocBuilder<DeliveryOrderBloc, DeliveryOrderState>(
+                            child: BlocBuilder<DeliveryOrderBloc,
+                                DeliveryOrderState>(
                               builder: (context, state) {
                                 if (state is LoadingInfo) {
                                   return Container(
@@ -437,7 +501,8 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                         left: horizontalPaddingDraggable,
                                         right: horizontalPaddingDraggable,
                                       ),
-                                      child: Center(child: CircularProgressIndicator()));
+                                      child: Center(
+                                          child: CircularProgressIndicator()));
                                 }
 
                                 return Container(
@@ -447,7 +512,8 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                                       right: horizontalPaddingDraggable,
                                     ),
                                     child: PickupInformationWidget(
-                                      infoList: _getPickUpInfoList(state.pickUpInfo),
+                                      infoList:
+                                          _getPickUpInfoList(state.pickUpInfo),
                                     ));
                               },
                             ),
@@ -481,16 +547,23 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
             child: new Container(
               decoration: new BoxDecoration(
                   borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(10.0), topRight: const Radius.circular(10.0))),
+                      topLeft: const Radius.circular(10.0),
+                      topRight: const Radius.circular(10.0))),
               child: new Wrap(
                 children: <Widget>[
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      PickedFile file = await ImagePicker().getImage(source: ImageSource.camera, imageQuality: 20);
-                      if (file != null) {
-                        _keyAnimatedList.currentState.insertItem(0, duration: Duration(milliseconds: 400));
-                        _bloc.add(AddAttachment(File(file.path)));
+                      try {
+                        PickedFile file = await ImagePicker().getImage(
+                            source: ImageSource.camera, imageQuality: 20);
+                        if (file != null) {
+                          _keyAnimatedList.currentState.insertItem(0,
+                              duration: Duration(milliseconds: 400));
+                          _bloc.add(AddAttachment(File(file.path)));
+                        }
+                      } catch (e) {
+                        print(e);
                       }
                     },
                     splashColor: Colors.black12,
@@ -504,10 +577,16 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage> wit
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      PickedFile file = await ImagePicker().getImage(source: ImageSource.gallery);
-                      if (file != null) {
-                        _keyAnimatedList.currentState.insertItem(0, duration: Duration(milliseconds: 400));
-                        _bloc.add(AddAttachment(File(file.path)));
+                      try {
+                        PickedFile file = await ImagePicker()
+                            .getImage(source: ImageSource.gallery);
+                        if (file != null) {
+                          _keyAnimatedList.currentState.insertItem(0,
+                              duration: Duration(milliseconds: 400));
+                          _bloc.add(AddAttachment(File(file.path)));
+                        }
+                      } catch (e) {
+                        print(e);
                       }
                     },
                     splashColor: Colors.black12,
@@ -547,9 +626,12 @@ class CustomTextField extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border:
-              Border.all(color: focusNode.hasFocus ? primary2 : Colors.black12, width: focusNode.hasFocus ? 1.5 : 1.0),
-          boxShadow: focusNode.hasFocus ? [BoxShadow(color: primary2, blurRadius: 5, spreadRadius: 1)] : []),
+          border: Border.all(
+              color: focusNode.hasFocus ? primary2 : Colors.black12,
+              width: focusNode.hasFocus ? 1.5 : 1.0),
+          boxShadow: focusNode.hasFocus
+              ? [BoxShadow(color: primary2, blurRadius: 5, spreadRadius: 1)]
+              : []),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -593,7 +675,9 @@ class PickupInformationWidget extends StatelessWidget {
                 .map((e) => Container(
                       padding: EdgeInsets.all(8),
                       margin: EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(4)),
+                      decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(4)),
                       child: Text(
                         e,
                         style: TextStyle(fontSize: 13),
@@ -650,7 +734,9 @@ class ImageThumbnail extends StatelessWidget {
       height: 60,
       width: 60,
       margin: EdgeInsets.only(right: 15),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black12)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.black12)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Image.file(

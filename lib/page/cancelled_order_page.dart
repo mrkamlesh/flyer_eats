@@ -9,7 +9,7 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/page/restaurants_list_page.dart';
-import 'package:clients/widget/promo_list.dart';
+import 'package:clients/widget/ads_list.dart';
 import 'package:clients/widget/restaurant_list.dart';
 
 class CancelledOrderPage extends StatefulWidget {

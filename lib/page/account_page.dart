@@ -57,12 +57,14 @@ class _AccountPageState extends State<AccountPage> {
                     child: Container(
                         width: AppUtil.getScreenWidth(context),
                         height: AppUtil.getBannerHeight(context),
-                        padding:
-                            EdgeInsets.only(top: AppUtil.getToolbarHeight(context), bottom: AppUtil.getBannerOffset()),
+                        padding: EdgeInsets.only(
+                            top: AppUtil.getToolbarHeight(context),
+                            bottom: AppUtil.getBannerOffset()),
                         color: Color(0xFFA4A4A4),
                         child: BlocBuilder<LoginBloc, LoginState>(
                           builder: (context, state) {
-                            if (state.user.avatar == null && state.user.avatar == "") {
+                            if (state.user.avatar == null &&
+                                state.user.avatar == "") {
                               return Center(
                                 child: SvgPicture.asset(
                                   "assets/account.svg",
@@ -96,12 +98,16 @@ class _AccountPageState extends State<AccountPage> {
                                       placeholder: (context, url) {
                                         return Shimmer.fromColors(
                                             child: Container(
-                                              height: AppUtil.getBannerHeight(context) -
-                                                  AppUtil.getToolbarHeight(context) -
+                                              height: AppUtil.getBannerHeight(
+                                                      context) -
+                                                  AppUtil.getToolbarHeight(
+                                                      context) -
                                                   AppUtil.getBannerOffset() -
                                                   20,
-                                              width: AppUtil.getBannerHeight(context) -
-                                                  AppUtil.getToolbarHeight(context) -
+                                              width: AppUtil.getBannerHeight(
+                                                      context) -
+                                                  AppUtil.getToolbarHeight(
+                                                      context) -
                                                   AppUtil.getBannerOffset() -
                                                   20,
                                               color: Colors.black,
@@ -130,17 +136,22 @@ class _AccountPageState extends State<AccountPage> {
                   ),
                 ),
                 DraggableScrollableSheet(
-                  initialChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
-                  minChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
+                  initialChildSize: AppUtil.getDraggableHeight(context) /
+                      AppUtil.getScreenHeight(context),
+                  minChildSize: AppUtil.getDraggableHeight(context) /
+                      AppUtil.getScreenHeight(context),
                   maxChildSize: 1.0,
                   builder: (context, controller) {
                     return Container(
                         decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius:
-                                BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(32),
+                                topLeft: Radius.circular(32))),
                         padding: EdgeInsets.only(
-                            top: 40, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                            top: 40,
+                            left: horizontalPaddingDraggable,
+                            right: horizontalPaddingDraggable),
                         child: BlocBuilder<LoginBloc, LoginState>(
                           builder: (context, state) {
                             return CustomScrollView(
@@ -148,15 +159,20 @@ class _AccountPageState extends State<AccountPage> {
                               slivers: <Widget>[
                                 SliverToBoxAdapter(
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Text(
                                         state.user.name,
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18),
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
                                             return EditAccountPage(
                                               user: state.user,
                                             );
@@ -164,7 +180,8 @@ class _AccountPageState extends State<AccountPage> {
                                         },
                                         child: Text(
                                           "Edit",
-                                          style: TextStyle(color: primary3, fontSize: 16),
+                                          style: TextStyle(
+                                              color: primary3, fontSize: 16),
                                         ),
                                       )
                                     ],
@@ -178,7 +195,8 @@ class _AccountPageState extends State<AccountPage> {
                                 SliverToBoxAdapter(
                                   child: Text(
                                     state.user.phone,
-                                    style: TextStyle(fontSize: 18, color: Colors.black45),
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.black45),
                                   ),
                                 ),
                                 SliverToBoxAdapter(
@@ -189,7 +207,8 @@ class _AccountPageState extends State<AccountPage> {
                                 SliverToBoxAdapter(
                                   child: Text(
                                     state.user.username,
-                                    style: TextStyle(fontSize: 18, color: Colors.black45),
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.black45),
                                   ),
                                 ),
                                 SliverToBoxAdapter(
@@ -211,7 +230,9 @@ class _AccountPageState extends State<AccountPage> {
                                 SliverToBoxAdapter(
                                   child: Text(
                                     "Address",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 SliverToBoxAdapter(
@@ -219,7 +240,8 @@ class _AccountPageState extends State<AccountPage> {
                                     height: distanceSectionContent,
                                   ),
                                 ),
-                                BlocBuilder<AddressBloc, AddressState>(builder: (context, state) {
+                                BlocBuilder<AddressBloc, AddressState>(
+                                    builder: (context, state) {
                                   if (state is ListAddressLoaded) {
                                     List<Address> list = state.list;
                                     List<Widget> address = [];
@@ -237,37 +259,52 @@ class _AccountPageState extends State<AccountPage> {
                                           left: 20,
                                           right: 20,
                                         ),
-                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(32)),
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: <Widget>[
                                             address.isNotEmpty
                                                 ? Column(
                                                     children: address,
                                                   )
                                                 : Container(
-                                                    margin: EdgeInsets.only(top: 50),
-                                                    child: Center(child: Text("No Address Available"))),
+                                                    margin: EdgeInsets.only(
+                                                        top: 50),
+                                                    child: Center(
+                                                        child: Text(
+                                                            "No Address Available"))),
                                             GestureDetector(
                                               onTap: () async {
-                                                await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                await Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
                                                   return AddressPage();
                                                 }));
-                                                _bloc.add(OpenListAddress(loginState.user.token));
+                                                _bloc.add(OpenListAddress(
+                                                    loginState.user.token));
                                               },
                                               child: Container(
-                                                width: AppUtil.getScreenWidth(context),
-                                                height: kBottomNavigationBarHeight,
-                                                margin: EdgeInsets.only(bottom: 30),
+                                                width: AppUtil.getScreenWidth(
+                                                    context),
+                                                height:
+                                                    kBottomNavigationBarHeight,
+                                                margin:
+                                                    EdgeInsets.only(bottom: 30),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
                                                 ),
                                                 child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
                                                   children: <Widget>[
                                                     Container(
-                                                      margin: EdgeInsets.only(right: 20),
+                                                      margin: EdgeInsets.only(
+                                                          right: 20),
                                                       child: Icon(
                                                         Icons.add,
                                                         size: 20,
@@ -277,7 +314,10 @@ class _AccountPageState extends State<AccountPage> {
                                                     Text(
                                                       "ADD NEW ADDRESS",
                                                       style: TextStyle(
-                                                          color: primary3, fontSize: 18, fontWeight: FontWeight.bold),
+                                                          color: primary3,
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     )
                                                   ],
                                                 ),
@@ -291,34 +331,45 @@ class _AccountPageState extends State<AccountPage> {
                                     return SliverToBoxAdapter(
                                         child: Container(
                                             margin: EdgeInsets.only(top: 50),
-                                            child: Center(child: CircularProgressIndicator())));
+                                            child: Center(
+                                                child:
+                                                    CircularProgressIndicator())));
                                   } else if (state is ErrorLoadingListAddress) {
                                     return SliverToBoxAdapter(
                                         child: Column(
                                       children: <Widget>[
                                         Container(
                                             margin: EdgeInsets.only(top: 50),
-                                            child: Center(child: Text("Fail load addresses"))),
+                                            child: Center(
+                                                child: Text(
+                                                    "Fail load addresses"))),
                                         GestureDetector(
                                           onTap: () async {
-                                            await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                            await Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
                                               return AddressPage();
                                             }));
-                                            _bloc.add(OpenListAddress(loginState.user.token));
+                                            _bloc.add(OpenListAddress(
+                                                loginState.user.token));
                                           },
                                           child: Container(
-                                            width: AppUtil.getScreenWidth(context),
+                                            width:
+                                                AppUtil.getScreenWidth(context),
                                             height: kBottomNavigationBarHeight,
                                             margin: EdgeInsets.only(bottom: 30),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                             ),
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Container(
-                                                  margin: EdgeInsets.only(right: 20),
+                                                  margin: EdgeInsets.only(
+                                                      right: 20),
                                                   child: Icon(
                                                     Icons.add,
                                                     size: 20,
@@ -328,7 +379,10 @@ class _AccountPageState extends State<AccountPage> {
                                                 Text(
                                                   "ADD NEW ADDRESS",
                                                   style: TextStyle(
-                                                      color: primary3, fontSize: 18, fontWeight: FontWeight.bold),
+                                                      color: primary3,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 )
                                               ],
                                             ),
@@ -359,20 +413,25 @@ class AddressItemWidget extends StatelessWidget {
   final AddressBloc bloc;
   final String token;
 
-  const AddressItemWidget({Key key, this.address, this.bloc, this.token}) : super(key: key);
+  const AddressItemWidget({Key key, this.address, this.bloc, this.token})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String type;
+    String icon;
     switch (address.type) {
       case AddressType.home:
         type = "HOME";
+        icon = "assets/home address.svg";
         break;
       case AddressType.office:
         type = "OFFICE";
+        icon = "assets/office address.svg";
         break;
       case AddressType.other:
         type = "OTHER";
+        icon = "assets/others address.svg";
         break;
       default:
         break;
@@ -388,9 +447,10 @@ class AddressItemWidget extends StatelessWidget {
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(right: 16),
-                  child: Icon(
-                    Icons.home,
-                    size: 25,
+                  child: SvgPicture.asset(
+                    icon,
+                    width: 20,
+                    height: 20,
                   ),
                 ),
                 Expanded(
@@ -401,14 +461,16 @@ class AddressItemWidget extends StatelessWidget {
                         margin: EdgeInsets.only(bottom: 10),
                         child: Text(
                           type,
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
                         child: Text(
                           address.title,
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Text(
@@ -428,7 +490,8 @@ class AddressItemWidget extends StatelessWidget {
               ),
               InkWell(
                 onTap: () async {
-                  await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
                     return AddressPage(
                       address: address,
                     );
@@ -440,7 +503,10 @@ class AddressItemWidget extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 15),
                   child: Text(
                     "EDIT",
-                    style: TextStyle(fontSize: 16, color: primary3, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: primary3,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -453,7 +519,8 @@ class AddressItemWidget extends StatelessWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         title: Text("DELETE?"),
                         content: Text("Delete ${address.title}?"),
                         actions: <Widget>[
@@ -461,7 +528,8 @@ class AddressItemWidget extends StatelessWidget {
                             builder: (context, loginState) {
                               return FlatButton(
                                   onPressed: () {
-                                    bloc.add(RemoveAddress(address.id, loginState.user.token));
+                                    bloc.add(RemoveAddress(
+                                        address.id, loginState.user.token));
                                     Navigator.pop(context);
                                   },
                                   child: Text("Yes"));
@@ -482,7 +550,10 @@ class AddressItemWidget extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 15),
                   child: Text(
                     "DELETE",
-                    style: TextStyle(fontSize: 16, color: primary3, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: primary3,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

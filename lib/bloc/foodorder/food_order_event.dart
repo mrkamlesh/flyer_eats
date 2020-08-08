@@ -98,11 +98,12 @@ class ChangeQuantityNoPayment extends FoodOrderEvent {
   final List<AddOn> addOns;
   final bool isIncrease;
 
-  const ChangeQuantityNoPayment(
-      this.restaurant, this.id, this.food, this.quantity, this.price, this.addOns, this.isIncrease);
+  const ChangeQuantityNoPayment(this.restaurant, this.id, this.food,
+      this.quantity, this.price, this.addOns, this.isIncrease);
 
   @override
-  List<Object> get props => [restaurant, id, food, quantity, price, addOns, isIncrease];
+  List<Object> get props =>
+      [restaurant, id, food, quantity, price, addOns, isIncrease];
 }
 
 class PlaceOrderEvent extends FoodOrderEvent {
@@ -147,10 +148,31 @@ class ClearCart extends FoodOrderEvent {
 }
 
 class GetFoodDetail extends FoodOrderEvent {
-  final foodId;
+  final String foodId;
 
   GetFoodDetail(this.foodId);
 
   @override
   List<Object> get props => [foodId];
+}
+
+class StartEditFoodDetail extends FoodOrderEvent {
+  final FoodCartItem cartItem;
+
+  StartEditFoodDetail(this.cartItem);
+
+  @override
+  List<Object> get props => [];
+}
+
+class UpdateFoodDetail extends FoodOrderEvent {
+  final FoodCartItem cartItem;
+  final int quantity;
+  final Price price;
+  final List<AddOn> addOns;
+
+  UpdateFoodDetail(this.cartItem, this.quantity, this.price, this.addOns);
+
+  @override
+  List<Object> get props => [cartItem, quantity, price, addOns];
 }

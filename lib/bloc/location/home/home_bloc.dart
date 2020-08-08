@@ -4,6 +4,7 @@ import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/home_page_data.dart';
 import 'package:clients/model/location.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import './bloc.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -25,11 +26,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> mapGetHomeDataByLatLngToState(String token, double lat, double lng) async* {
+  Stream<HomeState> mapGetHomeDataByLatLngToState(
+      String token, double lat, double lng) async* {
     yield LoadingHomeState();
+
     try {
       var data = await repository.getHomePageData(
-          token: token, lat: lat, long: lng, topRestaurantPage: 0, foodCategoryPage: 0, dblPage: 0, adsPage: 0);
+          token: token,
+          lat: lat,
+          long: lng,
+          topRestaurantPage: 0,
+          foodCategoryPage: 0,
+          dblPage: 0,
+          adsPage: 0,
+          time: DateFormat('hh:mm').format(DateTime.now()));
       if (data is HomePageData) {
         yield HomeState(
             homePageData: data,
@@ -44,27 +54,38 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           print(e);
         }
       } else {
-        List<Placemark> placeMark = await Geolocator().placemarkFromCoordinates(lat, lng);
+        List<Placemark> placeMark =
+            await Geolocator().placemarkFromCoordinates(lat, lng);
 
-        String thoroughfare = (placeMark[0].thoroughfare != "" && placeMark[0].thoroughfare != null)
+        String thoroughfare = (placeMark[0].thoroughfare != "" &&
+                placeMark[0].thoroughfare != null)
             ? placeMark[0].thoroughfare + " "
             : "";
-        String subThoroughfare = (placeMark[0].subThoroughfare != "" && placeMark[0].subThoroughfare != null)
+        String subThoroughfare = (placeMark[0].subThoroughfare != "" &&
+                placeMark[0].subThoroughfare != null)
             ? placeMark[0].subThoroughfare + " "
             : "";
         String subLocality =
-            (placeMark[0].subLocality != "" && placeMark[0].subLocality != null) ? placeMark[0].subLocality + " " : "";
+            (placeMark[0].subLocality != "" && placeMark[0].subLocality != null)
+                ? placeMark[0].subLocality + " "
+                : "";
         String locality =
-            (placeMark[0].locality != "" && placeMark[0].locality != null) ? placeMark[0].locality + " " : "";
+            (placeMark[0].locality != "" && placeMark[0].locality != null)
+                ? placeMark[0].locality + " "
+                : "";
         String subAdministrativeArea =
-            (placeMark[0].subAdministrativeArea != "" && placeMark[0].subAdministrativeArea != null)
+            (placeMark[0].subAdministrativeArea != "" &&
+                    placeMark[0].subAdministrativeArea != null)
                 ? placeMark[0].subAdministrativeArea + " "
                 : "";
-        String administrativeArea = (placeMark[0].administrativeArea != "" && placeMark[0].administrativeArea != null)
+        String administrativeArea = (placeMark[0].administrativeArea != "" &&
+                placeMark[0].administrativeArea != null)
             ? placeMark[0].administrativeArea + " "
             : "";
         String postalCode =
-            (placeMark[0].postalCode != "" && placeMark[0].postalCode != null) ? placeMark[0].postalCode + " " : "";
+            (placeMark[0].postalCode != "" && placeMark[0].postalCode != null)
+                ? placeMark[0].postalCode + " "
+                : "";
 
         String leading = getLeading(placeMark[0].isoCountryCode);
 
@@ -85,13 +106,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> mapGetHomeDataByLocationToState(String token, Location location) async* {
+  Stream<HomeState> mapGetHomeDataByLocationToState(
+      String token, Location location) async* {
     yield LoadingHomeState();
 
     try {
       var data = await repository.getHomePageData(
-          token: token, address: location.address, topRestaurantPage: 0, foodCategoryPage: 0, dblPage: 0, adsPage: 0);
-
+          token: token,
+          address: location.address,
+          topRestaurantPage: 0,
+          foodCategoryPage: 0,
+          dblPage: 0,
+          adsPage: 0,
+          time: DateFormat('HH:mm').format(DateTime.now()));
       if (data is HomePageData) {
         yield HomeState(
             homePageData: data,
@@ -114,7 +141,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> mapInitGetDataToState(String token, Location location) async* {
+  Stream<HomeState> mapInitGetDataToState(
+      String token, Location location) async* {
     yield LoadingCurrentLocation();
 
     if (location != null) {
@@ -132,7 +160,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               throw Exception();
             });
 
-            add(GetHomeDataByLatLng(token, position.latitude, position.longitude));
+            add(GetHomeDataByLatLng(
+                token, position.latitude, position.longitude));
           } catch (e) {
             yield ErrorCurrentLocation("Can not get location");
           }

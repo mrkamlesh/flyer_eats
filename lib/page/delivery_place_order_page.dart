@@ -29,13 +29,16 @@ class DeliveryPlaceOderPage extends StatefulWidget {
   final List<String> pickUpInfo;
   final Location location;
 
-  const DeliveryPlaceOderPage({Key key, this.pickUp, this.pickUpInfo, this.location}) : super(key: key);
+  const DeliveryPlaceOderPage(
+      {Key key, this.pickUp, this.pickUpInfo, this.location})
+      : super(key: key);
 
   @override
   _DeliveryPlaceOderPageState createState() => _DeliveryPlaceOderPageState();
 }
 
-class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with SingleTickerProviderStateMixin {
+class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
+    with SingleTickerProviderStateMixin {
   AddressBloc _addressBloc;
   PlaceOrderPickupBloc _orderPickupBloc;
   Razorpay _razorpay;
@@ -78,8 +81,12 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
             BlocProvider<PlaceOrderPickupBloc>(
               create: (context) {
                 return _orderPickupBloc
-                  ..add(InitPlaceOrder(loginState.user.token, widget.pickUp, loginState.user.defaultAddress,
-                      loginState.user.phone, widget.location.locationName));
+                  ..add(InitPlaceOrder(
+                      loginState.user.token,
+                      widget.pickUp,
+                      loginState.user.defaultAddress,
+                      loginState.user.phone,
+                      widget.location.locationName));
               },
             ),
           ],
@@ -137,17 +144,20 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                       ],
                     ),
                     DraggableScrollableSheet(
-                      initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                      initialChildSize: (AppUtil.getScreenHeight(context) -
+                              AppUtil.getToolbarHeight(context)) /
                           AppUtil.getScreenHeight(context),
-                      minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                      minChildSize: (AppUtil.getScreenHeight(context) -
+                              AppUtil.getToolbarHeight(context)) /
                           AppUtil.getScreenHeight(context),
                       maxChildSize: 1.0,
                       builder: (context, controller) {
                         return Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
                           padding: EdgeInsets.only(
                               left: horizontalPaddingDraggable,
                               right: horizontalPaddingDraggable,
@@ -160,7 +170,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                 child: Container(
                                   margin: EdgeInsets.only(bottom: 25),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Container(
                                         height: 20,
@@ -174,13 +185,16 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                       ),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Container(
-                                                margin: EdgeInsets.only(bottom: 10),
+                                                margin:
+                                                    EdgeInsets.only(bottom: 10),
                                                 child: Text(
                                                   widget.pickUp.shop.name,
-                                                  style: TextStyle(fontSize: 16),
+                                                  style:
+                                                      TextStyle(fontSize: 16),
                                                 )),
                                             Text(
                                               widget.pickUp.shop.address,
@@ -197,7 +211,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                 child: Container(
                                   margin: EdgeInsets.only(bottom: 10),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Container(
                                         height: 20,
@@ -211,23 +226,31 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                       ),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Container(
-                                                margin: EdgeInsets.only(bottom: 15),
+                                                margin:
+                                                    EdgeInsets.only(bottom: 15),
                                                 child: Text(
                                                   "ADD ITEMS",
-                                                  style: TextStyle(fontSize: 16),
+                                                  style:
+                                                      TextStyle(fontSize: 16),
                                                 )),
                                             Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: List.generate(widget.pickUp.items.length, (index) {
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: List.generate(
+                                                  widget.pickUp.items.length,
+                                                  (index) {
                                                 return Container(
-                                                  margin: EdgeInsets.only(bottom: 15),
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 15),
                                                   child: Text(
                                                     widget.pickUp.items[index],
                                                     textAlign: TextAlign.start,
-                                                    style: TextStyle(fontSize: 16),
+                                                    style:
+                                                        TextStyle(fontSize: 16),
                                                   ),
                                                 );
                                               }),
@@ -243,7 +266,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                 child: Container(
                                   margin: EdgeInsets.only(bottom: 15),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Container(
                                         height: 20,
@@ -256,7 +280,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                         ),
                                       ),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: <Widget>[
                                           Container(
                                             margin: EdgeInsets.only(bottom: 15),
@@ -267,18 +292,27 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                           ),
                                           widget.pickUp.attachment.length != 0
                                               ? Container(
-                                                  width: AppUtil.getScreenWidth(context) - 80,
+                                                  width: AppUtil.getScreenWidth(
+                                                          context) -
+                                                      80,
                                                   child: Wrap(
                                                     direction: Axis.horizontal,
-                                                    children: List.generate(widget.pickUp.attachment.length, (index) {
-                                                      return ImageThumbnail(0, widget.pickUp.attachment[index]);
+                                                    children: List.generate(
+                                                        widget.pickUp.attachment
+                                                            .length, (index) {
+                                                      return ImageThumbnail(
+                                                          0,
+                                                          widget.pickUp
+                                                                  .attachment[
+                                                              index]);
                                                     }),
                                                   ),
                                                 )
                                               : Container(
                                                   child: Text(
                                                     "No Attachment",
-                                                    style: TextStyle(fontSize: 12),
+                                                    style:
+                                                        TextStyle(fontSize: 12),
                                                   ),
                                                 ),
                                         ],
@@ -291,7 +325,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                 child: Container(
                                   margin: EdgeInsets.only(bottom: 20),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Container(
                                         height: 20,
@@ -304,7 +339,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                         ),
                                       ),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: <Widget>[
                                           Container(
                                             margin: EdgeInsets.only(bottom: 15),
@@ -314,12 +350,19 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                             ),
                                           ),
                                           Container(
-                                            width: AppUtil.getScreenWidth(context) - 80,
+                                            width: AppUtil.getScreenWidth(
+                                                    context) -
+                                                80,
                                             child: Text(
-                                              state.placeOrderPickup.distance != null
-                                                  ? state.placeOrderPickup.distance + " kilometers"
+                                              state.placeOrderPickup.distance !=
+                                                      null
+                                                  ? state.placeOrderPickup
+                                                          .distance +
+                                                      " kilometers"
                                                   : "",
-                                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ],
@@ -328,13 +371,15 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                   ),
                                 ),
                               ),
-                              BlocBuilder<PlaceOrderPickupBloc, PlaceOrderPickupState>(
+                              BlocBuilder<PlaceOrderPickupBloc,
+                                  PlaceOrderPickupState>(
                                 builder: (context, state) {
                                   if (state is LoadingGetDeliveryCharge ||
                                       state is LoadingPlaceOrder ||
                                       state is SuccessPlaceOrder ||
                                       state is ErrorPlaceOrder) {
-                                    return SliverToBoxAdapter(child: SizedBox());
+                                    return SliverToBoxAdapter(
+                                        child: SizedBox());
                                   }
 
                                   if (loginState.user.defaultAddress == null) {
@@ -343,7 +388,9 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                         margin: EdgeInsets.only(bottom: 20),
                                         padding: EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                            color: Colors.red[700], borderRadius: BorderRadius.circular(5)),
+                                            color: Colors.red[700],
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
                                         child: Text(
                                           "No Address Found",
                                           style: TextStyle(color: Colors.white),
@@ -358,10 +405,13 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                             margin: EdgeInsets.only(bottom: 20),
                                             padding: EdgeInsets.all(10),
                                             decoration: BoxDecoration(
-                                                color: Colors.red[700], borderRadius: BorderRadius.circular(5)),
+                                                color: Colors.red[700],
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
                                             child: Text(
                                               state.placeOrderPickup.message,
-                                              style: TextStyle(color: Colors.white),
+                                              style: TextStyle(
+                                                  color: Colors.white),
                                             ),
                                           )
                                         : SizedBox(),
@@ -370,7 +420,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                               ),
                               SliverToBoxAdapter(
                                 child: Container(
-                                  margin: EdgeInsets.only(bottom: 150 + kBottomNavigationBarHeight),
+                                  margin: EdgeInsets.only(
+                                      bottom: 150 + kBottomNavigationBarHeight),
                                   child: PickupInformationWidget(
                                     infoList: widget.pickUpInfo,
                                   ),
@@ -396,15 +447,21 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                             isValid: state.placeOrderPickup.isValid,
                             onButtonTap: state.placeOrderPickup.isValid
                                 ? () {
-                                    openRazorPayCheckOut(state.placeOrderPickup);
+                                    openRazorPayCheckOut(
+                                        state.placeOrderPickup);
                                   }
                                 : () {},
-                            showRupee: (state is LoadingGetDeliveryCharge) ? false : true,
+                            showRupee: (state is LoadingGetDeliveryCharge)
+                                ? false
+                                : true,
                             amount: (state is LoadingGetDeliveryCharge)
                                 ? "..."
-                                : AppUtil.doubleRemoveZeroTrailing(state.placeOrderPickup.deliveryAmount),
+                                : AppUtil.doubleRemoveZeroTrailing(
+                                    state.placeOrderPickup.deliveryAmount),
                             buttonText: "PLACE ORDER",
-                            description: (state is LoadingGetDeliveryCharge) ? "Calculating..." : "Total Amount",
+                            description: (state is LoadingGetDeliveryCharge)
+                                ? "Calculating..."
+                                : "Total Amount",
                           ),
                         ],
                       ),
@@ -413,10 +470,12 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                       listener: (context, state) {
                         if (state is SuccessPlaceOrder) {
                           if (state.placeOrderPickup.isChangePrimaryContact) {
-                            BlocProvider.of<LoginBloc>(context)
-                                .add(UpdatePrimaryContact(state.placeOrderPickup.contact));
+                            BlocProvider.of<LoginBloc>(context).add(
+                                UpdatePrimaryContact(
+                                    state.placeOrderPickup.contact));
                           }
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
                             return PlacedOrderSuccessPage(
                               placeOrderId: state.placeOrderPickup.id,
                               token: loginState.user.token,
@@ -429,10 +488,12 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
                                   title: Text(
                                     "Place Order Error",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   content: Text(state.message),
                                   actions: <Widget>[
@@ -442,7 +503,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                                       },
                                       child: Text(
                                         "OK",
-                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],
@@ -453,7 +515,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
                       builder: (context, state) {
                         if (state is LoadingPlaceOrder) {
                           return Container(
-                            decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                            decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5)),
                             child: Center(
                               child: SpinKitCircle(
                                 color: Colors.white,
@@ -478,7 +541,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
 
   openRazorPayCheckOut(PlaceOrderPickup placeOrderPickup) {
     var options = {
-      "key": placeOrderPickup.razorKey, //"rzp_test_shynWbWngI8JsA", // change to placeOrder.razorKey
+      "key": placeOrderPickup.razorKey,
+      //"rzp_test_shynWbWngI8JsA", // change to placeOrder.razorKey
       "amount": (placeOrderPickup.deliveryAmount * 100.0).ceil().toString(),
       "name": "Flyer Eats",
       "description": "Payment for Flyer Eats Order",
@@ -503,7 +567,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage> with Sing
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: Text(
               "Error",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -541,7 +606,9 @@ class PickupInformationWidget extends StatelessWidget {
                 .map((e) => Container(
                       padding: EdgeInsets.all(8),
                       margin: EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(4)),
+                      decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(4)),
                       child: Text(
                         e,
                         style: TextStyle(fontSize: 13),
@@ -565,7 +632,9 @@ class ImageThumbnail extends StatelessWidget {
       height: 60,
       width: 60,
       margin: EdgeInsets.only(right: 15, bottom: 15),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black12)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.black12)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Image.file(
@@ -586,11 +655,17 @@ class PickUpDeliveryInformation extends StatefulWidget {
   final PlaceOrderPickupBloc orderPickupBloc;
 
   const PickUpDeliveryInformation(
-      {Key key, this.address, this.token, this.addressBloc, this.orderPickupBloc, this.contact})
+      {Key key,
+      this.address,
+      this.token,
+      this.addressBloc,
+      this.orderPickupBloc,
+      this.contact})
       : super(key: key);
 
   @override
-  _PickUpDeliveryInformationState createState() => _PickUpDeliveryInformationState();
+  _PickUpDeliveryInformationState createState() =>
+      _PickUpDeliveryInformationState();
 }
 
 class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
@@ -610,21 +685,28 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
         ? Container(
             height: 90,
             width: AppUtil.getScreenWidth(context),
-            padding:
-                EdgeInsets.symmetric(vertical: horizontalPaddingDraggable - 5, horizontal: horizontalPaddingDraggable),
+            padding: EdgeInsets.symmetric(
+                vertical: horizontalPaddingDraggable - 5,
+                horizontal: horizontalPaddingDraggable),
             decoration: BoxDecoration(color: Colors.white, boxShadow: [
-              BoxShadow(color: Colors.orange[100], blurRadius: 5, spreadRadius: 0, offset: Offset(0, -1)),
+              BoxShadow(
+                  color: Colors.orange[100],
+                  blurRadius: 5,
+                  spreadRadius: 0,
+                  offset: Offset(0, -1)),
             ]),
             child: GestureDetector(
               onTap: () async {
-                Address address = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Address address = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) {
                   return AddressPage(
                     forcedDefault: true,
                   );
                 }));
 
                 if (address != null) {
-                  BlocProvider.of<LoginBloc>(context).add(UpdateDefaultAddress(address));
+                  BlocProvider.of<LoginBloc>(context)
+                      .add(UpdateDefaultAddress(address));
                   widget.orderPickupBloc.add(ChangeAddress(address));
                 }
                 //widget.addressBloc.add(InitDefaultAddress());
@@ -650,7 +732,10 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                       ),
                       Text(
                         "ADD NEW ADDRESS",
-                        style: TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.orange,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
@@ -661,10 +746,15 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
         : Container(
             height: 145,
             width: AppUtil.getScreenWidth(context),
-            padding:
-                EdgeInsets.symmetric(vertical: horizontalPaddingDraggable - 5, horizontal: horizontalPaddingDraggable),
+            padding: EdgeInsets.symmetric(
+                vertical: horizontalPaddingDraggable - 5,
+                horizontal: horizontalPaddingDraggable),
             decoration: BoxDecoration(color: Colors.white, boxShadow: [
-              BoxShadow(color: Colors.orange[100], blurRadius: 5, spreadRadius: 0, offset: Offset(0, -1)),
+              BoxShadow(
+                  color: Colors.orange[100],
+                  blurRadius: 5,
+                  spreadRadius: 0,
+                  offset: Offset(0, -1)),
             ]),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -678,7 +768,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                     Expanded(
                       child: Container(
                         padding: EdgeInsets.all(3),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(2)),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2)),
                         child: Text(
                           widget.address.title,
                           maxLines: 1,
@@ -711,7 +802,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                         widget.address.address,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -725,10 +817,16 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                   children: <Widget>[
                     Expanded(
                       child: RichText(
-                        text: TextSpan(text: "Contact Number: ", style: TextStyle(color: Colors.black), children: [
-                          TextSpan(
-                              text: widget.contact, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black))
-                        ]),
+                        text: TextSpan(
+                            text: "Contact Number: ",
+                            style: TextStyle(color: Colors.black),
+                            children: [
+                              TextSpan(
+                                  text: widget.contact,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black))
+                            ]),
                       ),
                     ),
                     GestureDetector(
@@ -758,7 +856,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
     showModalBottomSheet(
         isScrollControlled: false,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         context: context,
         builder: (context) {
           return BlocBuilder<AddressBloc, AddressState>(
@@ -777,13 +876,20 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(32),
+                          topRight: Radius.circular(32))),
                   child: Stack(
                     children: <Widget>[
                       SingleChildScrollView(
                         child: Container(
-                          padding: EdgeInsets.only(left: 20, right: 20, bottom: kBottomNavigationBarHeight, top: 20),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                          padding: EdgeInsets.only(
+                              left: 20,
+                              right: 20,
+                              bottom: kBottomNavigationBarHeight,
+                              top: 20),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(32)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
@@ -805,13 +911,16 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                         child: Container(
                             width: AppUtil.getScreenWidth(context),
                             decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(32),
+                                    topRight: Radius.circular(32)),
                                 color: Colors.white),
-                            padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
+                            padding:
+                                EdgeInsets.only(top: 20, left: 20, bottom: 20),
                             child: Text(
                               "SELECT ADDRESS",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             )),
                       ),
                       Positioned(
@@ -819,7 +928,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                           child: GestureDetector(
                             onTap: () {
                               Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
                                 return AddressPage();
                               }));
                             },
@@ -843,7 +953,10 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                                   ),
                                   Text(
                                     "ADD NEW ADDRESS",
-                                    style: TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: Colors.orange,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
                                   )
                                 ],
                               ),
@@ -870,7 +983,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                 );
               } else if (state is ErrorLoadingListAddress) {
                 return Container(
-                    margin: EdgeInsets.symmetric(vertical: 20), child: Center(child: Text("Fail load addresses")));
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    child: Center(child: Text("Fail load addresses")));
               }
               return Container();
             },
@@ -882,7 +996,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
     showModalBottomSheet(
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         context: context,
         builder: (context) {
           return StatefulBuilder(
@@ -893,8 +1008,9 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                     Container(
                         width: AppUtil.getScreenWidth(context),
                         decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(32),
+                                topRight: Radius.circular(32)),
                             color: Colors.white),
                         padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
                         child: Row(
@@ -902,7 +1018,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                             Expanded(
                               child: Text(
                                 "ENTER NUMBER",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
                             IconButton(
@@ -913,7 +1030,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                           ],
                         )),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: horizontalPaddingDraggable),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
@@ -940,7 +1058,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                                         Expanded(
                                           child: Container(
                                             height: 20,
-                                            child: SvgPicture.asset("assets/india_flag.svg"),
+                                            child: SvgPicture.asset(
+                                                "assets/india_flag.svg"),
                                           ),
                                         ),
                                         SizedBox(
@@ -949,7 +1068,9 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                                         Expanded(
                                           child: Text(
                                             "+91",
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         )
                                       ],
@@ -966,7 +1087,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                                         Expanded(
                                           child: Container(
                                             height: 20,
-                                            child: SvgPicture.asset("assets/singapore_flag.svg"),
+                                            child: SvgPicture.asset(
+                                                "assets/singapore_flag.svg"),
                                           ),
                                         ),
                                         SizedBox(
@@ -975,7 +1097,9 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                                         Expanded(
                                           child: Text(
                                             "+65",
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         )
                                       ],
@@ -993,8 +1117,10 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                           ),
                           Expanded(
                             child: Container(
-                              decoration:
-                                  BoxDecoration(border: Border(left: BorderSide(color: Colors.black12, width: 2))),
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      left: BorderSide(
+                                          color: Colors.black12, width: 2))),
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: TextField(
                                 onChanged: (value) {
@@ -1005,10 +1131,12 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                                 autofocus: true,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 15),
                                   border: InputBorder.none,
                                   hintText: "Enter phone number",
-                                  hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                  hintStyle: TextStyle(
+                                      fontSize: 16, color: Colors.black38),
                                 ),
                               ),
                             ),
@@ -1017,7 +1145,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable, vertical: 10),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: horizontalPaddingDraggable, vertical: 10),
                       child: Row(
                         children: <Widget>[
                           Checkbox(
@@ -1027,17 +1156,21 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                                 _isChangePrimaryNumber = value;
                               });
                             },
-                            visualDensity: VisualDensity(vertical: 0, horizontal: 0),
+                            visualDensity:
+                                VisualDensity(vertical: 0, horizontal: 0),
                           ),
-                          Expanded(child: Text("Do you want to make this number as your primary and login number?"))
+                          Expanded(
+                              child: Text(
+                                  "Do you want to make this number as your primary and login number?"))
                         ],
                       ),
                     ),
                     GestureDetector(
                       onTap: _number != "" && _number != null
                           ? () {
-                              widget.orderPickupBloc
-                                  .add(ChangeContact(_contactPredicate + _number, _isChangePrimaryNumber));
+                              widget.orderPickupBloc.add(ChangeContact(
+                                  _contactPredicate + _number,
+                                  _isChangePrimaryNumber));
                               Navigator.pop(context);
                             }
                           : () {},
@@ -1045,7 +1178,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                         margin: EdgeInsets.only(
                             left: horizontalPaddingDraggable,
                             right: horizontalPaddingDraggable,
-                            bottom: MediaQuery.of(context).viewInsets.bottom + 32),
+                            bottom:
+                                MediaQuery.of(context).viewInsets.bottom + 32),
                         child: Stack(
                           children: <Widget>[
                             Container(
@@ -1061,7 +1195,8 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                               ),
                             ),
                             AnimatedOpacity(
-                              opacity: _number != "" && _number != null ? 0.0 : 0.5,
+                              opacity:
+                                  _number != "" && _number != null ? 0.0 : 0.5,
                               child: Container(
                                 height: 50,
                                 color: Colors.white,
@@ -1085,20 +1220,25 @@ class AddressItemWidget extends StatelessWidget {
   final Address address;
   final PlaceOrderPickupBloc orderPickupBloc;
 
-  const AddressItemWidget({Key key, this.address, this.orderPickupBloc}) : super(key: key);
+  const AddressItemWidget({Key key, this.address, this.orderPickupBloc})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String type;
+    String icon;
     switch (address.type) {
       case AddressType.home:
         type = "HOME";
+        icon = "assets/home address.svg";
         break;
       case AddressType.office:
         type = "OFFICE";
+        icon = "assets/office address.svg";
         break;
       case AddressType.other:
         type = "OTHER";
+        icon = "assets/others address.svg";
         break;
       default:
         break;
@@ -1115,13 +1255,14 @@ class AddressItemWidget extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(bottom: 15),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.only(right: 16),
-                    child: Icon(
-                      Icons.home,
-                      size: 25,
+                    child: SvgPicture.asset(
+                      icon,
+                      width: 20,
+                      height: 20,
                     ),
                   ),
                   Expanded(
@@ -1132,7 +1273,8 @@ class AddressItemWidget extends StatelessWidget {
                           margin: EdgeInsets.only(bottom: 10),
                           child: Text(
                             type,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Container(
@@ -1141,7 +1283,8 @@ class AddressItemWidget extends StatelessWidget {
                             address.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Text(

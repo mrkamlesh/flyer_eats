@@ -14,7 +14,8 @@ class FoodCart {
     return singleItemCart.containsKey(id);
   }
 
-  void addSingleItemFoodToCart(String id, Food food, int quantity, Price price, List<AddOn> addOns) {
+  void addSingleItemFoodToCart(
+      String id, Food food, int quantity, Price price, List<AddOn> addOns) {
     singleItemCart[id] = FoodCartItem(id, food, quantity, price, addOns);
   }
 
@@ -32,7 +33,8 @@ class FoodCart {
     }
   }
 
-  void changeSingleItemFoodQuantity(String id, Food food, int quantity, Price price, List<AddOn> addOns) {
+  void changeSingleItemFoodQuantity(
+      String id, Food food, int quantity, Price price, List<AddOn> addOns) {
     if (!isSingleItemFoodExist(id)) {
       addSingleItemFoodToCart(id, food, 1, price, addOns);
     } else {
@@ -43,7 +45,8 @@ class FoodCart {
     }
   }
 
-  void addMultipleItemFoodToCart(Food food, int quantity, Price price, List<AddOn> addOns) {
+  void addMultipleItemFoodToCart(
+      Food food, int quantity, Price price, List<AddOn> addOns) {
     multipleItemCart.add(FoodCartItem("", food, quantity, price, addOns));
   }
 
@@ -77,11 +80,13 @@ class FoodCart {
     }
   }
 
-  double getAmount() {
+  double getCartTotalAmount() {
     double amount = 0;
 
     this.getAllFoodCartItem().forEach((foodCartItem) {
-      amount = amount + foodCartItem.food.getRealPrice() * foodCartItem.quantity;
+      amount = amount +
+          (foodCartItem.price.price - foodCartItem.food.discount) *
+              foodCartItem.quantity;
 
       foodCartItem.addOns.forEach((addOn) {
         amount = amount + addOn.price * addOn.quantity;
@@ -91,12 +96,13 @@ class FoodCart {
     return amount;
   }
 
-  int cartItemNumber() {
+  int cartItemTotal() {
     return this.getAllFoodCartItem().length;
   }
 
   List<FoodCartItem> getAllFoodCartItem() {
-    return this.singleItemCart.entries.map((e) => e.value).toList() + this.multipleItemCart;
+    return this.singleItemCart.entries.map((e) => e.value).toList() +
+        this.multipleItemCart;
   }
 
   String cartToString() {
@@ -108,13 +114,16 @@ class FoodCart {
       Map<String, dynamic> cartItem = Map();
       cartItem['item_id'] = foodCartItem.food.id;
       cartItem['qty'] = foodCartItem.quantity;
-      cartItem['price'] = foodCartItem.price.price.toString() + "|" + foodCartItem.food.price.size;
+      cartItem['price'] = foodCartItem.price.price.toString() +
+          "|" +
+          foodCartItem.food.price.size;
       //cartItem['sub_item'] = List<Map<String, dynamic>>();
       List<Map<String, dynamic>> addOnList = List();
       foodCartItem.addOns.forEach((addOn) {
         Map<String, dynamic> addOnMap = Map();
         addOnMap['subcat_id'] = addOn.addOnsTypeId;
-        addOnMap['value'] = addOn.id + "|" + addOn.price.toString() + "|" + addOn.name;
+        addOnMap['value'] =
+            addOn.id + "|" + addOn.price.toString() + "|" + addOn.name;
         addOnMap['qty'] = "itemqty"; //addOn.quantity;
         addOnMap['price'] = addOn.price;
         addOnList.add(addOnMap);
@@ -144,4 +153,29 @@ class FoodCartItem {
   final List<AddOn> addOns;
 
   FoodCartItem(this.id, this.food, this.quantity, this.price, this.addOns);
+
+  String addOnsToString() {
+    List<String> addOnsName = List();
+    this.addOns.forEach((addOn) {
+      addOnsName.add(addOn.name + " (" + addOn.quantity.toString() + ")");
+    });
+
+    return addOnsName.join(", ");
+  }
+
+  bool hasAddOns() {
+    return this.addOns.length > 0;
+  }
+
+  double getAmount() {
+    double amount = this.price.price - this.food.discount;
+
+    this.addOns.forEach((addOn) {
+      amount = amount + addOn.price * addOn.quantity;
+    });
+
+    //amount = amount * this.quantity;
+
+    return amount;
+  }
 }

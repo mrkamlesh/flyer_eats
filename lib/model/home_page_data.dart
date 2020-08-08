@@ -15,6 +15,7 @@ class HomePageData {
   final List<Ads> ads;
   final String referralCode;
   final String referralDiscount;
+  final String dblText;
 
   HomePageData({
     this.location,
@@ -27,6 +28,7 @@ class HomePageData {
     this.ads,
     this.referralCode,
     this.referralDiscount,
+    this.dblText,
   });
 
   factory HomePageData.fromJson(Map<String, dynamic> parsedJson) {
@@ -65,6 +67,7 @@ class HomePageData {
         countryId: parsedJson['location']['country_code'],
         referralDiscount: parsedJson['referral_discount'],
         referralCode: parsedJson['referral_code'],
+        dblText: parsedJson['dinner_section_title'],
         promos: promos,
         topRestaurants: top,
         categories: foodCategories,

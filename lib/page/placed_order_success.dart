@@ -11,7 +11,7 @@ import 'package:clients/bloc/placedordersuccess/placed_order_success_state.dart'
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/page/order_detail_page.dart';
-import 'package:clients/widget/promo_list.dart';
+import 'package:clients/widget/ads_list.dart';
 
 class PlacedOrderSuccessPage extends StatefulWidget {
   final String placeOrderId;

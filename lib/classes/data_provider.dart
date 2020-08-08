@@ -18,7 +18,8 @@ class DataProvider {
   String productionServerUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(String contactPhone) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/checkMobileExist?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/checkMobileExist?json=true&api_key=flyereats";
 
     var formData = {
       "contact_phone": contactPhone,
@@ -39,7 +40,8 @@ class DataProvider {
   }
 
   Future<dynamic> register(RegisterPost registerPost) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/register?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/register?json=true&api_key=flyereats";
 
     Map<String, dynamic> formData = {
       "email_address": registerPost.email,
@@ -63,7 +65,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await Dio().post(url, data: FormData.fromMap(formData), options: Options(contentType: 'JSON'));
+      final response = await Dio().post(url,
+          data: FormData.fromMap(formData),
+          options: Options(contentType: 'JSON'));
 
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -83,7 +87,8 @@ class DataProvider {
       String devicePlatform,
       String appVersion,
       String contactPhone}) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/socialLogin?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/socialLogin?json=true&api_key=flyereats";
 
     var formData = {
       "userid": userId,
@@ -112,7 +117,8 @@ class DataProvider {
   }
 
   Future<dynamic> checkEmailExist(String email) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/checkEmailExist?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/checkEmailExist?json=true&api_key=flyereats";
 
     var formData = {
       "email": email,
@@ -133,7 +139,8 @@ class DataProvider {
   }
 
   Future<dynamic> loginByEmail(String email, String password) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/checkAccount?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/checkAccount?json=true&api_key=flyereats";
 
     var formData = {"email_address": email, "password": password};
 
@@ -168,9 +175,10 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> verifyOtp(
-      String contactPhone, String otp, String firebaseToken, String platform, String version) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/verifyOtp?json=true&api_key=flyereats";
+  Future<dynamic> verifyOtp(String contactPhone, String otp,
+      String firebaseToken, String platform, String version) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/verifyOtp?json=true&api_key=flyereats";
 
     var formData = {
       "contact_phone": contactPhone,
@@ -195,7 +203,8 @@ class DataProvider {
   }
 
   Future<dynamic> getRegisterLocations() async {
-    String url = "${productionServerUrl}mobileapp/apinew/getCustomFields?json=true&api_key=flyereats";
+    String url =
+        "${productionServerUrl}mobileapp/apinew/getCustomFields?json=true&api_key=flyereats";
 
     var responseJson;
     try {
@@ -208,7 +217,8 @@ class DataProvider {
   }
 
   Future<dynamic> getPaymentOptions(PlaceOrder order) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getPaymentOptions?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getPaymentOptions?json=true&api_key=flyereats";
 
     var formData = {
       "next_step": "payment_option",
@@ -243,7 +253,8 @@ class DataProvider {
   }
 
   Future<dynamic> placeOrder(PlaceOrder order) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/placeOrder?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/placeOrder?json=true&api_key=flyereats";
 
     Map<String, dynamic> formData = {
       "merchant_id": order.restaurant.id,
@@ -261,9 +272,11 @@ class DataProvider {
       "street": order.address.address,
       "payment_list": order.selectedPaymentMethod,
       "voucher_code": order.voucher.name != null ? order.voucher.name : "",
-      "voucher_amount": order.voucher.amount != 0 ? order.voucher.amount.toString() : "",
+      "voucher_amount":
+          order.voucher.amount != 0 ? order.voucher.amount.toString() : "",
       "voucher_type": order.voucher.type != null ? order.voucher.type : "",
-      "voucher_rate": order.voucher.rate != 0 ? order.voucher.rate.toString() : "",
+      "voucher_rate":
+          order.voucher.rate != 0 ? order.voucher.rate.toString() : "",
       "change_primary_contact": order.isChangePrimaryContact ? "1" : "0",
       "delivery_date": order.getDeliveryDate(), //yyyy-mm-dd
       "delivery_time": order.getDeliveryTime(),
@@ -288,7 +301,8 @@ class DataProvider {
   }
 
   Future<dynamic> getOrderDetail(String orderId, String token) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getReceipt?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getReceipt?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -311,7 +325,8 @@ class DataProvider {
   }
 
   Future<dynamic> getPickupOrderDetail(String orderId, String token) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getPickupOrderDetails?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getPickupOrderDetails?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -334,7 +349,8 @@ class DataProvider {
   }
 
   Future<dynamic> getCoupons(String restaurantId, String token) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/loadPromos?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/loadPromos?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -355,10 +371,16 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getOrderHistory(String token, String typeOrder, int page) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getOrderHistory?json=true&api_key=flyereats";
+  Future<dynamic> getOrderHistory(
+      String token, String typeOrder, int page) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getOrderHistory?json=true&api_key=flyereats";
 
-    var formData = {"client_token": token, "type": typeOrder, "page": page.toString()};
+    var formData = {
+      "client_token": token,
+      "type": typeOrder,
+      "page": page.toString()
+    };
 
     var responseJson;
     try {
@@ -375,7 +397,8 @@ class DataProvider {
   }
 
   Future<dynamic> scratchCard(String token, String cardId) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/cardScratch?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/cardScratch?json=true&api_key=flyereats";
 
     var formData = {"client_token": token, "card_id": cardId};
 
@@ -394,8 +417,14 @@ class DataProvider {
   }
 
   Future<dynamic> getDeliveryCharge(
-      String token, String deliveryLat, String deliveryLng, String pickupLat, String pickupLng, String location) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getDeliveryCharge?json=true&api_key=flyereats";
+      String token,
+      String deliveryLat,
+      String deliveryLng,
+      String pickupLat,
+      String pickupLng,
+      String location) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getDeliveryCharge?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -421,7 +450,8 @@ class DataProvider {
   }
 
   Future<dynamic> placeOrderPickup(PlaceOrderPickup placeOrderPickup) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/placePickupOrder?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/placePickupOrder?json=true&api_key=flyereats";
 
     Map<String, dynamic> formData = {
       "client_token": placeOrderPickup.token,
@@ -433,7 +463,8 @@ class DataProvider {
       "contact_phone": placeOrderPickup.contact,
       "delivery_instruction": placeOrderPickup.pickUp.deliveryInstruction,
       "street": placeOrderPickup.address.address,
-      "change_primary_contact": placeOrderPickup.isChangePrimaryContact ? "1" : "0",
+      "change_primary_contact":
+          placeOrderPickup.isChangePrimaryContact ? "1" : "0",
       "pickup_address": placeOrderPickup.pickUp.shop.address,
       "shop_name": placeOrderPickup.pickUp.shop.name,
       "shop_description": placeOrderPickup.pickUp.shop.description,
@@ -447,7 +478,8 @@ class DataProvider {
     List files = [];
 
     for (int i = 0; i < placeOrderPickup.pickUp.attachment.length; i++) {
-      files.add(await MultipartFile.fromFile(placeOrderPickup.pickUp.attachment[i].path));
+      files.add(await MultipartFile.fromFile(
+          placeOrderPickup.pickUp.attachment[i].path));
     }
 
     formData['thumbnail_file'] = files;
@@ -467,7 +499,8 @@ class DataProvider {
   }
 
   Future<dynamic> getScratchCardList(String token) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/scratchCardHistory?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/scratchCardHistory?json=true&api_key=flyereats";
 
     var formData = {"client_token": token};
 
@@ -493,15 +526,18 @@ class DataProvider {
       int topRestaurantPage,
       int dblPage,
       int foodCategoryPage,
-      int adsPage}) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/homePage?json=true&api_key=flyereats";
+      int adsPage,
+      String time}) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/homePage?json=true&api_key=flyereats";
 
     Map<String, dynamic> formData = {
       "client_token": token,
       "sponsor_page": topRestaurantPage.toString(),
       "time_page": dblPage.toString(),
       "category_page": foodCategoryPage.toString(),
-      "ads_page": adsPage.toString()
+      "ads_page": adsPage.toString(),
+      "time": time,
     };
 
     if (lat != null && long != null) {
@@ -527,7 +563,8 @@ class DataProvider {
   }
 
   Future<dynamic> getReview(String restaurantId, String token) async {
-    String url = "${productionServerUrl}mobileapp/apinew/merchantReviews?json=true"
+    String url =
+        "${productionServerUrl}mobileapp/apinew/merchantReviews?json=true"
         "&merchant_id=$restaurantId"
         "&api_key=flyereats&client_token=$token";
 
@@ -541,8 +578,10 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> applyCoupon(String restaurantId, String voucherCode, double totalOrder, String token) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/applyVoucher?json=true&api_key=flyereats";
+  Future<dynamic> applyCoupon(String restaurantId, String voucherCode,
+      double totalOrder, String token) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/applyVoucher?json=true&api_key=flyereats";
 
     var formData = {
       "merchant_id": restaurantId,
@@ -579,8 +618,10 @@ class DataProvider {
     return responseJson;
   }*/
 
-  Future<dynamic> addReview(String token, String orderId, String review, double rating) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/addReview?json=true&api_key=flyereats";
+  Future<dynamic> addReview(
+      String token, String orderId, String review, double rating) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/addReview?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -603,8 +644,10 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> checkTokenValid(String token, String firebaseToken, String platform, String version) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/check?json=true&api_key=flyereats";
+  Future<dynamic> checkTokenValid(String token, String firebaseToken,
+      String platform, String version) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/check?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -628,13 +671,16 @@ class DataProvider {
   }
 
   Future<dynamic> saveProfile(String token, Profile profile) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/saveProfile?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/saveProfile?json=true&api_key=flyereats";
 
     Map<String, dynamic> formData = {
       "client_token": token,
       "full_name": profile.name,
       "contact_phone": profile.phone,
-      "password": profile.password != null && profile.password != "" ? profile.password : "",
+      "password": profile.password != null && profile.password != ""
+          ? profile.password
+          : "",
     };
 
     if (profile.avatar != null) {
@@ -705,7 +751,8 @@ class DataProvider {
   }
 
   Future<dynamic> getLocations(String countryId) async {
-    String url = "${productionServerUrl}store/addressesWithCountry?country_id=$countryId";
+    String url =
+        "${productionServerUrl}store/addressesWithCountry?country_id=$countryId";
 
     var responseJson;
     try {
@@ -718,7 +765,8 @@ class DataProvider {
   }
 
   Future<dynamic> getPredefinedLocationByLatLng(double lat, double lng) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getPredefinedLocation?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getPredefinedLocation?json=true&api_key=flyereats";
 
     Map<String, dynamic> formData = {
       "lat": lat.toString(),
@@ -738,10 +786,18 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getRestaurantList(String token, String address, MerchantType merchantType, RestaurantListType type,
-      String category, int page, bool isVegOnly,
-      {String cuisineType, String sortBy}) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/restaurantList?json=true&api_key=flyereats";
+  Future<dynamic> getRestaurantList(
+      String token,
+      String address,
+      MerchantType merchantType,
+      RestaurantListType type,
+      String category,
+      int page,
+      bool isVegOnly,
+      {String cuisineType,
+      String sortBy}) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/restaurantList?json=true&api_key=flyereats";
 
     String merchantTypeParams;
     if (merchantType == MerchantType.restaurant) {
@@ -812,8 +868,10 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getOfferList(String token, String address, String type) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getOffers?json=true&api_key=flyereats";
+  Future<dynamic> getOfferList(
+      String token, String address, String type) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getOffers?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -835,7 +893,8 @@ class DataProvider {
   }
 
   Future<dynamic> getActiveOrder(String token) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getActiveOrder?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getActiveOrder?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -855,10 +914,16 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getSimilarRestaurant(String token, String merchantId, String address) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/similarRestaurantList?json=true&api_key=flyereats";
+  Future<dynamic> getSimilarRestaurant(
+      String token, String merchantId, String address) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/similarRestaurantList?json=true&api_key=flyereats";
 
-    var formData = {"client_token": token, "merchant_id": merchantId, "address": address};
+    var formData = {
+      "client_token": token,
+      "merchant_id": merchantId,
+      "address": address
+    };
 
     var responseJson;
     try {
@@ -875,7 +940,8 @@ class DataProvider {
   }
 
   Future<dynamic> getWalletInfo(String token) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getWinAmount?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getWinAmount?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -896,7 +962,8 @@ class DataProvider {
   }
 
   Future<dynamic> addWallet(String token, double amount) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/addWalletMoney?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/addWalletMoney?json=true&api_key=flyereats";
 
     var formData = {"client_token": token, "amount": amount.toString()};
 
@@ -915,7 +982,8 @@ class DataProvider {
   }
 
   Future<dynamic> getPickupInfo(String token, String address) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getPickupInfo?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getPickupInfo?json=true&api_key=flyereats";
 
     var formData = {"client_token": token, "address": address};
 
@@ -933,8 +1001,10 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> globalSearch(String token, String textSearch, String address, int page) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/globalSearch?json=true&api_key=flyereats";
+  Future<dynamic> globalSearch(
+      String token, String textSearch, String address, int page) async {
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/globalSearch?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
@@ -957,16 +1027,20 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getFoods(String restaurantId, String categoryId, bool isVegOnly, String searchKeyword) async {
-    String vegOnlyParam = isVegOnly != null ? isVegOnly ? "&is_veg=1" : "&is_veg=0" : "";
-    String searchParam = searchKeyword != null ? "&searchitem=$searchKeyword" : "";
+  Future<dynamic> getFoods(String restaurantId, String categoryId,
+      bool isVegOnly, String searchKeyword) async {
+    String vegOnlyParam =
+        isVegOnly != null ? isVegOnly ? "&is_veg=1" : "&is_veg=0" : "";
+    String searchParam =
+        searchKeyword != null ? "&searchitem=$searchKeyword" : "";
     String categoryParam = categoryId != null ? "&cat_id=$categoryId" : "";
     String url =
         "${developmentServerUrl}mobileapp/apiRest/getItem?json=true&api_key=flyereats&page=all&merchant_id=$restaurantId$categoryParam$vegOnlyParam$searchParam";
 
     var responseJson;
     try {
-      final response = await Dio().get(url, options: Options(contentType: 'JSON'));
+      final response =
+          await Dio().get(url, options: Options(contentType: 'JSON'));
 
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -977,7 +1051,8 @@ class DataProvider {
   }
 
   Future<dynamic> getFoodDetail(String foodId) async {
-    String url = "${developmentServerUrl}mobileapp/apiRest/getItemDetails?json=true&api_key=flyereats";
+    String url =
+        "${developmentServerUrl}mobileapp/apiRest/getItemDetails?json=true&api_key=flyereats";
 
     var formData = {
       "item_id": foodId,
@@ -985,7 +1060,9 @@ class DataProvider {
 
     var responseJson;
     try {
-      final response = await Dio().post(url, data: FormData.fromMap(formData), options: Options(contentType: 'JSON'));
+      final response = await Dio().post(url,
+          data: FormData.fromMap(formData),
+          options: Options(contentType: 'JSON'));
 
       responseJson = _returnResponse(response);
     } on SocketException {

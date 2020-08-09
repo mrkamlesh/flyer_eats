@@ -77,7 +77,7 @@ class PlaceOrder {
           : 0,
       discountOrderPrettyString: (parsedJson['details']['cart'] as Map).containsKey('discount')
           ? parsedJson['details']['cart']['discount']['display'].toString()
-          : "DISCOUNT ORDER",
+          : "Discount Order",
       deliveryCharges: (parsedJson['details']['cart'] as Map).containsKey('delivery_charges')
           ? double.parse(parsedJson['details']['cart']['delivery_charges']['amount'].toString())
           : 0,

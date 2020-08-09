@@ -451,7 +451,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                         state.placeOrderPickup);
                                   }
                                 : () {},
-                            showRupee: (state is LoadingGetDeliveryCharge)
+                            showCurrency: (state is LoadingGetDeliveryCharge)
                                 ? false
                                 : true,
                             amount: (state is LoadingGetDeliveryCharge)

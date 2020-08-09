@@ -6,18 +6,20 @@ class OrderBottomNavBar extends StatelessWidget {
   final amount;
   final String description;
   final String buttonText;
-  final bool showRupee;
+  final bool showCurrency;
   final Function onButtonTap;
   final bool isValid;
+  final String currencyIcon;
 
   const OrderBottomNavBar(
       {Key key,
       this.amount,
       this.description,
       this.buttonText,
-      this.showRupee,
+      this.showCurrency,
       this.onButtonTap,
-      this.isValid})
+      this.isValid,
+      this.currencyIcon})
       : super(key: key);
 
   @override
@@ -25,9 +27,7 @@ class OrderBottomNavBar extends StatelessWidget {
     return Container(
       height: kBottomNavigationBarHeight,
       width: AppUtil.getScreenWidth(context),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Colors.yellow[600]))),
+      decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.yellow[600]))),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -41,11 +41,11 @@ class OrderBottomNavBar extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    showRupee
+                    showCurrency
                         ? Container(
                             margin: EdgeInsets.only(right: 10),
                             child: SvgPicture.asset(
-                              "assets/rupee.svg",
+                              currencyIcon,
                               width: 13,
                               height: 13,
                             ),
@@ -53,8 +53,7 @@ class OrderBottomNavBar extends StatelessWidget {
                         : Container(),
                     Text(
                       "$amount",
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ],
                 )
@@ -70,9 +69,7 @@ class OrderBottomNavBar extends StatelessWidget {
                   Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: Colors.yellow[600],
-                        borderRadius:
-                            BorderRadius.only(topLeft: Radius.circular(18))),
+                        color: Colors.yellow[600], borderRadius: BorderRadius.only(topLeft: Radius.circular(18))),
                     child: Text(
                       buttonText,
                       style: TextStyle(

@@ -18,6 +18,7 @@ class FoodListWidget extends StatefulWidget {
   final EdgeInsets padding;
   final Function(int) onRemove;
   final Function(int) onAdd;
+  final String currencyIcon;
 
   const FoodListWidget(
       {Key key,
@@ -27,7 +28,8 @@ class FoodListWidget extends StatefulWidget {
       this.cart,
       this.padding,
       this.onAdd,
-      this.onRemove})
+      this.onRemove,
+      this.currencyIcon})
       : super(key: key);
 
   @override
@@ -68,6 +70,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
             (context, i) {
               return FoodList(
                 type: widget.type,
+                currencyIcon: widget.currencyIcon,
                 index: i,
                 scale: _scaleAnimation,
                 selectedIndex: _selectedFood,
@@ -92,6 +95,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                   (context, i) {
                     return FoodList(
                       type: widget.type,
+                      currencyIcon: widget.currencyIcon,
                       index: i,
                       quantity: widget.cart.getFoodQuantity(widget.listFood[i]),
                       scale: _scaleAnimation,
@@ -120,6 +124,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                   (context, i) {
                     return FoodList(
                       type: widget.type,
+                      currencyIcon: widget.currencyIcon,
                       index: i,
                       quantity: widget.cart.getFoodQuantity(widget.listFood[i]),
                       scale: _scaleAnimation,
@@ -177,6 +182,7 @@ class FoodList extends StatelessWidget {
   final Animation<double> scale;
   final int quantity;
   final FoodListViewType type;
+  final String currencyIcon;
 
   const FoodList(
       {Key key,
@@ -187,7 +193,8 @@ class FoodList extends StatelessWidget {
       this.onTapRemove,
       this.scale,
       this.quantity,
-      this.type})
+      this.type,
+      this.currencyIcon})
       : super(key: key);
 
   @override
@@ -390,8 +397,7 @@ class FoodList extends StatelessWidget {
                                     children: <Widget>[
                                       food.discount > 0
                                           ? Text(
-                                              "\u20b9 " +
-                                                  AppUtil.doubleRemoveZeroTrailing(food.price.price),
+                                              "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price.price),
                                               style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
                                             )
                                           : SizedBox(),
@@ -399,7 +405,7 @@ class FoodList extends StatelessWidget {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: <Widget>[
                                           SvgPicture.asset(
-                                            "assets/rupee.svg",
+                                            currencyIcon,
                                             height: 8,
                                             width: 8,
                                             color: Colors.black,
@@ -580,15 +586,15 @@ class FoodList extends StatelessWidget {
                                           children: <Widget>[
                                             food.discount > 0
                                                 ? Text(
-                                                    "\u20b9 " +
-                                                        AppUtil.doubleRemoveZeroTrailing(food.price.price),
-                                                    style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                                    "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price.price),
+                                                    style:
+                                                        TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
                                                   )
                                                 : SizedBox(),
                                             Row(
                                               children: <Widget>[
                                                 SvgPicture.asset(
-                                                  "assets/rupee.svg",
+                                                  currencyIcon,
                                                   height: 11,
                                                   width: 11,
                                                   color: Colors.black,
@@ -783,8 +789,7 @@ class FoodList extends StatelessWidget {
                                     children: <Widget>[
                                       food.discount > 0
                                           ? Text(
-                                              "\u20b9 " +
-                                                  AppUtil.doubleRemoveZeroTrailing(food.price.price),
+                                              "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price.price),
                                               style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
                                             )
                                           : SizedBox(),
@@ -792,7 +797,7 @@ class FoodList extends StatelessWidget {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: <Widget>[
                                           SvgPicture.asset(
-                                            "assets/rupee.svg",
+                                            currencyIcon,
                                             height: 8,
                                             width: 8,
                                             color: Colors.black,

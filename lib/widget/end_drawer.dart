@@ -8,7 +8,7 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/page/account_page.dart';
 import 'package:clients/page/help_page.dart';
-import 'package:clients/page/my_wallet_page.dart';
+import 'package:clients/page/wallet_page.dart';
 import 'package:clients/page/notifications_list_page.dart';
 import 'package:clients/page/order_history_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -217,8 +217,8 @@ class EndDrawer extends StatelessWidget {
                 return InkWell(
                   onTap: homeState.homePageData != null
                       ? () {
-                          AppUtil.share(
-                              context, homeState.homePageData.referralCode, homeState.homePageData.referralDiscount);
+                          AppUtil.share(context, homeState.homePageData.referralCode,
+                              homeState.homePageData.currencyCode + " " + homeState.homePageData.referralDiscount);
                         }
                       : () {},
                   child: Row(

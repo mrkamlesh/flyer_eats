@@ -12,11 +12,12 @@ class Restaurant {
   final String discountTitle;
   final String discountDescription;
   final bool isOpen;
+  final String currencyCode;
 
   final List<Food> searchFoodList;
 
-  Restaurant(
-      this.id, this.name, this.deliveryEstimation, this.rating, this.image, this.cuisine, this.address, this.isOpen,
+  Restaurant(this.id, this.name, this.deliveryEstimation, this.rating, this.image, this.cuisine, this.address,
+      this.isOpen, this.currencyCode,
       {this.discountTitle, this.discountDescription, this.searchFoodList});
 
   factory Restaurant.fromJson(Map<String, dynamic> parsedJson) {
@@ -31,6 +32,7 @@ class Restaurant {
       parsedJson['cuisine'],
       parsedJson['address'],
       parsedJson['is_open'] == "open" ? true : false,
+      parsedJson['currency_code'],
       discountTitle: offers.isNotEmpty ? offers[0] : null,
       discountDescription: offers.isNotEmpty ? offers[0] : null,
     );
@@ -40,7 +42,7 @@ class Restaurant {
     String promoTitle = (parsedJson['offers'] as List).isNotEmpty ? parsedJson['offers'][0] : "";
 
     return Restaurant(parsedJson['merchant_id'], parsedJson['restaurant_name'], "", null, parsedJson['logo'], "", "",
-        parsedJson['is_open'] == "open" ? true : false,
+        parsedJson['is_open'] == "open" ? true : false, parsedJson['currency_code'],
         discountTitle: promoTitle, discountDescription: "");
   }
 
@@ -48,7 +50,7 @@ class Restaurant {
     String promoTitle = (parsedJson['offers'] as List).isNotEmpty ? parsedJson['offers'][0] : "";
 
     return Restaurant(parsedJson['merchant_id'], parsedJson['restaurant_name'], "", null, parsedJson['logo'], "", "",
-        parsedJson['is_open'] == "open" ? true : false,
+        parsedJson['is_open'] == "open" ? true : false, parsedJson['currency_code'],
         discountTitle: promoTitle, discountDescription: "");
   }
 
@@ -64,6 +66,7 @@ class Restaurant {
         parsedJson['cuisine'],
         "",
         parsedJson['is_open'] == "open" ? true : false,
+        parsedJson['currency_code'],
         discountTitle: promoTitle,
         discountDescription: "");
   }
@@ -84,6 +87,7 @@ class Restaurant {
         parsedJson['cuisine'],
         parsedJson['address'],
         parsedJson['is_open'] == "open" ? true : false,
+        parsedJson['currency_code'],
         discountTitle: offers.isNotEmpty ? offers[0] : null,
         discountDescription: offers.isNotEmpty ? offers[0] : null,
         searchFoodList: foods);

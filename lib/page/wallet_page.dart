@@ -188,26 +188,19 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                               ),
                                               Row(
                                                 children: <Widget>[
-                                                  /*SizedBox(
-                                                      width: 11,
-                                                      height: 17,
-                                                      child: FittedBox(
-                                                        fit: BoxFit.fill,
-                                                        child: SvgPicture.asset(
-                                                          "assets/rupee.svg",
-                                                          color: primary3,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),*/
+                                                  SvgPicture.asset(
+                                                    AppUtil.getCurrencyIcon(state.wallet.currency),
+                                                    color: primary3,
+                                                    width: 17,
+                                                    height: 17,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
                                                   Container(
                                                     alignment: Alignment.bottomRight,
                                                     child: Text(
-                                                      state.wallet.currency +
-                                                          " " +
-                                                          AppUtil.doubleRemoveZeroTrailing(state.wallet.walletAmount),
+                                                      AppUtil.doubleRemoveZeroTrailing(state.wallet.walletAmount),
                                                       textAlign: TextAlign.right,
                                                       style: TextStyle(
                                                           fontSize: 30, color: primary3, fontWeight: FontWeight.bold),
@@ -318,24 +311,16 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                                           style: TextStyle(fontSize: 13, color: Colors.black38),
                                                         ),
                                                       ),
-                                                      /*SizedBox(
-                                                          width: 5,
-                                                          height: 8,
-                                                          child: FittedBox(
-                                                            fit: BoxFit.fill,
-                                                            child: SvgPicture.asset(
-                                                              "assets/rupee.svg",
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 5,
-                                                        ),*/
+                                                      SvgPicture.asset(
+                                                        AppUtil.getCurrencyIcon(state.wallet.currency),
+                                                        height: 10,
+                                                        width: 10,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       Text(
-                                                        state.wallet.currency +
-                                                            " " +
-                                                            AppUtil.doubleRemoveZeroTrailing(
-                                                                state.wallet.scratchAmount),
+                                                        AppUtil.doubleRemoveZeroTrailing(state.wallet.scratchAmount),
                                                         textAlign: TextAlign.right,
                                                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                                       )

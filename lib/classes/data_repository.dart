@@ -678,7 +678,7 @@ class DataRepository {
     if (response['code'] == 1) {
       Map<String, dynamic> map = Map();
       map['amount'] = response['details']['total_amount'].toString();
-      map['currency'] = response['details']['currency'];
+      map['currency_code'] = response['details']['currency_code'];
       var listScratched = response['details']['scratched_card'] as List;
       var listNotScratched = response['details']['not_scratched_card'] as List;
       List<ScratchCard> cards = listNotScratched.map((i) {

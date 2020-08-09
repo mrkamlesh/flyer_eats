@@ -96,7 +96,7 @@ class _DeliveryProcessOrderPageState extends State<DeliveryProcessOrderPage>
                     amount: length,
                     description: "Items",
                     buttonText: "VIEW CART",
-                    showRupee: false,
+                    showCurrency: false,
                     onButtonTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {

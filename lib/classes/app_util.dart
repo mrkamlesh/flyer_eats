@@ -59,14 +59,21 @@ class AppUtil {
   }
 
   static String doubleRemoveZeroTrailing(double value) {
-    return double.parse(value.toStringAsFixed(2))
-        .toString()
-        .replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+    return double.parse(value.toStringAsFixed(2)).toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
     //return value.toStringAsFixed(2).toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
   }
 
-  static share(
-      BuildContext context, String referralCode, String referralAmount) {
+  static String getCurrencyIcon(String currencyCode) {
+    if (currencyCode == "INR") {
+      return "assets/rupee.svg";
+    } else if (currencyCode == "SGD") {
+      return "assets/sg dollar.svg";
+    } else {
+      return "";
+    }
+  }
+
+  static share(BuildContext context, String referralCode, String referralAmount) {
     final RenderBox box = context.findRenderObject();
     Share.share(
         'Install the FLYER EATS app now http://flyereats.app.link/mOvNgVSbm7 Use Referral code in Signup page - $referralCode We will give you $referralAmount & your buddy $referralAmount in your wallet after your orders above ₹99',

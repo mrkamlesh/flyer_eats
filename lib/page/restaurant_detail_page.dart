@@ -32,15 +32,13 @@ class RestaurantDetailPage extends StatefulWidget {
   final Restaurant restaurant;
   final Location location;
 
-  const RestaurantDetailPage({Key key, this.restaurant, this.location})
-      : super(key: key);
+  const RestaurantDetailPage({Key key, this.restaurant, this.location}) : super(key: key);
 
   @override
   _RestaurantDetailPageState createState() => _RestaurantDetailPageState();
 }
 
-class _RestaurantDetailPageState extends State<RestaurantDetailPage>
-    with TickerProviderStateMixin {
+class _RestaurantDetailPageState extends State<RestaurantDetailPage> with TickerProviderStateMixin {
   bool _isScrollingDown = false;
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
@@ -58,19 +56,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
       vsync: this,
       duration: Duration(milliseconds: 500),
     );
-    _navBarAnimation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
-        .animate(
-            CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _navBarAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
+        .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
 
     _rankPageController = PageController();
     int i = 0;
     _timer = Timer.periodic(Duration(seconds: 3), (t) {
       i++;
-      _rankPageController.animateToPage(
-          i % widget.restaurant.rating.getRollingText().length,
-          duration: Duration(milliseconds: 700),
-          curve: Curves.ease);
+      _rankPageController.animateToPage(i % widget.restaurant.rating.getRollingText().length,
+          duration: Duration(milliseconds: 700), curve: Curves.ease);
     });
 
     _bloc = DetailPageBloc();
@@ -98,8 +92,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       title: Text(
                         "Clear Cart?",
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -139,8 +132,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
           builder: (context, cartState) {
             return BlocProvider<DetailPageBloc>(
               create: (context) {
-                return _bloc
-                  ..add(PageDetailRestaurantOpen(widget.restaurant.id));
+                return _bloc..add(PageDetailRestaurantOpen(widget.restaurant.id));
               },
               child: BlocBuilder<DetailPageBloc, DetailPageState>(
                 builder: (context, state) {
@@ -162,25 +154,16 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                           );
                         },
                         child: AnimatedOpacity(
-                          opacity: widget.restaurant.id ==
-                                  cartState.placeOrder.restaurant.id
-                              ? 1.0
-                              : 0.0,
+                          opacity: widget.restaurant.id == cartState.placeOrder.restaurant.id ? 1.0 : 0.0,
                           duration: Duration(milliseconds: 300),
                           child: RestaurantDetailBottomNavBar(
-                            isValid:
-                                cartState.placeOrder.foodCart.cartItemTotal() >
-                                        0
-                                    ? true
-                                    : false,
-                            totalAmount:
-                                cartState.placeOrder.foodCart.getCartTotalAmount(),
-                            totalItem:
-                                cartState.placeOrder.foodCart.cartItemTotal(),
+                            currencyIcon: AppUtil.getCurrencyIcon(widget.restaurant.currencyCode),
+                            isValid: cartState.placeOrder.foodCart.cartItemTotal() > 0 ? true : false,
+                            totalAmount: cartState.placeOrder.foodCart.getCartTotalAmount(),
+                            totalItem: cartState.placeOrder.foodCart.cartItemTotal(),
                             buttonText: "CHECK OUT",
                             onButtonTap: () async {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
                                 return RestaurantPlaceOrderPage(
                                   location: widget.location,
                                   user: loginState.user,
@@ -238,18 +221,14 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                             ],
                           ),
                           DraggableScrollableSheet(
-                            initialChildSize:
-                                (AppUtil.getScreenHeight(context) -
-                                        AppUtil.getToolbarHeight(context)) /
-                                    AppUtil.getScreenHeight(context),
-                            minChildSize: (AppUtil.getScreenHeight(context) -
-                                    AppUtil.getToolbarHeight(context)) /
+                            initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                                AppUtil.getScreenHeight(context),
+                            minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                                 AppUtil.getScreenHeight(context),
                             maxChildSize: 1.0,
                             builder: (context, controller) {
                               controller.addListener(() {
-                                if (controller.position.userScrollDirection ==
-                                    ScrollDirection.reverse) {
+                                if (controller.position.userScrollDirection == ScrollDirection.reverse) {
                                   if (!_isScrollingDown) {
                                     _isScrollingDown = true;
                                     setState(() {
@@ -257,12 +236,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                     });
                                   }
                                 }
-                                if ((controller.position.userScrollDirection ==
-                                        ScrollDirection.forward) |
+                                if ((controller.position.userScrollDirection == ScrollDirection.forward) |
                                     (controller.offset >=
-                                            controller
-                                                    .position.maxScrollExtent -
-                                                kBottomNavigationBarHeight &&
+                                            controller.position.maxScrollExtent - kBottomNavigationBarHeight &&
                                         !controller.position.outOfRange)) {
                                   if (_isScrollingDown) {
                                     _isScrollingDown = false;
@@ -275,9 +251,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                               return Container(
                                 decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(32),
-                                        topLeft: Radius.circular(32))),
+                                    borderRadius:
+                                        BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                                 child: CustomScrollView(
                                   controller: controller,
                                   shrinkWrap: false,
@@ -289,28 +264,19 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                           children: <Widget>[
                                             Container(
                                               margin: EdgeInsets.only(
-                                                  left:
-                                                      horizontalPaddingDraggable,
-                                                  right:
-                                                      horizontalPaddingDraggable,
+                                                  left: horizontalPaddingDraggable,
+                                                  right: horizontalPaddingDraggable,
                                                   bottom: 5),
                                               child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: <Widget>[
                                                   Expanded(
                                                     child: Text(
                                                       widget.restaurant.name,
                                                       maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                                     ),
                                                   ),
                                                   SizedBox(
@@ -318,67 +284,40 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
-                                                      Navigator.push(context,
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) {
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
                                                         return ReviewPage(
-                                                          restaurant:
-                                                              widget.restaurant,
+                                                          restaurant: widget.restaurant,
                                                         );
                                                       }));
                                                     },
                                                     child: Row(
                                                       children: <Widget>[
                                                         Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal: 8,
-                                                                  vertical: 3),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  boxShadow: [
-                                                                    BoxShadow(
-                                                                        color: Colors
-                                                                            .black38,
-                                                                        offset: Offset(
-                                                                            1,
-                                                                            1),
-                                                                        spreadRadius:
-                                                                            -1,
-                                                                        blurRadius:
-                                                                            4)
-                                                                  ],
-                                                                  border: Border.all(
-                                                                      color: Colors
-                                                                          .orange)),
+                                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                                          decoration: BoxDecoration(
+                                                              color: Colors.white,
+                                                              borderRadius: BorderRadius.circular(10),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                    color: Colors.black38,
+                                                                    offset: Offset(1, 1),
+                                                                    spreadRadius: -1,
+                                                                    blurRadius: 4)
+                                                              ],
+                                                              border: Border.all(color: Colors.orange)),
                                                           child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
                                                             children: <Widget>[
                                                               Icon(
                                                                 Icons.star,
                                                                 size: 14,
-                                                                color: Colors
-                                                                    .orange,
+                                                                color: Colors.orange,
                                                               ),
                                                               Text(
-                                                                widget
-                                                                    .restaurant
-                                                                    .rating
-                                                                    .rating,
-                                                                style:
-                                                                    TextStyle(
+                                                                widget.restaurant.rating.rating,
+                                                                style: TextStyle(
                                                                   fontSize: 12,
-                                                                  color: Colors
-                                                                      .orange,
+                                                                  color: Colors.orange,
                                                                 ),
                                                               ),
                                                             ],
@@ -401,59 +340,34 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                             Container(
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  32),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  32))),
+                                                  borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(32), topRight: Radius.circular(32))),
                                               margin: EdgeInsets.symmetric(
-                                                  vertical: 5,
-                                                  horizontal:
-                                                      horizontalPaddingDraggable),
+                                                  vertical: 5, horizontal: horizontalPaddingDraggable),
                                               child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: <Widget>[
                                                   Expanded(
                                                     child: Text(
                                                       widget.restaurant.cuisine,
                                                       maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color:
-                                                              Colors.black54),
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(fontSize: 12, color: Colors.black54),
                                                     ),
                                                   ),
                                                   Container(
                                                     height: 20,
                                                     width: 100,
-                                                    alignment:
-                                                        Alignment.centerRight,
+                                                    alignment: Alignment.centerRight,
                                                     child: PageView.builder(
-                                                      controller:
-                                                          _rankPageController,
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      itemCount: widget
-                                                          .restaurant.rating
-                                                          .getRollingText()
-                                                          .length,
-                                                      itemBuilder:
-                                                          (context, i) {
+                                                      controller: _rankPageController,
+                                                      scrollDirection: Axis.vertical,
+                                                      itemCount: widget.restaurant.rating.getRollingText().length,
+                                                      itemBuilder: (context, i) {
                                                         return Text(
-                                                          widget
-                                                              .restaurant.rating
-                                                              .getRollingText()[i],
-                                                          textAlign:
-                                                              TextAlign.end,
-                                                          style: TextStyle(
-                                                              fontSize: 12),
+                                                          widget.restaurant.rating.getRollingText()[i],
+                                                          textAlign: TextAlign.end,
+                                                          style: TextStyle(fontSize: 12),
                                                         );
                                                       },
                                                     ),
@@ -462,79 +376,47 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                               ),
                                             ),
                                             Container(
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white),
+                                              decoration: BoxDecoration(color: Colors.white),
                                               margin: EdgeInsets.symmetric(
-                                                  vertical: 5,
-                                                  horizontal:
-                                                      horizontalPaddingDraggable),
+                                                  vertical: 5, horizontal: horizontalPaddingDraggable),
                                               child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: <Widget>[
                                                   Expanded(
                                                     child: Text(
                                                       widget.restaurant.address,
                                                       maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color:
-                                                              Colors.black54),
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(fontSize: 12, color: Colors.black54),
                                                     ),
                                                   ),
                                                   SizedBox(
                                                     width: 20,
                                                   ),
                                                   Text(
-                                                    widget.restaurant
-                                                        .deliveryEstimation,
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                    widget.restaurant.deliveryEstimation,
+                                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                                   )
                                                 ],
                                               ),
                                             ),
-                                            widget.restaurant
-                                                            .discountDescription !=
-                                                        null &&
-                                                    widget.restaurant
-                                                            .discountDescription !=
-                                                        ""
+                                            widget.restaurant.discountDescription != null &&
+                                                    widget.restaurant.discountDescription != ""
                                                 ? Container(
                                                     margin: EdgeInsets.only(
                                                       top: 5,
-                                                      left:
-                                                          horizontalPaddingDraggable,
-                                                      right:
-                                                          horizontalPaddingDraggable,
+                                                      left: horizontalPaddingDraggable,
+                                                      right: horizontalPaddingDraggable,
                                                     ),
                                                     width: double.infinity,
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.yellow[600]),
-                                                    padding: EdgeInsets.only(
-                                                        left: 10,
-                                                        right: 10,
-                                                        bottom: 5,
-                                                        top: 5),
+                                                    decoration: BoxDecoration(color: Colors.yellow[600]),
+                                                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
                                                     alignment: Alignment.center,
                                                     child: Text(
-                                                      AppUtil.parseHtmlString(widget
-                                                          .restaurant
-                                                          .discountDescription),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold),
+                                                      AppUtil.parseHtmlString(widget.restaurant.discountDescription),
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                                                     ),
                                                   )
                                                 : Container(),
@@ -543,12 +425,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                               color: Colors.white,
                                               child: Container(
                                                 margin: EdgeInsets.only(
-                                                    left:
-                                                        horizontalPaddingDraggable,
-                                                    right:
-                                                        horizontalPaddingDraggable,
-                                                    top:
-                                                        distanceSectionContent),
+                                                    left: horizontalPaddingDraggable,
+                                                    right: horizontalPaddingDraggable,
+                                                    top: distanceSectionContent),
                                                 child: Divider(
                                                   height: 1,
                                                   color: Colors.grey,
@@ -585,33 +464,26 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                           );
                                         },
                                         onSwitchChanged: (value) {
-                                          _bloc.add(SwitchVegOnly(
-                                              widget.restaurant.id, value));
+                                          _bloc.add(SwitchVegOnly(widget.restaurant.id, value));
                                         },
                                         isVegOnly: state.isVegOnly,
                                         size: 27,
                                       ),
                                     ),
-                                    BlocConsumer<DetailPageBloc,
-                                        DetailPageState>(
+                                    BlocConsumer<DetailPageBloc, DetailPageState>(
                                       listener: (context, state) {
                                         if (state is CartState) {
                                           _isScrollingDown = false;
-                                          _animationController
-                                              .reverse()
-                                              .orCancel;
+                                          _animationController.reverse().orCancel;
                                         }
                                       },
                                       builder: (context, state) {
                                         if (state is OnDataLoading) {
-                                          return _isListMode
-                                              ? FoodListLoadingWidget()
-                                              : FoodGridLoadingWidget();
+                                          return _isListMode ? FoodListLoadingWidget() : FoodGridLoadingWidget();
                                         } else if (state is NoFoodAvailable) {
                                           return SliverToBoxAdapter(
                                             child: Container(
-                                                padding: EdgeInsets.all(
-                                                    horizontalPaddingDraggable),
+                                                padding: EdgeInsets.all(horizontalPaddingDraggable),
                                                 child: Column(
                                                   children: <Widget>[
                                                     SizedBox(
@@ -619,24 +491,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                     ),
                                                     SvgPicture.asset(
                                                       "assets/no food.svg",
-                                                      height: AppUtil
-                                                              .getScreenHeight(
-                                                                  context) /
-                                                          5,
-                                                      width: AppUtil
-                                                              .getScreenHeight(
-                                                                  context) /
-                                                          5,
+                                                      height: AppUtil.getScreenHeight(context) / 5,
+                                                      width: AppUtil.getScreenHeight(context) / 5,
                                                     ),
                                                     SizedBox(
                                                       height: 20,
                                                     ),
                                                     Text(
                                                       "No Food Available",
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold),
+                                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                                     )
                                                   ],
                                                 )),
@@ -644,75 +507,48 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                         }
                                         return FoodListWidget(
                                           onAdd: (i) {
-                                            _animationController
-                                                .reverse()
-                                                .orCancel;
+                                            _animationController.reverse().orCancel;
 
-                                            if (state
-                                                .foodList[i].isSingleItem) {
-                                              BlocProvider.of<FoodOrderBloc>(
-                                                      context)
-                                                  .add(ChangeQuantityNoPayment(
-                                                      widget.restaurant,
-                                                      state.foodList[i].id,
-                                                      state.foodList[i],
-                                                      (cartState.placeOrder
-                                                              .foodCart
-                                                              .getFoodQuantity(
-                                                                  state.foodList[
-                                                                      i]) +
-                                                          1),
-                                                      state.foodList[i].price,
-                                                      [],
-                                                      true));
+                                            if (state.foodList[i].isSingleItem) {
+                                              BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                                  widget.restaurant,
+                                                  state.foodList[i].id,
+                                                  state.foodList[i],
+                                                  (cartState.placeOrder.foodCart.getFoodQuantity(state.foodList[i]) +
+                                                      1),
+                                                  state.foodList[i].price,
+                                                  [],
+                                                  true));
                                             } else {
                                               _showAddOnsSheet(state.foodList[i]);
                                             }
                                           },
                                           onRemove: (i) {
-                                            _animationController
-                                                .reverse()
-                                                .orCancel;
-                                            BlocProvider.of<FoodOrderBloc>(
-                                                    context)
-                                                .add(ChangeQuantityNoPayment(
-                                                    widget.restaurant,
-                                                    state.foodList[i].id,
-                                                    state.foodList[i],
-                                                    (cartState
-                                                            .placeOrder.foodCart
-                                                            .getFoodQuantity(
-                                                                state.foodList[
-                                                                    i]) -
-                                                        1),
-                                                    state.foodList[i].price,
-                                                    [],
-                                                    false));
+                                            _animationController.reverse().orCancel;
+                                            BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                                widget.restaurant,
+                                                state.foodList[i].id,
+                                                state.foodList[i],
+                                                (cartState.placeOrder.foodCart.getFoodQuantity(state.foodList[i]) - 1),
+                                                state.foodList[i].price,
+                                                [],
+                                                false));
                                           },
                                           padding: _isListMode
                                               ? EdgeInsets.only(
-                                                  left:
-                                                      horizontalPaddingDraggable -
-                                                          5,
-                                                  right:
-                                                      horizontalPaddingDraggable -
-                                                          5,
+                                                  left: horizontalPaddingDraggable - 5,
+                                                  right: horizontalPaddingDraggable - 5,
                                                   top: 10,
-                                                  bottom:
-                                                      kBottomNavigationBarHeight)
+                                                  bottom: kBottomNavigationBarHeight)
                                               : EdgeInsets.only(
-                                                  left:
-                                                      horizontalPaddingDraggable,
-                                                  right:
-                                                      horizontalPaddingDraggable,
+                                                  left: horizontalPaddingDraggable,
+                                                  right: horizontalPaddingDraggable,
                                                   top: 10,
-                                                  bottom: 20 +
-                                                      kBottomNavigationBarHeight),
+                                                  bottom: 20 + kBottomNavigationBarHeight),
                                           cart: cartState.placeOrder.foodCart,
                                           listFood: state.foodList,
-                                          type: _isListMode
-                                              ? FoodListViewType.list
-                                              : FoodListViewType.grid,
+                                          currencyIcon: AppUtil.getCurrencyIcon(widget.restaurant.currencyCode),
+                                          type: _isListMode ? FoodListViewType.list : FoodListViewType.grid,
                                           scale: 0.90,
                                         );
                                       },
@@ -743,14 +579,11 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
         context: context,
         builder: (context, controller) {
           return Container(
-            height: AppUtil.getScreenHeight(context) -
-                AppUtil.getToolbarHeight(context),
+            height: AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context),
             width: AppUtil.getScreenWidth(context),
             decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32))),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
             child: CustomScrollView(
               controller: controller,
               slivers: <Widget>[
@@ -766,8 +599,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                         Expanded(
                             child: Text(
                           "SEARCH FOOD",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         )),
                         InkWell(
                             onTap: () {
@@ -782,10 +614,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                   child: Container(
                     height: 55,
                     margin: EdgeInsets.only(
-                        right: horizontalPaddingDraggable,
-                        left: horizontalPaddingDraggable,
-                        top: 20,
-                        bottom: 20),
+                        right: horizontalPaddingDraggable, left: horizontalPaddingDraggable, top: 20, bottom: 20),
                     padding: EdgeInsets.only(left: horizontalPaddingDraggable),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -804,8 +633,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Search here....",
-                        hintStyle:
-                            TextStyle(fontSize: 16, color: Colors.black38),
+                        hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
                       ),
                       textInputAction: TextInputAction.search,
                       onSubmitted: (value) {
@@ -840,32 +668,24 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                             builder: (context, cartState) {
                               return FoodListWidget(
                                 onAdd: (i) {
-                                  BlocProvider.of<FoodOrderBloc>(context).add(
-                                      ChangeQuantityNoPayment(
-                                          widget.restaurant,
-                                          state.result[i].id,
-                                          state.result[i],
-                                          (cartState.placeOrder.foodCart
-                                                  .getFoodQuantity(
-                                                      state.result[i]) +
-                                              1),
-                                          state.result[i].price,
-                                          [],
-                                          true));
+                                  BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                      widget.restaurant,
+                                      state.result[i].id,
+                                      state.result[i],
+                                      (cartState.placeOrder.foodCart.getFoodQuantity(state.result[i]) + 1),
+                                      state.result[i].price,
+                                      [],
+                                      true));
                                 },
                                 onRemove: (i) {
-                                  BlocProvider.of<FoodOrderBloc>(context).add(
-                                      ChangeQuantityNoPayment(
-                                          widget.restaurant,
-                                          state.result[i].id,
-                                          state.result[i],
-                                          (cartState.placeOrder.foodCart
-                                                  .getFoodQuantity(
-                                                      state.result[i]) -
-                                              1),
-                                          state.result[i].price,
-                                          [],
-                                          false));
+                                  BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                      widget.restaurant,
+                                      state.result[i].id,
+                                      state.result[i],
+                                      (cartState.placeOrder.foodCart.getFoodQuantity(state.result[i]) - 1),
+                                      state.result[i].price,
+                                      [],
+                                      false));
                                 },
                                 padding: EdgeInsets.only(
                                     left: horizontalPaddingDraggable - 5,
@@ -899,8 +719,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
     BlocProvider.of<FoodOrderBloc>(context).add(GetFoodDetail(food.id));
     showMaterialModalBottomSheet(
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,
         context: context,
         expand: false,
@@ -911,25 +730,16 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                 height: AppUtil.getScreenHeight(context) * 3 / 4,
                 width: AppUtil.getScreenWidth(context),
                 padding: EdgeInsets.only(top: 25),
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
                 child: BlocConsumer<FoodOrderBloc, FoodOrderState>(
                   listener: (context, cartState) {
                     if (cartState is SuccessGetFoodDetail) {
                       price = cartState.foodDetail.prices[0];
-                      for (int i = 0;
-                          i < cartState.foodDetail.addOnsTypes.length;
-                          i++) {
-                        if (cartState.foodDetail.addOnsTypes[i].options ==
-                            "one") {
+                      for (int i = 0; i < cartState.foodDetail.addOnsTypes.length; i++) {
+                        if (cartState.foodDetail.addOnsTypes[i].options == "one") {
                           textControllersMap[i] = List<TextEditingController>();
-                          for (int j = 0;
-                              j <
-                                  cartState
-                                      .foodDetail.addOnsTypes[i].addOns.length;
-                              j++) {
-                            TextEditingController textController =
-                                TextEditingController(text: 1.toString());
+                          for (int j = 0; j < cartState.foodDetail.addOnsTypes[i].addOns.length; j++) {
+                            TextEditingController textController = TextEditingController(text: 1.toString());
                             textControllersMap[i].add(textController);
                           }
                         }
@@ -950,17 +760,12 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                       listWidget.add(
                         SliverToBoxAdapter(
                           child: Container(
-                            padding: EdgeInsets.only(
-                                left: horizontalPaddingDraggable,
-                                top: 10,
-                                bottom: 10),
+                            padding: EdgeInsets.only(left: horizontalPaddingDraggable, top: 10, bottom: 10),
                             child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   "SIZE",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                 )),
                             decoration: BoxDecoration(color: Colors.black12),
                           ),
@@ -971,13 +776,18 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                           return RadioListTile<Price>(
                             title: Row(
                               children: <Widget>[
-                                Expanded(
-                                    child: Text(
-                                        cartState.foodDetail.prices[i].size)),
-                                Text("\u20b9 " +
-                                    (cartState.foodDetail.prices[i]
-                                            .discountedPrice)
-                                        .toString())
+                                Expanded(child: Text(cartState.foodDetail.prices[i].size)),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      AppUtil.getCurrencyIcon(widget.restaurant.currencyCode),
+                                      width: 13,
+                                      height: 13,
+                                    ),
+                                    SizedBox(width: 3),
+                                    Text((cartState.foodDetail.prices[i].discountedPrice).toString()),
+                                  ],
+                                )
                               ],
                             ),
                             value: cartState.foodDetail.prices[i],
@@ -991,9 +801,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                         }, childCount: cartState.foodDetail.prices.length),
                       ));
 
-                      for (int i = 0;
-                          i < cartState.foodDetail.addOnsTypes.length;
-                          i++) {
+                      for (int i = 0; i < cartState.foodDetail.addOnsTypes.length; i++) {
                         listWidget.add(SliverToBoxAdapter(
                           child: Container(
                             padding: EdgeInsets.only(
@@ -1005,34 +813,26 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   cartState.foodDetail.addOnsTypes[i].name,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                 )),
                             decoration: BoxDecoration(color: Colors.black12),
                           ),
                         ));
-                        if (cartState.foodDetail.addOnsTypes[i].options ==
-                            "one") {
+                        if (cartState.foodDetail.addOnsTypes[i].options == "one") {
                           // one is check box with number inside
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
                               return CheckboxListTile(
                                 onChanged: (bool) {
                                   newState(() {
-                                    cartState.foodDetail.addOnsTypes[i]
-                                        .addOns[j].isSelected = bool;
+                                    cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected = bool;
                                   });
                                 },
-                                value: cartState.foodDetail.addOnsTypes[i]
-                                    .addOns[j].isSelected,
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
+                                value: cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected,
+                                controlAffinity: ListTileControlAffinity.leading,
                                 title: Row(
                                   children: <Widget>[
-                                    Expanded(
-                                        child: Text(cartState.foodDetail
-                                            .addOnsTypes[i].addOns[j].name)),
+                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
                                     Container(
                                       width: 50,
                                       margin: EdgeInsets.only(right: 10),
@@ -1043,58 +843,56 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                         onChanged: (text) {
                                           newState(() {
                                             if (text == "") {
-                                              cartState
-                                                  .foodDetail
-                                                  .addOnsTypes[i]
-                                                  .addOns[j]
-                                                  .quantity = 0;
+                                              cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 0;
                                             } else {
-                                              cartState
-                                                  .foodDetail
-                                                  .addOnsTypes[i]
-                                                  .addOns[j]
-                                                  .quantity = int.parse(text);
+                                              cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = int.parse(text);
                                             }
                                           });
                                         },
                                       ),
                                     ),
-                                    Text("\u20b9 " +
-                                        (cartState.foodDetail.addOnsTypes[i]
-                                                .addOns[j].price)
-                                            .toString())
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          AppUtil.getCurrencyIcon(widget.restaurant.currencyCode),
+                                          width: 13,
+                                          height: 13,
+                                        ),
+                                        SizedBox(width: 3),
+                                        Text((cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString()),
+                                      ],
+                                    )
                                   ],
                                 ),
                               );
-                            },
-                                childCount: cartState
-                                    .foodDetail.addOnsTypes[i].addOns.length),
+                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
                           ));
-                        } else if (cartState
-                                .foodDetail.addOnsTypes[i].options ==
-                            "multiple") {
+                        } else if (cartState.foodDetail.addOnsTypes[i].options == "multiple") {
                           // multiple is radio button
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
                               return RadioListTile<AddOn>(
                                 title: Row(
                                   children: <Widget>[
-                                    Expanded(
-                                        child: Text(cartState.foodDetail
-                                            .addOnsTypes[i].addOns[j].name)),
-                                    Text("\u20b9 " +
-                                        (cartState.foodDetail.addOnsTypes[i]
-                                                .addOns[j].price)
-                                            .toString())
+                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          AppUtil.getCurrencyIcon(widget.restaurant.currencyCode),
+                                          width: 13,
+                                          height: 13,
+                                        ),
+                                        SizedBox(width: 3),
+                                        Text((cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString()),
+                                      ],
+                                    )
                                   ],
                                 ),
-                                value: cartState
-                                    .foodDetail.addOnsTypes[i].addOns[j],
+                                value: cartState.foodDetail.addOnsTypes[i].addOns[j],
                                 onChanged: (addOn) {
                                   newState(() {
                                     multipleAddOns[i] = addOn;
-                                    cartState.foodDetail.addOnsTypes[i].addOns
-                                        .forEach((e) {
+                                    cartState.foodDetail.addOnsTypes[i].addOns.forEach((e) {
                                       e.isSelected = false;
                                     });
                                     addOn.isSelected = true;
@@ -1102,49 +900,43 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                 },
                                 groupValue: multipleAddOns[i],
                               );
-                            },
-                                childCount: cartState
-                                    .foodDetail.addOnsTypes[i].addOns.length),
+                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
                           ));
-                        } else if (cartState
-                                .foodDetail.addOnsTypes[i].options ==
-                            "custom") {
+                        } else if (cartState.foodDetail.addOnsTypes[i].options == "custom") {
                           // custom is check box only
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
                               return CheckboxListTile(
                                 onChanged: (bool) {
                                   newState(() {
-                                    cartState.foodDetail.addOnsTypes[i]
-                                        .addOns[j].isSelected = bool;
+                                    cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected = bool;
                                     if (bool) {
-                                      cartState.foodDetail.addOnsTypes[i]
-                                          .addOns[j].quantity = 1;
+                                      cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 1;
                                     } else {
-                                      cartState.foodDetail.addOnsTypes[i]
-                                          .addOns[j].quantity = 0;
+                                      cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 0;
                                     }
                                   });
                                 },
-                                value: cartState.foodDetail.addOnsTypes[i]
-                                    .addOns[j].isSelected,
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
+                                value: cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected,
+                                controlAffinity: ListTileControlAffinity.leading,
                                 title: Row(
                                   children: <Widget>[
-                                    Expanded(
-                                        child: Text(cartState.foodDetail
-                                            .addOnsTypes[i].addOns[j].name)),
-                                    Text("\u20b9 " +
-                                        (cartState.foodDetail.addOnsTypes[i]
-                                                .addOns[j].price)
-                                            .toString())
+                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          AppUtil.getCurrencyIcon(widget.restaurant.currencyCode),
+                                          width: 13,
+                                          height: 13,
+                                        ),
+                                        SizedBox(width: 3),
+                                        Text((cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString()),
+                                      ],
+                                    )
                                   ],
                                 ),
                               );
-                            },
-                                childCount: cartState
-                                    .foodDetail.addOnsTypes[i].addOns.length),
+                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
                           ));
                         }
                       }
@@ -1167,10 +959,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                               height: kBottomNavigationBarHeight,
                               width: AppUtil.getScreenWidth(context),
                               decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border(
-                                      top: BorderSide(
-                                          color: Colors.yellow[600]))),
+                                  color: Colors.white, border: Border(top: BorderSide(color: Colors.yellow[600]))),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -1178,8 +967,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                     child: price == null || quantity == 0
                                         ? SizedBox()
                                         : Container(
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 10),
+                                            padding: EdgeInsets.only(left: 10, right: 10),
                                             child: Row(
                                               children: <Widget>[
                                                 Expanded(
@@ -1190,18 +978,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                               quantity--;
                                                             });
                                                           },
-                                                          child: Icon(
-                                                              Icons.remove))
+                                                          child: Icon(Icons.remove))
                                                       : SizedBox(),
                                                 ),
                                                 Expanded(
                                                   child: Center(
                                                     child: Text(
                                                       "$quantity",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 16),
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(fontSize: 16),
                                                     ),
                                                   ),
                                                 ),
@@ -1226,46 +1011,33 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                             : () {
                                                 //do something add item here
                                                 Navigator.pop(context);
-                                                BlocProvider.of<FoodOrderBloc>(
-                                                        context)
-                                                    .add(
-                                                        ChangeQuantityNoPayment(
-                                                            widget.restaurant,
-                                                            "",
-                                                            food,
-                                                            quantity,
-                                                            price,
-                                                            _getAddOns(cartState
-                                                                .foodDetail
-                                                                .addOnsTypes),
-                                                            true));
+                                                BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
+                                                    widget.restaurant,
+                                                    "",
+                                                    food,
+                                                    quantity,
+                                                    price,
+                                                    _getAddOns(cartState.foodDetail.addOnsTypes),
+                                                    true));
                                               },
                                         child: SizedBox.expand(
                                           child: Stack(
                                             children: <Widget>[
                                               Container(
                                                 alignment: Alignment.center,
-                                                padding: EdgeInsets.only(
-                                                    left: 10, right: 10),
+                                                padding: EdgeInsets.only(left: 10, right: 10),
                                                 decoration: BoxDecoration(
                                                     color: Colors.yellow[600],
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    18))),
+                                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(18))),
                                                 child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
                                                     Expanded(
                                                       child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
                                                         children: <Widget>[
                                                           SvgPicture.asset(
-                                                            "assets/rupee.svg",
+                                                            AppUtil.getCurrencyIcon(widget.restaurant.currencyCode),
                                                             width: 15,
                                                             height: 15,
                                                           ),
@@ -1273,18 +1045,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                             width: 10,
                                                           ),
                                                           Text(
-                                                            AppUtil.doubleRemoveZeroTrailing(
-                                                                _getTotalFoodDetail(
-                                                                    price,
-                                                                    quantity,
-                                                                    cartState
-                                                                        .foodDetail
-                                                                        .addOnsTypes)),
-                                                            style: TextStyle(
-                                                                fontSize: 19,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
+                                                            AppUtil.doubleRemoveZeroTrailing(_getTotalFoodDetail(
+                                                                price, quantity, cartState.foodDetail.addOnsTypes)),
+                                                            style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                                                           ),
                                                         ],
                                                       ),
@@ -1292,26 +1055,18 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                     Expanded(
                                                       child: Text(
                                                         "ADD ITEM",
-                                                        style: TextStyle(
-                                                            fontSize: 19,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                        style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
                                               AnimatedOpacity(
-                                                opacity: price == null ||
-                                                        quantity == 0
-                                                    ? 0.65
-                                                    : 0.0,
+                                                opacity: price == null || quantity == 0 ? 0.65 : 0.0,
                                                 child: Container(
                                                   color: Colors.white,
                                                 ),
-                                                duration:
-                                                    Duration(milliseconds: 300),
+                                                duration: Duration(milliseconds: 300),
                                               )
                                             ],
                                           ),
@@ -1333,8 +1088,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
         });
   }
 
-  double _getTotalFoodDetail(
-      Price price, int quantity, List<AddOnsType> addOnsTypes) {
+  double _getTotalFoodDetail(Price price, int quantity, List<AddOnsType> addOnsTypes) {
     double totalAmount = 0;
 
     if (price == null || quantity == 0) {
@@ -1369,6 +1123,7 @@ class RestaurantDetailBottomNavBar extends StatelessWidget {
   final Function onButtonTap;
   final bool isValid;
   final double totalAmount;
+  final String currencyIcon;
 
   const RestaurantDetailBottomNavBar({
     Key key,
@@ -1377,6 +1132,7 @@ class RestaurantDetailBottomNavBar extends StatelessWidget {
     this.onButtonTap,
     this.isValid,
     this.totalAmount,
+    this.currencyIcon,
   }) : super(key: key);
 
   @override
@@ -1384,9 +1140,7 @@ class RestaurantDetailBottomNavBar extends StatelessWidget {
     return Container(
       height: kBottomNavigationBarHeight,
       width: AppUtil.getScreenWidth(context),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Colors.yellow[600]))),
+      decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.yellow[600]))),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -1407,8 +1161,7 @@ class RestaurantDetailBottomNavBar extends StatelessWidget {
                       "$totalItem",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -1424,7 +1177,7 @@ class RestaurantDetailBottomNavBar extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.only(right: 5),
                       child: SvgPicture.asset(
-                        "assets/rupee.svg",
+                        currencyIcon,
                         width: 13,
                         height: 13,
                       ),
@@ -1433,8 +1186,7 @@ class RestaurantDetailBottomNavBar extends StatelessWidget {
                       "${AppUtil.doubleRemoveZeroTrailing(totalAmount)}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -1450,9 +1202,7 @@ class RestaurantDetailBottomNavBar extends StatelessWidget {
                   Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: Colors.yellow[600],
-                        borderRadius:
-                            BorderRadius.only(topLeft: Radius.circular(18))),
+                        color: Colors.yellow[600], borderRadius: BorderRadius.only(topLeft: Radius.circular(18))),
                     child: Text(
                       buttonText,
                       style: TextStyle(
@@ -1501,17 +1251,13 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
   });
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return SizedBox.expand(
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
         ),
-        padding: EdgeInsets.only(
-            left: horizontalPaddingDraggable,
-            right: horizontalPaddingDraggable,
-            top: offset),
+        padding: EdgeInsets.only(left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, top: offset),
         child: Column(
           children: <Widget>[
             Row(
@@ -1568,9 +1314,7 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                 ),
                 Container(
                   height: size,
-                  decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(6)),
+                  decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(6)),
                   child: Row(
                     children: <Widget>[
                       GestureDetector(
@@ -1584,9 +1328,7 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                             color: isListSelected ? Colors.white : Colors.grey,
                           ),
                           decoration: BoxDecoration(
-                              color: isListSelected
-                                  ? Colors.green
-                                  : Colors.grey[100],
+                              color: isListSelected ? Colors.green : Colors.grey[100],
                               borderRadius: BorderRadius.circular(6)),
                           duration: Duration(milliseconds: 300),
                         ),
@@ -1602,9 +1344,7 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                             color: !isListSelected ? Colors.white : Colors.grey,
                           ),
                           decoration: BoxDecoration(
-                              color: !isListSelected
-                                  ? Colors.green
-                                  : Colors.grey[100],
+                              color: !isListSelected ? Colors.green : Colors.grey[100],
                               borderRadius: BorderRadius.circular(6)),
                           duration: Duration(milliseconds: 300),
                         ),
@@ -1630,21 +1370,17 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                     alignment: Alignment.centerLeft,
                     child: TabBar(
                       onTap: (i) {
-                        BlocProvider.of<DetailPageBloc>(context).add(
-                            RestaurantMenuChange(
-                                restaurantId, state.menuCategories[i].id, i));
+                        BlocProvider.of<DetailPageBloc>(context)
+                            .add(RestaurantMenuChange(restaurantId, state.menuCategories[i].id, i));
                       },
                       isScrollable: true,
                       labelColor: Colors.black,
                       unselectedLabelColor: Colors.black26,
                       indicatorColor: Colors.yellow[600],
                       indicatorSize: TabBarIndicatorSize.tab,
-                      labelStyle: GoogleFonts.poppins(
-                          textStyle: TextStyle(fontWeight: FontWeight.bold)),
-                      indicatorPadding: EdgeInsets.only(
-                          left: 0, right: 15, bottom: 2, top: 0),
-                      labelPadding:
-                          EdgeInsets.only(left: 0, right: 15, bottom: 0),
+                      labelStyle: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                      indicatorPadding: EdgeInsets.only(left: 0, right: 15, bottom: 2, top: 0),
+                      labelPadding: EdgeInsets.only(left: 0, right: 15, bottom: 0),
                       tabs: tabs,
                     ),
                   ),

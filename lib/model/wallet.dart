@@ -16,7 +16,7 @@ class Wallet {
 
   factory Wallet.fromJson(Map<String, dynamic> parsedJson) {
     return Wallet(
-      currency: parsedJson['currency'],
+      currency: parsedJson['currency_code'],
       walletAmount: double.parse(parsedJson['wallet_amount'].toString()),
       scratchAmount: double.parse(parsedJson['scratch_amount'].toString()),
       loyaltyAmount: 0,

@@ -29,7 +29,7 @@ class ScratchCardListBloc extends Bloc<ScratchCardListEvent, ScratchCardListStat
       Map<String, dynamic> map = await repository.getScratchCardList(token);
       if (map['list'] != null) {
         yield ScratchCardListState(
-            scratchAmountTotal: double.parse(map['amount']), currency: map['currency'], scratchList: map['list']);
+            scratchAmountTotal: double.parse(map['amount']), currency: map['currency_code'], scratchList: map['list']);
       } else {
         yield NoAvailableList();
       }

@@ -31,7 +31,7 @@ class NoItemsInCart extends FoodOrderState {
   NoItemsInCart()
       : super(
             placeOrder: PlaceOrder(
-                restaurant: Restaurant(null, null, null, null, null, null, null, false), foodCart: FoodCart(Map(), List())));
+                restaurant: Restaurant(null, null, null, null, null, null, null, false, null), foodCart: FoodCart(Map(), List())));
 }
 
 class LoadingPlaceOrder extends FoodOrderState {

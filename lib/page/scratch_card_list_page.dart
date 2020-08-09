@@ -10,6 +10,7 @@ import 'package:clients/classes/style.dart';
 import 'package:clients/model/scratch_card.dart';
 import 'package:clients/widget/app_bar.dart';
 import 'package:scratcher/scratcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ScratchCardPage extends StatefulWidget {
   @override
@@ -144,13 +145,19 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                                   margin: EdgeInsets.only(
                                       bottom: 15, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Text("Total Scratch Card"),
+                                      Expanded(child: Text("Total Scratch Card")),
+                                      SvgPicture.asset(
+                                        AppUtil.getCurrencyIcon(state.currency),
+                                        color: primary3,
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
                                       Text(
-                                        state.currency +
-                                            " " +
-                                            AppUtil.doubleRemoveZeroTrailing(state.scratchAmountTotal),
+                                        AppUtil.doubleRemoveZeroTrailing(state.scratchAmountTotal),
                                         textAlign: TextAlign.right,
                                         style: TextStyle(fontSize: 36, color: primary3, fontWeight: FontWeight.bold),
                                       )

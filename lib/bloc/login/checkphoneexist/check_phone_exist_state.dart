@@ -15,7 +15,10 @@ class LoadingLoginPhoneState extends LoginPhoneState {
 }
 
 class PhoneIsExist extends LoginPhoneState {
-  PhoneIsExist({String countryCode, String number})
+
+  final String otpSignature;
+
+  PhoneIsExist(this.otpSignature, {String countryCode, String number})
       : super(countryCode: countryCode, number: number);
 }
 

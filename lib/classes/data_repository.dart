@@ -42,16 +42,15 @@ class DataRepository {
   Future<PlaceOrder> placeOrder(PlaceOrder placeOrder) async {
     final response = await _provider.placeOrder(placeOrder);
     if (response['code'] == 1) {
-      PlaceOrder placeOrder = PlaceOrder(
-          id: response['details']['order_id'], message: response['msg']);
+      PlaceOrder placeOrder = PlaceOrder(id: response['details']['order_id'], message: response['msg']);
       return placeOrder;
     } else {
       return PlaceOrder(isValid: false, message: response['msg']);
     }
   }
 
-  Future<LoginStatus> checkPhoneExist(String contactPhone) async {
-    final response = await _provider.checkPhoneExist(contactPhone);
+  Future<LoginStatus> checkPhoneExist(String contactPhone, String otpSignature) async {
+    final response = await _provider.checkPhoneExist(contactPhone, otpSignature);
     if (response['code'] == 1) {
       if (response['details']['is_exist'])
         return LoginStatus(response['msg'], true);
@@ -75,8 +74,8 @@ class DataRepository {
     }
   }
 
-  Future<LoginStatus> loginByEmail(String email, String password) async {
-    final response = await _provider.loginByEmail(email, password);
+  Future<LoginStatus> loginByEmail(String contactPhone, String email, String password, String otpSignature) async {
+    final response = await _provider.loginByEmail(contactPhone, email, password, otpSignature);
     if (response['code'] == 1) {
       return LoginStatus(response['msg'], true);
     } else {
@@ -93,10 +92,9 @@ class DataRepository {
     }
   }
 
-  Future<dynamic> verifyOtp(String contactPhone, String otp,
-      String firebaseToken, String platform, String version) async {
-    final response = await _provider.verifyOtp(
-        contactPhone, otp, firebaseToken, platform, version);
+  Future<dynamic> verifyOtp(
+      String contactPhone, String otp, String firebaseToken, String platform, String version) async {
+    final response = await _provider.verifyOtp(contactPhone, otp, firebaseToken, platform, version);
     if (response['code'] == 1) {
       User user = User.fromJson(response['details']);
       return user;
@@ -105,8 +103,8 @@ class DataRepository {
     }
   }
 
-  Future<LoginStatus> register(RegisterPost registerPost) async {
-    final response = await _provider.register(registerPost);
+  Future<LoginStatus> register(RegisterPost registerPost, String otpSignature) async {
+    final response = await _provider.register(registerPost, otpSignature);
     if (response['code'] == 1) {
       return LoginStatus(response['msg'], true);
     } else {
@@ -141,8 +139,7 @@ class DataRepository {
     }
   }
 
-  Future<List<Order>> getOrderHistory(
-      String token, String typeOrder, int page) async {
+  Future<List<Order>> getOrderHistory(String token, String typeOrder, int page) async {
     final response = await _provider.getOrderHistory(token, typeOrder, 0);
     if (response['code'] == 1) {
       var orderHistory = response['details'] as List;
@@ -155,8 +152,7 @@ class DataRepository {
     }
   }
 
-  Future<List<PickupOrder>> getPickupOrderHistory(
-      String token, String typeOrder, int page) async {
+  Future<List<PickupOrder>> getPickupOrderHistory(String token, String typeOrder, int page) async {
     final response = await _provider.getOrderHistory(token, typeOrder, page);
     if (response['code'] == 1) {
       var orderHistory = response['details'] as List;
@@ -169,10 +165,8 @@ class DataRepository {
     }
   }
 
-  Future<List<Restaurant>> globalSearch(
-      String token, String textSearch, String address, int page) async {
-    final response =
-        await _provider.globalSearch(token, textSearch, address, page);
+  Future<List<Restaurant>> globalSearch(String token, String textSearch, String address, int page) async {
+    final response = await _provider.globalSearch(token, textSearch, address, page);
     if (response['code'] == 1) {
       var listResponse = response['details'] as List;
       List<Restaurant> list = listResponse.map((i) {
@@ -184,8 +178,7 @@ class DataRepository {
     }
   }
 
-  Future<List<NotificationItem>> getNotificationList(
-      String token, int page) async {
+  Future<List<NotificationItem>> getNotificationList(String token, int page) async {
     final response = await _provider.getNotificationList(token, page);
     if (response['code'] == 1) {
       var listResponse = response['details']['data'] as List;
@@ -234,10 +227,8 @@ class DataRepository {
     }
   }
 
-  Future<dynamic> checkTokenValid(String token, String firebaseToken,
-      String platform, String version) async {
-    final response = await _provider.checkTokenValid(
-        token, firebaseToken, platform, version);
+  Future<dynamic> checkTokenValid(String token, String firebaseToken, String platform, String version) async {
+    final response = await _provider.checkTokenValid(token, firebaseToken, platform, version);
     if (response['details']['is_exist']) {
       User user = User.fromJson(response['details']);
       return user;
@@ -256,8 +247,7 @@ class DataRepository {
     }
   }
 
-  Future<bool> addReview(
-      String token, String orderId, String review, double rating) async {
+  Future<bool> addReview(String token, String orderId, String review, double rating) async {
     final response = await _provider.addReview(token, orderId, review, rating);
     if (response['code'] == 1) {
       return true;
@@ -279,8 +269,7 @@ class DataRepository {
     }
   }
 
-  Future<List<Restaurant>> getMerchantOfferList(
-      String token, String address) async {
+  Future<List<Restaurant>> getMerchantOfferList(String token, String address) async {
     final response = await _provider.getOfferList(token, address, "merchant");
     if (response['code'] == 1) {
       var listResponse = response['details'] as List;
@@ -306,8 +295,7 @@ class DataRepository {
     }
   }
 
-  Future<Map<String, dynamic>> getPickupInfo(
-      String token, String address) async {
+  Future<Map<String, dynamic>> getPickupInfo(String token, String address) async {
     final response = await _provider.getPickupInfo(token, address);
     if (response['code'] == 1) {
       Map<String, dynamic> map = Map();
@@ -375,22 +363,15 @@ class DataRepository {
   }
 
   Future<PlaceOrderPickup> getDeliveryCharge(
-      String token,
-      String deliveryLat,
-      String deliveryLng,
-      String pickupLat,
-      String pickupLng,
-      String location) async {
-    final response = await _provider.getDeliveryCharge(
-        token, deliveryLat, deliveryLng, pickupLat, pickupLng, location);
+      String token, String deliveryLat, String deliveryLng, String pickupLat, String pickupLng, String location) async {
+    final response = await _provider.getDeliveryCharge(token, deliveryLat, deliveryLng, pickupLat, pickupLng, location);
     if (response['code'] == 1) {
       return PlaceOrderPickup(
           isValid: true,
           razorSecret: response['details']['razor_secret'],
           razorKey: response['details']['razor_key'],
           distance: response['details']['distance'].toString(),
-          deliveryAmount:
-              double.parse(response['details']['price'].toString()));
+          deliveryAmount: double.parse(response['details']['price'].toString()));
     } else {
       return PlaceOrderPickup(isValid: false, message: response['msg']);
     }
@@ -405,10 +386,8 @@ class DataRepository {
     }
   }
 
-  Future<dynamic> applyVoucher(String restaurantId, String voucherCode,
-      double totalOrder, String token) async {
-    final response = await _provider.applyCoupon(
-        restaurantId, voucherCode, totalOrder, token);
+  Future<dynamic> applyVoucher(String restaurantId, String voucherCode, double totalOrder, String token) async {
+    final response = await _provider.applyCoupon(restaurantId, voucherCode, totalOrder, token);
     if (response['code'] == 1) {
       Voucher voucher = Voucher.fromJson(response['details']);
       return voucher;
@@ -448,12 +427,7 @@ class DataRepository {
 
   Future<dynamic> getAds(String token, String address) async {
     final response = await _provider.getHomePageData(
-        address: address,
-        adsPage: 0,
-        dblPage: 0,
-        foodCategoryPage: 0,
-        token: token,
-        topRestaurantPage: 0);
+        address: address, adsPage: 0, dblPage: 0, foodCategoryPage: 0, token: token, topRestaurantPage: 0);
     if (response['code'] == 1) {
       var listAds = response['details']['ads'] as List;
       List<Ads> ads = listAds.map((i) {
@@ -506,8 +480,7 @@ class DataRepository {
   Future<dynamic> getPickupDetailOrder(String orderId, String token) async {
     final response = await _provider.getPickupOrderDetail(orderId, token);
     if (response['code'] == 1) {
-      PickupDetailOrder detailOrder =
-          PickupDetailOrder.fromJson(response['details']);
+      PickupDetailOrder detailOrder = PickupDetailOrder.fromJson(response['details']);
       return detailOrder;
     } else {
       return response['msg'];
@@ -515,18 +488,11 @@ class DataRepository {
   }
 
   Future<Map<String, dynamic>> getFirstDataRestaurantList(
-      String token,
-      String address,
-      MerchantType merchantType,
-      RestaurantListType type,
-      String category,
-      bool isVegOnly,
-      {String cuisineType,
-      String sortBy}) async {
+      String token, String address, MerchantType merchantType, RestaurantListType type, String category, bool isVegOnly,
+      {String cuisineType, String sortBy}) async {
     Map<String, dynamic> map = Map();
 
-    final response = await _provider.getRestaurantList(
-        token, address, merchantType, type, category, 0, isVegOnly,
+    final response = await _provider.getRestaurantList(token, address, merchantType, type, category, 0, isVegOnly,
         sortBy: sortBy, cuisineType: cuisineType);
     if (response['code'] == 1) {
       var listLocations = response['details']['restaurants'] as List;
@@ -545,20 +511,13 @@ class DataRepository {
 
       var listSortBY = response['details']['sortoptions'];
       List<SortBy> sortBy = List();
-      sortBy.add(SortBy(
-          key: listSortBY['sort_ratings']['key'],
-          title: listSortBY['sort_ratings']['title']));
-      sortBy.add(SortBy(
-          key: listSortBY['sort_recommended']['key'],
-          title: listSortBY['sort_recommended']['title']));
-      sortBy.add(SortBy(
-          key: listSortBY['sort_distance']['key'],
-          title: listSortBY['sort_distance']['title']));
+      sortBy.add(SortBy(key: listSortBY['sort_ratings']['key'], title: listSortBY['sort_ratings']['title']));
+      sortBy.add(SortBy(key: listSortBY['sort_recommended']['key'], title: listSortBY['sort_recommended']['title']));
+      sortBy.add(SortBy(key: listSortBY['sort_distance']['key'], title: listSortBY['sort_distance']['title']));
       map['sortBy'] = sortBy;
 
       if ((response['details']['filteroptions'] is Map)) {
-        var listFilter = response['details']['filteroptions']['cuisine_type']
-            ['options'] as List;
+        var listFilter = response['details']['filteroptions']['cuisine_type']['options'] as List;
         List<Filter> filters = listFilter.map((i) {
           return Filter.fromJson(i);
         }).toList();
@@ -573,16 +532,9 @@ class DataRepository {
     }
   }
 
-  Future<List<Restaurant>> getRestaurantList(
-      String token,
-      String address,
-      MerchantType merchantType,
-      RestaurantListType type,
-      String category,
-      int page,
-      bool isVegOnly) async {
-    final response = await _provider.getRestaurantList(
-        token, address, merchantType, type, category, page, isVegOnly);
+  Future<List<Restaurant>> getRestaurantList(String token, String address, MerchantType merchantType,
+      RestaurantListType type, String category, int page, bool isVegOnly) async {
+    final response = await _provider.getRestaurantList(token, address, merchantType, type, category, page, isVegOnly);
     if (response['code'] == 1) {
       var listLocations = response['details']['restaurants'] as List;
       List<Restaurant> restaurants = listLocations.map((i) {
@@ -615,10 +567,8 @@ class DataRepository {
     }
   }
 
-  Future<List<Food>> getFoods(String restaurantId, String categoryId,
-      bool isVegOnly, String searchKeyword) async {
-    final response = await _provider.getFoods(
-        restaurantId, categoryId, isVegOnly, searchKeyword);
+  Future<List<Food>> getFoods(String restaurantId, String categoryId, bool isVegOnly, String searchKeyword) async {
+    final response = await _provider.getFoods(restaurantId, categoryId, isVegOnly, searchKeyword);
     if (response['code'] == 1) {
       var list = response['details']['item'] as List;
       List<Food> foods = list.map((i) {
@@ -655,10 +605,8 @@ class DataRepository {
     }
   }
 
-  Future<dynamic> getSimilarRestaurant(
-      String token, String merchantId, String address) async {
-    final response =
-        await _provider.getSimilarRestaurant(token, merchantId, address);
+  Future<dynamic> getSimilarRestaurant(String token, String merchantId, String address) async {
+    final response = await _provider.getSimilarRestaurant(token, merchantId, address);
     if (response['code'] == 1) {
       Map<String, dynamic> map = Map();
       map['category'] = response['details']['food_category_id'];

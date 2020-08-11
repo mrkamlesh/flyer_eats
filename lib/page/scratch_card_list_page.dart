@@ -269,7 +269,7 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                           accuracy: ScratchAccuracy.medium,
                           brushSize: 50,
                           threshold: 25,
-                          color: Colors.black,
+                          //color: appLogoBackground,
                           onThreshold: () {
                             newState(() {
                               opacity = 1.0;
@@ -277,7 +277,7 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                             _bloc.add(DoScratchCard(token, scratchCard.cardId, pos));
                           },
                           image: Image.asset(
-                            "assets/flyereatslogo.png",
+                            "assets/scratch card.png",
                             fit: BoxFit.none,
                             width: AppUtil.getScreenWidth(context) - 100,
                             height: 0.7 * AppUtil.getScreenWidth(context) - 100,
@@ -337,9 +337,9 @@ class ScratchCardWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.black),
-                padding: EdgeInsets.only(left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                 child: Image.asset(
-                  "assets/flyereatslogo.png",
+                  "assets/scratch card.png",
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

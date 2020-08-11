@@ -7,6 +7,7 @@ import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/login_status.dart';
 import 'package:clients/model/register_post.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 import 'dart:io' show Platform;
 import './bloc.dart';
 
@@ -41,9 +42,11 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     yield LoadingRegister(listLocations: state.listLocations, registerPost: state.registerPost);
 
     try {
-      LoginStatus status = await repository.register(state.registerPost);
+      String otpSignature = await SmsAutoFill().getAppSignature;
+      LoginStatus status = await repository.register(state.registerPost, otpSignature);
       if (status.status) {
-        yield SuccessRegister(status, listLocations: state.listLocations, registerPost: state.registerPost);
+        yield SuccessRegister(status, otpSignature,
+            listLocations: state.listLocations, registerPost: state.registerPost);
       } else {
         yield ErrorRegister(status.message, listLocations: state.listLocations, registerPost: state.registerPost);
       }

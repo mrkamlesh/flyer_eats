@@ -16,7 +16,10 @@ class LoadingState extends LoginEmailState {
 }
 
 class SuccessState extends LoginEmailState {
-  SuccessState({String password}) : super(password: password);
+
+  final String otpSignature;
+
+  SuccessState(this.otpSignature, {String password}) : super(password: password);
 }
 
 class ErrorState extends LoginEmailState {

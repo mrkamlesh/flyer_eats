@@ -55,13 +55,14 @@ dependencies:
   flutter_facebook_login: 3.0.0
   razorpay_flutter: ^1.2.1
   google_fonts: ^1.1.0
-  scratcher: 1.3.0
+  scratcher: 1.4.0
   modal_bottom_sheet: ^0.2.0
   mask_text_input_formatter: ^1.0.7
   firebase_messaging: ^6.0.9
   flutter_local_notifications: ^1.4.4+2
   share: ^0.6.4+3
   video_player: ^0.10.11+2
+  sms_autofill: ^1.2.3
 
 dev_dependencies:
   flutter_launcher_icons: ^0.7.5
@@ -157,6 +158,8 @@ flutter:
     - assets/office address.svg
     - assets/others address.svg
     - assets/home address.svg
+    - assets/flyereatslogo2.png
+    - assets/scratch card.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

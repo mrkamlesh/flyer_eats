@@ -4,6 +4,7 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/login_status.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 import './bloc.dart';
 
 class LoginPhoneBloc extends Bloc<LoginPhoneEvent, LoginPhoneState> {
@@ -31,9 +32,10 @@ class LoginPhoneBloc extends Bloc<LoginPhoneEvent, LoginPhoneState> {
     yield LoadingLoginPhoneState(countryCode: state.countryCode, number: state.number);
 
     try {
-      LoginStatus status = await repository.checkPhoneExist(state.countryCode + state.number);
+      String otpSignature = await SmsAutoFill().getAppSignature;
+      LoginStatus status = await repository.checkPhoneExist(state.countryCode + state.number, otpSignature);
       if (status.status) {
-        yield PhoneIsExist(countryCode: state.countryCode, number: state.number);
+        yield PhoneIsExist(otpSignature, countryCode: state.countryCode, number: state.number);
       } else {
         yield PhoneIsNotExist(countryCode: state.countryCode, number: state.number);
       }
@@ -51,8 +53,8 @@ class LoginPhoneBloc extends Bloc<LoginPhoneEvent, LoginPhoneState> {
   }
 
   Stream<LoginPhoneState> mapGetAutoLocationToState() async* {
-    AppUtil.checkLocationServiceAndPermission();
     yield LoadingLoginPhoneState(countryCode: state.countryCode, number: state.number);
+    await AppUtil.checkLocationServiceAndPermission();
     try {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)

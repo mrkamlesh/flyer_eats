@@ -10,20 +10,23 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/page/home.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 class OtpPage extends StatefulWidget {
   final String phoneNumber;
   final Location location;
   final bool isShowContactConfirmationSheet;
+  final String otpSignature;
 
-  const OtpPage({Key key, this.phoneNumber, this.location, this.isShowContactConfirmationSheet = false})
+  const OtpPage(
+      {Key key, this.phoneNumber, this.location, this.isShowContactConfirmationSheet = false, this.otpSignature})
       : super(key: key);
 
   @override
   _OtpPageState createState() => _OtpPageState();
 }
 
-class _OtpPageState extends State<OtpPage> {
+class _OtpPageState extends State<OtpPage> with CodeAutoFill {
   TextEditingController _otpController;
   String otpCode = "";
 
@@ -36,10 +39,23 @@ class _OtpPageState extends State<OtpPage> {
         otpCode = _otpController.text;
       });
     });
+
+    print(widget.otpSignature);
+
+    listenForCode();
   }
 
   bool isValid() {
     return otpCode.length >= 6;
+  }
+
+  @override
+  void codeUpdated() {
+    setState(() {
+      _otpController.text = code;
+    });
+    Future.delayed(Duration(milliseconds: 150));
+    BlocProvider.of<LoginBloc>(context).add(VerifyOtp(widget.phoneNumber, _otpController.text));
   }
 
   @override
@@ -83,7 +99,7 @@ class _OtpPageState extends State<OtpPage> {
           body: Stack(
             children: <Widget>[
               Container(
-                decoration: BoxDecoration(color: Colors.black),
+                decoration: BoxDecoration(color: appLogoBackground),
               ),
               Column(
                 children: <Widget>[
@@ -94,7 +110,7 @@ class _OtpPageState extends State<OtpPage> {
                       child: FittedBox(
                           fit: BoxFit.cover,
                           child: Image.asset(
-                            "assets/flyereatslogo.png",
+                            AppUtil.getAppLogo(),
                             alignment: Alignment.center,
                             width: AppUtil.getScreenWidth(context) - 140,
                             height: 0.46 * (AppUtil.getScreenWidth(context) - 140),

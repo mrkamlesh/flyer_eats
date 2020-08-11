@@ -22,8 +22,9 @@ class LoadingRegister extends RegisterState {
 
 class SuccessRegister extends RegisterState {
   final LoginStatus status;
+  final String otpSignature;
 
-  SuccessRegister(this.status, {List<Location> listLocations, RegisterPost registerPost})
+  SuccessRegister(this.status, this.otpSignature, {List<Location> listLocations, RegisterPost registerPost})
       : super(listLocations: listLocations, registerPost: registerPost);
 }
 

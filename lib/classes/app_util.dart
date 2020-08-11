@@ -28,6 +28,10 @@ class AppUtil {
     return kToolbarHeight + MediaQuery.of(context).padding.top;
   }
 
+  static String getAppLogo() {
+    return "assets/flyereatslogo2.png";
+  }
+
   static Future<void> checkLocationServiceAndPermission() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;

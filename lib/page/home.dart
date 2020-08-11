@@ -457,9 +457,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                             ),
                                           ],
                                         )
-                                      : Container(
-                                          margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
-                                        ),
+                                      : SizedBox(),
                                   homeState.homePageData.orderAgainRestaurants.isNotEmpty
                                       ? Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -515,9 +513,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                             ),
                                           ],
                                         )
-                                      : Container(
-                                          margin: EdgeInsets.only(bottom: distanceSectionContent - 10),
-                                        ),
+                                      : SizedBox(),
                                   homeState.homePageData.referralDiscount != ""
                                       ? InkWell(
                                           onTap: () {
@@ -1264,7 +1260,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                           accuracy: ScratchAccuracy.medium,
                           brushSize: 50,
                           threshold: 25,
-                          color: Colors.black,
+                          //color: appLogoBackground,
                           onThreshold: () {
                             newState(() {
                               opacity = 1.0;
@@ -1272,7 +1268,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                             BlocProvider.of<CurrentOrderBloc>(context).add(ScratchCardEvent(token, scratchCard.cardId));
                           },
                           image: Image.asset(
-                            "assets/flyereatslogo.png",
+                            "assets/scratch card.png",
                             fit: BoxFit.none,
                             width: AppUtil.getScreenWidth(context) - 100,
                             height: 0.7 * AppUtil.getScreenWidth(context) - 100,
@@ -1647,7 +1643,7 @@ class DefaultBanner extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Container(
-            decoration: BoxDecoration(color: Colors.black),
+            decoration: BoxDecoration(color: appLogoBackground),
           ),
           Align(
             alignment: Alignment.center,
@@ -1655,7 +1651,7 @@ class DefaultBanner extends StatelessWidget {
               child: FittedBox(
                 fit: BoxFit.cover,
                 child: Image.asset(
-                  "assets/flyereatslogo.png",
+                  AppUtil.getAppLogo(),
                   alignment: Alignment.center,
                   width: AppUtil.getScreenWidth(context) - 140,
                   height: 0.46 * (AppUtil.getScreenWidth(context) - 140),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/login_status.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 import './bloc.dart';
 
 class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
@@ -17,7 +18,7 @@ class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
     if (event is UpdatePassword) {
       yield* mapUpdatePasswordToState(event.password);
     } else if (event is Login) {
-      yield* mapLoginToState(event.email, event.password);
+      yield* mapLoginToState(event.email, event.password, event.contactPhone);
     } else if (event is ForgotPassword) {
       yield* mapForgotPasswordToState(event.email);
     }
@@ -27,12 +28,13 @@ class LoginEmailBloc extends Bloc<LoginEmailEvent, LoginEmailState> {
     yield LoginEmailState(password: password);
   }
 
-  Stream<LoginEmailState> mapLoginToState(String email, String password) async* {
+  Stream<LoginEmailState> mapLoginToState(String email, String password, String contactPhone) async* {
     yield LoadingState(password: state.password);
 
     try {
-      await repository.loginByEmail(email, password);
-      yield SuccessState(password: password);
+      String otpSignature = await SmsAutoFill().getAppSignature;
+      await repository.loginByEmail(contactPhone, email, password, otpSignature);
+      yield SuccessState(otpSignature, password: password);
     } catch (e) {
       yield ErrorState(e.toString(), password: state.password);
     }

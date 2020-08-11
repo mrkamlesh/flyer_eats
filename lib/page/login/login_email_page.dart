@@ -119,6 +119,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
           } else if (state is SuccessState) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return OtpPage(
+                otpSignature: state.otpSignature,
                 phoneNumber: widget.phoneNumber,
                 isShowContactConfirmationSheet: true,
               );
@@ -130,7 +131,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
             body: Stack(
               children: <Widget>[
                 Container(
-                  decoration: BoxDecoration(color: Colors.black),
+                  decoration: BoxDecoration(color: appLogoBackground),
                 ),
                 SingleChildScrollView(
                   controller: _controller,
@@ -145,9 +146,10 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                             child: FittedBox(
                                 fit: BoxFit.cover,
                                 child: Image.asset(
-                                  "assets/flyereatslogo.png",
+                                  AppUtil.getAppLogo(),
                                   alignment: Alignment.center,
                                   width: AppUtil.getScreenWidth(context) - 140,
+                                  height: 0.46 * (AppUtil.getScreenWidth(context) - 140),
                                 )),
                           ),
                         ),
@@ -228,7 +230,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                 GestureDetector(
                                   onTap: state.password != null && state.password != ""
                                       ? () {
-                                          _bloc.add(Login(widget.email, state.password));
+                                          _bloc.add(Login(widget.phoneNumber, widget.email, state.password));
                                         }
                                       : () {},
                                   child: Stack(

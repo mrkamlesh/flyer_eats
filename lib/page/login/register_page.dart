@@ -74,6 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
           if (state is SuccessRegister) {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return OtpPage(
+                otpSignature: state.otpSignature,
                 phoneNumber: widget.phoneNumber,
                 location: state.registerPost.location,
               );
@@ -111,7 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: <Widget>[
                       Expanded(
                         child: Container(
-                          decoration: BoxDecoration(color: Colors.black),
+                          decoration: BoxDecoration(color: appLogoBackground),
                         ),
                       ),
                       Expanded(
@@ -136,9 +137,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: FittedBox(
                                 fit: BoxFit.cover,
                                 child: Image.asset(
-                                  "assets/flyereatslogo.png",
+                                  AppUtil.getAppLogo(),
                                   alignment: Alignment.center,
                                   width: AppUtil.getScreenWidth(context) - 140,
+                                  height: 0.46 * (AppUtil.getScreenWidth(context) - 140),
                                 )),
                           ),
                         ),

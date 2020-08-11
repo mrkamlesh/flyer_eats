@@ -99,7 +99,7 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
             body: Stack(
               children: <Widget>[
                 Container(
-                  decoration: BoxDecoration(color: Colors.black),
+                  decoration: BoxDecoration(color: appLogoBackground),
                 ),
                 SingleChildScrollView(
                   controller: _controller,
@@ -115,7 +115,7 @@ class _LoginFacebookGmailState extends State<LoginFacebookGmail> {
                             child: FittedBox(
                                 fit: BoxFit.cover,
                                 child: Image.asset(
-                                  "assets/flyereatslogo.png",
+                                  AppUtil.getAppLogo(),
                                   alignment: Alignment.center,
                                   width: AppUtil.getScreenWidth(context) - 140,
                                   height: 0.46 * (AppUtil.getScreenWidth(context) - 140),

@@ -7,10 +7,11 @@ abstract class LoginEmailEvent extends Equatable {
 }
 
 class Login extends LoginEmailEvent {
+  final String contactPhone;
   final String email;
   final String password;
 
-  const Login(this.email, this.password);
+  const Login(this.contactPhone, this.email, this.password);
 
   @override
   List<Object> get props => [email, password];
@@ -33,4 +34,3 @@ class ForgotPassword extends LoginEmailEvent {
   @override
   List<Object> get props => [email];
 }
-

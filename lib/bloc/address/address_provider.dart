@@ -7,12 +7,12 @@ import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/model/address.dart';
 
 class AddressProvider {
-  /*String baseUrl = "http://flyereats.in/";*/
-  String baseUrl = "https://www.pollachiarea.com/flyereats/";
+  //String serverUrl = "http://flyereats.in/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
   Future<dynamic> deleteAddress(String id, String token) async {
     String url =
-        "${baseUrl}mobileapp/apinew/deleteAddressBook?json=true&&client_token=$token&id=$id&lang_id=en&lang=en&api_key=flyereats";
+        "${serverUrl}mobileapp/apinew/deleteAddressBook?json=true&&client_token=$token&id=$id&lang_id=en&lang=en&api_key=flyereats";
 
     var responseJson;
     try {
@@ -26,7 +26,7 @@ class AddressProvider {
 
   Future<dynamic> addAddress(Address address, String token) async {
     String url =
-        "${baseUrl}mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";
+        "${serverUrl}mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";
 
     /* String url =
         "https://www.pollachiarea.com/flyereats/mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";*/
@@ -61,7 +61,7 @@ class AddressProvider {
 
   Future<dynamic> updateAddress(Address address, String token) async {
     String url =
-        "${baseUrl}mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";
+        "${serverUrl}mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";
 
 /*     String url =
         "https://www.pollachiarea.com/flyereats/mobileapp/apiRest/saveAddressBook?json=true&api_key=flyereats";*/
@@ -96,7 +96,7 @@ class AddressProvider {
 
   Future<dynamic> getAddress(String id, String token) async {
     String url =
-        "${baseUrl}mobileapp/apinew/getAddressBookDetails?json=true&client_token=$token&id=$id&lang_id=en&lang=en&api_key=flyereats";
+        "${serverUrl}mobileapp/apinew/getAddressBookDetails?json=true&client_token=$token&id=$id&lang_id=en&lang=en&api_key=flyereats";
     var responseJson;
     try {
       final response = await Dio().get(url);
@@ -109,7 +109,7 @@ class AddressProvider {
 
   Future<dynamic> getAllAddress(String token) async {
     String url =
-        "${baseUrl}mobileapp/apiRest/getAddressBook?json=true&api_key=flyereats";
+        "${serverUrl}mobileapp/apiRest/getAddressBook?json=true&api_key=flyereats";
 
     Map<String, dynamic> formData = {
       "client_token": token,

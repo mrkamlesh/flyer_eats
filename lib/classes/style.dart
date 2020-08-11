@@ -18,4 +18,6 @@ Color primary2 = Color(0xFFFFb531);
 Color primary3 = Color(0xFFF47B22);
 Color shadow = Colors.black26;
 
+Color appLogoBackground = Color(0xFFD82128);
+
 String mapApi = "AIzaSyCoUa2tLisTVw00rL43A8rgeFdB5xW5i-s";

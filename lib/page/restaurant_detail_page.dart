@@ -94,11 +94,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                     return AlertDialog(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       title: Text(
-                        "Clear Cart?",
+                        "Replace Cart Item?",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       content: Text(
-                        "Would you like to clear current cart?",
+                        "Your cart contain dishes from " +
+                            cartState.placeOrder.restaurant.name +
+                            "  Do You want to discard the selection and add dishes from " +
+                            cartState.tempSelectedRestaurant.name +
+                            "?",
                         style: TextStyle(color: Colors.black54),
                       ),
                       actions: <Widget>[
@@ -132,7 +136,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
           builder: (context, cartState) {
             return BlocProvider<DetailPageBloc>(
               create: (context) {
-                return _bloc..add(PageDetailRestaurantOpen(widget.restaurant.id));
+                return _bloc..add(PageDetailRestaurantOpen(widget.restaurant.id, widget.location.address));
               },
               child: BlocBuilder<DetailPageBloc, DetailPageState>(
                 builder: (context, state) {
@@ -442,6 +446,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                       pinned: true,
                                       delegate: DetailRestaurantFilterTabs(
                                         widget.restaurant.id,
+                                        address: widget.location.address,
                                         onSearchTap: _onSearchTap,
                                         offset: offset,
                                         isListSelected: _isListMode,
@@ -464,7 +469,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                           );
                                         },
                                         onSwitchChanged: (value) {
-                                          _bloc.add(SwitchVegOnly(widget.restaurant.id, value));
+                                          _bloc
+                                              .add(SwitchVegOnly(widget.restaurant.id, value, widget.location.address));
                                         },
                                         isVegOnly: state.isVegOnly,
                                         size: 27,
@@ -637,7 +643,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                       ),
                       textInputAction: TextInputAction.search,
                       onSubmitted: (value) {
-                        _bloc.add(SearchFood(widget.restaurant.id, value));
+                        _bloc.add(SearchFood(widget.restaurant.id, value, widget.location.address));
                       },
                     ),
                   ),
@@ -659,6 +665,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                     } else if (state is ErrorSearch) {
                       return SliverToBoxAdapter(
                         child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
                           child: Text(state.message),
                         ),
                       );
@@ -696,6 +703,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                 listFood: state.result,
                                 type: FoodListViewType.list,
                                 scale: 0.90,
+                                currencyIcon: AppUtil.getCurrencyIcon(widget.restaurant.currencyCode),
                               );
                             },
                           )
@@ -1237,10 +1245,12 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
   final Function(bool) onSwitchChanged;
   final double offset;
   final Function onSearchTap;
+  final String address;
 
   DetailRestaurantFilterTabs(
     this.restaurantId, {
     this.onListButtonTap,
+    this.address,
     this.onGridButtonTap,
     this.isListSelected,
     this.size,
@@ -1371,7 +1381,7 @@ class DetailRestaurantFilterTabs extends SliverPersistentHeaderDelegate {
                     child: TabBar(
                       onTap: (i) {
                         BlocProvider.of<DetailPageBloc>(context)
-                            .add(RestaurantMenuChange(restaurantId, state.menuCategories[i].id, i));
+                            .add(RestaurantMenuChange(restaurantId, state.menuCategories[i].id, i, address));
                       },
                       isScrollable: true,
                       labelColor: Colors.black,

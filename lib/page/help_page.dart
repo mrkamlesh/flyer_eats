@@ -51,41 +51,42 @@ class _HelpPageState extends State<HelpPage> {
             ],
           ),
           DraggableScrollableSheet(
-            initialChildSize: (AppUtil.getScreenHeight(context) -
-                    AppUtil.getToolbarHeight(context)) /
+            initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                 AppUtil.getScreenHeight(context),
-            minChildSize: (AppUtil.getScreenHeight(context) -
-                    AppUtil.getToolbarHeight(context)) /
+            minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                 AppUtil.getScreenHeight(context),
             maxChildSize: 1.0,
             builder: (context, controller) {
               return Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(32),
-                        topLeft: Radius.circular(32))),
-                padding: EdgeInsets.only(
-                    top: 20,
-                    left: horizontalPaddingDraggable,
-                    right: horizontalPaddingDraggable),
+                    borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                padding: EdgeInsets.only(top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
                 child: Column(
                   children: <Widget>[
                     HelpItem(
                       title: "T & C",
-                      onTap: () {},
+                      onTap: () async {
+                        await AppUtil.launchInBrowser("https://flyereats.in/page-terms-amp-conditions");
+                      },
                     ),
                     HelpItem(
                       title: "P & P",
-                      onTap: () {},
+                      onTap: () async {
+                        await AppUtil.launchInBrowser("https://flyereats.in/page-privacy-policy");
+                      },
                     ),
                     HelpItem(
                       title: "FAQs",
-                      onTap: () {},
+                      onTap: () async {
+                        await AppUtil.launchInBrowser("https://flyereats.in/page-faq");
+                      },
                     ),
                     HelpItem(
                       title: "Contact US",
-                      onTap: () {},
+                      onTap: () async {
+                        await AppUtil.launchInBrowser("https://flyereats.in/contact");
+                      },
                     ),
                   ],
                 ),
@@ -106,7 +107,7 @@ class HelpItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),

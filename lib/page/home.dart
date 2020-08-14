@@ -641,9 +641,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                             adsList: homeState.homePageData.ads,
                                           ),
                                         )
-                                      : Container(
-                                          margin: EdgeInsets.only(bottom: distanceBetweenSection - 10),
-                                        ),
+                                      : SizedBox(),
                                   homeState.homePageData.dblRestaurants.isNotEmpty
                                       ? Container(
                                           margin:
@@ -696,7 +694,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                                 height: 225,
                                                 padding: EdgeInsets.only(
                                                     top: distanceSectionContent, bottom: distanceSectionContent),
-                                                margin: EdgeInsets.only(bottom: distanceSectionContent),
+                                                //margin: EdgeInsets.only(bottom: distanceSectionContent),
                                                 decoration: BoxDecoration(color: Colors.white, boxShadow: [
                                                   BoxShadow(
                                                       offset: Offset(2, 2),
@@ -714,9 +712,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin, AfterL
                                             ],
                                           ),
                                         )
-                                      : Container(
-                                          margin:
-                                              EdgeInsets.only(bottom: distanceBetweenSection + distanceSectionContent),
+                                      : SizedBox(
+                                          height: distanceBetweenSection,
                                         ),
                                   BlocBuilder<CurrentOrderBloc, CurrentOrderState>(builder: (context, state) {
                                     if (state is SuccessState || state is ErrorState || state is LoadingState) {

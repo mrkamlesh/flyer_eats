@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clients/bloc/video/video_player_bloc.dart';
+import 'package:clients/classes/app_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:clients/classes/style.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class AdsListWidget extends StatefulWidget {
   final List<Ads> adsList;
@@ -30,8 +31,7 @@ class _AdsListWidgetState extends State<AdsListWidget> {
   @override
   void initState() {
     super.initState();
-    _pageController =
-        PageController(initialPage: 0, viewportFraction: viewport);
+    _pageController = PageController(initialPage: 0, viewportFraction: viewport);
 
     _timer = Timer.periodic(Duration(seconds: 4), (t) {
       _currentIndex++;
@@ -49,8 +49,7 @@ class _AdsListWidgetState extends State<AdsListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _adsOffset = -((1 - viewport) * MediaQuery.of(context).size.width / 2 -
-        horizontalPaddingDraggable);
+    _adsOffset = -((1 - viewport) * MediaQuery.of(context).size.width / 2 - horizontalPaddingDraggable);
     return PageView.builder(
         controller: _pageController,
         onPageChanged: (i) {
@@ -79,8 +78,10 @@ class AdsWidget extends StatefulWidget {
 }
 
 class _AdsWidgetState extends State<AdsWidget> {
-  VideoPlayerController _videoController;
+  //VideoPlayerController _videoController;
+  YoutubePlayerController _youtubePlayerController;
   VideoPlayerBloc _videoPlayerBloc = VideoPlayerBloc();
+  String videoId;
 
   @override
   void dispose() {
@@ -92,7 +93,12 @@ class _AdsWidgetState extends State<AdsWidget> {
   void initState() {
     super.initState();
     if (widget.ads.type == "video") {
-      _videoController = VideoPlayerController.network(widget.ads.content);
+      videoId = YoutubePlayer.convertUrlToId(widget.ads.videoUrl);
+      if (videoId != null) {
+        _youtubePlayerController = YoutubePlayerController(
+          initialVideoId: videoId,
+        );
+      }
     }
   }
 
@@ -101,14 +107,23 @@ class _AdsWidgetState extends State<AdsWidget> {
     return InkWell(
       onTap: () async {
         if (widget.ads.type == "video") {
-          _videoPlayerBloc.add(PlayVideo(_videoController));
+          _videoPlayerBloc.add(PlayVideo(_youtubePlayerController));
           await showMaterialModalBottomSheet(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32))),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
               context: context,
               builder: (context, controller) {
+                if (videoId == null) {
+                  return Container(
+                    height: 100,
+                    child: Center(
+                      child: Text(
+                        "Can not play youtube video, URL is invalid",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
                 return BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
                   bloc: _videoPlayerBloc,
                   builder: (context, state) {
@@ -124,20 +139,22 @@ class _AdsWidgetState extends State<AdsWidget> {
                     } else {
                       return Container(
                         margin: EdgeInsets.all(horizontalPaddingDraggable),
-                        child: AspectRatio(
-                          aspectRatio: _videoController.value.aspectRatio,
-                          child: Stack(
-                            children: [
-                              VideoPlayer(_videoController),
-                              _PlayPauseOverlay(controller: _videoController),
-                              Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: VideoProgressIndicator(
-                                    _videoController,
-                                    allowScrubbing: true,
-                                  )),
-                            ],
-                          ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            YoutubePlayer(
+                              controller: _youtubePlayerController,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                AppUtil.launchInBrowser(widget.ads.url);
+                              },
+                              child: Text(
+                                "CLICK HERE",
+                                style: TextStyle(color: primary3, decoration: TextDecoration.underline),
+                              ),
+                            )
+                          ],
                         ),
                       );
                     }
@@ -145,35 +162,37 @@ class _AdsWidgetState extends State<AdsWidget> {
                 );
               });
 
-          if (widget.ads.type == "video") if (_videoController
-              .value.isPlaying) {
-            _videoController.pause();
+          if (widget.ads.type == "video") if (_youtubePlayerController.value.isPlaying) {
+            _youtubePlayerController.pause();
           }
         } else {
           showMaterialModalBottomSheet(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32))),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
               context: context,
               builder: (context, controller) {
-                return Container(
-                  margin: EdgeInsets.all(horizontalPaddingDraggable),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
-                    child: CachedNetworkImage(
-                      imageUrl: widget.ads.content,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                      placeholder: (context, url) {
-                        return Shimmer.fromColors(
-                            child: Container(
-                              height: 150,
-                              color: Colors.black,
-                            ),
-                            baseColor: Colors.grey[300],
-                            highlightColor: Colors.grey[100]);
-                      },
+                return InkWell(
+                  onTap: () {
+                    AppUtil.launchInBrowser(widget.ads.url);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(horizontalPaddingDraggable),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(32),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.ads.photo,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        placeholder: (context, url) {
+                          return Shimmer.fromColors(
+                              child: Container(
+                                height: 150,
+                                color: Colors.black,
+                              ),
+                              baseColor: Colors.grey[300],
+                              highlightColor: Colors.grey[100]);
+                        },
+                      ),
                     ),
                   ),
                 );
@@ -188,19 +207,13 @@ class _AdsWidgetState extends State<AdsWidget> {
           margin: EdgeInsets.only(right: 20),
           height: 60,
           decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  offset: Offset(2, 2),
-                  color: Colors.black26,
-                  spreadRadius: 0,
-                  blurRadius: 5)
-            ],
+            boxShadow: [BoxShadow(offset: Offset(2, 2), color: Colors.black26, spreadRadius: 0, blurRadius: 5)],
             borderRadius: BorderRadius.circular(20),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: CachedNetworkImage(
-              imageUrl: widget.ads.thumbnail,
+              imageUrl: widget.ads.type == "video" ? widget.ads.thumbnail : widget.ads.photo,
               height: 60,
               fit: BoxFit.cover,
               alignment: Alignment.center,
@@ -221,7 +234,7 @@ class _AdsWidgetState extends State<AdsWidget> {
   }
 }
 
-class _PlayPauseOverlay extends StatelessWidget {
+/*class _PlayPauseOverlay extends StatelessWidget {
   const _PlayPauseOverlay({Key key, this.controller}) : super(key: key);
 
   final VideoPlayerController controller;
@@ -254,4 +267,4 @@ class _PlayPauseOverlay extends StatelessWidget {
       ],
     );
   }
-}
+}*/

@@ -62,12 +62,37 @@ class LoginPhoneBloc extends Bloc<LoginPhoneEvent, LoginPhoneState> {
         return null;
       });
 
-      List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(position.latitude, position.longitude);
+      List<Placemark> placeMark = await Geolocator().placemarkFromCoordinates(position.latitude, position.longitude);
 
-      if (placemark[0].isoCountryCode == "SG") {
-        yield LoginPhoneState(countryCode: "+65", number: "");
+      String thoroughfare =
+          (placeMark[0].thoroughfare != "" && placeMark[0].thoroughfare != null) ? placeMark[0].thoroughfare + " " : "";
+      String subThoroughfare = (placeMark[0].subThoroughfare != "" && placeMark[0].subThoroughfare != null)
+          ? placeMark[0].subThoroughfare + " "
+          : "";
+      String subLocality =
+          (placeMark[0].subLocality != "" && placeMark[0].subLocality != null) ? placeMark[0].subLocality + " " : "";
+      String locality =
+          (placeMark[0].locality != "" && placeMark[0].locality != null) ? placeMark[0].locality + " " : "";
+      String subAdministrativeArea =
+          (placeMark[0].subAdministrativeArea != "" && placeMark[0].subAdministrativeArea != null)
+              ? placeMark[0].subAdministrativeArea + " "
+              : "";
+      String administrativeArea = (placeMark[0].administrativeArea != "" && placeMark[0].administrativeArea != null)
+          ? placeMark[0].administrativeArea + " "
+          : "";
+
+      if (placeMark[0].isoCountryCode == "SG") {
+        yield LocationDetected(
+            thoroughfare + subThoroughfare + subLocality + locality + subAdministrativeArea + administrativeArea,
+            placeMark[0].isoCountryCode,
+            countryCode: "+65",
+            number: "");
       } else {
-        yield LoginPhoneState(countryCode: "+91", number: "");
+        yield LocationDetected(
+            thoroughfare + subThoroughfare + subLocality + locality + subAdministrativeArea + administrativeArea,
+            placeMark[0].isoCountryCode,
+            countryCode: "+91",
+            number: "");
       }
     } catch (e) {
       yield InitialLoginPhoneState();

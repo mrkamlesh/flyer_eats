@@ -1010,7 +1010,7 @@ class DinnerRestaurantHomeWidget extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    restaurant.discountDescription,
+                                    AppUtil.parseHtmlString(restaurant.discountDescription),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -1075,7 +1075,7 @@ class LoadingRestaurantListWidget extends StatelessWidget {
       padding: EdgeInsets.only(
           top: distanceSectionContent - 10, bottom: distanceSectionContent + kBottomNavigationBarHeight),
       child: ListView.builder(
-        padding: EdgeInsets.only(top: 0),
+          padding: EdgeInsets.only(top: 0),
           itemBuilder: (context, i) {
             return Shimmer.fromColors(
                 child: Container(

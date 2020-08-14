@@ -120,6 +120,28 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                             );
                           });
                     }
+                    /*else if (state is LocationDetected) {
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              title: Text(
+                                "Info",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: Text("ISO CODE: " + state.isoCountryCode + "\nAddress: " + state.address),
+                              actions: <Widget>[
+                                FlatButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("OK"))
+                              ],
+                            );
+                          });
+                    }*/
                   },
                   builder: (context, state) {
                     return Scaffold(

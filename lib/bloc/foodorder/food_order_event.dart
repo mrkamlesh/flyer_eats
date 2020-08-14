@@ -6,7 +6,6 @@ import 'package:clients/model/user.dart';
 import 'package:equatable/equatable.dart';
 import 'package:clients/model/address.dart';
 import 'package:clients/model/food.dart';
-import 'package:clients/model/place_order.dart';
 import 'package:clients/model/voucher.dart';
 import 'package:meta/meta.dart';
 
@@ -79,6 +78,13 @@ class ApplyVoucher extends FoodOrderEvent {
   List<Object> get props => [voucher];
 }
 
+class RemoveVoucher extends FoodOrderEvent {
+  const RemoveVoucher();
+
+  @override
+  List<Object> get props => [];
+}
+
 class ChangeQuantityWithPayment extends FoodOrderEvent {
   final FoodCartItem foodCartItem;
   final int quantity;
@@ -98,12 +104,11 @@ class ChangeQuantityNoPayment extends FoodOrderEvent {
   final List<AddOn> addOns;
   final bool isIncrease;
 
-  const ChangeQuantityNoPayment(this.restaurant, this.id, this.food,
-      this.quantity, this.price, this.addOns, this.isIncrease);
+  const ChangeQuantityNoPayment(
+      this.restaurant, this.id, this.food, this.quantity, this.price, this.addOns, this.isIncrease);
 
   @override
-  List<Object> get props =>
-      [restaurant, id, food, quantity, price, addOns, isIncrease];
+  List<Object> get props => [restaurant, id, food, quantity, price, addOns, isIncrease];
 }
 
 class PlaceOrderEvent extends FoodOrderEvent {
@@ -114,12 +119,11 @@ class PlaceOrderEvent extends FoodOrderEvent {
 }
 
 class GetPaymentOptions extends FoodOrderEvent {
-  final PlaceOrder order;
 
-  GetPaymentOptions(this.order);
+  GetPaymentOptions();
 
   @override
-  List<Object> get props => [order];
+  List<Object> get props => [];
 }
 
 class ChangeWalletUsage extends FoodOrderEvent {

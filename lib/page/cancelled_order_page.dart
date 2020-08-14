@@ -1,3 +1,5 @@
+import 'package:clients/bloc/location/home/bloc.dart';
+import 'package:clients/bloc/location/home/home_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -191,106 +193,132 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                   return Container();
                                 },
                               ),
-                              Container(
-                                margin: EdgeInsets.only(bottom: 20),
-                                height: 0.16 * AppUtil.getScreenHeight(context),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFFFC94B),
-                                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)],
-                                ),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      width: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                      height: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                      margin: EdgeInsets.all(10),
-                                      padding: EdgeInsets.all(10),
+                              BlocBuilder<HomeBloc, HomeState>(
+                                builder: (context, homeState) {
+                                  return homeState.homePageData.referralDiscount != ""
+                                      ? InkWell(
+                                    onTap: homeState.homePageData != null
+                                        ? () {
+                                      AppUtil.share(
+                                          context,
+                                          homeState.homePageData.referralCode,
+                                          homeState.homePageData.currencyCode +
+                                              " " +
+                                              homeState.homePageData.referralDiscount);
+                                    }
+                                        : () {},
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 20, bottom: 20),
+                                      height: 0.16 * AppUtil.getScreenHeight(context),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.3),
+                                        color: Color(0xFFFFC94B),
+                                        boxShadow: [
+                                          BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)
+                                        ],
                                       ),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                      child: Row(
                                         children: <Widget>[
-                                          SvgPicture.asset(
-                                            "assets/order success icon 2.svg",
-                                            height: 40,
-                                            width: 40,
+                                          Container(
+                                            width: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                            height: 0.16 * AppUtil.getScreenHeight(context) - 20,
+                                            margin: EdgeInsets.all(10),
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withOpacity(0.3),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                SvgPicture.asset(
+                                                  "assets/order success icon 2.svg",
+                                                  height: 0.16 * AppUtil.getScreenHeight(context) - 60,
+                                                  width: 0.16 * AppUtil.getScreenHeight(context) - 60,
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Text(
+                                                  "Refer Now",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            "Refer Now",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
-                                          )
+                                          Expanded(
+                                              child: Container(
+                                                padding: EdgeInsets.all(10),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "REFER A FRIEND AND EARN",
+                                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "Get a coupon worth",
+                                                          style: TextStyle(fontSize: 12),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        SvgPicture.asset(
+                                                          AppUtil.getCurrencyIcon(
+                                                              homeState.homePageData.currencyCode),
+                                                          height: 12,
+                                                          width: 12,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          homeState.homePageData.referralDiscount ?? "",
+                                                          style: TextStyle(
+                                                              fontSize: 18, fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    FittedBox(
+                                                      fit: BoxFit.none,
+                                                      child: Container(
+                                                        padding:
+                                                        EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.circular(4),
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: <Widget>[
+                                                            Text(
+                                                              "Use Referal Code: ",
+                                                              style: TextStyle(
+                                                                  fontSize: 12, fontWeight: FontWeight.bold),
+                                                            ),
+                                                            Text(
+                                                              homeState.homePageData.referralCode ?? "",
+                                                              style: TextStyle(
+                                                                color: primary3,
+                                                                fontSize: 12,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ))
                                         ],
                                       ),
                                     ),
-                                    Expanded(
-                                        child: Container(
-                                      padding: EdgeInsets.all(10),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            "REFER A FRIEND AND EARN",
-                                            style: TextStyle(fontWeight: FontWeight.bold),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Text(
-                                                "Get a coupon worth",
-                                                style: TextStyle(fontSize: 12),
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              SvgPicture.asset(
-                                                "assets/rupee.svg",
-                                              ),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              Text(
-                                                "100",
-                                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                              ),
-                                            ],
-                                          ),
-                                          FittedBox(
-                                            fit: BoxFit.none,
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(4),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    "Use Referal Code: ",
-                                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                                  ),
-                                                  Text(
-                                                    "HHHHHH",
-                                                    style: TextStyle(
-                                                      color: primary3,
-                                                      fontSize: 12,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ))
-                                  ],
-                                ),
+                                  )
+                                      : SizedBox();
+                                },
                               ),
                               BlocBuilder<CancelledOrderBloc, CancelledOrderState>(
                                 condition: (context, state) {

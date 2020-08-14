@@ -14,9 +14,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  //String serverUrl = "http://flyereats.in/";
+  String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(String contactPhone, String otpSignature) async {
     String url = "${serverUrl}mobileapp/apiRest/checkMobileExist?json=true&api_key=flyereats";
@@ -135,7 +135,12 @@ class DataProvider {
   Future<dynamic> loginByEmail(String contactPhone, String email, String password, String otpSignature) async {
     String url = "${serverUrl}mobileapp/apiRest/checkAccount?json=true&api_key=flyereats";
 
-    var formData = {"contact_phone": contactPhone, "email_address": email, "password": password, "otp_signature": otpSignature};
+    var formData = {
+      "contact_phone": contactPhone,
+      "email_address": email,
+      "password": password,
+      "otp_signature": otpSignature
+    };
 
     var responseJson;
     try {
@@ -959,12 +964,14 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> getFoods(String restaurantId, String categoryId, bool isVegOnly, String searchKeyword) async {
+  Future<dynamic> getFoods(
+      String restaurantId, String categoryId, bool isVegOnly, String searchKeyword, String address) async {
     String vegOnlyParam = isVegOnly != null ? isVegOnly ? "&is_veg=1" : "&is_veg=0" : "";
     String searchParam = searchKeyword != null ? "&searchitem=$searchKeyword" : "";
     String categoryParam = categoryId != null ? "&cat_id=$categoryId" : "";
+    String addressParam = address != null ? "&address=$address" : "";
     String url =
-        "${serverUrl}mobileapp/apiRest/getItem?json=true&api_key=flyereats&page=all&merchant_id=$restaurantId$categoryParam$vegOnlyParam$searchParam";
+        "${serverUrl}mobileapp/apiRest/getItem?json=true&api_key=flyereats&page=all&merchant_id=$restaurantId$categoryParam$vegOnlyParam$searchParam$addressParam";
 
     var responseJson;
     try {

@@ -358,8 +358,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                             );
                                                           }));
 
-                                                          BlocProvider.of<FoodOrderBloc>(context)
-                                                              .add(ApplyVoucher(result));
+                                                          if (result != null) {
+                                                            BlocProvider.of<FoodOrderBloc>(context)
+                                                                .add(ApplyVoucher(result));
+                                                          }
                                                         },
                                                         child: Container(
                                                           height: 55,
@@ -430,6 +432,41 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                               child: Text(
                                                                 state.placeOrder.voucher.name,
                                                                 style: TextStyle(fontSize: 16),
+                                                              ),
+                                                            ),
+                                                            InkWell(
+                                                              onTap: () async {
+                                                                Voucher result = await Navigator.push(context,
+                                                                    MaterialPageRoute(builder: (context) {
+                                                                  return ApplyCouponPage(
+                                                                    restaurant: state.placeOrder.restaurant,
+                                                                    totalOrder: state.placeOrder.getTotal(),
+                                                                  );
+                                                                }));
+
+                                                                if (result != null) {
+                                                                  BlocProvider.of<FoodOrderBloc>(context)
+                                                                      .add(ApplyVoucher(result));
+                                                                }
+                                                              },
+                                                              child: SvgPicture.asset(
+                                                                "assets/add review icon.svg",
+                                                                height: 24,
+                                                                width: 24,
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            InkWell(
+                                                              onTap: () {
+                                                                BlocProvider.of<FoodOrderBloc>(context)
+                                                                    .add(RemoveVoucher());
+                                                              },
+                                                              child: SvgPicture.asset(
+                                                                "assets/remove.svg",
+                                                                height: 24,
+                                                                width: 24,
                                                               ),
                                                             ),
                                                           ],
@@ -524,28 +561,32 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                     children: <Widget>[
                                                       OrderRowItem(
                                                         title: "Order",
-                                                        currencyIcon: AppUtil.getCurrencyIcon(state.placeOrder.restaurant.currencyCode),
+                                                        currencyIcon: AppUtil.getCurrencyIcon(
+                                                            state.placeOrder.restaurant.currencyCode),
                                                         color: Colors.black,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.subTotal()),
                                                       ),
                                                       OrderRowItem(
                                                         title: state.placeOrder.taxPrettyString,
-                                                        currencyIcon: AppUtil.getCurrencyIcon(state.placeOrder.restaurant.currencyCode),
+                                                        currencyIcon: AppUtil.getCurrencyIcon(
+                                                            state.placeOrder.restaurant.currencyCode),
                                                         color: Colors.black,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.taxCharges),
                                                       ),
                                                       OrderRowItem(
                                                         title: "Packaging",
-                                                        currencyIcon: AppUtil.getCurrencyIcon(state.placeOrder.restaurant.currencyCode),
+                                                        currencyIcon: AppUtil.getCurrencyIcon(
+                                                            state.placeOrder.restaurant.currencyCode),
                                                         color: Colors.black,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.packagingCharges),
                                                       ),
                                                       OrderRowItem(
                                                         title: "Delivery Fee",
-                                                        currencyIcon: AppUtil.getCurrencyIcon(state.placeOrder.restaurant.currencyCode),
+                                                        currencyIcon: AppUtil.getCurrencyIcon(
+                                                            state.placeOrder.restaurant.currencyCode),
                                                         color: Colors.black,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.deliveryCharges),
@@ -558,14 +599,16 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                       ),*/
                                                       OrderRowItem(
                                                         title: state.placeOrder.discountOrderPrettyString,
-                                                        currencyIcon: AppUtil.getCurrencyIcon(state.placeOrder.restaurant.currencyCode),
+                                                        currencyIcon: AppUtil.getCurrencyIcon(
+                                                            state.placeOrder.restaurant.currencyCode),
                                                         color: Colors.green,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.discountOrder),
                                                       ),
                                                       OrderRowItem(
                                                         title: "Coupon/Voucher",
-                                                        currencyIcon: AppUtil.getCurrencyIcon(state.placeOrder.restaurant.currencyCode),
+                                                        currencyIcon: AppUtil.getCurrencyIcon(
+                                                            state.placeOrder.restaurant.currencyCode),
                                                         color: Colors.green,
                                                         amount: AppUtil.doubleRemoveZeroTrailing(
                                                             state.placeOrder.voucher.amount),
@@ -579,7 +622,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                       ),
                                                       OrderRowItem(
                                                           title: "TOTAL ORDER AMOUNT",
-                                                          currencyIcon: AppUtil.getCurrencyIcon(state.placeOrder.restaurant.currencyCode),
+                                                          currencyIcon: AppUtil.getCurrencyIcon(
+                                                              state.placeOrder.restaurant.currencyCode),
                                                           color: Colors.black,
                                                           amount: AppUtil.doubleRemoveZeroTrailing(
                                                               state.placeOrder.getTotal())),
@@ -1602,7 +1646,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                                         mainAxisAlignment: MainAxisAlignment.center,
                                                         children: <Widget>[
                                                           SvgPicture.asset(
-                                                            AppUtil.getCurrencyIcon(cartState.placeOrder.restaurant.currencyCode),
+                                                            AppUtil.getCurrencyIcon(
+                                                                cartState.placeOrder.restaurant.currencyCode),
                                                             width: 15,
                                                             height: 15,
                                                           ),

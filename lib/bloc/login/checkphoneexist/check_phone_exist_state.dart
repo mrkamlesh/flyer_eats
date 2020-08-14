@@ -10,12 +10,10 @@ class InitialLoginPhoneState extends LoginPhoneState {
 }
 
 class LoadingLoginPhoneState extends LoginPhoneState {
-  LoadingLoginPhoneState({String countryCode, String number})
-      : super(countryCode: countryCode, number: number);
+  LoadingLoginPhoneState({String countryCode, String number}) : super(countryCode: countryCode, number: number);
 }
 
 class PhoneIsExist extends LoginPhoneState {
-
   final String otpSignature;
 
   PhoneIsExist(this.otpSignature, {String countryCode, String number})
@@ -23,14 +21,20 @@ class PhoneIsExist extends LoginPhoneState {
 }
 
 class PhoneIsNotExist extends LoginPhoneState {
-
-  PhoneIsNotExist({String countryCode, String number})
-      : super(countryCode: countryCode, number: number);
+  PhoneIsNotExist({String countryCode, String number}) : super(countryCode: countryCode, number: number);
 }
 
 class ErrorCheckPhoneExist extends LoginPhoneState {
   final String message;
 
   ErrorCheckPhoneExist(this.message, {String countryCode, String number})
+      : super(countryCode: countryCode, number: number);
+}
+
+class LocationDetected extends LoginPhoneState {
+  final String address;
+  final String isoCountryCode;
+
+  LocationDetected(this.address, this.isoCountryCode, {String countryCode, String number})
       : super(countryCode: countryCode, number: number);
 }

@@ -247,6 +247,33 @@ class EndDrawer extends StatelessWidget {
             height: distanceSectionContent,
           ),
           GestureDetector(
+            onTap: () async {
+              Navigator.pop(context);
+              await AppUtil.launchInBrowser("https://5v6vw.app.link/MaPgS0fNP8");
+            },
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "Book A Ride",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Icon(Icons.keyboard_arrow_right),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: distanceSectionContent,
+          ),
+          Divider(
+            height: 1.0,
+            color: Colors.black12,
+          ),
+          SizedBox(
+            height: distanceSectionContent,
+          ),
+          GestureDetector(
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -272,29 +299,6 @@ class EndDrawer extends StatelessWidget {
             height: 1.0,
             color: Colors.black12,
           ),
-          /*SizedBox(
-            height: distanceSectionContent,
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return LoginNumberPage();
-              }));
-            },
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    "**Login Mock Up**",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ),
-                Icon(Icons.keyboard_arrow_right),
-              ],
-            ),
-          ),*/
-
           Expanded(child: SizedBox()),
           Divider(
             height: 1.0,

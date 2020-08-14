@@ -19,17 +19,17 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
     DetailPageEvent event,
   ) async* {
     if (event is PageDetailRestaurantOpen) {
-      yield* mapPageOpenToState(event.restaurantId);
+      yield* mapPageOpenToState(event.restaurantId, event.address);
     } else if (event is SwitchVegOnly) {
-      yield* mapSwitchVegOnlyToState(event.restaurantId, event.isVegOnly);
+      yield* mapSwitchVegOnlyToState(event.restaurantId, event.isVegOnly, event.address);
     } else if (event is RestaurantMenuChange) {
-      yield* mapRestaurantMenuChangeToState(event.restaurantId, event.menuId, event.menuSelected);
+      yield* mapRestaurantMenuChangeToState(event.restaurantId, event.menuId, event.menuSelected, event.address);
     } else if (event is SearchFood) {
-      yield* mapSearchFoodToState(event.restaurantId, event.keyword);
+      yield* mapSearchFoodToState(event.restaurantId, event.keyword, event.address);
     }
   }
 
-  Stream<DetailPageState> mapPageOpenToState(String restaurantId) async* {
+  Stream<DetailPageState> mapPageOpenToState(String restaurantId, String address) async* {
     yield OnDataLoading(
         isVegOnly: state.isVegOnly,
         menuCategories: state.menuCategories,
@@ -37,20 +37,14 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
         menuSelected: state.menuSelected);
     try {
       List<MenuCategory> menus = await repository.getCategories(restaurantId);
-      List<Food> foods = await repository.getFoods(restaurantId, menus[state.menuSelected].id, false, null);
+      List<Food> foods = await repository.getFoods(restaurantId, menus[state.menuSelected].id, false, null, address);
 
       if (foods.isEmpty) {
         yield NoFoodAvailable(
-            menuCategories: menus,
-            isVegOnly: state.isVegOnly,
-            foodList: List(),
-            menuSelected: state.menuSelected);
+            menuCategories: menus, isVegOnly: state.isVegOnly, foodList: List(), menuSelected: state.menuSelected);
       } else {
         yield DetailPageState(
-            isVegOnly: state.isVegOnly,
-            menuCategories: menus,
-            foodList: foods,
-            menuSelected: state.menuSelected);
+            isVegOnly: state.isVegOnly, menuCategories: menus, foodList: foods, menuSelected: state.menuSelected);
       }
     } catch (e) {
       yield OnDataError(e.toString(),
@@ -61,15 +55,15 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
     }
   }
 
-  Stream<DetailPageState> mapSwitchVegOnlyToState(String restaurantId, bool isVegOnly) async* {
+  Stream<DetailPageState> mapSwitchVegOnlyToState(String restaurantId, bool isVegOnly, String address) async* {
     yield OnDataLoading(
         isVegOnly: isVegOnly,
         menuCategories: state.menuCategories,
         foodList: state.foodList,
         menuSelected: state.menuSelected);
     try {
-      List<Food> foods =
-          await repository.getFoods(restaurantId, state.menuCategories[state.menuSelected].id, isVegOnly, null);
+      List<Food> foods = await repository.getFoods(
+          restaurantId, state.menuCategories[state.menuSelected].id, isVegOnly, null, address);
 
       if (foods.isEmpty) {
         yield NoFoodAvailable(
@@ -95,14 +89,12 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
 
   Stream<DetailPageState> mapSwitchCategoryToState(String id) async* {}
 
-  Stream<DetailPageState> mapRestaurantMenuChangeToState(String restaurantId, String menuId, int menuSelected) async* {
+  Stream<DetailPageState> mapRestaurantMenuChangeToState(
+      String restaurantId, String menuId, int menuSelected, String address) async* {
     yield OnDataLoading(
-        isVegOnly: state.isVegOnly,
-        menuCategories: state.menuCategories,
-        foodList: List(),
-        menuSelected: menuSelected);
+        isVegOnly: state.isVegOnly, menuCategories: state.menuCategories, foodList: List(), menuSelected: menuSelected);
     try {
-      List<Food> foods = await repository.getFoods(restaurantId, menuId, state.isVegOnly, null);
+      List<Food> foods = await repository.getFoods(restaurantId, menuId, state.isVegOnly, null, address);
       if (foods.isEmpty) {
         yield NoFoodAvailable(
             menuCategories: state.menuCategories,
@@ -133,14 +125,14 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
         menuSelected: state.menuSelected);
   }
 
-  Stream<DetailPageState> mapSearchFoodToState(String restaurantId, String keyword) async* {
+  Stream<DetailPageState> mapSearchFoodToState(String restaurantId, String keyword, String address) async* {
     yield LoadingSearch(
         isVegOnly: state.isVegOnly,
         menuCategories: state.menuCategories,
         foodList: state.foodList,
         menuSelected: state.menuSelected);
     try {
-      List<Food> result = await repository.getFoods(restaurantId, null, null, keyword);
+      List<Food> result = await repository.getFoods(restaurantId, null, null, keyword, address);
       if (result.isNotEmpty) {
         yield DetailPageState(
             result: result,
@@ -149,14 +141,14 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
             foodList: state.foodList,
             menuSelected: state.menuSelected);
       } else {
-        ErrorSearch("Food item not available",
+        yield ErrorSearch("Food item not available",
             isVegOnly: state.isVegOnly,
             menuCategories: state.menuCategories,
             foodList: state.foodList,
             menuSelected: state.menuSelected);
       }
     } catch (e) {
-      ErrorSearch(e.toString(),
+      yield ErrorSearch(e.toString(),
           isVegOnly: state.isVegOnly,
           menuCategories: state.menuCategories,
           foodList: state.foodList,

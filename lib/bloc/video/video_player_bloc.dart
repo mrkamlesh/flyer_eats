@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 part 'video_player_event.dart';
 
@@ -22,9 +22,9 @@ class VideoPlayerBloc extends Bloc<VideoPlayerEvent, VideoPlayerState> {
     }
   }
 
-  Stream<VideoPlayerState> mapPlayVideoToState(
-      VideoPlayerController controller) async* {
-    await controller.initialize();
+  Stream<VideoPlayerState> mapPlayVideoToState(YoutubePlayerController controller) async* {
+    //await controller.initialize();
+    //controller.play();
     controller.play();
     yield PlayingVideo();
   }

@@ -17,8 +17,7 @@ class ApplyCouponPage extends StatefulWidget {
   final Restaurant restaurant;
   final double totalOrder;
 
-  const ApplyCouponPage({Key key, this.restaurant, this.totalOrder})
-      : super(key: key);
+  const ApplyCouponPage({Key key, this.restaurant, this.totalOrder}) : super(key: key);
 
   @override
   _ApplyCouponPageState createState() => _ApplyCouponPageState();
@@ -50,8 +49,7 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
       builder: (context, loginState) {
         return BlocProvider<CouponBloc>(
           create: (context) {
-            return _bloc
-              ..add(GetCouponList(widget.restaurant, loginState.user.token));
+            return _bloc..add(GetCouponList(widget.restaurant, loginState.user.token));
           },
           child: Scaffold(
             resizeToAvoidBottomInset: false,
@@ -99,20 +97,16 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                   ],
                 ),
                 DraggableScrollableSheet(
-                  initialChildSize: (AppUtil.getScreenHeight(context) -
-                          AppUtil.getToolbarHeight(context)) /
+                  initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  minChildSize: (AppUtil.getScreenHeight(context) -
-                          AppUtil.getToolbarHeight(context)) /
+                  minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
                   maxChildSize: 1.0,
                   builder: (context, controller) {
                     return Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(32),
-                              topLeft: Radius.circular(32))),
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
                       child: CustomScrollView(
                         controller: controller,
                         slivers: <Widget>[
@@ -120,8 +114,7 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                             child: Container(
                               height: 55,
                               margin: EdgeInsets.symmetric(
-                                  vertical: horizontalPaddingDraggable,
-                                  horizontal: horizontalPaddingDraggable),
+                                  vertical: horizontalPaddingDraggable, horizontal: horizontalPaddingDraggable),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -156,52 +149,39 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: "ENTER COUPON",
-                                        hintStyle: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black38),
+                                        hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
                                       ),
                                     ),
                                   ),
                                   BlocBuilder<CouponBloc, CouponState>(
                                     builder: (context, state) {
                                       return GestureDetector(
-                                        onTap: state.couponTyped != "" &&
-                                                !(state is LoadingApplyCoupon)
+                                        onTap: state.couponTyped != "" && !(state is LoadingApplyCoupon)
                                             ? () {
                                                 _bloc.add(ApplyCoupon(
-                                                    widget.restaurant,
-                                                    widget.totalOrder,
-                                                    loginState.user.token));
+                                                    widget.restaurant, widget.totalOrder, loginState.user.token));
                                               }
                                             : () {},
                                         child: AnimatedOpacity(
-                                          opacity: state.couponTyped != "" &&
-                                                  !(state is LoadingApplyCoupon)
-                                              ? 1.0
-                                              : 0.5,
+                                          opacity:
+                                              state.couponTyped != "" && !(state is LoadingApplyCoupon) ? 1.0 : 0.5,
                                           child: Container(
                                             height: 55,
                                             width: 80,
                                             decoration: BoxDecoration(
-                                                border:
-                                                    Border.all(color: primary2),
+                                                border: Border.all(color: primary2),
                                                 color: primary2,
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
+                                                borderRadius: BorderRadius.circular(10)),
                                             child: Center(
-                                                child:
-                                                    state is LoadingApplyCoupon
-                                                        ? SpinKitCircle(
-                                                            color: Colors.white,
-                                                            size: 30,
-                                                          )
-                                                        : Text(
-                                                            "Apply",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          )),
+                                                child: state is LoadingApplyCoupon
+                                                    ? SpinKitCircle(
+                                                        color: Colors.white,
+                                                        size: 30,
+                                                      )
+                                                    : Text(
+                                                        "Apply",
+                                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                                      )),
                                           ),
                                           duration: Duration(milliseconds: 300),
                                         ),
@@ -266,12 +246,10 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                 );
                               }
                               return SliverList(
-                                  delegate:
-                                      SliverChildBuilderDelegate((context, i) {
+                                  delegate: SliverChildBuilderDelegate((context, i) {
                                 return GestureDetector(
                                   onTap: () {
-                                    _couponController.text =
-                                        state.couponList[i].code;
+                                    _couponController.text = state.couponList[i].code;
                                   },
                                   child: Container(
                                     margin: EdgeInsets.only(
@@ -290,13 +268,11 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                       ],
                                     ),
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: <Widget>[
                                         ClipRRect(
                                           borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(10),
-                                              topLeft: Radius.circular(10)),
+                                              topRight: Radius.circular(10), topLeft: Radius.circular(10)),
                                           child: CachedNetworkImage(
                                             imageUrl: state.couponList[i].image,
                                             height: 100,
@@ -309,8 +285,7 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                                     color: Colors.black,
                                                   ),
                                                   baseColor: Colors.grey[300],
-                                                  highlightColor:
-                                                      Colors.grey[100]);
+                                                  highlightColor: Colors.grey[100]);
                                             },
                                           ),
                                         ),
@@ -319,23 +294,17 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                         ),
                                         /* Html(data: state.couponList[i].name),*/
                                         Container(
-                                          margin: EdgeInsets.only(
-                                              bottom: 10, left: 10, right: 10),
+                                          margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
                                           child: Text(
-                                            AppUtil.parseHtmlString(
-                                                state.couponList[i].name),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                            AppUtil.parseHtmlString(state.couponList[i].name),
+                                            style: TextStyle(fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         Container(
-                                          margin: EdgeInsets.only(
-                                              left: 10, right: 10, bottom: 10),
+                                          margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                                           child: Text(
-                                            state.couponList[i].text,
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.black38),
+                                            AppUtil.parseHtmlString(state.couponList[i].text),
+                                            style: TextStyle(fontSize: 12, color: Colors.black38),
                                           ),
                                         )
                                       ],

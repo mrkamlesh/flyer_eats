@@ -6,7 +6,7 @@ abstract class VideoPlayerEvent extends Equatable {
 }
 
 class PlayVideo extends VideoPlayerEvent {
-  final VideoPlayerController controller;
+  final YoutubePlayerController controller;
 
   PlayVideo(this.controller);
 

@@ -136,7 +136,7 @@ class ShopCategoryWidget extends StatelessWidget {
                   category.name,
                   maxLines: 1,
                   overflow: TextOverflow.visible,
-                  style: TextStyle(fontSize: 10),
+                  style: TextStyle(fontSize: 11),
                 ))
           ],
         ),

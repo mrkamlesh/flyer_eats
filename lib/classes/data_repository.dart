@@ -567,8 +567,8 @@ class DataRepository {
     }
   }
 
-  Future<List<Food>> getFoods(String restaurantId, String categoryId, bool isVegOnly, String searchKeyword) async {
-    final response = await _provider.getFoods(restaurantId, categoryId, isVegOnly, searchKeyword);
+  Future<List<Food>> getFoods(String restaurantId, String categoryId, bool isVegOnly, String searchKeyword, String address) async {
+    final response = await _provider.getFoods(restaurantId, categoryId, isVegOnly, searchKeyword, address);
     if (response['code'] == 1) {
       var list = response['details']['item'] as List;
       List<Food> foods = list.map((i) {

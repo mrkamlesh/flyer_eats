@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:html/parser.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppUtil {
   static double getScreenHeight(context) {
@@ -30,6 +31,19 @@ class AppUtil {
 
   static String getAppLogo() {
     return "assets/flyereatslogo2.png";
+  }
+
+  static Future<void> launchInBrowser(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: false,
+        forceWebView: false,
+        //headers: <String, String>{'my_header_key': 'my_header_value'},
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   static Future<void> checkLocationServiceAndPermission() async {

@@ -8,7 +8,7 @@ class Food {
   final String title;
   final String description;
   final String image;
-  final bool isAvailable;
+  final bool isVeg;
   final MenuCategory category;
   final Price price;
   final double discount;
@@ -20,7 +20,7 @@ class Food {
     this.title,
     this.description,
     this.image,
-    this.isAvailable,
+    this.isVeg,
     this.category,
     this.price,
     this.discount,
@@ -29,7 +29,6 @@ class Food {
   });
 
   factory Food.fromJson(Map<String, dynamic> parsedJson) {
-    bool available = parsedJson['not_available'] == "1" ? true : false;
     bool isSingleItem = parsedJson['single_item'] == 2 ? true : false;
 
     return Food(
@@ -37,7 +36,7 @@ class Food {
         title: parsedJson['item_name'],
         description: parsedJson['item_description'],
         image: parsedJson['photo'],
-        isAvailable: available,
+        isVeg: parsedJson['is_veg'],
         price: Price.fromJson(parsedJson['prices'][0]),
         badge: parsedJson['badge'],
         isSingleItem: isSingleItem,

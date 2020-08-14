@@ -269,7 +269,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                 left: horizontalPaddingDraggable,
                                 right: horizontalPaddingDraggable),
                             child: CustomTextField(
-                              onSubmitted: (value) {
+                              onChanged: (value) {
                                 _bloc.add(Search(widget.token, widget.address, value));
                               },
                               hint: "SEARCH ANYTHING",
@@ -1077,12 +1077,12 @@ class SearchRestaurantWidget extends StatelessWidget {
 
 class CustomTextField extends StatelessWidget {
   final String hint;
-  final Function(String) onSubmitted;
+  final Function(String) onChanged;
 
   const CustomTextField({
     Key key,
     this.hint,
-    this.onSubmitted,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -1100,7 +1100,7 @@ class CustomTextField extends StatelessWidget {
             child: TextField(
               autofocus: true,
               textInputAction: TextInputAction.search,
-              onSubmitted: onSubmitted,
+              onSubmitted: onChanged,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(vertical: 15),
                 border: InputBorder.none,

@@ -47,7 +47,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         hasReachedMax: state.hasReachedMax,
         searchText: state.searchText,
         restaurants: state.restaurants);
-
     try {
       List<Restaurant> list = await repository.globalSearch(token, state.searchText, address, state.page);
       yield SearchState(

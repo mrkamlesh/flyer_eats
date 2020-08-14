@@ -333,7 +333,7 @@ class FoodList extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    food.isAvailable
+                                    food.isVeg
                                         ? Container(
                                             height: 12,
                                             width: 12,
@@ -537,7 +537,7 @@ class FoodList extends StatelessWidget {
                                         Container(
                                           margin: EdgeInsets.only(left: 10, right: 10, top: 3),
                                           child: SvgPicture.asset(
-                                            food.isAvailable ? "assets/box_circle.svg" : "assets/box_circle_red.svg",
+                                            food.isVeg ? "assets/box_circle.svg" : "assets/box_circle_red.svg",
                                             width: 12,
                                             height: 12,
                                           ),
@@ -725,7 +725,7 @@ class FoodList extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    food.isAvailable
+                                    food.isVeg
                                         ? Container(
                                             height: 12,
                                             width: 12,

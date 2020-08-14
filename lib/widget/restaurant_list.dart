@@ -527,36 +527,40 @@ class RestaurantDetailGridWidget extends StatelessWidget {
                   )
                 ],
               ),
-              restaurant.discountTitle != null && restaurant.discountTitle != ""
+              restaurant.badges.length > 0
                   ? Positioned(
                       top: 7,
                       left: -5,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            width: 80,
-                            height: 25,
-                            decoration: BoxDecoration(
-                                color: primary1,
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(2),
-                                    topRight: Radius.circular(2),
-                                    bottomRight: Radius.circular(2))),
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(4),
-                            child: Text(
-                              AppUtil.parseHtmlString(restaurant.discountTitle),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          CustomPaint(
-                            size: Size(5, 5),
-                            painter: RestaurantTrianglePainter(),
-                          )
-                        ],
+                        children: restaurant.badges
+                            .map((e) => Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      height: 25,
+                                      decoration: BoxDecoration(
+                                          color: primary1,
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(2),
+                                              topRight: Radius.circular(2),
+                                              bottomRight: Radius.circular(2))),
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(4),
+                                      child: Text(
+                                        AppUtil.parseHtmlString(e),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    CustomPaint(
+                                      size: Size(5, 5),
+                                      painter: RestaurantTrianglePainter(),
+                                    )
+                                  ],
+                                ))
+                            .toList(),
                       ),
                     )
                   : Container(),
@@ -624,6 +628,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
             ],
           ),
           child: Stack(
+            overflow: Overflow.visible,
             children: <Widget>[
               Row(
                 children: <Widget>[
@@ -662,7 +667,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
                             child: Container(
                               margin: EdgeInsets.only(bottom: 5),
                               child: Column(
-                                mainAxisAlignment: restaurant.discountDescription != null
+                                mainAxisAlignment: restaurant.voucherBadge != "" && restaurant.voucherBadge != null
                                     ? MainAxisAlignment.start
                                     : MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -690,7 +695,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                       style: TextStyle(fontSize: 12, color: Colors.black45),
                                     ),
                                   ),
-                                  restaurant.discountDescription != null && restaurant.discountDescription != ""
+                                  restaurant.voucherBadge != "" && restaurant.voucherBadge != null
                                       ? Row(
                                           children: <Widget>[
                                             SvgPicture.asset(
@@ -703,7 +708,7 @@ class RestaurantDetailListWidget extends StatelessWidget {
                                             ),
                                             Expanded(
                                               child: Text(
-                                                AppUtil.parseHtmlString(restaurant.discountDescription),
+                                                AppUtil.parseHtmlString(restaurant.voucherBadge),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
@@ -779,6 +784,43 @@ class RestaurantDetailListWidget extends StatelessWidget {
                   ),
                 ],
               ),
+              restaurant.badges.length > 0
+                  ? Positioned(
+                      top: 7,
+                      left: -5,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: restaurant.badges
+                            .map((e) => Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      height: 25,
+                                      decoration: BoxDecoration(
+                                          color: primary1,
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(2),
+                                              topRight: Radius.circular(2),
+                                              bottomRight: Radius.circular(2))),
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(4),
+                                      child: Text(
+                                        AppUtil.parseHtmlString(e),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    CustomPaint(
+                                      size: Size(5, 5),
+                                      painter: RestaurantTrianglePainter(),
+                                    )
+                                  ],
+                                ))
+                            .toList(),
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),
@@ -868,7 +910,7 @@ class TopRestaurantHomeWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              restaurant.discountTitle != null && restaurant.discountTitle != ""
+              restaurant.badges.length > 0
                   ? Positioned(
                       top: 7,
                       left: -5,
@@ -887,7 +929,7 @@ class TopRestaurantHomeWidget extends StatelessWidget {
                             alignment: Alignment.center,
                             padding: EdgeInsets.all(4),
                             child: Text(
-                              AppUtil.parseHtmlString(restaurant.discountTitle),
+                              AppUtil.parseHtmlString(restaurant.badges[0]),
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -997,7 +1039,7 @@ class DinnerRestaurantHomeWidget extends StatelessWidget {
                           ),
                         ),
                       ),
-                      restaurant.discountDescription != null
+                      restaurant.voucherBadge != null && restaurant.voucherBadge != ""
                           ? Row(
                               children: <Widget>[
                                 SvgPicture.asset(
@@ -1010,7 +1052,7 @@ class DinnerRestaurantHomeWidget extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    AppUtil.parseHtmlString(restaurant.discountDescription),
+                                    AppUtil.parseHtmlString(restaurant.voucherBadge),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(

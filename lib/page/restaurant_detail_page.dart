@@ -10,6 +10,7 @@ import 'package:clients/model/price.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
@@ -42,7 +43,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
   bool _isScrollingDown = false;
   AnimationController _animationController;
   Animation<Offset> _navBarAnimation;
-  PageController _rankPageController;
+  PageController _ratingPageController = PageController();
+  PageController _offersPageController = PageController();
+
   Timer _timer;
 
   bool _isListMode = true;
@@ -59,11 +62,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
     _navBarAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
         .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
 
-    _rankPageController = PageController();
     int i = 0;
     _timer = Timer.periodic(Duration(seconds: 3), (t) {
       i++;
-      _rankPageController.animateToPage(i % widget.restaurant.rating.getRollingText().length,
+      _ratingPageController.animateToPage(i % widget.restaurant.rating.getRollingText().length,
+          duration: Duration(milliseconds: 700), curve: Curves.ease);
+
+      _offersPageController.animateToPage(i % widget.restaurant.offers.length,
           duration: Duration(milliseconds: 700), curve: Curves.ease);
     });
 
@@ -74,7 +79,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
   void dispose() {
     _timer?.cancel();
     _animationController.dispose();
-    _rankPageController.dispose();
+    _ratingPageController.dispose();
+    _offersPageController.dispose();
     _bloc.close();
     super.dispose();
   }
@@ -364,7 +370,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                                     width: 100,
                                                     alignment: Alignment.centerRight,
                                                     child: PageView.builder(
-                                                      controller: _rankPageController,
+                                                      controller: _ratingPageController,
                                                       scrollDirection: Axis.vertical,
                                                       itemCount: widget.restaurant.rating.getRollingText().length,
                                                       itemBuilder: (context, i) {
@@ -405,22 +411,33 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> with Ticker
                                                 ],
                                               ),
                                             ),
-                                            widget.restaurant.discountDescription != null &&
-                                                    widget.restaurant.discountDescription != ""
+                                            widget.restaurant.offers.length > 0
                                                 ? Container(
-                                                    margin: EdgeInsets.only(
-                                                      top: 5,
-                                                      left: horizontalPaddingDraggable,
-                                                      right: horizontalPaddingDraggable,
-                                                    ),
-                                                    width: double.infinity,
-                                                    decoration: BoxDecoration(color: Colors.yellow[600]),
-                                                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
-                                                    alignment: Alignment.center,
-                                                    child: Text(
-                                                      AppUtil.parseHtmlString(widget.restaurant.discountDescription),
-                                                      textAlign: TextAlign.center,
-                                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                                    height: 40,
+                                                    width: AppUtil.getScreenWidth(context),
+                                                    child: PageView.builder(
+                                                      controller: _offersPageController,
+                                                      itemBuilder: (context, i) {
+                                                        return Container(
+                                                          margin: EdgeInsets.only(
+                                                            top: 5,
+                                                            left: horizontalPaddingDraggable,
+                                                            right: horizontalPaddingDraggable,
+                                                          ),
+                                                          width: double.infinity,
+                                                          decoration: BoxDecoration(color: Colors.yellow[600]),
+                                                          padding:
+                                                              EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
+                                                          alignment: Alignment.center,
+                                                          child: Text(
+                                                            AppUtil.parseHtmlString(widget.restaurant.offers[i]),
+                                                            textAlign: TextAlign.center,
+                                                            maxLines: 1,
+                                                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                                          ),
+                                                        );
+                                                      },
+                                                      itemCount: widget.restaurant.offers.length,
                                                     ),
                                                   )
                                                 : Container(),

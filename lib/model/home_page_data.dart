@@ -40,6 +40,7 @@ class HomePageData {
     }).toList();
 
     var listTopRestaurant = parsedJson['top_restaurants'] as List;
+
     List<Restaurant> top = listTopRestaurant.map((i) {
       return Restaurant.fromJson(i);
     }).toList();

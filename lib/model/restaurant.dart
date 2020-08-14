@@ -9,8 +9,9 @@ class Restaurant {
   final Rating rating;
   final String cuisine;
   final String address;
-  final String discountTitle;
-  final String discountDescription;
+  final List<String> offers;
+  final List<String> badges;
+  final String voucherBadge;
   final bool isOpen;
   final String currencyCode;
 
@@ -18,61 +19,35 @@ class Restaurant {
 
   Restaurant(this.id, this.name, this.deliveryEstimation, this.rating, this.image, this.cuisine, this.address,
       this.isOpen, this.currencyCode,
-      {this.discountTitle, this.discountDescription, this.searchFoodList});
+      {this.offers, this.badges, this.voucherBadge, this.searchFoodList});
 
   factory Restaurant.fromJson(Map<String, dynamic> parsedJson) {
     var offers = parsedJson['offers'] as List;
-
-    return Restaurant(
-      parsedJson['merchant_id'],
-      parsedJson['restaurant_name'],
-      parsedJson['delivery_estimation'],
-      Rating.fromJson(parsedJson['ratings']),
-      parsedJson['logo'],
-      parsedJson['cuisine'],
-      parsedJson['address'],
-      parsedJson['is_open'] == "open" ? true : false,
-      parsedJson['currency_code'],
-      discountTitle: offers.isNotEmpty ? offers[0] : null,
-      discountDescription: offers.isNotEmpty ? offers[0] : null,
-    );
-  }
-
-  factory Restaurant.fromJsonTopRestaurant(Map<String, dynamic> parsedJson) {
-    String promoTitle = (parsedJson['offers'] as List).isNotEmpty ? parsedJson['offers'][0] : "";
-
-    return Restaurant(parsedJson['merchant_id'], parsedJson['restaurant_name'], "", null, parsedJson['logo'], "", "",
-        parsedJson['is_open'] == "open" ? true : false, parsedJson['currency_code'],
-        discountTitle: promoTitle, discountDescription: "");
-  }
-
-  factory Restaurant.fromJsonDblRestaurant(Map<String, dynamic> parsedJson) {
-    String promoTitle = (parsedJson['offers'] as List).isNotEmpty ? parsedJson['offers'][0] : "";
-
-    return Restaurant(parsedJson['merchant_id'], parsedJson['restaurant_name'], "", null, parsedJson['logo'], "", "",
-        parsedJson['is_open'] == "open" ? true : false, parsedJson['currency_code'],
-        discountTitle: promoTitle, discountDescription: "");
-  }
-
-  factory Restaurant.fromJsonOrderAgain(Map<String, dynamic> parsedJson) {
-    String promoTitle = (parsedJson['offers'] as List).isNotEmpty ? parsedJson['offers'][0] : "";
+    var badges = parsedJson['badges'] as List;
 
     return Restaurant(
         parsedJson['merchant_id'],
         parsedJson['restaurant_name'],
-        parsedJson['delivery_est'],
+        parsedJson['delivery_estimation'],
         Rating.fromJson(parsedJson['ratings']),
         parsedJson['logo'],
         parsedJson['cuisine'],
-        "",
+        parsedJson['address'],
         parsedJson['is_open'] == "open" ? true : false,
         parsedJson['currency_code'],
-        discountTitle: promoTitle,
-        discountDescription: "");
+        badges: badges.map((e) {
+          return (e as String);
+        }).toList(),
+        offers: offers.map((e) {
+          return (e as String);
+        }).toList(),
+        voucherBadge: parsedJson['voucher_badge']);
   }
 
   factory Restaurant.fromSearch(Map<String, dynamic> parsedJson) {
     var offers = parsedJson['offers'] as List;
+    var badges = parsedJson['badges'] as List;
+
     var searchFoods = parsedJson['item'] as List;
     List<Food> foods = searchFoods.map((i) {
       return Food.fromJson(i);
@@ -88,8 +63,13 @@ class Restaurant {
         parsedJson['address'],
         parsedJson['is_open'] == "open" ? true : false,
         parsedJson['currency_code'],
-        discountTitle: offers.isNotEmpty ? offers[0] : null,
-        discountDescription: offers.isNotEmpty ? offers[0] : null,
+        badges: badges.map((e) {
+          return (e as String);
+        }).toList(),
+        offers: offers.map((e) {
+          return (e as String);
+        }).toList(),
+        voucherBadge: parsedJson['voucher_badge'],
         searchFoodList: foods);
   }
 }

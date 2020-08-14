@@ -1022,7 +1022,7 @@ class SearchRestaurantWidget extends StatelessWidget {
                   )
                 ],
               ),
-              restaurant.discountTitle != null && restaurant.discountTitle != ""
+              restaurant.badges.length > 0
                   ? Positioned(
                       top: 7,
                       left: -5,
@@ -1041,7 +1041,7 @@ class SearchRestaurantWidget extends StatelessWidget {
                             alignment: Alignment.center,
                             padding: EdgeInsets.all(4),
                             child: Text(
-                              AppUtil.parseHtmlString(restaurant.discountTitle),
+                              AppUtil.parseHtmlString(restaurant.badges[0]),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),

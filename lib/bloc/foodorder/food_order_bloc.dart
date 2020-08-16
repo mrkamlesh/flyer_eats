@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/classes/data_repository.dart';
@@ -12,6 +13,9 @@ import 'package:clients/model/price.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/user.dart';
 import 'package:clients/model/voucher.dart';
+import 'package:flutter/services.dart';
+import 'package:stripe_payment/stripe_payment.dart';
+import 'package:http/http.dart' as http;
 
 class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   DataRepository repository = DataRepository();
@@ -60,6 +64,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapUpdateFoodDetailToState(event.cartItem, event.quantity, event.price, event.addOns);
     } else if (event is RemoveVoucher) {
       yield* mapRemoveVoucherToState();
+    } else if (event is PlaceOrderStripeEvent) {
+      yield* mapPlaceOrderStripeEventToState();
     }
   }
 
@@ -175,6 +181,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
                 message: result.message,
                 razorKey: result.razorKey,
                 razorSecret: result.razorSecret,
+                stripePublishKey: result.stripePublishKey,
+                stripeSecretKey: result.stripeSecretKey,
                 taxCharges: result.taxCharges,
                 packagingCharges: result.packagingCharges,
                 taxPrettyString: result.taxPrettyString,
@@ -287,5 +295,54 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   Stream<FoodOrderState> mapRemoveVoucherToState() async* {
     yield FoodOrderState(placeOrder: state.placeOrder.copyWith(voucher: Voucher(amount: 0, rate: 0)));
     add(GetPaymentOptions());
+  }
+
+  Stream<FoodOrderState> mapPlaceOrderStripeEventToState() async* {
+    yield LoadingPlaceOrder(placeOrder: state.placeOrder);
+
+    try {
+      StripePayment.setOptions(StripeOptions(
+          publishableKey: state.placeOrder.stripePublishKey, merchantId: "Flyer Eats", androidPayMode: 'test'));
+
+      var paymentMethod = await StripePayment.paymentRequestWithCardForm(CardFormPaymentRequest());
+
+      var paymentIntent;
+
+      try {
+        Map<String, dynamic> body = {
+          'amount': (state.placeOrder.getTotal() * 100.0).ceil().toString(),
+          'currency': state.placeOrder.restaurant.currencyCode,
+          'payment_method_types[]': 'card'
+        };
+        Map<String, String> headers = {
+          'Authorization': 'Bearer ${state.placeOrder.stripeSecretKey}',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        };
+        var response = await http.post(
+            "https://api.stripe.com/v1/payment_intents",
+            body: body,
+            headers: headers
+        );
+        paymentIntent = jsonDecode(response.body);
+      } catch (err) {
+        print('err charging user: ${err.toString()}');
+      }
+
+      var response = await StripePayment.confirmPaymentIntent(
+          PaymentIntent(clientSecret: paymentIntent['client_secret'], paymentMethodId: paymentMethod.id));
+
+      if (response.status == 'succeeded') {
+        add(PlaceOrderEvent());
+      } else {
+        yield ErrorPlaceOrder("Payment with Stripe Fail",
+            placeOrder: state.placeOrder.copyWith(isValid: false, message: "Payment with Stripe Fail"));
+      }
+    } on PlatformException catch (e) {
+      print (e);
+      yield ErrorPlaceOrder("Something went wrong",
+          placeOrder: state.placeOrder.copyWith(isValid: false, message: "Something went wrong"));
+    } catch (e) {
+      yield ErrorPlaceOrder(e.toString(), placeOrder: state.placeOrder.copyWith(isValid: false, message: e.toString()));
+    }
   }
 }

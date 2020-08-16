@@ -33,6 +33,8 @@ class PlaceOrder {
   final List<PaymentMethod> listPaymentMethod;
   final DateTime now;
   final DateTime selectedDeliveryTime;
+  final String stripePublishKey;
+  final String stripeSecretKey;
 
   PlaceOrder({
     this.id,
@@ -47,6 +49,8 @@ class PlaceOrder {
     this.selectedPaymentMethod,
     this.razorKey,
     this.razorSecret,
+    this.stripePublishKey,
+    this.stripeSecretKey,
     this.deliveryInstruction,
     this.contact,
     this.deliveryCharges,
@@ -92,6 +96,8 @@ class PlaceOrder {
           : "Tax",
       razorKey: parsedJson['details']['razorpay']['razor_key'],
       razorSecret: parsedJson['details']['razorpay']['razor_secret'],
+      stripePublishKey: parsedJson['details']['stripe_publish_key'],
+      stripeSecretKey: parsedJson['details']['stripe_secret_key'],
       walletAmount: double.parse(
         parsedJson['details']['wallet_amount'].toString(),
       ),
@@ -112,6 +118,8 @@ class PlaceOrder {
     String selectedPaymentMethod,
     String razorKey,
     String razorSecret,
+    String stripePublishKey,
+    String stripeSecretKey,
     String deliveryInstruction,
     String contact,
     double deliveryCharges,
@@ -141,6 +149,8 @@ class PlaceOrder {
         selectedPaymentMethod: selectedPaymentMethod ?? this.selectedPaymentMethod,
         razorKey: razorKey ?? this.razorKey,
         razorSecret: razorSecret ?? this.razorSecret,
+        stripePublishKey: stripePublishKey ?? this.stripePublishKey,
+        stripeSecretKey: stripeSecretKey ?? this.stripeSecretKey,
         voucher: voucher ?? this.voucher,
         deliveryCharges: deliveryCharges ?? this.deliveryCharges,
         packagingCharges: packagingCharges ?? this.packagingCharges,

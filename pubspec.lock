@@ -292,7 +292,7 @@ packages:
       name: flutter_local_notifications
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.4+2"
+    version: "1.4.4+3"
   flutter_local_notifications_platform_interface:
     dependency: transitive
     description:
@@ -838,6 +838,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
+  stripe_payment:
+    dependency: "direct main"
+    description:
+      name: stripe_payment
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.7"
   synchronized:
     dependency: transitive
     description:
@@ -900,7 +907,7 @@ packages:
       name: url_launcher_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.2"
+    version: "0.1.2+1"
   uuid:
     dependency: transitive
     description:

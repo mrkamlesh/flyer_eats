@@ -118,6 +118,13 @@ class PlaceOrderEvent extends FoodOrderEvent {
   List<Object> get props => [];
 }
 
+class PlaceOrderStripeEvent extends FoodOrderEvent {
+  PlaceOrderStripeEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class GetPaymentOptions extends FoodOrderEvent {
 
   GetPaymentOptions();

@@ -239,19 +239,6 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                       children: <Widget>[
                                         Column(
                                           children: <Widget>[
-                                            /*Column(
-                                              children: <Widget>[
-                                                _feeRowWidget("Order", state.detailOrder.total),
-                                                _feeRowWidget("Tax", "\u20b9 0"),
-                                              ],
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(bottom: 10, top: 5),
-                                              child: Divider(
-                                                height: 0.5,
-                                                color: Colors.black12,
-                                              ),
-                                            ),*/
                                             Container(
                                               margin: EdgeInsets.only(bottom: 10),
                                               child: Row(

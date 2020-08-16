@@ -48,7 +48,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
       builder: (context, loginState) {
         return BlocProvider<DetailOrderBloc>(
           create: (context) {
-            return _bloc..add(GetDetailOrder(widget.orderId, loginState.user.token));
+            return _bloc
+              ..add(GetDetailOrder(widget.orderId, loginState.user.token));
           },
           child: Scaffold(
             body: Stack(
@@ -90,17 +91,23 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                   ],
                 ),
                 DraggableScrollableSheet(
-                  initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  initialChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  minChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
                   maxChildSize: 1.0,
                   builder: (context, controller) {
                     return Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                      padding: EdgeInsets.only(left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(32),
+                              topLeft: Radius.circular(32))),
+                      padding: EdgeInsets.only(
+                          left: horizontalPaddingDraggable,
+                          right: horizontalPaddingDraggable),
                       child: BlocBuilder<DetailOrderBloc, DetailOrderState>(
                         builder: (context, state) {
                           if (state is LoadingDetailOrderState) {
@@ -126,8 +133,9 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                               height: AppUtil.getDraggableHeight(context),
                               decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(32),
+                                      topLeft: Radius.circular(32))),
                               alignment: Alignment.center,
                               child: Container(
                                 child: Center(
@@ -142,21 +150,26 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                state.detailOrder.statusHistory.last.isDelivered()
+                                state.detailOrder.statusHistory.last
+                                        .isDelivered()
                                     ? state.isReviewAdded
                                         ? Row(
                                             children: <Widget>[
                                               Expanded(
                                                 child: Container(
-                                                  margin: EdgeInsets.only(top: 30, bottom: 20),
+                                                  margin: EdgeInsets.only(
+                                                      top: 30, bottom: 20),
                                                   padding: EdgeInsets.all(7),
                                                   decoration: BoxDecoration(
                                                     color: Colors.green,
-                                                    borderRadius: BorderRadius.circular(4),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
                                                   ),
                                                   child: Text(
                                                     "Review has been added!",
-                                                    style: TextStyle(color: Colors.white),
+                                                    style: TextStyle(
+                                                        color: Colors.white),
                                                   ),
                                                 ),
                                               ),
@@ -167,7 +180,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                               _showReviewSheet();
                                             },
                                             child: Container(
-                                              margin: EdgeInsets.only(bottom: 30, top: 30),
+                                              margin: EdgeInsets.only(
+                                                  bottom: 30, top: 30),
                                               child: Row(
                                                 children: <Widget>[
                                                   SvgPicture.asset(
@@ -182,7 +196,9 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                   Expanded(
                                                     child: Text(
                                                       "Add Reviews To Earn Points",
-                                                      style: TextStyle(fontSize: 16, color: primary3),
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: primary3),
                                                     ),
                                                   ),
                                                   Icon(
@@ -195,7 +211,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                           )
                                     : SizedBox(),
                                 Container(
-                                  margin: state.detailOrder.statusHistory.last.isDelivered()
+                                  margin: state.detailOrder.statusHistory.last
+                                          .isDelivered()
                                       ? EdgeInsets.only(bottom: 10)
                                       : EdgeInsets.only(bottom: 10, top: 30),
                                   child: Row(
@@ -203,9 +220,11 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                       Container(
                                         margin: EdgeInsets.only(right: 10),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           child: CachedNetworkImage(
-                                            imageUrl: state.detailOrder.restaurant.image,
+                                            imageUrl: state
+                                                .detailOrder.restaurant.image,
                                             height: 50,
                                             width: 50,
                                             fit: BoxFit.cover,
@@ -218,29 +237,36 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                     color: Colors.black,
                                                   ),
                                                   baseColor: Colors.grey[300],
-                                                  highlightColor: Colors.grey[100]);
+                                                  highlightColor:
+                                                      Colors.grey[100]);
                                             },
                                           ),
                                         ),
                                       ),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
                                               state.detailOrder.restaurant.name,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             SizedBox(
                                               height: 5,
                                             ),
                                             Text(
-                                              state.detailOrder.restaurant.address,
+                                              state.detailOrder.restaurant
+                                                  .address,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 12, color: Colors.black26),
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.black26),
                                             ),
                                           ],
                                         ),
@@ -262,7 +288,9 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                       Expanded(
                                         child: Text(
                                           "ORDER NO - " + state.detailOrder.id,
-                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                       Icon(
@@ -294,7 +322,9 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                   ),
                                 ),
                                 Column(
-                                  children: _foodCartWidgets(state.detailOrder.foodCart),
+                                  children: _foodCartWidgets(
+                                      state.detailOrder.foodCart,
+                                      state.detailOrder.currencyCode),
                                 ),
                                 Stack(
                                   overflow: Overflow.visible,
@@ -303,17 +333,43 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                       children: <Widget>[
                                         Column(
                                           children: <Widget>[
-                                            _feeRowWidget("Order", state.detailOrder.subtotal, true),
-                                            _feeRowWidget("Tax", state.detailOrder.tax, true),
-                                            _feeRowWidget("Packaging", state.detailOrder.packagingFee, true),
-                                            _feeRowWidget("Delivery Fee", state.detailOrder.deliveryCharges, true),
+                                            _feeRowWidget(
+                                                "Order",
+                                                state.detailOrder.subtotal,
+                                                true,
+                                                state.detailOrder.currencyCode),
+                                            _feeRowWidget(
+                                                "Tax",
+                                                state.detailOrder.tax,
+                                                true,
+                                                state.detailOrder.currencyCode),
+                                            _feeRowWidget(
+                                                "Packaging",
+                                                state.detailOrder.packagingFee,
+                                                true,
+                                                state.detailOrder.currencyCode),
+                                            _feeRowWidget(
+                                                "Delivery Fee",
+                                                state.detailOrder
+                                                    .deliveryCharges,
+                                                true,
+                                                state.detailOrder.currencyCode),
                                             /*_feeRowWidget("Discount Food", state.detailOrder.discountFood, false),*/
-                                            _feeRowWidget("Discount Order", state.detailOrder.discountOrder, false),
-                                            _feeRowWidget("Coupon/Voucher", state.detailOrder.voucherAmount, false),
+                                            _feeRowWidget(
+                                                "Discount Order",
+                                                state.detailOrder.discountOrder,
+                                                false,
+                                                state.detailOrder.currencyCode),
+                                            _feeRowWidget(
+                                                "Coupon/Voucher",
+                                                state.detailOrder.voucherAmount,
+                                                false,
+                                                state.detailOrder.currencyCode),
                                           ],
                                         ),
                                         Container(
-                                          margin: EdgeInsets.only(bottom: 10, top: 5),
+                                          margin: EdgeInsets.only(
+                                              bottom: 10, top: 5),
                                           child: Divider(
                                             height: 0.5,
                                             color: Colors.black12,
@@ -328,16 +384,28 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                 child: Text(
                                                   "Total",
                                                   textAlign: TextAlign.end,
-                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
                                               ),
                                               Expanded(
                                                 flex: 3,
                                                 child: Text(
-                                                  "\u20b9 " +
-                                                      AppUtil.doubleRemoveZeroTrailing(state.detailOrder.grandTotal),
+                                                  AppUtil.getCurrencyString(
+                                                          state.detailOrder
+                                                              .currencyCode) +
+                                                      " " +
+                                                      AppUtil
+                                                          .doubleRemoveZeroTrailing(
+                                                              state.detailOrder
+                                                                  .grandTotal),
                                                   textAlign: TextAlign.end,
-                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
                                               )
                                             ],
@@ -352,7 +420,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                         ),
                                       ],
                                     ),
-                                    state.detailOrder.statusHistory.last.isDelivered()
+                                    state.detailOrder.statusHistory.last
+                                            .isDelivered()
                                         ? Positioned(
                                             bottom: -50,
                                             left: 50,
@@ -365,20 +434,25 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                         : SizedBox(),
                                   ],
                                 ),
-                                state.detailOrder.orderInstruction != null && state.detailOrder.orderInstruction != ""
+                                state.detailOrder.orderInstruction != null &&
+                                        state.detailOrder.orderInstruction != ""
                                     ? Container(
-                                        margin: EdgeInsets.only(top: 5, bottom: 15),
+                                        margin:
+                                            EdgeInsets.only(top: 5, bottom: 15),
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
                                               "ORDER INSTRUCTION",
-                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             SizedBox(
                                               height: 10,
                                             ),
-                                            Text(state.detailOrder.orderInstruction),
+                                            Text(state
+                                                .detailOrder.orderInstruction),
                                           ],
                                         ),
                                       )
@@ -389,23 +463,34 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                         isScrollControlled: true,
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                                                topLeft: Radius.circular(32),
+                                                topRight: Radius.circular(32))),
                                         backgroundColor: Colors.white,
                                         context: context,
                                         builder: (context) {
                                           List<Widget> statusWidgets = List();
-                                          for (int i = 0; i < state.detailOrder.statusHistory.length; i++) {
+                                          for (int i = 0;
+                                              i <
+                                                  state.detailOrder
+                                                      .statusHistory.length;
+                                              i++) {
                                             statusWidgets.add(
                                               Container(
-                                                margin: EdgeInsets.symmetric(vertical: 3),
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 3),
                                                 child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: <Widget>[
                                                     Row(
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
                                                       children: <Widget>[
                                                         SvgPicture.asset(
-                                                          state.detailOrder.statusHistory[i].getIconAssets(),
+                                                          state.detailOrder
+                                                              .statusHistory[i]
+                                                              .getIconAssets(),
                                                           width: 60,
                                                           height: 60,
                                                         ),
@@ -414,47 +499,75 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                         ),
                                                         Expanded(
                                                           child: Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
                                                             children: <Widget>[
                                                               Text(
-                                                                state.detailOrder.statusHistory[i].status,
+                                                                state
+                                                                    .detailOrder
+                                                                    .statusHistory[
+                                                                        i]
+                                                                    .status,
                                                                 style: TextStyle(
-                                                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                                                    fontSize:
+                                                                        20,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                               SizedBox(
                                                                 height: 10,
                                                               ),
                                                               Row(
-                                                                children: <Widget>[
+                                                                children: <
+                                                                    Widget>[
                                                                   Row(
-                                                                    children: <Widget>[
+                                                                    children: <
+                                                                        Widget>[
                                                                       Icon(
-                                                                        Icons.calendar_today,
-                                                                        size: 16,
+                                                                        Icons
+                                                                            .calendar_today,
+                                                                        size:
+                                                                            16,
                                                                       ),
                                                                       SizedBox(
-                                                                        width: 5,
+                                                                        width:
+                                                                            5,
                                                                       ),
                                                                       Text(state
-                                                                          .detailOrder.statusHistory[i].dateCreated)
+                                                                          .detailOrder
+                                                                          .statusHistory[
+                                                                              i]
+                                                                          .dateCreated)
                                                                     ],
                                                                   ),
                                                                   SizedBox(
                                                                     width: 10,
                                                                   ),
                                                                   Row(
-                                                                    children: <Widget>[
+                                                                    children: <
+                                                                        Widget>[
                                                                       Icon(
-                                                                        Icons.access_time,
-                                                                        color: primary3,
-                                                                        size: 16,
+                                                                        Icons
+                                                                            .access_time,
+                                                                        color:
+                                                                            primary3,
+                                                                        size:
+                                                                            16,
                                                                       ),
                                                                       SizedBox(
-                                                                        width: 5,
+                                                                        width:
+                                                                            5,
                                                                       ),
                                                                       Text(
-                                                                        state.detailOrder.statusHistory[i].time,
-                                                                        style: TextStyle(color: primary3),
+                                                                        state
+                                                                            .detailOrder
+                                                                            .statusHistory[i]
+                                                                            .time,
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                primary3),
                                                                       )
                                                                     ],
                                                                   )
@@ -465,10 +578,18 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                         )
                                                       ],
                                                     ),
-                                                    i != state.detailOrder.statusHistory.length - 1
+                                                    i !=
+                                                            state
+                                                                    .detailOrder
+                                                                    .statusHistory
+                                                                    .length -
+                                                                1
                                                         ? Container(
-                                                            margin: EdgeInsets.only(left: 25),
-                                                            child: SvgPicture.asset(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    left: 25),
+                                                            child: SvgPicture
+                                                                .asset(
                                                               "assets/separator icon.svg",
                                                               height: 60,
                                                               width: 15,
@@ -490,18 +611,27 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                       padding: EdgeInsets.only(
                                                           left: 20,
                                                           right: 20,
-                                                          bottom: kBottomNavigationBarHeight,
+                                                          bottom:
+                                                              kBottomNavigationBarHeight,
                                                           top: 20),
-                                                      decoration:
-                                                          BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      32)),
                                                       child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: <Widget>[
                                                           Container(
-                                                            margin: EdgeInsets.only(bottom: 52),
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    bottom: 52),
                                                           ),
                                                           Column(
-                                                            children: statusWidgets,
+                                                            children:
+                                                                statusWidgets,
                                                           ),
                                                         ],
                                                       ),
@@ -511,29 +641,48 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                     top: 0,
                                                     left: 0,
                                                     child: Container(
-                                                        width: AppUtil.getScreenWidth(context),
+                                                        width: AppUtil
+                                                            .getScreenWidth(
+                                                                context),
                                                         decoration: BoxDecoration(
                                                             borderRadius: BorderRadius.only(
-                                                                topLeft: Radius.circular(32),
-                                                                topRight: Radius.circular(32)),
-                                                            color: Colors.white),
-                                                        padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        32),
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                        32)),
+                                                            color:
+                                                                Colors.white),
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 20,
+                                                                left: 20,
+                                                                bottom: 20),
                                                         child: Row(
                                                           children: <Widget>[
                                                             Expanded(
                                                                 flex: 2,
-                                                                child: GestureDetector(
+                                                                child:
+                                                                    GestureDetector(
                                                                   onTap: () {
-                                                                    Navigator.pop(context);
+                                                                    Navigator.pop(
+                                                                        context);
                                                                   },
-                                                                  child: Icon(Icons.clear),
+                                                                  child: Icon(
+                                                                      Icons
+                                                                          .clear),
                                                                 )),
                                                             Expanded(
                                                               flex: 8,
                                                               child: Text(
                                                                 "Track Order Timeline",
                                                                 style: TextStyle(
-                                                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                                                    fontSize:
+                                                                        18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                             ),
                                                           ],
@@ -547,8 +696,12 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                   },
                                   child: Container(
                                     height: 50,
-                                    margin: state.detailOrder.orderInstruction != null &&
-                                            state.detailOrder.orderInstruction != ""
+                                    margin: state.detailOrder
+                                                    .orderInstruction !=
+                                                null &&
+                                            state.detailOrder
+                                                    .orderInstruction !=
+                                                ""
                                         ? EdgeInsets.only(top: 30, bottom: 30)
                                         : EdgeInsets.only(top: 50, bottom: 30),
                                     decoration: BoxDecoration(
@@ -557,7 +710,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
-                                      state.detailOrder.statusHistory.last.isDelivered()
+                                      state.detailOrder.statusHistory.last
+                                              .isDelivered()
                                           ? "TRACK ORDER TIMELINE"
                                           : "TRACK ORDER",
                                       style: TextStyle(fontSize: 20),
@@ -580,22 +734,29 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
     );
   }
 
-  List<Widget> _foodCartWidgets(FoodCart cart) {
+  List<Widget> _foodCartWidgets(FoodCart cart, String currencyCode) {
     List<Widget> widgets = List();
 
     cart.singleItemCart.forEach((key, value) {
       widgets.add(FoodCartItemWidget(
         item: value,
+        currencyCode: currencyCode,
       ));
     });
 
     return widgets;
   }
 
-  Widget _feeRowWidget(String title, double amount, bool isPositive) {
+  Widget _feeRowWidget(
+      String title, double amount, bool isPositive, String currencyCode) {
     String amountString = isPositive
-        ? "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(amount)
-        : "(\u20b9 " + AppUtil.doubleRemoveZeroTrailing(amount) + ")";
+        ? AppUtil.getCurrencyString(currencyCode) +
+            " " +
+            AppUtil.doubleRemoveZeroTrailing(amount)
+        : "(" + AppUtil.getCurrencyString(currencyCode) +
+            " " +
+            AppUtil.doubleRemoveZeroTrailing(amount) +
+            ")";
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5),
@@ -627,7 +788,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         isScrollControlled: true,
         enableDrag: false,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,
         context: context,
         builder: (context) {
@@ -638,7 +800,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         title: Text(
                           "Error",
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -673,8 +836,10 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                 children: <Widget>[
                   SingleChildScrollView(
                     child: Container(
-                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, bottom: 20, top: 20),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(32)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -684,11 +849,13 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                           Column(
                             children: <Widget>[
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(
                                     "Rate Merchant",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(
                                     width: 10,
@@ -712,15 +879,18 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                 height: 20,
                               ),
                               Container(
-                                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 20, horizontal: 20),
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black12)),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.black12)),
                                 child: TextField(
                                   controller: _reviewTextController,
                                   maxLines: 5,
                                   autofocus: true,
                                   decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 0, horizontal: 0),
                                       hintText: "Enter your review",
                                       hintStyle: TextStyle(fontSize: 14),
                                       border: InputBorder.none),
@@ -732,19 +902,25 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                               BlocBuilder<LoginBloc, LoginState>(
                                 builder: (context, loginState) {
                                   return GestureDetector(
-                                    onTap: state.isReviewValid() && !(state is LoadingAddReview)
+                                    onTap: state.isReviewValid() &&
+                                            !(state is LoadingAddReview)
                                         ? () {
-                                            _bloc.add(AddReview(loginState.user.token));
+                                            _bloc.add(AddReview(
+                                                loginState.user.token));
                                           }
                                         : () {},
                                     child: Stack(
                                       children: <Widget>[
                                         Container(
                                           height: 50,
-                                          margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                          margin: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom),
                                           decoration: BoxDecoration(
                                             color: Color(0xFFFFB531),
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           alignment: Alignment.center,
                                           child: state is LoadingAddReview
@@ -754,11 +930,15 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                                 )
                                               : Text(
                                                   "SUBMIT",
-                                                  style: TextStyle(fontSize: 20),
+                                                  style:
+                                                      TextStyle(fontSize: 20),
                                                 ),
                                         ),
                                         AnimatedOpacity(
-                                          opacity: state.isReviewValid() && !(state is LoadingAddReview) ? 0.0 : 0.5,
+                                          opacity: state.isReviewValid() &&
+                                                  !(state is LoadingAddReview)
+                                              ? 0.0
+                                              : 0.5,
                                           child: Container(
                                             height: 50,
                                             color: Colors.white,
@@ -782,8 +962,9 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                     child: Container(
                         width: AppUtil.getScreenWidth(context),
                         decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(32),
+                                topRight: Radius.circular(32)),
                             color: Colors.white),
                         padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
                         child: Row(
@@ -800,7 +981,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                               flex: 8,
                               child: Text(
                                 "Add Review",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
@@ -816,8 +998,10 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
 
 class FoodCartItemWidget extends StatelessWidget {
   final FoodCartItem item;
+  final String currencyCode;
 
-  const FoodCartItemWidget({Key key, this.item}) : super(key: key);
+  const FoodCartItemWidget({Key key, this.item, this.currencyCode})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -840,7 +1024,9 @@ class FoodCartItemWidget extends StatelessWidget {
                 item.food.title +
                     " ( " +
                     item.quantity.toString() +
-                    " X \u20b9 " +
+                    " X " +
+                    AppUtil.getCurrencyString(currencyCode) +
+                    " " +
                     AppUtil.doubleRemoveZeroTrailing(item.food.getRealPrice()) +
                     " )",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -849,7 +1035,10 @@ class FoodCartItemWidget extends StatelessWidget {
             Expanded(
                 flex: 3,
                 child: Text(
-                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing((item.quantity * item.food.getRealPrice())),
+                  AppUtil.getCurrencyString(currencyCode) +
+                      " " +
+                      AppUtil.doubleRemoveZeroTrailing(
+                          (item.quantity * item.food.getRealPrice())),
                   textAlign: TextAlign.end,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ))

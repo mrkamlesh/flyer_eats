@@ -35,6 +35,7 @@ class PlaceOrder {
   final DateTime selectedDeliveryTime;
   final String stripePublishKey;
   final String stripeSecretKey;
+  final String applyVoucherErrorMessage;
 
   PlaceOrder({
     this.id,
@@ -46,6 +47,7 @@ class PlaceOrder {
     this.foodCart,
     this.address,
     this.voucher,
+    this.applyVoucherErrorMessage,
     this.selectedPaymentMethod,
     this.razorKey,
     this.razorSecret,
@@ -73,20 +75,39 @@ class PlaceOrder {
       return PaymentMethod.fromJson(i);
     }).toList();
 
+    String applyVoucherMessage;
+    Voucher voucher;
+    if (parsedJson['details']['apply_voucher'] is Map) {
+      if ((parsedJson['details']['apply_voucher'] as Map)
+          .containsKey('error')) {
+        applyVoucherMessage = parsedJson['details']['apply_voucher']['error'];
+      } else {
+        voucher = Voucher.fromJson(parsedJson['details']['apply_voucher']);
+      }
+    }
+
     return PlaceOrder(
       isValid: true,
       message: parsedJson['msg'],
-      discountOrder: (parsedJson['details']['cart'] as Map).containsKey('discount')
-          ? double.parse(parsedJson['details']['cart']['discount']['amount'].toString())
+      discountOrder: (parsedJson['details']['cart'] as Map)
+              .containsKey('discount')
+          ? double.parse(
+              parsedJson['details']['cart']['discount']['amount'].toString())
           : 0,
-      discountOrderPrettyString: (parsedJson['details']['cart'] as Map).containsKey('discount')
-          ? parsedJson['details']['cart']['discount']['display'].toString()
-          : "Discount Order",
-      deliveryCharges: (parsedJson['details']['cart'] as Map).containsKey('delivery_charges')
-          ? double.parse(parsedJson['details']['cart']['delivery_charges']['amount'].toString())
-          : 0,
-      packagingCharges: (parsedJson['details']['cart'] as Map).containsKey('packaging')
-          ? double.parse(parsedJson['details']['cart']['packaging']['amount'].toString())
+      discountOrderPrettyString:
+          (parsedJson['details']['cart'] as Map).containsKey('discount')
+              ? parsedJson['details']['cart']['discount']['display'].toString()
+              : "Discount Order",
+      deliveryCharges:
+          (parsedJson['details']['cart'] as Map).containsKey('delivery_charges')
+              ? double.parse(parsedJson['details']['cart']['delivery_charges']
+                      ['amount']
+                  .toString())
+              : 0,
+      packagingCharges: (parsedJson['details']['cart'] as Map)
+              .containsKey('packaging')
+          ? double.parse(
+              parsedJson['details']['cart']['packaging']['amount'].toString())
           : 0,
       taxCharges: (parsedJson['details']['cart'] as Map).containsKey('tax')
           ? double.parse(parsedJson['details']['cart']['tax']['tax'].toString())
@@ -102,6 +123,8 @@ class PlaceOrder {
         parsedJson['details']['wallet_amount'].toString(),
       ),
       listPaymentMethod: listPayment,
+      applyVoucherErrorMessage: applyVoucherMessage,
+      voucher: voucher,
     );
   }
 
@@ -115,6 +138,7 @@ class PlaceOrder {
     FoodCart foodCart,
     Address address,
     Voucher voucher,
+    String applyVoucherMessage,
     String selectedPaymentMethod,
     String razorKey,
     String razorSecret,
@@ -146,21 +170,25 @@ class PlaceOrder {
         contact: contact ?? this.contact,
         deliveryInstruction: deliveryInstruction ?? this.deliveryInstruction,
         foodCart: foodCart ?? this.foodCart,
-        selectedPaymentMethod: selectedPaymentMethod ?? this.selectedPaymentMethod,
+        selectedPaymentMethod:
+            selectedPaymentMethod ?? this.selectedPaymentMethod,
         razorKey: razorKey ?? this.razorKey,
         razorSecret: razorSecret ?? this.razorSecret,
         stripePublishKey: stripePublishKey ?? this.stripePublishKey,
         stripeSecretKey: stripeSecretKey ?? this.stripeSecretKey,
         voucher: voucher ?? this.voucher,
+        applyVoucherErrorMessage: applyVoucherMessage,
         deliveryCharges: deliveryCharges ?? this.deliveryCharges,
         packagingCharges: packagingCharges ?? this.packagingCharges,
         taxCharges: taxCharges ?? this.taxCharges,
         taxPrettyString: taxPrettyString ?? this.taxPrettyString,
         discountOrder: discountOrder ?? this.discountOrder,
-        discountOrderPrettyString: discountOrderPrettyString ?? this.discountOrderPrettyString,
+        discountOrderPrettyString:
+            discountOrderPrettyString ?? this.discountOrderPrettyString,
         walletAmount: walletAmount ?? this.walletAmount,
         isUseWallet: isUseWallet ?? this.isUseWallet,
-        isChangePrimaryContact: isChangePrimaryContact ?? this.isChangePrimaryContact,
+        isChangePrimaryContact:
+            isChangePrimaryContact ?? this.isChangePrimaryContact,
         listPaymentMethod: listPaymentMethod ?? this.listPaymentMethod,
         selectedDeliveryTime: selectedDeliveryTime ?? this.selectedDeliveryTime,
         now: now ?? this.now);
@@ -233,7 +261,12 @@ class PlaceOrder {
   double getTotal() {
     double total = 0;
 
-    total = subTotal() + deliveryCharges + packagingCharges + taxCharges - discountOrder - voucher.amount;
+    total = subTotal() +
+        deliveryCharges +
+        packagingCharges +
+        taxCharges -
+        discountOrder -
+        voucher.amount;
 
     if (total < 0) {
       return 0;

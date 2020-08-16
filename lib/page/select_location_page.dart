@@ -3,6 +3,7 @@ import 'package:clients/bloc/location/predefinedlocations/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/classes/app_util.dart';
@@ -11,6 +12,11 @@ import 'package:clients/model/location.dart';
 import 'package:clients/page/select_current_location_page.dart';
 
 class SelectLocationPage extends StatefulWidget {
+  final bool isRedirectToHomePage;
+
+  const SelectLocationPage({Key key, this.isRedirectToHomePage = true})
+      : super(key: key);
+
   @override
   _SelectLocationPageState createState() => _SelectLocationPageState();
 }
@@ -36,22 +42,25 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0.0 && _scrollController.hasClients) {
+    if (MediaQuery.of(context).viewInsets.bottom > 0.0 &&
+        _scrollController.hasClients) {
       _offsetController = 0;
-      _scrollController.animateTo(_offsetController, duration: Duration(milliseconds: 200), curve: Curves.ease);
+      _scrollController.animateTo(_offsetController,
+          duration: Duration(milliseconds: 200), curve: Curves.ease);
     }
 
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
         return BlocProvider<PredefinedLocationsBloc>(
           create: (context) {
-            return _bloc..add(GetPredefinedLocations());
+            return _bloc..add(InitGetPredefinedLocation());
           },
           child: WillPopScope(
             onWillPop: _onBackPressed,
             child: Scaffold(
               resizeToAvoidBottomInset: false,
-              body: BlocBuilder<PredefinedLocationsBloc, PredefinedLocationsState>(
+              body: BlocBuilder<PredefinedLocationsBloc,
+                  PredefinedLocationsState>(
                 builder: (context, state) {
                   return Stack(
                     children: <Widget>[
@@ -95,8 +104,9 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                             child: Container(
                               decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(32),
+                                      topLeft: Radius.circular(32))),
                               padding: EdgeInsets.only(
                                 top: horizontalPaddingDraggable,
                               ),
@@ -109,60 +119,84 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
-                                    child: Container(
-                                      margin: EdgeInsets.only(bottom: 20),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            "Search Location",
-                                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                          ),
-                                          InkWell(
+                                  widget.isRedirectToHomePage
+                                      ? Column(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      horizontalPaddingDraggable),
+                                              child: Container(
+                                                margin:
+                                                    EdgeInsets.only(bottom: 20),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Search Location",
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    InkWell(
+                                                        onTap: () {
+                                                          //BlocProvider.of<LocationBloc>(context).add(GetPreviousLocation());
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: Container(
+                                                            child: Icon(
+                                                                Icons.clear)))
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            InkWell(
                                               onTap: () {
-                                                //BlocProvider.of<LocationBloc>(context).add(GetPreviousLocation());
-                                                Navigator.of(context).pop();
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return SelectCurrentLocationPage(
+                                                    token:
+                                                        loginState.user.token,
+                                                  );
+                                                }));
                                               },
-                                              child: Container(child: Icon(Icons.clear)))
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                        return SelectCurrentLocationPage(
-                                          token: loginState.user.token,
-                                        );
-                                      }));
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: horizontalPaddingDraggable,
-                                      ),
-                                      margin: EdgeInsets.only(bottom: 20),
-                                      child: Row(
-                                        children: <Widget>[
-                                          SizedBox(
-                                              width: 25,
-                                              height: 25,
-                                              child: SvgPicture.asset(
-                                                "assets/currentloc.svg",
-                                                color: primary3,
-                                              )),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            "Current Location",
-                                            style: TextStyle(color: primary3, fontSize: 16),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      horizontalPaddingDraggable,
+                                                ),
+                                                margin:
+                                                    EdgeInsets.only(bottom: 20),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    SizedBox(
+                                                        width: 25,
+                                                        height: 25,
+                                                        child: SvgPicture.asset(
+                                                          "assets/currentloc.svg",
+                                                          color: primary3,
+                                                        )),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                      "Current Location",
+                                                      style: TextStyle(
+                                                          color: primary3,
+                                                          fontSize: 16),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : SizedBox(),
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: horizontalPaddingDraggable,
@@ -170,14 +204,16 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                     margin: EdgeInsets.only(bottom: 15),
                                     child: Text(
                                       "Locations",
-                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   Container(
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.black12, width: 1.0)),
+                                        border: Border.all(
+                                            color: Colors.black12, width: 1.0)),
                                     margin: EdgeInsets.only(
                                         bottom: 20,
                                         left: horizontalPaddingDraggable,
@@ -186,7 +222,8 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                       children: <Widget>[
                                         Container(
                                           width: 100,
-                                          padding: EdgeInsets.symmetric(horizontal: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
                                           child: DropdownButton<String>(
                                             underline: Container(),
                                             isExpanded: false,
@@ -199,12 +236,14 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                 child: Container(
                                                   width: 80,
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: <Widget>[
                                                       Expanded(
                                                         child: Container(
                                                           height: 20,
-                                                          child: SvgPicture.asset("assets/india_flag.svg"),
+                                                          child: SvgPicture.asset(
+                                                              "assets/india_flag.svg"),
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -213,7 +252,11 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                       Expanded(
                                                         child: Text(
                                                           "IND",
-                                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         ),
                                                       )
                                                     ],
@@ -225,12 +268,14 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                 child: Container(
                                                   width: 80,
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: <Widget>[
                                                       Expanded(
                                                         child: Container(
                                                           height: 20,
-                                                          child: SvgPicture.asset("assets/singapore_flag.svg"),
+                                                          child: SvgPicture.asset(
+                                                              "assets/singapore_flag.svg"),
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -239,7 +284,11 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                       Expanded(
                                                         child: Text(
                                                           "SNG",
-                                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         ),
                                                       )
                                                     ],
@@ -255,19 +304,28 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                         Expanded(
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                border: Border(left: BorderSide(color: Colors.black12, width: 1.0))),
-                                            padding: EdgeInsets.symmetric(horizontal: 20),
+                                                border: Border(
+                                                    left: BorderSide(
+                                                        color: Colors.black12,
+                                                        width: 1.0))),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 20),
                                             child: TextField(
                                               controller: _controller,
                                               autofocus: true,
                                               onChanged: (filter) {
-                                                _bloc.add(FilterLocations(filter));
+                                                _bloc.add(
+                                                    FilterLocations(filter));
                                               },
                                               decoration: InputDecoration(
-                                                contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 15),
                                                 border: InputBorder.none,
                                                 hintText: "SELECT LOCATIONS",
-                                                hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                                hintStyle: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black38),
                                               ),
                                             ),
                                           ),
@@ -283,45 +341,66 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                 child: Text("Select your town or city here"),
                               ),*/
                                   Expanded(
-                                    child: BlocBuilder<PredefinedLocationsBloc, PredefinedLocationsState>(
+                                    child: BlocBuilder<PredefinedLocationsBloc,
+                                        PredefinedLocationsState>(
                                       builder: (context, state) {
-                                        if (state is LoadingPredefinedLocations) {
+                                        if (state
+                                            is LoadingPredefinedLocations) {
                                           return Center(
                                               child: SizedBox(
                                             width: 40,
                                             height: 40,
                                             child: CircularProgressIndicator(),
                                           ));
-                                        } else if (state is ErrorPredefinedLocations) {
+                                        } else if (state
+                                            is ErrorPredefinedLocations) {
                                           return Container(
                                               margin: EdgeInsets.symmetric(
-                                                  vertical: horizontalPaddingDraggable,
-                                                  horizontal: horizontalPaddingDraggable),
+                                                  vertical:
+                                                      horizontalPaddingDraggable,
+                                                  horizontal:
+                                                      horizontalPaddingDraggable),
                                               child: Text("${state.message}"));
-                                        } else if (state is NoAvailablePredefinedLocations) {
+                                        } else if (state
+                                            is NoAvailablePredefinedLocations) {
                                           return Container(
                                               margin: EdgeInsets.symmetric(
-                                                  vertical: horizontalPaddingDraggable,
-                                                  horizontal: horizontalPaddingDraggable),
-                                              child: Text("No Available Locations"));
+                                                  vertical:
+                                                      horizontalPaddingDraggable,
+                                                  horizontal:
+                                                      horizontalPaddingDraggable),
+                                              child: Text(
+                                                  "No Available Locations"));
                                         }
                                         return Container(
                                           child: CustomScrollView(
                                             slivers: <Widget>[
                                               SliverList(
-                                                  delegate: SliverChildBuilderDelegate((context, i) {
+                                                  delegate:
+                                                      SliverChildBuilderDelegate(
+                                                          (context, i) {
                                                 return InkWell(
-                                                  onTap: () {
-                                                    _onTap(
-                                                      i,
-                                                      loginState.user.token,
-                                                      state.filteredLocations[i],
-                                                    );
-                                                  },
+                                                  onTap: widget
+                                                          .isRedirectToHomePage
+                                                      ? () {
+                                                          _onTapRedirectToHomePage(
+                                                            i,
+                                                            loginState
+                                                                .user.token,
+                                                            state.filteredLocations[
+                                                                i],
+                                                          );
+                                                        }
+                                                      : () {
+                                                          _onTap(state
+                                                              .filteredLocations[i]);
+                                                        },
                                                   child: Container(
                                                     padding: EdgeInsets.only(
-                                                        left: horizontalPaddingDraggable,
-                                                        right: horizontalPaddingDraggable,
+                                                        left:
+                                                            horizontalPaddingDraggable,
+                                                        right:
+                                                            horizontalPaddingDraggable,
                                                         bottom: 5),
                                                     child: Column(
                                                       children: <Widget>[
@@ -329,14 +408,22 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                           children: <Widget>[
                                                             Expanded(
                                                               child: Text(
-                                                                state.filteredLocations[i].address,
+                                                                state
+                                                                    .filteredLocations[
+                                                                        i]
+                                                                    .address,
                                                                 maxLines: 1,
-                                                                overflow: TextOverflow.ellipsis,
-                                                                style: TextStyle(fontSize: 14),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14),
                                                               ),
                                                             ),
                                                             Icon(
-                                                              Icons.arrow_forward_ios,
+                                                              Icons
+                                                                  .arrow_forward_ios,
                                                               size: 18,
                                                             )
                                                           ],
@@ -351,7 +438,10 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                     ),
                                                   ),
                                                 );
-                                              }, childCount: state.filteredLocations.length))
+                                              },
+                                                          childCount: state
+                                                              .filteredLocations
+                                                              .length))
                                             ],
                                           ),
                                         );
@@ -364,6 +454,18 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                           )
                         ],
                       ),
+                      state is InitialPredefinedLocationsState
+                          ? Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.5)),
+                              child: Center(
+                                child: SpinKitCircle(
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                            )
+                          : IgnorePointer(child: Container()),
                     ],
                   );
                 },
@@ -375,8 +477,9 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
     );
   }
 
-  void _onTap(i, String token, Location location) {
-    BlocProvider.of<HomeBloc>(context).add(GetHomeDataByLocation(location, token));
+  void _onTapRedirectToHomePage(i, String token, Location location) {
+    BlocProvider.of<HomeBloc>(context)
+        .add(GetHomeDataByLocation(location, token));
     Navigator.pushReplacementNamed(context, "/home");
   }
 
@@ -385,5 +488,9 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
     //BlocProvider.of<LocationBloc>(context).add(GetPreviousLocation());
 
     return true;
+  }
+
+  void _onTap(Location location) {
+    Navigator.pop(context, location);
   }
 }

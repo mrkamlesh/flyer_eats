@@ -151,7 +151,7 @@ class FoodOrderHistoryWidget extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    order.getMapStatus(),
+                    order.status,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   )
                 ],

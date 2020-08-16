@@ -8,15 +8,17 @@ class User {
   final String avatar;
   final Address defaultAddress;
   final String username;
+  final String location;
 
-  User({
-      this.avatar,
+  User(
+      {this.avatar,
       this.name,
       this.phone,
       this.hasAddress,
       this.token,
       this.defaultAddress,
-      this.username});
+      this.username,
+      this.location});
 
   factory User.fromJson(Map<String, dynamic> parsedJson) {
     Address defaultAddress = parsedJson['default_address'] == false
@@ -41,6 +43,7 @@ class User {
         hasAddress: parsedJson['has_addressbook'] == '2' ? true : false,
         token: parsedJson['token'],
         username: parsedJson['email'],
+        location: parsedJson['location_name'],
         defaultAddress: defaultAddress);
   }
 
@@ -55,12 +58,13 @@ class User {
       String referralCode,
       String referralDiscount}) {
     return User(
-        name: name ?? this.name,
-        phone: phone ?? this.phone,
-        avatar: avatar ?? this.avatar,
-        username: username ?? this.username,
-        token: token ?? this.token,
-        hasAddress: hasAddress ?? this.hasAddress,
-        defaultAddress: defaultAddress ?? this.defaultAddress,);
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      avatar: avatar ?? this.avatar,
+      username: username ?? this.username,
+      token: token ?? this.token,
+      hasAddress: hasAddress ?? this.hasAddress,
+      defaultAddress: defaultAddress ?? this.defaultAddress,
+    );
   }
 }

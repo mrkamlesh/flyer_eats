@@ -2,7 +2,7 @@ class Wallet {
   final double walletAmount;
   final double scratchAmount;
   final double loyaltyAmount;
-  final String currency;
+  final String currencyCode;
   final String razorpayKey;
   final String razorpaySecret;
 
@@ -10,13 +10,13 @@ class Wallet {
       {this.walletAmount,
       this.scratchAmount,
       this.loyaltyAmount,
-      this.currency,
+      this.currencyCode,
       this.razorpayKey,
       this.razorpaySecret});
 
   factory Wallet.fromJson(Map<String, dynamic> parsedJson) {
     return Wallet(
-      currency: parsedJson['currency_code'],
+      currencyCode: parsedJson['currency_code'],
       walletAmount: double.parse(parsedJson['wallet_amount'].toString()),
       scratchAmount: double.parse(parsedJson['scratch_amount'].toString()),
       loyaltyAmount: 0,

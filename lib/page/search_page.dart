@@ -52,17 +52,21 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       vsync: this,
       duration: Duration(milliseconds: 500),
     );
-    _navBarAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _navBarAnimation = Tween<Offset>(
+            begin: Offset.zero, end: Offset(0, kBottomNavigationBarHeight))
+        .animate(
+            CurvedAnimation(parent: _animationController, curve: Curves.ease));
 
     _scrollController = ScrollController();
     _scrollController.addListener(() {
       double maxScroll = _scrollController.position.maxScrollExtent;
       double currentScroll = _scrollController.position.pixels;
 
-      if (currentScroll == maxScroll) _bloc.add(LoadMore(widget.token, widget.address));
+      if (currentScroll == maxScroll)
+        _bloc.add(LoadMore(widget.token, widget.address));
 
-      if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
         if (!_isScrollingDown) {
           _isScrollingDown = true;
           setState(() {
@@ -113,7 +117,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         title: Text(
                           "Clear Cart?",
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -163,9 +168,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                     extendBody: true,
                     extendBodyBehindAppBar: true,
                     bottomNavigationBar: AnimatedCrossFade(
-                      crossFadeState: cartState.placeOrder.foodCart.cartItemTotal() > 0
-                          ? CrossFadeState.showSecond
-                          : CrossFadeState.showFirst,
+                      crossFadeState:
+                          cartState.placeOrder.foodCart.cartItemTotal() > 0
+                              ? CrossFadeState.showSecond
+                              : CrossFadeState.showFirst,
                       duration: Duration(milliseconds: 300),
                       firstChild: AnimatedBuilder(
                         animation: _navBarAnimation,
@@ -189,25 +195,31 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                             child: CustomBottomNavBar(
                               animationDuration: Duration(milliseconds: 300),
                               items: [
-                                BottomNavyBarItem(icon: "assets/2.svg", title: "Flyer Eats"),
-                                BottomNavyBarItem(icon: "assets/4.svg", title: "Offers"),
-                                BottomNavyBarItem(icon: "assets/1.svg", title: "Search"),
+                                BottomNavyBarItem(
+                                    icon: "assets/2.svg", title: "Flyer Eats"),
+                                BottomNavyBarItem(
+                                    icon: "assets/4.svg", title: "Offers"),
+                                BottomNavyBarItem(
+                                    icon: "assets/1.svg", title: "Search"),
                                 BottomNavyBarItem(
                                     icon: "assets/3.svg",
                                     title: "Order",
-                                    badge: cartState.placeOrder.foodCart.cartItemTotal())
+                                    badge: cartState.placeOrder.foodCart
+                                        .cartItemTotal())
                               ],
                               onItemSelected: (index) {
                                 setState(() async {
                                   _currentIndex = index;
                                   if (index == 0) {
-                                    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                    await Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
                                       return Home();
                                     }));
                                     _currentIndex = 2;
                                   } else if (index == 1) {
                                     await Navigator.push(context,
-                                        PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                                        PageRouteBuilder(pageBuilder:
+                                            (context, anim1, anim2) {
                                       return OfferListPage(
                                         address: widget.address,
                                       );
@@ -215,9 +227,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                     _currentIndex = 2;
                                   } else if (index == 3) {
                                     await Navigator.push(context,
-                                        PageRouteBuilder(pageBuilder: (context, anim1, anim2) {
+                                        PageRouteBuilder(pageBuilder:
+                                            (context, anim1, anim2) {
                                       return RestaurantPlaceOrderPage(
-                                        location: Location(address: widget.address),
+                                        location:
+                                            Location(address: widget.address),
                                         user: loginState.user,
                                       );
                                     }));
@@ -241,13 +255,20 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                           );
                         },
                         child: SearchPageOrderBottomNavBar(
-                          isValid: cartState.placeOrder.foodCart.cartItemTotal() > 0 ? true : false,
-                          totalAmount: cartState.placeOrder.foodCart.getCartTotalAmount(),
-                          totalItem: cartState.placeOrder.foodCart.cartItemTotal(),
-                          currencyIcon: AppUtil.getCurrencyIcon(cartState.placeOrder.restaurant.currencyCode),
+                          isValid:
+                              cartState.placeOrder.foodCart.cartItemTotal() > 0
+                                  ? true
+                                  : false,
+                          totalAmount: cartState.placeOrder.foodCart
+                              .getCartTotalAmount(),
+                          totalItem:
+                              cartState.placeOrder.foodCart.cartItemTotal(),
+                          currencyIcon: AppUtil.getCurrencyIcon(
+                              cartState.placeOrder.restaurant.currencyCode),
                           buttonText: "CHECK OUT",
                           onButtonTap: () async {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
                               return RestaurantPlaceOrderPage(
                                 location: Location(address: widget.address),
                                 user: loginState.user,
@@ -265,12 +286,14 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(
-                                top: MediaQuery.of(context).padding.top + distanceBetweenSection,
+                                top: MediaQuery.of(context).padding.top +
+                                    distanceBetweenSection,
                                 left: horizontalPaddingDraggable,
                                 right: horizontalPaddingDraggable),
                             child: CustomTextField(
                               onChanged: (value) {
-                                _bloc.add(Search(widget.token, widget.address, value));
+                                _bloc.add(Search(
+                                    widget.token, widget.address, value));
                               },
                               hint: "SEARCH ANYTHING",
                             ),
@@ -294,10 +317,16 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                       unselectedLabelColor: Colors.black26,
                                       indicatorColor: Colors.yellow[600],
                                       indicatorSize: TabBarIndicatorSize.tab,
-                                      labelStyle:
-                                          GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.bold)),
-                                      indicatorPadding: EdgeInsets.only(left: 0, right: 15, bottom: 2, top: 0),
-                                      labelPadding: EdgeInsets.only(left: 0, right: 15, bottom: 0),
+                                      labelStyle: GoogleFonts.poppins(
+                                          textStyle: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                      indicatorPadding: EdgeInsets.only(
+                                          left: 0,
+                                          right: 15,
+                                          bottom: 2,
+                                          top: 0),
+                                      labelPadding: EdgeInsets.only(
+                                          left: 0, right: 15, bottom: 0),
                                       tabs: [
                                         Tab(
                                           text: "Restaurant",
@@ -310,7 +339,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                               );
                             },
                           ),
-                          BlocBuilder<SearchBloc, SearchState>(builder: (context, state) {
+                          BlocBuilder<SearchBloc, SearchState>(
+                              builder: (context, state) {
                             if (state is LoadingNewSearch) {
                               return Expanded(
                                 child: Container(
@@ -325,19 +355,25 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                             } else if (state is InitialSearchState) {
                               return Container(
                                 margin: EdgeInsets.only(
-                                    top: 30, right: horizontalPaddingDraggable, left: horizontalPaddingDraggable),
+                                    top: 30,
+                                    right: horizontalPaddingDraggable,
+                                    left: horizontalPaddingDraggable),
                                 child: Text(
                                   "Search anything here...",
-                                  style: TextStyle(color: Colors.black38, fontSize: 14),
+                                  style: TextStyle(
+                                      color: Colors.black38, fontSize: 14),
                                 ),
                               );
                             } else if (state is ErrorNewSearch) {
                               return Container(
                                 margin: EdgeInsets.only(
-                                    top: 30, right: horizontalPaddingDraggable, left: horizontalPaddingDraggable),
+                                    top: 30,
+                                    right: horizontalPaddingDraggable,
+                                    left: horizontalPaddingDraggable),
                                 child: Text(
                                   state.message,
-                                  style: TextStyle(color: Colors.black38, fontSize: 14),
+                                  style: TextStyle(
+                                      color: Colors.black38, fontSize: 14),
                                 ),
                               );
                             }
@@ -345,64 +381,92 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                             if (state.restaurants.isEmpty) {
                               return Container(
                                 margin: EdgeInsets.only(
-                                    top: 30, right: horizontalPaddingDraggable, left: horizontalPaddingDraggable),
+                                    top: 30,
+                                    right: horizontalPaddingDraggable,
+                                    left: horizontalPaddingDraggable),
                                 child: Text("No result for your search..."),
                               );
                             } else {
                               List<Widget> slivers = List();
-                              for (int i = 0; i < state.restaurants.length; i++) {
-                                if (state.restaurants[i].searchFoodList.length > 0) {
+                              for (int i = 0;
+                                  i < state.restaurants.length;
+                                  i++) {
+                                if (state.restaurants[i].searchFoodList.length >
+                                    0) {
                                   slivers.add(SliverToBoxAdapter(
                                     child: Container(
-                                        margin: EdgeInsets.only(bottom: 10, top: distanceSectionContent),
+                                        margin: EdgeInsets.only(
+                                            bottom: 10,
+                                            top: distanceSectionContent),
                                         padding: EdgeInsets.only(
                                           left: horizontalPaddingDraggable,
                                           right: horizontalPaddingDraggable,
                                         ),
                                         child: Text(
                                           state.restaurants[i].name,
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
                                         )),
                                   ));
                                   slivers.add(FoodListWidget(
                                     onAdd: (j) {
                                       FocusScope.of(context).unfocus();
                                       _animationController.reverse().orCancel;
-                                      if (state.restaurants[i].searchFoodList[j].isSingleItem) {
-                                        BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
-                                            state.restaurants[i],
-                                            state.restaurants[i].searchFoodList[j].id,
-                                            state.restaurants[i].searchFoodList[j],
-                                            (cartState.placeOrder.foodCart
-                                                    .getFoodQuantity(state.restaurants[i].searchFoodList[j]) +
-                                                1),
-                                            state.restaurants[i].searchFoodList[j].price,
-                                            [],
-                                            true));
+                                      if (state.restaurants[i].searchFoodList[j]
+                                          .isSingleItem) {
+                                        BlocProvider.of<FoodOrderBloc>(context)
+                                            .add(ChangeQuantityNoPayment(
+                                                state.restaurants[i],
+                                                state.restaurants[i]
+                                                    .searchFoodList[j].id,
+                                                state.restaurants[i]
+                                                    .searchFoodList[j],
+                                                (cartState.placeOrder.foodCart
+                                                        .getFoodQuantity(state
+                                                                .restaurants[i]
+                                                                .searchFoodList[
+                                                            j]) +
+                                                    1),
+                                                state.restaurants[i]
+                                                    .searchFoodList[j].price,
+                                                [],
+                                                true));
                                       } else {
-                                        _showAddOnsSheet(state.restaurants[i].searchFoodList[j], state.restaurants[i]);
+                                        _showAddOnsSheet(
+                                            state.restaurants[i]
+                                                .searchFoodList[j],
+                                            state.restaurants[i]);
                                       }
                                     },
                                     onRemove: (j) {
                                       _animationController.reverse().orCancel;
-                                      BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
-                                          state.restaurants[i],
-                                          state.restaurants[i].searchFoodList[j].id,
-                                          state.restaurants[i].searchFoodList[j],
-                                          (cartState.placeOrder.foodCart
-                                                  .getFoodQuantity(state.restaurants[i].searchFoodList[j]) -
-                                              1),
-                                          state.restaurants[i].searchFoodList[j].price,
-                                          [],
-                                          false));
+                                      BlocProvider.of<FoodOrderBloc>(context)
+                                          .add(ChangeQuantityNoPayment(
+                                              state.restaurants[i],
+                                              state.restaurants[i]
+                                                  .searchFoodList[j].id,
+                                              state.restaurants[i]
+                                                  .searchFoodList[j],
+                                              (cartState.placeOrder.foodCart
+                                                      .getFoodQuantity(state
+                                                          .restaurants[i]
+                                                          .searchFoodList[j]) -
+                                                  1),
+                                              state.restaurants[i]
+                                                  .searchFoodList[j].price,
+                                              [],
+                                              false));
                                     },
                                     padding: EdgeInsets.only(
                                       left: horizontalPaddingDraggable,
                                       right: horizontalPaddingDraggable,
                                     ),
                                     cart: cartState.placeOrder.foodCart,
-                                    currencyIcon: AppUtil.getCurrencyIcon(state.restaurants[i].currencyCode),
-                                    listFood: state.restaurants[i].searchFoodList,
+                                    currencyCode:
+                                        state.restaurants[i].currencyCode,
+                                    listFood:
+                                        state.restaurants[i].searchFoodList,
                                     type: FoodListViewType.search,
                                     scale: 0.90,
                                   ));
@@ -423,36 +487,43 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                               slivers.add(
                                 SliverToBoxAdapter(
                                   child: SizedBox(
-                                    height: kBottomNavigationBarHeight + distanceBetweenSection,
+                                    height: kBottomNavigationBarHeight +
+                                        distanceBetweenSection,
                                   ),
                                 ),
                               );
 
                               return Expanded(
                                 child: Container(
-                                  child: TabBarView(controller: _tabController, children: [
-                                    CustomScrollView(
-                                      controller: _scrollController,
-                                      slivers: <Widget>[
-                                        RestaurantListWidget(
-                                          type: RestaurantViewType.searchResult,
-                                          location: Location(address: widget.address),
-                                          restaurants: state.restaurants,
-                                          fade: 0.4,
-                                          scale: 0.95,
+                                  child: TabBarView(
+                                      controller: _tabController,
+                                      children: [
+                                        CustomScrollView(
+                                          controller: _scrollController,
+                                          slivers: <Widget>[
+                                            RestaurantListWidget(
+                                              type: RestaurantViewType
+                                                  .searchResult,
+                                              location: Location(
+                                                  address: widget.address),
+                                              restaurants: state.restaurants,
+                                              fade: 0.4,
+                                              scale: 0.95,
+                                            ),
+                                            SliverToBoxAdapter(
+                                              child: SizedBox(
+                                                height:
+                                                    kBottomNavigationBarHeight +
+                                                        distanceBetweenSection,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        SliverToBoxAdapter(
-                                          child: SizedBox(
-                                            height: kBottomNavigationBarHeight + distanceBetweenSection,
-                                          ),
+                                        CustomScrollView(
+                                          controller: _scrollController,
+                                          slivers: slivers,
                                         ),
-                                      ],
-                                    ),
-                                    CustomScrollView(
-                                      controller: _scrollController,
-                                      slivers: slivers,
-                                    ),
-                                  ]),
+                                      ]),
                                 ),
                               );
                             }
@@ -479,7 +550,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     BlocProvider.of<FoodOrderBloc>(context).add(GetFoodDetail(food.id));
     showMaterialModalBottomSheet(
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,
         context: context,
         expand: false,
@@ -490,16 +562,25 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 height: AppUtil.getScreenHeight(context) * 3 / 4,
                 width: AppUtil.getScreenWidth(context),
                 padding: EdgeInsets.only(top: 25),
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(32)),
                 child: BlocConsumer<FoodOrderBloc, FoodOrderState>(
                   listener: (context, cartState) {
                     if (cartState is SuccessGetFoodDetail) {
                       price = cartState.foodDetail.prices[0];
-                      for (int i = 0; i < cartState.foodDetail.addOnsTypes.length; i++) {
-                        if (cartState.foodDetail.addOnsTypes[i].options == "one") {
+                      for (int i = 0;
+                          i < cartState.foodDetail.addOnsTypes.length;
+                          i++) {
+                        if (cartState.foodDetail.addOnsTypes[i].options ==
+                            "one") {
                           textControllersMap[i] = List<TextEditingController>();
-                          for (int j = 0; j < cartState.foodDetail.addOnsTypes[i].addOns.length; j++) {
-                            TextEditingController textController = TextEditingController(text: 1.toString());
+                          for (int j = 0;
+                              j <
+                                  cartState
+                                      .foodDetail.addOnsTypes[i].addOns.length;
+                              j++) {
+                            TextEditingController textController =
+                                TextEditingController(text: 1.toString());
                             textControllersMap[i].add(textController);
                           }
                         }
@@ -520,12 +601,17 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                       listWidget.add(
                         SliverToBoxAdapter(
                           child: Container(
-                            padding: EdgeInsets.only(left: horizontalPaddingDraggable, top: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: horizontalPaddingDraggable,
+                                top: 10,
+                                bottom: 10),
                             child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   "SIZE",
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
                                 )),
                             decoration: BoxDecoration(color: Colors.black12),
                           ),
@@ -536,18 +622,23 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                           return RadioListTile<Price>(
                             title: Row(
                               children: <Widget>[
-                                Expanded(child: Text(cartState.foodDetail.prices[i].size)),
+                                Expanded(
+                                    child: Text(
+                                        cartState.foodDetail.prices[i].size)),
                                 Row(
                                   children: [
                                     SvgPicture.asset(
-                                      AppUtil.getCurrencyIcon(selectedRestaurant.currencyCode),
+                                      AppUtil.getCurrencyIcon(
+                                          selectedRestaurant.currencyCode),
                                       height: 10,
                                       width: 10,
                                     ),
                                     SizedBox(
                                       width: 5,
                                     ),
-                                    Text((cartState.foodDetail.prices[i].discountedPrice).toString()),
+                                    Text((cartState.foodDetail.prices[i]
+                                            .discountedPrice)
+                                        .toString()),
                                   ],
                                 )
                               ],
@@ -563,7 +654,9 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                         }, childCount: cartState.foodDetail.prices.length),
                       ));
 
-                      for (int i = 0; i < cartState.foodDetail.addOnsTypes.length; i++) {
+                      for (int i = 0;
+                          i < cartState.foodDetail.addOnsTypes.length;
+                          i++) {
                         listWidget.add(SliverToBoxAdapter(
                           child: Container(
                             padding: EdgeInsets.only(
@@ -575,26 +668,34 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   cartState.foodDetail.addOnsTypes[i].name,
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
                                 )),
                             decoration: BoxDecoration(color: Colors.black12),
                           ),
                         ));
-                        if (cartState.foodDetail.addOnsTypes[i].options == "one") {
+                        if (cartState.foodDetail.addOnsTypes[i].options ==
+                            "one") {
                           // one is check box with number inside
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
                               return CheckboxListTile(
                                 onChanged: (bool) {
                                   newState(() {
-                                    cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected = bool;
+                                    cartState.foodDetail.addOnsTypes[i]
+                                        .addOns[j].isSelected = bool;
                                   });
                                 },
-                                value: cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected,
-                                controlAffinity: ListTileControlAffinity.leading,
+                                value: cartState.foodDetail.addOnsTypes[i]
+                                    .addOns[j].isSelected,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 title: Row(
                                   children: <Widget>[
-                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Expanded(
+                                        child: Text(cartState.foodDetail
+                                            .addOnsTypes[i].addOns[j].name)),
                                     Container(
                                       width: 50,
                                       margin: EdgeInsets.only(right: 10),
@@ -605,9 +706,17 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                         onChanged: (text) {
                                           newState(() {
                                             if (text == "") {
-                                              cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 0;
+                                              cartState
+                                                  .foodDetail
+                                                  .addOnsTypes[i]
+                                                  .addOns[j]
+                                                  .quantity = 0;
                                             } else {
-                                              cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = int.parse(text);
+                                              cartState
+                                                  .foodDetail
+                                                  .addOnsTypes[i]
+                                                  .addOns[j]
+                                                  .quantity = int.parse(text);
                                             }
                                           });
                                         },
@@ -616,49 +725,63 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                     Row(
                                       children: [
                                         SvgPicture.asset(
-                                          AppUtil.getCurrencyIcon(selectedRestaurant.currencyCode),
+                                          AppUtil.getCurrencyIcon(
+                                              selectedRestaurant.currencyCode),
                                           height: 10,
                                           width: 10,
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text((cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString()),
+                                        Text((cartState.foodDetail
+                                                .addOnsTypes[i].addOns[j].price)
+                                            .toString()),
                                       ],
                                     )
                                   ],
                                 ),
                               );
-                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
+                            },
+                                childCount: cartState
+                                    .foodDetail.addOnsTypes[i].addOns.length),
                           ));
-                        } else if (cartState.foodDetail.addOnsTypes[i].options == "multiple") {
+                        } else if (cartState
+                                .foodDetail.addOnsTypes[i].options ==
+                            "multiple") {
                           // multiple is radio button
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
                               return RadioListTile<AddOn>(
                                 title: Row(
                                   children: <Widget>[
-                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Expanded(
+                                        child: Text(cartState.foodDetail
+                                            .addOnsTypes[i].addOns[j].name)),
                                     Row(
                                       children: [
                                         SvgPicture.asset(
-                                          AppUtil.getCurrencyIcon(selectedRestaurant.currencyCode),
+                                          AppUtil.getCurrencyIcon(
+                                              selectedRestaurant.currencyCode),
                                           height: 10,
                                           width: 10,
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text((cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString()),
+                                        Text((cartState.foodDetail
+                                                .addOnsTypes[i].addOns[j].price)
+                                            .toString()),
                                       ],
                                     )
                                   ],
                                 ),
-                                value: cartState.foodDetail.addOnsTypes[i].addOns[j],
+                                value: cartState
+                                    .foodDetail.addOnsTypes[i].addOns[j],
                                 onChanged: (addOn) {
                                   newState(() {
                                     multipleAddOns[i] = addOn;
-                                    cartState.foodDetail.addOnsTypes[i].addOns.forEach((e) {
+                                    cartState.foodDetail.addOnsTypes[i].addOns
+                                        .forEach((e) {
                                       e.isSelected = false;
                                     });
                                     addOn.isSelected = true;
@@ -666,45 +789,61 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                 },
                                 groupValue: multipleAddOns[i],
                               );
-                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
+                            },
+                                childCount: cartState
+                                    .foodDetail.addOnsTypes[i].addOns.length),
                           ));
-                        } else if (cartState.foodDetail.addOnsTypes[i].options == "custom") {
+                        } else if (cartState
+                                .foodDetail.addOnsTypes[i].options ==
+                            "custom") {
                           // custom is check box only
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
                               return CheckboxListTile(
                                 onChanged: (bool) {
                                   newState(() {
-                                    cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected = bool;
+                                    cartState.foodDetail.addOnsTypes[i]
+                                        .addOns[j].isSelected = bool;
                                     if (bool) {
-                                      cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 1;
+                                      cartState.foodDetail.addOnsTypes[i]
+                                          .addOns[j].quantity = 1;
                                     } else {
-                                      cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 0;
+                                      cartState.foodDetail.addOnsTypes[i]
+                                          .addOns[j].quantity = 0;
                                     }
                                   });
                                 },
-                                value: cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected,
-                                controlAffinity: ListTileControlAffinity.leading,
+                                value: cartState.foodDetail.addOnsTypes[i]
+                                    .addOns[j].isSelected,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 title: Row(
                                   children: <Widget>[
-                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Expanded(
+                                        child: Text(cartState.foodDetail
+                                            .addOnsTypes[i].addOns[j].name)),
                                     Row(
                                       children: [
                                         SvgPicture.asset(
-                                          AppUtil.getCurrencyIcon(selectedRestaurant.currencyCode),
+                                          AppUtil.getCurrencyIcon(
+                                              selectedRestaurant.currencyCode),
                                           height: 10,
                                           width: 10,
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text((cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString()),
+                                        Text((cartState.foodDetail
+                                                .addOnsTypes[i].addOns[j].price)
+                                            .toString()),
                                       ],
                                     )
                                   ],
                                 ),
                               );
-                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
+                            },
+                                childCount: cartState
+                                    .foodDetail.addOnsTypes[i].addOns.length),
                           ));
                         }
                       }
@@ -727,7 +866,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                               height: kBottomNavigationBarHeight,
                               width: AppUtil.getScreenWidth(context),
                               decoration: BoxDecoration(
-                                  color: Colors.white, border: Border(top: BorderSide(color: Colors.yellow[600]))),
+                                  color: Colors.white,
+                                  border: Border(
+                                      top: BorderSide(
+                                          color: Colors.yellow[600]))),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -735,7 +877,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                     child: price == null || quantity == 0
                                         ? SizedBox()
                                         : Container(
-                                            padding: EdgeInsets.only(left: 10, right: 10),
+                                            padding: EdgeInsets.only(
+                                                left: 10, right: 10),
                                             child: Row(
                                               children: <Widget>[
                                                 Expanded(
@@ -746,15 +889,18 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                                               quantity--;
                                                             });
                                                           },
-                                                          child: Icon(Icons.remove))
+                                                          child: Icon(
+                                                              Icons.remove))
                                                       : SizedBox(),
                                                 ),
                                                 Expanded(
                                                   child: Center(
                                                     child: Text(
                                                       "$quantity",
-                                                      textAlign: TextAlign.center,
-                                                      style: TextStyle(fontSize: 16),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                          fontSize: 16),
                                                     ),
                                                   ),
                                                 ),
@@ -779,33 +925,48 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                             : () {
                                                 //do something add item here
                                                 Navigator.pop(context);
-                                                BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityNoPayment(
-                                                    selectedRestaurant,
-                                                    "",
-                                                    food,
-                                                    quantity,
-                                                    price,
-                                                    _getAddOns(cartState.foodDetail.addOnsTypes),
-                                                    true));
+                                                BlocProvider.of<FoodOrderBloc>(
+                                                        context)
+                                                    .add(
+                                                        ChangeQuantityNoPayment(
+                                                            selectedRestaurant,
+                                                            "",
+                                                            food,
+                                                            quantity,
+                                                            price,
+                                                            _getAddOns(cartState
+                                                                .foodDetail
+                                                                .addOnsTypes),
+                                                            true));
                                               },
                                         child: SizedBox.expand(
                                           child: Stack(
                                             children: <Widget>[
                                               Container(
                                                 alignment: Alignment.center,
-                                                padding: EdgeInsets.only(left: 10, right: 10),
+                                                padding: EdgeInsets.only(
+                                                    left: 10, right: 10),
                                                 decoration: BoxDecoration(
                                                     color: Colors.yellow[600],
-                                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(18))),
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    18))),
                                                 child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
                                                   children: <Widget>[
                                                     Expanded(
                                                       child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
                                                         children: <Widget>[
                                                           SvgPicture.asset(
-                                                            AppUtil.getCurrencyIcon(selectedRestaurant.currencyCode),
+                                                            AppUtil.getCurrencyIcon(
+                                                                selectedRestaurant
+                                                                    .currencyCode),
                                                             width: 15,
                                                             height: 15,
                                                           ),
@@ -813,9 +974,18 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                                             width: 10,
                                                           ),
                                                           Text(
-                                                            AppUtil.doubleRemoveZeroTrailing(_getTotalFoodDetail(
-                                                                price, quantity, cartState.foodDetail.addOnsTypes)),
-                                                            style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                                                            AppUtil.doubleRemoveZeroTrailing(
+                                                                _getTotalFoodDetail(
+                                                                    price,
+                                                                    quantity,
+                                                                    cartState
+                                                                        .foodDetail
+                                                                        .addOnsTypes)),
+                                                            style: TextStyle(
+                                                                fontSize: 19,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
                                                           ),
                                                         ],
                                                       ),
@@ -823,18 +993,26 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                                     Expanded(
                                                       child: Text(
                                                         "ADD ITEM",
-                                                        style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                                                        style: TextStyle(
+                                                            fontSize: 19,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
                                               AnimatedOpacity(
-                                                opacity: price == null || quantity == 0 ? 0.65 : 0.0,
+                                                opacity: price == null ||
+                                                        quantity == 0
+                                                    ? 0.65
+                                                    : 0.0,
                                                 child: Container(
                                                   color: Colors.white,
                                                 ),
-                                                duration: Duration(milliseconds: 300),
+                                                duration:
+                                                    Duration(milliseconds: 300),
                                               )
                                             ],
                                           ),
@@ -856,7 +1034,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         });
   }
 
-  double _getTotalFoodDetail(Price price, int quantity, List<AddOnsType> addOnsTypes) {
+  double _getTotalFoodDetail(
+      Price price, int quantity, List<AddOnsType> addOnsTypes) {
     double totalAmount = 0;
 
     if (price == null || quantity == 0) {
@@ -892,7 +1071,13 @@ class SearchRestaurantWidget extends StatelessWidget {
   final Function onTap;
   final Animation<double> scale;
 
-  const SearchRestaurantWidget({Key key, this.restaurant, this.index, this.selectedIndex, this.onTap, this.scale})
+  const SearchRestaurantWidget(
+      {Key key,
+      this.restaurant,
+      this.index,
+      this.selectedIndex,
+      this.onTap,
+      this.scale})
       : super(key: key);
 
   @override
@@ -903,13 +1088,16 @@ class SearchRestaurantWidget extends StatelessWidget {
       child: Opacity(
         opacity: restaurant.isOpen ? 1.0 : 0.3,
         child: Container(
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: [
-            BoxShadow(
-              color: shadow,
-              blurRadius: 7,
-              spreadRadius: -3,
-            )
-          ]),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: shadow,
+                  blurRadius: 7,
+                  spreadRadius: -3,
+                )
+              ]),
           child: Stack(
             overflow: Overflow.visible,
             children: <Widget>[
@@ -918,7 +1106,9 @@ class SearchRestaurantWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   ClipRRect(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10)),
                     child: CachedNetworkImage(
                       imageUrl: restaurant.image,
                       height: 100,
@@ -943,23 +1133,27 @@ class SearchRestaurantWidget extends StatelessWidget {
                       children: <Widget>[
                         Expanded(
                           child: Container(
-                            margin: EdgeInsets.only(right: 10, left: 10, top: 7, bottom: 7),
+                            margin: EdgeInsets.only(
+                                right: 10, left: 10, top: 7, bottom: 7),
                             alignment: Alignment.centerLeft,
                             child: Text(
                               restaurant.name,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(right: 10, left: 10, bottom: 7),
+                          margin:
+                              EdgeInsets.only(right: 10, left: 10, bottom: 7),
                           child: Text(
                             restaurant.cuisine,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 10, color: Colors.black45),
+                            style:
+                                TextStyle(fontSize: 10, color: Colors.black45),
                           ),
                         ),
                         Container(
@@ -991,7 +1185,8 @@ class SearchRestaurantWidget extends StatelessWidget {
                                   ),
                                   Text(
                                     restaurant.deliveryEstimation,
-                                    style: TextStyle(fontSize: 12, color: Colors.black),
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.black),
                                   ),
                                 ],
                               ),
@@ -1044,7 +1239,8 @@ class SearchRestaurantWidget extends StatelessWidget {
                               AppUtil.parseHtmlString(restaurant.badges[0]),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ),
                           CustomPaint(
@@ -1090,7 +1286,13 @@ class CustomTextField extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-          boxShadow: [BoxShadow(color: primary1, blurRadius: 10, spreadRadius: -4, offset: Offset(-4, 4))],
+          boxShadow: [
+            BoxShadow(
+                color: primary1,
+                blurRadius: 10,
+                spreadRadius: -4,
+                offset: Offset(-4, 4))
+          ],
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: primary1, width: 2)),
@@ -1142,7 +1344,9 @@ class SearchPageOrderBottomNavBar extends StatelessWidget {
     return Container(
       height: kBottomNavigationBarHeight,
       width: AppUtil.getScreenWidth(context),
-      decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.yellow[600]))),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Colors.yellow[600]))),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -1163,7 +1367,8 @@ class SearchPageOrderBottomNavBar extends StatelessWidget {
                       "$totalItem",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -1188,7 +1393,8 @@ class SearchPageOrderBottomNavBar extends StatelessWidget {
                       "${AppUtil.doubleRemoveZeroTrailing(totalAmount)}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -1204,7 +1410,9 @@ class SearchPageOrderBottomNavBar extends StatelessWidget {
                   Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: Colors.yellow[600], borderRadius: BorderRadius.only(topLeft: Radius.circular(18))),
+                        color: Colors.yellow[600],
+                        borderRadius:
+                            BorderRadius.only(topLeft: Radius.circular(18))),
                     child: Text(
                       buttonText,
                       style: TextStyle(

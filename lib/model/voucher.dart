@@ -19,6 +19,27 @@ class Voucher {
     this.text,
   });
 
+  Voucher copyWith({
+    String id,
+    String name,
+    String type,
+    double amount,
+    double rate,
+    String code,
+    String image,
+    String text,
+  }) {
+    return Voucher(
+        id: id ?? this.id,
+        rate: rate ?? this.rate,
+        amount: amount ?? this.amount,
+        code: code ?? this.code,
+        image: image ?? this.image,
+        name: name ?? this.name,
+        text: text ?? this.text,
+        type: type ?? this.type);
+  }
+
   factory Voucher.fromJson(Map<String, dynamic> parsedJson) {
     return Voucher(
         id: parsedJson['voucher_id'],

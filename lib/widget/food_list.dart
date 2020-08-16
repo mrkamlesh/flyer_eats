@@ -18,7 +18,7 @@ class FoodListWidget extends StatefulWidget {
   final EdgeInsets padding;
   final Function(int) onRemove;
   final Function(int) onAdd;
-  final String currencyIcon;
+  final String currencyCode;
 
   const FoodListWidget(
       {Key key,
@@ -29,14 +29,15 @@ class FoodListWidget extends StatefulWidget {
       this.padding,
       this.onAdd,
       this.onRemove,
-      this.currencyIcon})
+      this.currencyCode})
       : super(key: key);
 
   @override
   _FoodListWidgetState createState() => _FoodListWidgetState();
 }
 
-class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStateMixin {
+class _FoodListWidgetState extends State<FoodListWidget>
+    with TickerProviderStateMixin {
   int _selectedFood = -1;
   AnimationController _animationController;
   Animation<double> _scaleAnimation;
@@ -49,8 +50,8 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
       duration: itemClickedDuration,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale)
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.ease));
   }
 
   @override
@@ -70,7 +71,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
             (context, i) {
               return FoodList(
                 type: widget.type,
-                currencyIcon: widget.currencyIcon,
+                currencyCode: widget.currencyCode,
                 index: i,
                 scale: _scaleAnimation,
                 selectedIndex: _selectedFood,
@@ -95,7 +96,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                   (context, i) {
                     return FoodList(
                       type: widget.type,
-                      currencyIcon: widget.currencyIcon,
+                      currencyCode: widget.currencyCode,
                       index: i,
                       quantity: widget.cart.getFoodQuantity(widget.listFood[i]),
                       scale: _scaleAnimation,
@@ -115,7 +116,8 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                     crossAxisCount: 2,
                     mainAxisSpacing: 20,
                     crossAxisSpacing: 20,
-                    childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 235)));
+                    childAspectRatio:
+                        AppUtil.getScreenWidth(context) / 2 / 235)));
       case FoodListViewType.search:
         return SliverPadding(
             padding: widget.padding,
@@ -124,7 +126,7 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                   (context, i) {
                     return FoodList(
                       type: widget.type,
-                      currencyIcon: widget.currencyIcon,
+                      currencyCode: widget.currencyCode,
                       index: i,
                       quantity: widget.cart.getFoodQuantity(widget.listFood[i]),
                       scale: _scaleAnimation,
@@ -144,7 +146,8 @@ class _FoodListWidgetState extends State<FoodListWidget> with TickerProviderStat
                     crossAxisCount: 2,
                     mainAxisSpacing: 20,
                     crossAxisSpacing: 20,
-                    childAspectRatio: AppUtil.getScreenWidth(context) / 2 / 235)));
+                    childAspectRatio:
+                        AppUtil.getScreenWidth(context) / 2 / 235)));
       default:
         return SliverToBoxAdapter();
     }
@@ -182,7 +185,7 @@ class FoodList extends StatelessWidget {
   final Animation<double> scale;
   final int quantity;
   final FoodListViewType type;
-  final String currencyIcon;
+  final String currencyCode;
 
   const FoodList(
       {Key key,
@@ -194,7 +197,7 @@ class FoodList extends StatelessWidget {
       this.scale,
       this.quantity,
       this.type,
-      this.currencyIcon})
+      this.currencyCode})
       : super(key: key);
 
   @override
@@ -219,7 +222,9 @@ class FoodList extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                       color: Colors.yellow[600],
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10))),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[Icon(Icons.add), Text("Add")],
@@ -234,7 +239,9 @@ class FoodList extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: Colors.yellow[600],
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[Icon(Icons.add), Text("Add")],
@@ -247,7 +254,8 @@ class FoodList extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
           color: Colors.yellow[600],
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -256,16 +264,22 @@ class FoodList extends StatelessWidget {
             onTap: onTapRemove,
             child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.yellow[700], borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
+                    color: Colors.yellow[700],
+                    borderRadius:
+                        BorderRadius.only(topLeft: Radius.circular(10))),
                 child: Icon(Icons.remove)),
           )),
-          Expanded(child: Container(alignment: Alignment.center, child: Text("$quantity"))),
+          Expanded(
+              child: Container(
+                  alignment: Alignment.center, child: Text("$quantity"))),
           Expanded(
               child: GestureDetector(
             onTap: onTapAdd,
             child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.yellow[700], borderRadius: BorderRadius.only(bottomRight: Radius.circular(10))),
+                    color: Colors.yellow[700],
+                    borderRadius:
+                        BorderRadius.only(bottomRight: Radius.circular(10))),
                 child: Icon(Icons.add)),
           ))
         ],
@@ -301,7 +315,9 @@ class FoodList extends StatelessWidget {
                       Container(
                         //margin: EdgeInsets.only(left: 10, top: 10, right: 10),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10)),
                           child: CachedNetworkImage(
                             imageUrl: food.image,
                             width: (AppUtil.getScreenWidth(context) - 30) / 2,
@@ -312,7 +328,9 @@ class FoodList extends StatelessWidget {
                               return Shimmer.fromColors(
                                   child: Container(
                                     height: 90,
-                                    width: (AppUtil.getScreenWidth(context) - 30) / 2,
+                                    width:
+                                        (AppUtil.getScreenWidth(context) - 30) /
+                                            2,
                                     color: Colors.black,
                                   ),
                                   baseColor: Colors.grey[300],
@@ -337,7 +355,8 @@ class FoodList extends StatelessWidget {
                                         ? Container(
                                             height: 12,
                                             width: 12,
-                                            margin: EdgeInsets.only(right: 10, top: 3),
+                                            margin: EdgeInsets.only(
+                                                right: 10, top: 3),
                                             child: SvgPicture.asset(
                                               "assets/box_circle.svg",
                                               width: 12,
@@ -347,7 +366,8 @@ class FoodList extends StatelessWidget {
                                         : Container(
                                             height: 12,
                                             width: 12,
-                                            margin: EdgeInsets.only(right: 10, top: 3),
+                                            margin: EdgeInsets.only(
+                                                right: 10, top: 3),
                                             child: SvgPicture.asset(
                                               "assets/box_circle_red.svg",
                                               width: 12,
@@ -359,7 +379,9 @@ class FoodList extends StatelessWidget {
                                         food.title,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],
@@ -397,15 +419,25 @@ class FoodList extends StatelessWidget {
                                     children: <Widget>[
                                       food.discount > 0
                                           ? Text(
-                                              "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price.price),
-                                              style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                              AppUtil.getCurrencyString(
+                                                      currencyCode) +
+                                                  " " +
+                                                  AppUtil
+                                                      .doubleRemoveZeroTrailing(
+                                                          food.price.price),
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  decoration: TextDecoration
+                                                      .lineThrough),
                                             )
                                           : SizedBox(),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           SvgPicture.asset(
-                                            currencyIcon,
+                                            AppUtil.getCurrencyIcon(
+                                                currencyCode),
                                             height: 8,
                                             width: 8,
                                             color: Colors.black,
@@ -418,7 +450,9 @@ class FoodList extends StatelessWidget {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -429,7 +463,8 @@ class FoodList extends StatelessWidget {
                             ),
                             quantity == 0
                                 ? Expanded(flex: 5, child: addButton)
-                                : Expanded(flex: 5, child: changeQuantityButton),
+                                : Expanded(
+                                    flex: 5, child: changeQuantityButton),
                           ],
                         ),
                       ),
@@ -459,12 +494,16 @@ class FoodList extends StatelessWidget {
                             food.badge,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
                         ),
                         CustomPaint(
                           size: Size(5, 5),
-                          painter: FoodTrianglePainter(color: food.getBadgeColor()),
+                          painter:
+                              FoodTrianglePainter(color: food.getBadgeColor()),
                         )
                       ],
                     ),
@@ -532,12 +571,16 @@ class FoodList extends StatelessWidget {
                                   Container(
                                     margin: EdgeInsets.only(right: 10),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Container(
-                                          margin: EdgeInsets.only(left: 10, right: 10, top: 3),
+                                          margin: EdgeInsets.only(
+                                              left: 10, right: 10, top: 3),
                                           child: SvgPicture.asset(
-                                            food.isVeg ? "assets/box_circle.svg" : "assets/box_circle_red.svg",
+                                            food.isVeg
+                                                ? "assets/box_circle.svg"
+                                                : "assets/box_circle_red.svg",
                                             width: 12,
                                             height: 12,
                                           ),
@@ -547,20 +590,30 @@ class FoodList extends StatelessWidget {
                                             food.title,
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  food.description != null && food.description != ""
+                                  food.description != null &&
+                                          food.description != ""
                                       ? Container(
-                                          margin: EdgeInsets.only(top: 5, bottom: 10, right: 10, left: 32),
+                                          margin: EdgeInsets.only(
+                                              top: 5,
+                                              bottom: 10,
+                                              right: 10,
+                                              left: 32),
                                           child: Text(
-                                            AppUtil.parseHtmlString(food.description),
+                                            AppUtil.parseHtmlString(
+                                                food.description),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(color: Colors.black54, fontSize: 10),
+                                            style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 10),
                                           ),
                                         )
                                       : SizedBox(),
@@ -571,7 +624,8 @@ class FoodList extends StatelessWidget {
                               height: 43,
                               margin: EdgeInsets.only(left: 32),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
                                   Expanded(
@@ -581,20 +635,32 @@ class FoodList extends StatelessWidget {
                                       child: FittedBox(
                                         fit: BoxFit.none,
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: <Widget>[
                                             food.discount > 0
                                                 ? Text(
-                                                    "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price.price),
-                                                    style:
-                                                        TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                                    AppUtil.getCurrencyString(
+                                                            currencyCode) +
+                                                        " " +
+                                                        AppUtil
+                                                            .doubleRemoveZeroTrailing(
+                                                                food.price
+                                                                    .price),
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough),
                                                   )
                                                 : SizedBox(),
                                             Row(
                                               children: <Widget>[
                                                 SvgPicture.asset(
-                                                  currencyIcon,
+                                                  AppUtil.getCurrencyIcon(
+                                                      currencyCode),
                                                   height: 11,
                                                   width: 11,
                                                   color: Colors.black,
@@ -605,8 +671,12 @@ class FoodList extends StatelessWidget {
                                                 Text(
                                                   "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
                                               ],
                                             ),
@@ -617,7 +687,9 @@ class FoodList extends StatelessWidget {
                                   ),
                                   quantity == 0
                                       ? Expanded(flex: 11, child: addButton)
-                                      : Expanded(flex: 11, child: changeQuantityButton),
+                                      : Expanded(
+                                          flex: 11,
+                                          child: changeQuantityButton),
                                 ],
                               ),
                             ),
@@ -651,12 +723,16 @@ class FoodList extends StatelessWidget {
                             food.badge,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
                         ),
                         CustomPaint(
                           size: Size(5, 5),
-                          painter: FoodTrianglePainter(color: food.getBadgeColor()),
+                          painter:
+                              FoodTrianglePainter(color: food.getBadgeColor()),
                         )
                       ],
                     ),
@@ -693,7 +769,9 @@ class FoodList extends StatelessWidget {
                       Container(
                         //margin: EdgeInsets.only(left: 10, top: 10, right: 10),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10)),
                           child: CachedNetworkImage(
                             imageUrl: food.image,
                             width: (AppUtil.getScreenWidth(context) - 30) / 2,
@@ -704,7 +782,9 @@ class FoodList extends StatelessWidget {
                               return Shimmer.fromColors(
                                   child: Container(
                                     height: 90,
-                                    width: (AppUtil.getScreenWidth(context) - 30) / 2,
+                                    width:
+                                        (AppUtil.getScreenWidth(context) - 30) /
+                                            2,
                                     color: Colors.black,
                                   ),
                                   baseColor: Colors.grey[300],
@@ -729,7 +809,8 @@ class FoodList extends StatelessWidget {
                                         ? Container(
                                             height: 12,
                                             width: 12,
-                                            margin: EdgeInsets.only(right: 10, top: 3),
+                                            margin: EdgeInsets.only(
+                                                right: 10, top: 3),
                                             child: SvgPicture.asset(
                                               "assets/box_circle.svg",
                                               width: 12,
@@ -739,7 +820,8 @@ class FoodList extends StatelessWidget {
                                         : Container(
                                             height: 12,
                                             width: 12,
-                                            margin: EdgeInsets.only(right: 10, top: 3),
+                                            margin: EdgeInsets.only(
+                                                right: 10, top: 3),
                                             child: SvgPicture.asset(
                                               "assets/box_circle_red.svg",
                                               width: 12,
@@ -751,7 +833,9 @@ class FoodList extends StatelessWidget {
                                         food.title,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],
@@ -789,15 +873,25 @@ class FoodList extends StatelessWidget {
                                     children: <Widget>[
                                       food.discount > 0
                                           ? Text(
-                                              "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(food.price.price),
-                                              style: TextStyle(fontSize: 10, decoration: TextDecoration.lineThrough),
+                                              AppUtil.getCurrencyString(
+                                                      currencyCode) +
+                                                  " " +
+                                                  AppUtil
+                                                      .doubleRemoveZeroTrailing(
+                                                          food.price.price),
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  decoration: TextDecoration
+                                                      .lineThrough),
                                             )
                                           : SizedBox(),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           SvgPicture.asset(
-                                            currencyIcon,
+                                            AppUtil.getCurrencyIcon(
+                                                currencyCode),
                                             height: 8,
                                             width: 8,
                                             color: Colors.black,
@@ -810,7 +904,9 @@ class FoodList extends StatelessWidget {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -821,7 +917,8 @@ class FoodList extends StatelessWidget {
                             ),
                             quantity == 0
                                 ? Expanded(flex: 5, child: addButton)
-                                : Expanded(flex: 5, child: changeQuantityButton),
+                                : Expanded(
+                                    flex: 5, child: changeQuantityButton),
                           ],
                         ),
                       ),
@@ -851,12 +948,16 @@ class FoodList extends StatelessWidget {
                             food.badge,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
                         ),
                         CustomPaint(
                           size: Size(5, 5),
-                          painter: FoodTrianglePainter(color: food.getBadgeColor()),
+                          painter:
+                              FoodTrianglePainter(color: food.getBadgeColor()),
                         )
                       ],
                     ),

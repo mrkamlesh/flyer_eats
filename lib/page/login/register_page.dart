@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:clients/model/location.dart';
+import 'package:clients/page/select_location_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -28,7 +29,9 @@ class RegisterPage extends StatefulWidget {
   deviceId: "DASDASDA",
   avatar: _photo*/
 
-  const RegisterPage({Key key, this.phoneNumber, this.email, this.name, this.imageUrl}) : super(key: key);
+  const RegisterPage(
+      {Key key, this.phoneNumber, this.email, this.name, this.imageUrl})
+      : super(key: key);
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -58,7 +61,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).viewInsets.bottom > 0.0 && _controller.hasClients) {
+    if (MediaQuery.of(context).viewInsets.bottom > 0.0 &&
+        _controller.hasClients) {
       _controller.animateTo(MediaQuery.of(context).viewInsets.bottom,
           duration: Duration(milliseconds: 200), curve: Curves.ease);
     }
@@ -67,7 +71,10 @@ class _RegisterPageState extends State<RegisterPage> {
       create: (context) {
         return _bloc
           ..add(InitRegisterEvent(
-              email: widget.email, name: widget.name, imageUrl: widget.imageUrl, phoneNumber: widget.phoneNumber));
+              email: widget.email,
+              name: widget.name,
+              imageUrl: widget.imageUrl,
+              phoneNumber: widget.phoneNumber));
       },
       child: BlocConsumer<RegisterBloc, RegisterState>(
         listener: (context, state) {
@@ -85,7 +92,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     title: Text(
                       "Registration Error",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -140,7 +148,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   AppUtil.getAppLogo(),
                                   alignment: Alignment.center,
                                   width: AppUtil.getScreenWidth(context) - 140,
-                                  height: 0.46 * (AppUtil.getScreenWidth(context) - 140),
+                                  height: 0.46 *
+                                      (AppUtil.getScreenWidth(context) - 140),
                                 )),
                           ),
                         ),
@@ -148,10 +157,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           margin: EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
                           padding: EdgeInsets.only(
-                              top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                              top: 20,
+                              left: horizontalPaddingDraggable,
+                              right: horizontalPaddingDraggable),
                           alignment: Alignment.center,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -163,7 +175,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   "DETAILS",
-                                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Transform.translate(
@@ -175,27 +189,37 @@ class _RegisterPageState extends State<RegisterPage> {
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 30),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       children: <Widget>[
                                         Container(
                                           decoration: BoxDecoration(
-                                              shape: BoxShape.circle, border: Border.all(color: Colors.black12)),
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Colors.black12)),
                                           width: 100,
                                           height: 100,
-                                          child: state.registerPost.avatar != null
+                                          child: state.registerPost.avatar !=
+                                                  null
                                               ? ClipOval(
                                                   child: FittedBox(
-                                                      alignment: Alignment.center,
+                                                      alignment:
+                                                          Alignment.center,
                                                       fit: BoxFit.cover,
-                                                      child: Image.file(state.registerPost.avatar)),
+                                                      child: Image.file(state
+                                                          .registerPost
+                                                          .avatar)),
                                                 )
                                               : widget.imageUrl != null
                                                   ? ClipOval(
                                                       child: FittedBox(
-                                                          alignment: Alignment.center,
+                                                          alignment:
+                                                              Alignment.center,
                                                           fit: BoxFit.cover,
-                                                          child: Image.network(widget.imageUrl)),
+                                                          child: Image.network(
+                                                              widget.imageUrl)),
                                                     )
                                                   : FittedBox(
                                                       fit: BoxFit.none,
@@ -229,12 +253,15 @@ class _RegisterPageState extends State<RegisterPage> {
                                 margin: EdgeInsets.only(bottom: 20),
                                 child: TextField(
                                   enabled: false,
-                                  controller: TextEditingController(text: widget.email),
+                                  controller:
+                                      TextEditingController(text: widget.email),
                                   decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: 15),
                                     border: InputBorder.none,
                                     hintText: "Enter your email",
-                                    hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                    hintStyle: TextStyle(
+                                        fontSize: 16, color: Colors.black38),
                                   ),
                                 ),
                               ),
@@ -249,41 +276,61 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: TextField(
                                   controller: _nameController,
                                   decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: 15),
                                     border: InputBorder.none,
                                     hintText: "Your name here",
-                                    hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                    hintStyle: TextStyle(
+                                        fontSize: 16, color: Colors.black38),
                                   ),
                                 ),
                               ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(color: Colors.black12),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                margin: EdgeInsets.only(bottom: 10),
-                                child: DropdownButton<Location>(
-                                  underline: Container(),
-                                  isExpanded: true,
-                                  hint: Text("Select Your Location"),
-                                  value: state.registerPost.location,
-                                  icon: Icon(Icons.expand_more),
-                                  items: state.listLocations
-                                      .map<DropdownMenuItem<Location>>((value) => new DropdownMenuItem<Location>(
-                                            value: value,
-                                            child: Container(
-                                              child: Text(
-                                                value.address,
+                              InkWell(
+                                onTap: () async {
+                                  Location location =
+                                      await Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                    return SelectLocationPage(
+                                      isRedirectToHomePage: false,
+                                    );
+                                  }));
+
+                                  if (location != null) {
+                                    _bloc.add(ChangeLocation(location));
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(color: Colors.black12),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: state.registerPost.location ==
+                                                null
+                                            ? Text(
+                                                "Select Your Location",
+                                                maxLines: 1,
+                                                style: TextStyle(
+                                                    color: Colors.black38,
+                                                    fontSize: 16),
+                                              )
+                                            : Text(
+                                                state.registerPost.location
+                                                    .address,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(fontSize: 16),
                                               ),
-                                            ),
-                                          ))
-                                      .toList(),
-                                  onChanged: (i) {
-                                    _bloc.add(ChangeLocation(i));
-                                  },
+                                      ),
+                                      Icon(Icons.arrow_drop_down)
+                                    ],
+                                  ),
                                 ),
                               ),
                               Row(
@@ -293,17 +340,20 @@ class _RegisterPageState extends State<RegisterPage> {
                                     onChanged: (value) {
                                       _bloc.add(ChangeIsUseReferral(value));
                                     },
-                                    visualDensity: VisualDensity(vertical: 0, horizontal: 0),
+                                    visualDensity: VisualDensity(
+                                        vertical: 0, horizontal: 0),
                                   ),
                                   Expanded(child: Text("Use Referral Code"))
                                 ],
                               ),
                               state.registerPost.isUseReferral
                                   ? Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 20),
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        border: Border.all(color: Colors.black12),
+                                        border:
+                                            Border.all(color: Colors.black12),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       margin: EdgeInsets.only(top: 10),
@@ -313,10 +363,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                           _bloc.add(ChangeReferral(value));
                                         },
                                         decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                          contentPadding: EdgeInsets.symmetric(
+                                              vertical: 15),
                                           border: InputBorder.none,
                                           hintText: "Enter referral code here",
-                                          hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                          hintStyle: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black38),
                                         ),
                                       ),
                                     )
@@ -336,17 +389,21 @@ class _RegisterPageState extends State<RegisterPage> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       alignment: Alignment.center,
-                                      margin: EdgeInsets.only(top: 20, bottom: 30),
+                                      margin:
+                                          EdgeInsets.only(top: 20, bottom: 30),
                                       child: Text(
                                         "CONFIRM",
                                         style: TextStyle(fontSize: 20),
                                       ),
                                     ),
                                     AnimatedOpacity(
-                                      opacity: state.registerPost.isValid() ? 0.0 : 0.5,
+                                      opacity: state.registerPost.isValid()
+                                          ? 0.0
+                                          : 0.5,
                                       child: Container(
                                         height: 50,
-                                        margin: EdgeInsets.only(top: 20, bottom: 30),
+                                        margin: EdgeInsets.only(
+                                            top: 20, bottom: 30),
                                         color: Colors.white,
                                       ),
                                       duration: Duration(milliseconds: 300),
@@ -363,7 +420,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 (state is LoadingRegister || state is LoadingLocations)
                     ? Container(
-                        decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                        decoration:
+                            BoxDecoration(color: Colors.black.withOpacity(0.5)),
                         child: Center(
                           child: SpinKitCircle(
                             color: Colors.white,
@@ -388,13 +446,15 @@ class _RegisterPageState extends State<RegisterPage> {
             child: new Container(
               decoration: new BoxDecoration(
                   borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(10.0), topRight: const Radius.circular(10.0))),
+                      topLeft: const Radius.circular(10.0),
+                      topRight: const Radius.circular(10.0))),
               child: new Wrap(
                 children: <Widget>[
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      PickedFile file = await ImagePicker().getImage(source: ImageSource.camera, imageQuality: 20);
+                      PickedFile file = await ImagePicker().getImage(
+                          source: ImageSource.camera, imageQuality: 20);
                       if (file != null) {
                         _bloc.add(ChangeAvatar(File(file.path)));
                       }
@@ -410,7 +470,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      PickedFile file = await ImagePicker().getImage(source: ImageSource.gallery);
+                      PickedFile file = await ImagePicker()
+                          .getImage(source: ImageSource.gallery);
                       if (file != null) {
                         _bloc.add(ChangeAvatar(File(file.path)));
                       }

@@ -34,13 +34,16 @@ class RestaurantPlaceOrderPage extends StatefulWidget {
   final Location location;
   final User user;
 
-  const RestaurantPlaceOrderPage({Key key, this.location, this.user}) : super(key: key);
+  const RestaurantPlaceOrderPage({Key key, this.location, this.user})
+      : super(key: key);
 
   @override
-  _RestaurantPlaceOrderPageState createState() => _RestaurantPlaceOrderPageState();
+  _RestaurantPlaceOrderPageState createState() =>
+      _RestaurantPlaceOrderPageState();
 }
 
-class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> with SingleTickerProviderStateMixin {
+class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
+    with SingleTickerProviderStateMixin {
   AddressBloc _addressBloc;
 
   Razorpay _razorpay;
@@ -83,7 +86,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                   endDrawer: EndDrawer(),
                   body: BlocBuilder<FoodOrderBloc, FoodOrderState>(
                     builder: (context, state) {
-                      if (state is InitialFoodOrderState || state is CartChangeState || state is ConfirmCartState) {
+                      if (state is InitialFoodOrderState ||
+                          state is CartChangeState ||
+                          state is ConfirmCartState) {
                         return Container();
                       } else if (state is NoItemsInCart) {
                         return Stack(
@@ -130,9 +135,12 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                               ),
                             ),
                             DraggableScrollableSheet(
-                              initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
-                                  AppUtil.getScreenHeight(context),
-                              minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                              initialChildSize:
+                                  (AppUtil.getScreenHeight(context) -
+                                          AppUtil.getToolbarHeight(context)) /
+                                      AppUtil.getScreenHeight(context),
+                              minChildSize: (AppUtil.getScreenHeight(context) -
+                                      AppUtil.getToolbarHeight(context)) /
                                   AppUtil.getScreenHeight(context),
                               maxChildSize: 1.0,
                               builder: (context, controller) {
@@ -140,15 +148,21 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                                    padding: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                                            topRight: Radius.circular(32),
+                                            topLeft: Radius.circular(32))),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: horizontalPaddingDraggable),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: <Widget>[
                                         Image.asset(
                                           "assets/no available items cart.jpg",
-                                          width: AppUtil.getScreenWidth(context) - 50,
+                                          width:
+                                              AppUtil.getScreenWidth(context) -
+                                                  50,
                                         ),
                                         /*SvgPicture.asset(
                                           "assets/no available items cart.svg",
@@ -161,20 +175,24 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                         Text(
                                           "Start browsing and add item",
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18),
                                         ),
                                         SizedBox(
                                           height: 50,
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            Navigator.pushReplacementNamed(context, "/home");
+                                            Navigator.pushReplacementNamed(
+                                                context, "/home");
                                           },
                                           child: Container(
                                             height: 50,
                                             decoration: BoxDecoration(
                                               color: Color(0xFFFFB531),
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
                                             alignment: Alignment.center,
                                             child: Text(
@@ -202,7 +220,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                 child: FittedBox(
                                     fit: BoxFit.cover,
                                     child: CachedNetworkImage(
-                                      imageUrl: state.placeOrder.restaurant.image,
+                                      imageUrl:
+                                          state.placeOrder.restaurant.image,
                                       fit: BoxFit.cover,
                                       alignment: Alignment.center,
                                     )),
@@ -224,7 +243,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                       leading: "assets/back.svg",
                                       title: state.placeOrder.restaurant.name +
                                           " " +
-                                          state.placeOrder.foodCart.cartItemTotal().toString(),
+                                          state.placeOrder.foodCart
+                                              .cartItemTotal()
+                                              .toString(),
                                       onTapLeading: () {
                                         Navigator.pop(context);
                                       },
@@ -236,17 +257,21 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                             ],
                           ),
                           DraggableScrollableSheet(
-                            initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
-                                AppUtil.getScreenHeight(context),
-                            minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                            initialChildSize:
+                                (AppUtil.getScreenHeight(context) -
+                                        AppUtil.getToolbarHeight(context)) /
+                                    AppUtil.getScreenHeight(context),
+                            minChildSize: (AppUtil.getScreenHeight(context) -
+                                    AppUtil.getToolbarHeight(context)) /
                                 AppUtil.getScreenHeight(context),
                             maxChildSize: 1.0,
                             builder: (context, controller) {
                               return Container(
                                 decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(32),
+                                        topLeft: Radius.circular(32))),
                                 child: CustomScrollView(
                                   controller: controller,
                                   slivers: <Widget>[
@@ -262,11 +287,16 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                               child: Container(
                                             margin: EdgeInsets.only(
                                                 top: 20,
-                                                left: horizontalPaddingDraggable,
-                                                right: horizontalPaddingDraggable,
-                                                bottom: kBottomNavigationBarHeight + 160),
+                                                left:
+                                                    horizontalPaddingDraggable,
+                                                right:
+                                                    horizontalPaddingDraggable,
+                                                bottom:
+                                                    kBottomNavigationBarHeight +
+                                                        160),
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Center(
                                                   child: SpinKitCircle(
@@ -287,13 +317,20 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                               child: Container(
                                             margin: EdgeInsets.only(
                                                 top: 20,
-                                                left: horizontalPaddingDraggable,
-                                                right: horizontalPaddingDraggable,
-                                                bottom: kBottomNavigationBarHeight + 160),
+                                                left:
+                                                    horizontalPaddingDraggable,
+                                                right:
+                                                    horizontalPaddingDraggable,
+                                                bottom:
+                                                    kBottomNavigationBarHeight +
+                                                        160),
                                             child: Container(
-                                              child: loginState.user.defaultAddress == null
+                                              child: loginState.user
+                                                          .defaultAddress ==
+                                                      null
                                                   ? Text("No Address Found")
-                                                  : Text(state.placeOrder.message),
+                                                  : Text(
+                                                      state.placeOrder.message),
                                             ),
                                           ));
                                         } else {
@@ -302,15 +339,21 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                               children: <Widget>[
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
-                                                      vertical: horizontalPaddingDraggable,
-                                                      horizontal: horizontalPaddingDraggable),
+                                                      vertical:
+                                                          horizontalPaddingDraggable,
+                                                      horizontal:
+                                                          horizontalPaddingDraggable),
                                                   margin: EdgeInsets.only(
-                                                      left: horizontalPaddingDraggable,
-                                                      right: horizontalPaddingDraggable,
+                                                      left:
+                                                          horizontalPaddingDraggable,
+                                                      right:
+                                                          horizontalPaddingDraggable,
                                                       bottom: 20),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(18),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            18),
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: shadow,
@@ -320,11 +363,14 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                     ],
                                                   ),
                                                   child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: <Widget>[
                                                       Text(
                                                         "DELIVERY INSTRUCTION",
-                                                        style: TextStyle(fontSize: 16),
+                                                        style: TextStyle(
+                                                            fontSize: 16),
                                                       ),
                                                       SizedBox(
                                                         height: 5,
@@ -334,50 +380,86 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                       ),
                                                       TextField(
                                                         onChanged: (value) {
-                                                          BlocProvider.of<FoodOrderBloc>(context)
-                                                              .add(ChangeInstruction(value));
+                                                          BlocProvider.of<
+                                                                      FoodOrderBloc>(
+                                                                  context)
+                                                              .add(
+                                                                  ChangeInstruction(
+                                                                      value));
                                                         },
                                                         maxLines: 2,
                                                         decoration: InputDecoration(
                                                             contentPadding:
-                                                                EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                                                            hintText: "Enter your instruction here",
-                                                            hintStyle: TextStyle(fontSize: 12),
-                                                            border: InputBorder.none),
+                                                                EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            0,
+                                                                        horizontal:
+                                                                            0),
+                                                            hintText:
+                                                                "Enter your instruction here",
+                                                            hintStyle:
+                                                                TextStyle(
+                                                                    fontSize:
+                                                                        12),
+                                                            border: InputBorder
+                                                                .none),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
-                                                state.placeOrder.voucher.id == null
+                                                state.placeOrder.voucher.id ==
+                                                        null
                                                     ? GestureDetector(
                                                         onTap: () async {
-                                                          Voucher result = await Navigator.push(context,
-                                                              MaterialPageRoute(builder: (context) {
+                                                          Voucher result =
+                                                              await Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) {
                                                             return ApplyCouponPage(
-                                                              restaurant: state.placeOrder.restaurant,
-                                                              totalOrder: state.placeOrder.getTotal(),
+                                                              restaurant: state
+                                                                  .placeOrder
+                                                                  .restaurant,
+                                                              totalOrder: state
+                                                                  .placeOrder
+                                                                  .subTotal(),
                                                             );
                                                           }));
 
                                                           if (result != null) {
-                                                            BlocProvider.of<FoodOrderBloc>(context)
-                                                                .add(ApplyVoucher(result));
+                                                            BlocProvider.of<
+                                                                        FoodOrderBloc>(
+                                                                    context)
+                                                                .add(ApplyVoucher(
+                                                                    result));
                                                           }
                                                         },
                                                         child: Container(
                                                           height: 55,
-                                                          padding: EdgeInsets.symmetric(
-                                                              vertical: 17, horizontal: horizontalPaddingDraggable),
-                                                          margin: EdgeInsets.symmetric(
-                                                              horizontal: horizontalPaddingDraggable),
-                                                          decoration: BoxDecoration(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical: 17,
+                                                                  horizontal:
+                                                                      horizontalPaddingDraggable),
+                                                          margin: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      horizontalPaddingDraggable),
+                                                          decoration:
+                                                              BoxDecoration(
                                                             color: Colors.white,
-                                                            borderRadius: BorderRadius.circular(10),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
                                                             boxShadow: [
                                                               BoxShadow(
                                                                 color: shadow,
                                                                 blurRadius: 7,
-                                                                spreadRadius: -3,
+                                                                spreadRadius:
+                                                                    -3,
                                                               )
                                                             ],
                                                           ),
@@ -387,7 +469,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                                 "assets/discount.svg",
                                                                 height: 24,
                                                                 width: 24,
-                                                                color: Colors.black,
+                                                                color: Colors
+                                                                    .black,
                                                               ),
                                                               SizedBox(
                                                                 width: 17,
@@ -395,7 +478,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                               Expanded(
                                                                 child: Text(
                                                                   "APPLY COUPON",
-                                                                  style: TextStyle(fontSize: 16),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16),
                                                                 ),
                                                               )
                                                             ],
@@ -403,14 +488,27 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                         ),
                                                       )
                                                     : Container(
-                                                        height: 55,
-                                                        padding: EdgeInsets.symmetric(
-                                                            vertical: 17, horizontal: horizontalPaddingDraggable),
-                                                        margin: EdgeInsets.symmetric(
-                                                            horizontal: horizontalPaddingDraggable),
-                                                        decoration: BoxDecoration(
+                                                        height: state.placeOrder
+                                                                    .applyVoucherErrorMessage ==
+                                                                null
+                                                            ? 55
+                                                            : 115,
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 15,
+                                                                horizontal:
+                                                                    horizontalPaddingDraggable),
+                                                        margin: EdgeInsets.only(
+                                                            right:
+                                                                horizontalPaddingDraggable,
+                                                            left:
+                                                                horizontalPaddingDraggable),
+                                                        decoration:
+                                                            BoxDecoration(
                                                           color: Colors.white,
-                                                          borderRadius: BorderRadius.circular(10),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
                                                           boxShadow: [
                                                             BoxShadow(
                                                               color: shadow,
@@ -419,70 +517,150 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                             )
                                                           ],
                                                         ),
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            SvgPicture.asset(
-                                                              "assets/check.svg",
-                                                              height: 24,
-                                                              width: 24,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 17,
-                                                            ),
-                                                            Expanded(
-                                                              child: Text(
-                                                                state.placeOrder.voucher.name,
-                                                                style: TextStyle(fontSize: 16),
-                                                              ),
-                                                            ),
-                                                            InkWell(
-                                                              onTap: () async {
-                                                                Voucher result = await Navigator.push(context,
-                                                                    MaterialPageRoute(builder: (context) {
-                                                                  return ApplyCouponPage(
-                                                                    restaurant: state.placeOrder.restaurant,
-                                                                    totalOrder: state.placeOrder.getTotal(),
-                                                                  );
-                                                                }));
+                                                        child: Center(
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .stretch,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Row(
+                                                                children: <
+                                                                    Widget>[
+                                                                  SvgPicture
+                                                                      .asset(
+                                                                    state.placeOrder.applyVoucherErrorMessage ==
+                                                                            null
+                                                                        ? "assets/check.svg"
+                                                                        : "assets/warnings.svg",
+                                                                    height: 24,
+                                                                    width: 24,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 17,
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      state
+                                                                          .placeOrder
+                                                                          .voucher
+                                                                          .name,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16),
+                                                                    ),
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap:
+                                                                        () async {
+                                                                      Voucher result = await Navigator.push(
+                                                                          context,
+                                                                          MaterialPageRoute(builder:
+                                                                              (context) {
+                                                                        return ApplyCouponPage(
+                                                                          restaurant: state
+                                                                              .placeOrder
+                                                                              .restaurant,
+                                                                          totalOrder: state
+                                                                              .placeOrder
+                                                                              .getTotal(),
+                                                                        );
+                                                                      }));
 
-                                                                if (result != null) {
-                                                                  BlocProvider.of<FoodOrderBloc>(context)
-                                                                      .add(ApplyVoucher(result));
-                                                                }
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                "assets/add review icon.svg",
-                                                                height: 24,
-                                                                width: 24,
+                                                                      if (result !=
+                                                                          null) {
+                                                                        BlocProvider.of<FoodOrderBloc>(context)
+                                                                            .add(ApplyVoucher(result));
+                                                                      }
+                                                                    },
+                                                                    child: SvgPicture
+                                                                        .asset(
+                                                                      "assets/add review icon.svg",
+                                                                      height:
+                                                                          24,
+                                                                      width: 24,
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      BlocProvider.of<FoodOrderBloc>(
+                                                                              context)
+                                                                          .add(
+                                                                              RemoveVoucher());
+                                                                    },
+                                                                    child: SvgPicture
+                                                                        .asset(
+                                                                      "assets/remove.svg",
+                                                                      height:
+                                                                          24,
+                                                                      width: 24,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            InkWell(
-                                                              onTap: () {
-                                                                BlocProvider.of<FoodOrderBloc>(context)
-                                                                    .add(RemoveVoucher());
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                "assets/remove.svg",
-                                                                height: 24,
-                                                                width: 24,
-                                                              ),
-                                                            ),
-                                                          ],
+                                                              state.placeOrder
+                                                                          .applyVoucherErrorMessage !=
+                                                                      null
+                                                                  ? Expanded(
+                                                                      child:
+                                                                          Container(
+                                                                        margin: EdgeInsets.only(
+                                                                            top:
+                                                                                10),
+                                                                        padding:
+                                                                            EdgeInsets.all(7),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              Colors.red,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(4),
+                                                                        ),
+                                                                        child:
+                                                                            Align(
+                                                                          alignment:
+                                                                              Alignment.centerLeft,
+                                                                          child:
+                                                                              Text(
+                                                                            state.placeOrder.applyVoucherErrorMessage,
+                                                                            textAlign: TextAlign.start,
+                                                                            style:
+                                                                                TextStyle(color: Colors.white, fontSize: 12),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : SizedBox(),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                 Container(
                                                   height: 55,
                                                   margin: EdgeInsets.only(
                                                       top: 20,
-                                                      left: horizontalPaddingDraggable,
-                                                      right: horizontalPaddingDraggable),
-                                                  padding: EdgeInsets.only(top: 10, bottom: 10, left: 17, right: 17),
+                                                      left:
+                                                          horizontalPaddingDraggable,
+                                                      right:
+                                                          horizontalPaddingDraggable),
+                                                  padding: EdgeInsets.only(
+                                                      top: 10,
+                                                      bottom: 10,
+                                                      left: 17,
+                                                      right: 17),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(10),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: shadow,
@@ -492,16 +670,24 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                     ],
                                                   ),
                                                   child: Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     children: <Widget>[
                                                       SizedBox(
                                                         width: 25,
                                                         child: Checkbox(
-                                                            activeColor: Colors.green,
-                                                            value: state.placeOrder.isUseWallet,
+                                                            activeColor:
+                                                                Colors.green,
+                                                            value: state
+                                                                .placeOrder
+                                                                .isUseWallet,
                                                             onChanged: (value) {
-                                                              BlocProvider.of<FoodOrderBloc>(context)
-                                                                  .add(ChangeWalletUsage(value));
+                                                              BlocProvider.of<
+                                                                          FoodOrderBloc>(
+                                                                      context)
+                                                                  .add(ChangeWalletUsage(
+                                                                      value));
                                                             }),
                                                       ),
                                                       SizedBox(
@@ -510,15 +696,21 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                       Expanded(
                                                         child: Text(
                                                           "WALLET AMOUNT",
-                                                          style: TextStyle(fontSize: 16),
+                                                          style: TextStyle(
+                                                              fontSize: 16),
                                                         ),
                                                       ),
                                                       Row(
-                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
                                                         children: <Widget>[
                                                           SvgPicture.asset(
                                                             AppUtil.getCurrencyIcon(
-                                                                state.placeOrder.restaurant.currencyCode),
+                                                                state
+                                                                    .placeOrder
+                                                                    .restaurant
+                                                                    .currencyCode),
                                                             height: 10,
                                                             width: 10,
                                                           ),
@@ -526,10 +718,16 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                             width: 5,
                                                           ),
                                                           Text(
-                                                            AppUtil.doubleRemoveZeroTrailing(
-                                                                state.placeOrder.walletAmount -
-                                                                    state.placeOrder.getWalletUsed()),
-                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                                            AppUtil.doubleRemoveZeroTrailing(state
+                                                                    .placeOrder
+                                                                    .walletAmount -
+                                                                state.placeOrder
+                                                                    .getWalletUsed()),
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 16),
                                                           )
                                                         ],
                                                       )
@@ -539,17 +737,24 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                 Container(
                                                   margin: EdgeInsets.only(
                                                       top: 20,
-                                                      left: horizontalPaddingDraggable,
-                                                      right: horizontalPaddingDraggable,
+                                                      left:
+                                                          horizontalPaddingDraggable,
+                                                      right:
+                                                          horizontalPaddingDraggable,
                                                       bottom: 20),
                                                   padding: EdgeInsets.only(
-                                                      left: horizontalPaddingDraggable,
-                                                      right: horizontalPaddingDraggable,
-                                                      top: horizontalPaddingDraggable,
+                                                      left:
+                                                          horizontalPaddingDraggable,
+                                                      right:
+                                                          horizontalPaddingDraggable,
+                                                      top:
+                                                          horizontalPaddingDraggable,
                                                       bottom: 7),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(10),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: shadow,
@@ -561,36 +766,57 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                   child: Column(
                                                     children: <Widget>[
                                                       OrderRowItem(
-                                                        title: "Order",
-                                                        currencyIcon: AppUtil.getCurrencyIcon(
-                                                            state.placeOrder.restaurant.currencyCode),
+                                                        title: "Item Total",
+                                                        currencyIcon: AppUtil
+                                                            .getCurrencyIcon(state
+                                                                .placeOrder
+                                                                .restaurant
+                                                                .currencyCode),
                                                         color: Colors.black,
-                                                        amount: AppUtil.doubleRemoveZeroTrailing(
-                                                            state.placeOrder.subTotal()),
+                                                        amount: AppUtil
+                                                            .doubleRemoveZeroTrailing(
+                                                                state.placeOrder
+                                                                    .subTotal()),
                                                       ),
                                                       OrderRowItem(
-                                                        title: state.placeOrder.taxPrettyString,
-                                                        currencyIcon: AppUtil.getCurrencyIcon(
-                                                            state.placeOrder.restaurant.currencyCode),
+                                                        title: state.placeOrder
+                                                            .taxPrettyString,
+                                                        currencyIcon: AppUtil
+                                                            .getCurrencyIcon(state
+                                                                .placeOrder
+                                                                .restaurant
+                                                                .currencyCode),
                                                         color: Colors.black,
-                                                        amount: AppUtil.doubleRemoveZeroTrailing(
-                                                            state.placeOrder.taxCharges),
+                                                        amount: AppUtil
+                                                            .doubleRemoveZeroTrailing(
+                                                                state.placeOrder
+                                                                    .taxCharges),
                                                       ),
                                                       OrderRowItem(
                                                         title: "Packaging",
-                                                        currencyIcon: AppUtil.getCurrencyIcon(
-                                                            state.placeOrder.restaurant.currencyCode),
+                                                        currencyIcon: AppUtil
+                                                            .getCurrencyIcon(state
+                                                                .placeOrder
+                                                                .restaurant
+                                                                .currencyCode),
                                                         color: Colors.black,
-                                                        amount: AppUtil.doubleRemoveZeroTrailing(
-                                                            state.placeOrder.packagingCharges),
+                                                        amount: AppUtil
+                                                            .doubleRemoveZeroTrailing(
+                                                                state.placeOrder
+                                                                    .packagingCharges),
                                                       ),
                                                       OrderRowItem(
                                                         title: "Delivery Fee",
-                                                        currencyIcon: AppUtil.getCurrencyIcon(
-                                                            state.placeOrder.restaurant.currencyCode),
+                                                        currencyIcon: AppUtil
+                                                            .getCurrencyIcon(state
+                                                                .placeOrder
+                                                                .restaurant
+                                                                .currencyCode),
                                                         color: Colors.black,
-                                                        amount: AppUtil.doubleRemoveZeroTrailing(
-                                                            state.placeOrder.deliveryCharges),
+                                                        amount: AppUtil
+                                                            .doubleRemoveZeroTrailing(
+                                                                state.placeOrder
+                                                                    .deliveryCharges),
                                                       ),
                                                       /*OrderRowItem(
                                                         title: "DISCOUNT FOOD",
@@ -599,51 +825,80 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                             state.placeOrder.getDiscountFoodTotal()),
                                                       ),*/
                                                       OrderRowItem(
-                                                        title: state.placeOrder.discountOrderPrettyString,
-                                                        currencyIcon: AppUtil.getCurrencyIcon(
-                                                            state.placeOrder.restaurant.currencyCode),
+                                                        title: state.placeOrder
+                                                            .discountOrderPrettyString,
+                                                        currencyIcon: AppUtil
+                                                            .getCurrencyIcon(state
+                                                                .placeOrder
+                                                                .restaurant
+                                                                .currencyCode),
                                                         color: Colors.green,
-                                                        amount: AppUtil.doubleRemoveZeroTrailing(
-                                                            state.placeOrder.discountOrder),
+                                                        amount: AppUtil
+                                                            .doubleRemoveZeroTrailing(
+                                                                state.placeOrder
+                                                                    .discountOrder),
                                                       ),
                                                       OrderRowItem(
                                                         title: "Coupon/Voucher",
-                                                        currencyIcon: AppUtil.getCurrencyIcon(
-                                                            state.placeOrder.restaurant.currencyCode),
+                                                        currencyIcon: AppUtil
+                                                            .getCurrencyIcon(state
+                                                                .placeOrder
+                                                                .restaurant
+                                                                .currencyCode),
                                                         color: Colors.green,
-                                                        amount: AppUtil.doubleRemoveZeroTrailing(
-                                                            state.placeOrder.voucher.amount),
+                                                        amount: AppUtil
+                                                            .doubleRemoveZeroTrailing(
+                                                                state
+                                                                    .placeOrder
+                                                                    .voucher
+                                                                    .amount),
                                                       ),
                                                       Container(
-                                                        margin: EdgeInsets.only(bottom: 13),
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 13),
                                                         child: Divider(
                                                           height: 1,
                                                           color: Colors.black54,
                                                         ),
                                                       ),
                                                       OrderRowItem(
-                                                          title: "TOTAL ORDER AMOUNT",
-                                                          currencyIcon: AppUtil.getCurrencyIcon(
-                                                              state.placeOrder.restaurant.currencyCode),
+                                                          title: "Total",
+                                                          currencyIcon: AppUtil
+                                                              .getCurrencyIcon(state
+                                                                  .placeOrder
+                                                                  .restaurant
+                                                                  .currencyCode),
                                                           color: Colors.black,
-                                                          amount: AppUtil.doubleRemoveZeroTrailing(
-                                                              state.placeOrder.getTotal())),
+                                                          amount: AppUtil
+                                                              .doubleRemoveZeroTrailing(state
+                                                                  .placeOrder
+                                                                  .getTotal())),
                                                     ],
                                                   ),
                                                 ),
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
-                                                      vertical: horizontalPaddingDraggable,
-                                                      horizontal: horizontalPaddingDraggable),
+                                                      vertical:
+                                                          horizontalPaddingDraggable,
+                                                      horizontal:
+                                                          horizontalPaddingDraggable),
                                                   margin: EdgeInsets.only(
-                                                      left: horizontalPaddingDraggable,
-                                                      right: horizontalPaddingDraggable,
-                                                      bottom: state.placeOrder.transactionType == "self-pickup"
-                                                          ? kBottomNavigationBarHeight + 30
-                                                          : kBottomNavigationBarHeight + 170),
+                                                      left:
+                                                          horizontalPaddingDraggable,
+                                                      right:
+                                                          horizontalPaddingDraggable,
+                                                      bottom: state.placeOrder
+                                                                  .transactionType ==
+                                                              "self-pickup"
+                                                          ? kBottomNavigationBarHeight +
+                                                              30
+                                                          : kBottomNavigationBarHeight +
+                                                              170),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(18),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            18),
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: shadow,
@@ -653,18 +908,24 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                     ],
                                                   ),
                                                   child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: <Widget>[
                                                       Text(
                                                         "DELIVERY TIME",
-                                                        style: TextStyle(fontSize: 16),
+                                                        style: TextStyle(
+                                                            fontSize: 16),
                                                       ),
                                                       SizedBox(
                                                         height: 5,
                                                       ),
                                                       Text(
                                                         "Choose time when order will be delivered",
-                                                        style: TextStyle(color: Colors.black45, fontSize: 12),
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black45,
+                                                            fontSize: 12),
                                                       ),
                                                       SizedBox(
                                                         height: 5,
@@ -677,44 +938,65 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                       ),
                                                       InkWell(
                                                         onTap: () {
-                                                          showDeliveryOptions(state.placeOrder);
+                                                          showDeliveryOptions(
+                                                              state.placeOrder);
                                                         },
                                                         child: Row(
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
                                                           children: <Widget>[
                                                             Row(
-                                                              children: <Widget>[
-                                                                SvgPicture.asset(
+                                                              children: <
+                                                                  Widget>[
+                                                                SvgPicture
+                                                                    .asset(
                                                                   "assets/calendar.svg",
                                                                   height: 18,
                                                                   width: 18,
-                                                                  color: Colors.black,
+                                                                  color: Colors
+                                                                      .black,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 5,
                                                                 ),
                                                                 Text(
-                                                                  state.placeOrder.getDeliveryDatePretty(),
-                                                                  style: TextStyle(fontSize: 14),
+                                                                  state
+                                                                      .placeOrder
+                                                                      .getDeliveryDatePretty(),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          14),
                                                                 )
                                                               ],
                                                             ),
-                                                            Expanded(child: Container()),
+                                                            Expanded(
+                                                                child:
+                                                                    Container()),
                                                             Row(
-                                                              children: <Widget>[
-                                                                SvgPicture.asset(
+                                                              children: <
+                                                                  Widget>[
+                                                                SvgPicture
+                                                                    .asset(
                                                                   "assets/clock.svg",
                                                                   height: 18,
                                                                   width: 18,
-                                                                  color: Colors.black,
+                                                                  color: Colors
+                                                                      .black,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 5,
                                                                 ),
                                                                 Text(
-                                                                  state.placeOrder.getDeliveryTime(),
-                                                                  style: TextStyle(fontSize: 14),
+                                                                  state
+                                                                      .placeOrder
+                                                                      .getDeliveryTime(),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          14),
                                                                 )
                                                               ],
                                                             ),
@@ -722,7 +1004,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                                               width: 30,
                                                             ),
                                                             Icon(
-                                                              Icons.arrow_forward_ios,
+                                                              Icons
+                                                                  .arrow_forward_ios,
                                                               size: 18,
                                                             )
                                                           ],
@@ -750,27 +1033,36 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                     ? FoodListDeliveryInformation(
                                         address: state.placeOrder.address,
                                         token: state.placeOrder.user.token,
-                                        foodOrderBloc: BlocProvider.of<FoodOrderBloc>(context),
+                                        foodOrderBloc:
+                                            BlocProvider.of<FoodOrderBloc>(
+                                                context),
                                         addressBloc: _addressBloc,
                                         contact: state.placeOrder.contact,
-                                        deliveryEstimation: state.placeOrder.restaurant.deliveryEstimation,
+                                        deliveryEstimation: state.placeOrder
+                                            .restaurant.deliveryEstimation,
                                       )
                                     : Container(),
                                 OrderBottomNavBar(
                                   isValid: state.placeOrder.isValid,
-                                  currencyIcon: AppUtil.getCurrencyIcon(state.placeOrder.restaurant.currencyCode),
+                                  currencyIcon: AppUtil.getCurrencyIcon(
+                                      state.placeOrder.restaurant.currencyCode),
                                   onButtonTap: state.placeOrder.isValid
                                       ? () {
                                           placeOrderButtonTap(state.placeOrder);
                                         }
                                       : () {},
-                                  showCurrency: (state is LoadingGetPayments) ? false : true,
+                                  showCurrency: (state is LoadingGetPayments)
+                                      ? false
+                                      : true,
                                   amount: (state is LoadingGetPayments)
                                       ? "..."
                                       : AppUtil.doubleRemoveZeroTrailing(
-                                          state.placeOrder.getTotal() - state.placeOrder.getWalletUsed()),
+                                          state.placeOrder.getTotal() -
+                                              state.placeOrder.getWalletUsed()),
                                   buttonText: "PLACE ORDER",
-                                  description: (state is LoadingGetPayments) ? "Calculating..." : "Total Amount",
+                                  description: (state is LoadingGetPayments)
+                                      ? "Calculating..."
+                                      : "Total Amount",
                                 ),
                               ],
                             ),
@@ -779,11 +1071,14 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                             listener: (context, state) {
                               if (state is SuccessPlaceOrder) {
                                 if (state.placeOrder.isChangePrimaryContact) {
-                                  BlocProvider.of<LoginBloc>(context)
-                                      .add(UpdatePrimaryContact(state.placeOrder.contact));
+                                  BlocProvider.of<LoginBloc>(context).add(
+                                      UpdatePrimaryContact(
+                                          state.placeOrder.contact));
                                 }
-                                BlocProvider.of<FoodOrderBloc>(context).add(ClearCart());
-                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                BlocProvider.of<FoodOrderBloc>(context)
+                                    .add(ClearCart());
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
                                   return PlacedOrderSuccessPage(
                                     placeOrderId: state.placeOrder.id,
                                     token: loginState.user.token,
@@ -795,10 +1090,13 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
                                         title: Text(
                                           "Place Order Error",
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         content: Text(state.message),
                                         actions: <Widget>[
@@ -808,7 +1106,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                             },
                                             child: Text(
                                               "OK",
-                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ],
@@ -819,7 +1118,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                             builder: (context, state) {
                               if (state is LoadingPlaceOrder) {
                                 return Container(
-                                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                                  decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.5)),
                                   child: Center(
                                     child: SpinKitCircle(
                                       color: Colors.white,
@@ -850,7 +1150,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
     showModalBottomSheet(
         isScrollControlled: false,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,
         context: context,
         builder: (context) {
@@ -865,17 +1166,20 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                           height: 110,
                         ),
                         Column(
-                          children: placeOrder.getDeliveryTimeOptions().map((time) {
+                          children:
+                              placeOrder.getDeliveryTimeOptions().map((time) {
                             return Container(
-                              padding:
-                                  EdgeInsets.only(left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                              padding: EdgeInsets.only(
+                                  left: horizontalPaddingDraggable,
+                                  right: horizontalPaddingDraggable),
                               child: RadioListTile<DateTime>(
                                 dense: true,
                                 onChanged: (value) {
                                   newState(() {
                                     groupValue = value;
                                   });
-                                  BlocProvider.of<FoodOrderBloc>(context).add(ChangeDeliveryTime(value));
+                                  BlocProvider.of<FoodOrderBloc>(context)
+                                      .add(ChangeDeliveryTime(value));
                                   Navigator.pop(context);
                                 },
                                 groupValue: groupValue,
@@ -896,7 +1200,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                     child: Container(
                       width: AppUtil.getScreenWidth(context),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32)),
                           color: Colors.white),
                       padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
                       child: Column(
@@ -923,7 +1229,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                                 flex: 9,
                                 child: Text(
                                   "Select Delivery Time For",
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -953,7 +1261,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                               ),
                               Text(
                                 placeOrder.getDeliveryDatePretty(),
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -973,7 +1282,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
         context: context,
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         builder: (context) {
           return StatefulBuilder(
             builder: (context, newState) {
@@ -1002,7 +1312,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
                           ),
                           Text(
                             placeOrder.listPaymentMethod[i].label,
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
                           )
                         ],
                       ),
@@ -1015,7 +1326,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
               }
 
               return Container(
-                margin: EdgeInsets.symmetric(vertical: 40, horizontal: horizontalPaddingDraggable - 10),
+                margin: EdgeInsets.symmetric(
+                    vertical: 40, horizontal: horizontalPaddingDraggable - 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(32),
@@ -1061,7 +1373,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: Text(
               "Error",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -1088,13 +1401,15 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
     if ((placeOrder.getTotal() - placeOrder.getWalletUsed()) > 0.0) {
       showPaymentMethodOptions(placeOrder);
     } else {
-      BlocProvider.of<FoodOrderBloc>(context).add(ChangePaymentMethod("wallet"));
+      BlocProvider.of<FoodOrderBloc>(context)
+          .add(ChangePaymentMethod("wallet"));
       BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderEvent());
     }
   }
 
   void _onPaymentOptionsSelected(PlaceOrder placeOrder, selectedPaymentMethod) {
-    BlocProvider.of<FoodOrderBloc>(context).add(ChangePaymentMethod(selectedPaymentMethod));
+    BlocProvider.of<FoodOrderBloc>(context)
+        .add(ChangePaymentMethod(selectedPaymentMethod));
     if (selectedPaymentMethod == "cod") {
       BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderEvent());
     } else if (selectedPaymentMethod == "rzr") {
@@ -1107,19 +1422,22 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage> wit
   }
 
   void _onBackPressed(PlaceOrder placeOrder) {
-    Navigator.pop(context, placeOrder == null ? FoodCart(Map(), List()) : placeOrder.foodCart);
+    Navigator.pop(context,
+        placeOrder == null ? FoodCart(Map(), List()) : placeOrder.foodCart);
   }
 }
 
 class DeliveryOptions extends SliverPersistentHeaderDelegate {
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return BlocBuilder<FoodOrderBloc, FoodOrderState>(
       builder: (context, state) {
         return Container(
           decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(32), topLeft: Radius.circular(32))),
           padding: EdgeInsets.only(
               top: 10 + MediaQuery.of(context).padding.top,
               right: horizontalPaddingDraggable,
@@ -1130,12 +1448,14 @@ class DeliveryOptions extends SliverPersistentHeaderDelegate {
               Expanded(
                 child: RadioCustom(
                   radio: Radio(
-                      visualDensity: VisualDensity(vertical: -4, horizontal: -4),
+                      visualDensity:
+                          VisualDensity(vertical: -4, horizontal: -4),
                       activeColor: Colors.green,
                       value: "delivery",
                       groupValue: state.placeOrder.transactionType,
                       onChanged: (value) {
-                        BlocProvider.of<FoodOrderBloc>(context).add(ChangeTransactionType(value));
+                        BlocProvider.of<FoodOrderBloc>(context)
+                            .add(ChangeTransactionType(value));
                       }),
                   icon: "assets/delivery.svg",
                   title: "Delivery",
@@ -1145,12 +1465,14 @@ class DeliveryOptions extends SliverPersistentHeaderDelegate {
               Expanded(
                 child: RadioCustom(
                   radio: Radio(
-                      visualDensity: VisualDensity(vertical: -4, horizontal: -4),
+                      visualDensity:
+                          VisualDensity(vertical: -4, horizontal: -4),
                       activeColor: Colors.green,
                       value: "self-pickup",
                       groupValue: state.placeOrder.transactionType,
                       onChanged: (value) {
-                        BlocProvider.of<FoodOrderBloc>(context).add(ChangeTransactionType(value));
+                        BlocProvider.of<FoodOrderBloc>(context)
+                            .add(ChangeTransactionType(value));
                       }),
                   icon: "assets/selfpickup.svg",
                   title: "Self Pickup",
@@ -1182,7 +1504,8 @@ class RadioCustom extends StatelessWidget {
   final String title;
   final String subtitle;
 
-  const RadioCustom({Key key, this.radio, this.icon, this.title, this.subtitle}) : super(key: key);
+  const RadioCustom({Key key, this.radio, this.icon, this.title, this.subtitle})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1208,7 +1531,8 @@ class RadioCustom extends StatelessWidget {
                     Text(
                       title,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -1236,7 +1560,9 @@ class OrderRowItem extends StatelessWidget {
   final String amount;
   final String currencyIcon;
 
-  const OrderRowItem({Key key, this.title, this.color, this.amount, this.currencyIcon}) : super(key: key);
+  const OrderRowItem(
+      {Key key, this.title, this.color, this.amount, this.currencyIcon})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1260,7 +1586,8 @@ class OrderRowItem extends StatelessWidget {
           ),
           Text(
             "$amount",
-            style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 16),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: color, fontSize: 16),
           ),
         ],
       ),
@@ -1273,7 +1600,8 @@ class FoodListPlaceOrder extends StatefulWidget {
   _FoodListPlaceOrderState createState() => _FoodListPlaceOrderState();
 }
 
-class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTickerProviderStateMixin {
+class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
+    with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -1284,29 +1612,43 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
     return BlocBuilder<FoodOrderBloc, FoodOrderState>(
       builder: (context, state) {
         return SliverPadding(
-          padding:
-              EdgeInsets.only(top: 20, bottom: 10, right: horizontalPaddingDraggable, left: horizontalPaddingDraggable),
+          padding: EdgeInsets.only(
+              top: 20,
+              bottom: 10,
+              right: horizontalPaddingDraggable,
+              left: horizontalPaddingDraggable),
           sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
             (context, i) {
               return FoodItemPlaceOrder(
                 index: i,
-                currencyIcon: AppUtil.getCurrencyIcon(state.placeOrder.restaurant.currencyCode),
+                currencyIcon: AppUtil.getCurrencyIcon(
+                    state.placeOrder.restaurant.currencyCode),
                 onTapEditAddOns: () {
-                  _showAddOnsEditSheet(state.placeOrder.foodCart.getAllFoodCartItem()[i]);
+                  _showAddOnsEditSheet(
+                      state.placeOrder.foodCart.getAllFoodCartItem()[i]);
                 },
                 foodCartItem: state.placeOrder.foodCart.getAllFoodCartItem()[i],
-                quantity: state.placeOrder.foodCart.getAllFoodCartItem()[i].quantity,
+                quantity:
+                    state.placeOrder.foodCart.getAllFoodCartItem()[i].quantity,
                 onTapRemove: () {
-                  BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(
+                  BlocProvider.of<FoodOrderBloc>(context)
+                      .add(ChangeQuantityWithPayment(
                     state.placeOrder.foodCart.getAllFoodCartItem()[i],
-                    ((state.placeOrder.foodCart.getAllFoodCartItem()[i].quantity) - 1),
+                    ((state.placeOrder.foodCart
+                            .getAllFoodCartItem()[i]
+                            .quantity) -
+                        1),
                   ));
                 },
                 onTapAdd: () {
-                  BlocProvider.of<FoodOrderBloc>(context).add(ChangeQuantityWithPayment(
+                  BlocProvider.of<FoodOrderBloc>(context)
+                      .add(ChangeQuantityWithPayment(
                     state.placeOrder.foodCart.getAllFoodCartItem()[i],
-                    ((state.placeOrder.foodCart.getAllFoodCartItem()[i].quantity) + 1),
+                    ((state.placeOrder.foodCart
+                            .getAllFoodCartItem()[i]
+                            .quantity) +
+                        1),
                   ));
                 },
               );
@@ -1327,7 +1669,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
     BlocProvider.of<FoodOrderBloc>(context).add(StartEditFoodDetail(cartItem));
     showMaterialModalBottomSheet(
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,
         context: context,
         expand: false,
@@ -1338,14 +1681,20 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                 height: AppUtil.getScreenHeight(context) * 3 / 4,
                 width: AppUtil.getScreenWidth(context),
                 padding: EdgeInsets.only(top: 25),
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(32)),
                 child: BlocConsumer<FoodOrderBloc, FoodOrderState>(
                   listener: (context, cartState) {
                     if (cartState is SuccessGetFoodDetail) {
-                      price = _getSelectedPrice(cartItem.price, cartState.foodDetail.prices);
-                      for (int i = 0; i < cartState.foodDetail.addOnsTypes.length; i++) {
-                        if (cartState.foodDetail.addOnsTypes[i].options == "multiple") {
-                          cartState.foodDetail.addOnsTypes[i].addOns.forEach((addOn) {
+                      price = _getSelectedPrice(
+                          cartItem.price, cartState.foodDetail.prices);
+                      for (int i = 0;
+                          i < cartState.foodDetail.addOnsTypes.length;
+                          i++) {
+                        if (cartState.foodDetail.addOnsTypes[i].options ==
+                            "multiple") {
+                          cartState.foodDetail.addOnsTypes[i].addOns
+                              .forEach((addOn) {
                             if (addOn.isSelected) {
                               multipleAddOns[i] = addOn;
                             }
@@ -1353,12 +1702,22 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                         }
                       }
 
-                      for (int i = 0; i < cartState.foodDetail.addOnsTypes.length; i++) {
-                        if (cartState.foodDetail.addOnsTypes[i].options == "one") {
+                      for (int i = 0;
+                          i < cartState.foodDetail.addOnsTypes.length;
+                          i++) {
+                        if (cartState.foodDetail.addOnsTypes[i].options ==
+                            "one") {
                           textControllersMap[i] = List<TextEditingController>();
-                          for (int j = 0; j < cartState.foodDetail.addOnsTypes[i].addOns.length; j++) {
-                            TextEditingController textController = TextEditingController(
-                                text: cartState.foodDetail.addOnsTypes[i].addOns[j].quantity.toString());
+                          for (int j = 0;
+                              j <
+                                  cartState
+                                      .foodDetail.addOnsTypes[i].addOns.length;
+                              j++) {
+                            TextEditingController textController =
+                                TextEditingController(
+                                    text: cartState.foodDetail.addOnsTypes[i]
+                                        .addOns[j].quantity
+                                        .toString());
                             textControllersMap[i].add(textController);
                           }
                         }
@@ -1379,12 +1738,17 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                       listWidget.add(
                         SliverToBoxAdapter(
                           child: Container(
-                            padding: EdgeInsets.only(left: horizontalPaddingDraggable, top: 10, bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: horizontalPaddingDraggable,
+                                top: 10,
+                                bottom: 10),
                             child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   "SIZE",
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
                                 )),
                             decoration: BoxDecoration(color: Colors.black12),
                           ),
@@ -1395,16 +1759,21 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                           return RadioListTile<Price>(
                             title: Row(
                               children: <Widget>[
-                                Expanded(child: Text(cartState.foodDetail.prices[i].size)),
+                                Expanded(
+                                    child: Text(
+                                        cartState.foodDetail.prices[i].size)),
                                 Row(
                                   children: [
                                     SvgPicture.asset(
-                                      AppUtil.getCurrencyIcon(cartState.placeOrder.restaurant.currencyCode),
+                                      AppUtil.getCurrencyIcon(cartState
+                                          .placeOrder.restaurant.currencyCode),
                                       width: 13,
                                       height: 13,
                                     ),
                                     SizedBox(width: 3),
-                                    Text((cartState.foodDetail.prices[i].discountedPrice).toString()),
+                                    Text((cartState.foodDetail.prices[i]
+                                            .discountedPrice)
+                                        .toString()),
                                   ],
                                 )
                               ],
@@ -1420,7 +1789,9 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                         }, childCount: cartState.foodDetail.prices.length),
                       ));
 
-                      for (int i = 0; i < cartState.foodDetail.addOnsTypes.length; i++) {
+                      for (int i = 0;
+                          i < cartState.foodDetail.addOnsTypes.length;
+                          i++) {
                         listWidget.add(SliverToBoxAdapter(
                           child: Container(
                             padding: EdgeInsets.only(
@@ -1432,26 +1803,34 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   cartState.foodDetail.addOnsTypes[i].name,
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
                                 )),
                             decoration: BoxDecoration(color: Colors.black12),
                           ),
                         ));
-                        if (cartState.foodDetail.addOnsTypes[i].options == "one") {
+                        if (cartState.foodDetail.addOnsTypes[i].options ==
+                            "one") {
                           // one is check box with number inside
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
                               return CheckboxListTile(
                                 onChanged: (bool) {
                                   newState(() {
-                                    cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected = bool;
+                                    cartState.foodDetail.addOnsTypes[i]
+                                        .addOns[j].isSelected = bool;
                                   });
                                 },
-                                value: cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected,
-                                controlAffinity: ListTileControlAffinity.leading,
+                                value: cartState.foodDetail.addOnsTypes[i]
+                                    .addOns[j].isSelected,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 title: Row(
                                   children: <Widget>[
-                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Expanded(
+                                        child: Text(cartState.foodDetail
+                                            .addOnsTypes[i].addOns[j].name)),
                                     Container(
                                       width: 50,
                                       margin: EdgeInsets.only(right: 10),
@@ -1462,9 +1841,17 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                         onChanged: (text) {
                                           newState(() {
                                             if (text == "") {
-                                              cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 0;
+                                              cartState
+                                                  .foodDetail
+                                                  .addOnsTypes[i]
+                                                  .addOns[j]
+                                                  .quantity = 0;
                                             } else {
-                                              cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = int.parse(text);
+                                              cartState
+                                                  .foodDetail
+                                                  .addOnsTypes[i]
+                                                  .addOns[j]
+                                                  .quantity = int.parse(text);
                                             }
                                           });
                                         },
@@ -1473,45 +1860,63 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                     Row(
                                       children: [
                                         SvgPicture.asset(
-                                          AppUtil.getCurrencyIcon(cartState.placeOrder.restaurant.currencyCode),
+                                          AppUtil.getCurrencyIcon(cartState
+                                              .placeOrder
+                                              .restaurant
+                                              .currencyCode),
                                           width: 13,
                                           height: 13,
                                         ),
                                         SizedBox(width: 3),
-                                        Text((cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString()),
+                                        Text((cartState.foodDetail
+                                                .addOnsTypes[i].addOns[j].price)
+                                            .toString()),
                                       ],
                                     )
                                   ],
                                 ),
                               );
-                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
+                            },
+                                childCount: cartState
+                                    .foodDetail.addOnsTypes[i].addOns.length),
                           ));
-                        } else if (cartState.foodDetail.addOnsTypes[i].options == "multiple") {
+                        } else if (cartState
+                                .foodDetail.addOnsTypes[i].options ==
+                            "multiple") {
                           // multiple is radio button
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
                               return RadioListTile<AddOn>(
                                 title: Row(
                                   children: <Widget>[
-                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Expanded(
+                                        child: Text(cartState.foodDetail
+                                            .addOnsTypes[i].addOns[j].name)),
                                     Row(
                                       children: [
                                         SvgPicture.asset(
-                                          AppUtil.getCurrencyIcon(cartState.placeOrder.restaurant.currencyCode),
+                                          AppUtil.getCurrencyIcon(cartState
+                                              .placeOrder
+                                              .restaurant
+                                              .currencyCode),
                                           width: 13,
                                           height: 13,
                                         ),
                                         SizedBox(width: 3),
-                                        Text((cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString()),
+                                        Text((cartState.foodDetail
+                                                .addOnsTypes[i].addOns[j].price)
+                                            .toString()),
                                       ],
                                     )
                                   ],
                                 ),
-                                value: cartState.foodDetail.addOnsTypes[i].addOns[j],
+                                value: cartState
+                                    .foodDetail.addOnsTypes[i].addOns[j],
                                 onChanged: (addOn) {
                                   newState(() {
                                     multipleAddOns[i] = addOn;
-                                    cartState.foodDetail.addOnsTypes[i].addOns.forEach((e) {
+                                    cartState.foodDetail.addOnsTypes[i].addOns
+                                        .forEach((e) {
                                       e.isSelected = false;
                                     });
                                     addOn.isSelected = true;
@@ -1519,43 +1924,61 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                 },
                                 groupValue: multipleAddOns[i],
                               );
-                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
+                            },
+                                childCount: cartState
+                                    .foodDetail.addOnsTypes[i].addOns.length),
                           ));
-                        } else if (cartState.foodDetail.addOnsTypes[i].options == "custom") {
+                        } else if (cartState
+                                .foodDetail.addOnsTypes[i].options ==
+                            "custom") {
                           // custom is check box only
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
                               return CheckboxListTile(
                                 onChanged: (bool) {
                                   newState(() {
-                                    cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected = bool;
+                                    cartState.foodDetail.addOnsTypes[i]
+                                        .addOns[j].isSelected = bool;
                                     if (bool) {
-                                      cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 1;
+                                      cartState.foodDetail.addOnsTypes[i]
+                                          .addOns[j].quantity = 1;
                                     } else {
-                                      cartState.foodDetail.addOnsTypes[i].addOns[j].quantity = 0;
+                                      cartState.foodDetail.addOnsTypes[i]
+                                          .addOns[j].quantity = 0;
                                     }
                                   });
                                 },
-                                value: cartState.foodDetail.addOnsTypes[i].addOns[j].isSelected,
-                                controlAffinity: ListTileControlAffinity.leading,
+                                value: cartState.foodDetail.addOnsTypes[i]
+                                    .addOns[j].isSelected,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 title: Row(
                                   children: <Widget>[
-                                    Expanded(child: Text(cartState.foodDetail.addOnsTypes[i].addOns[j].name)),
+                                    Expanded(
+                                        child: Text(cartState.foodDetail
+                                            .addOnsTypes[i].addOns[j].name)),
                                     Row(
                                       children: [
                                         SvgPicture.asset(
-                                          AppUtil.getCurrencyIcon(cartState.placeOrder.restaurant.currencyCode),
+                                          AppUtil.getCurrencyIcon(cartState
+                                              .placeOrder
+                                              .restaurant
+                                              .currencyCode),
                                           width: 13,
                                           height: 13,
                                         ),
                                         SizedBox(width: 3),
-                                        Text((cartState.foodDetail.addOnsTypes[i].addOns[j].price).toString()),
+                                        Text((cartState.foodDetail
+                                                .addOnsTypes[i].addOns[j].price)
+                                            .toString()),
                                       ],
                                     )
                                   ],
                                 ),
                               );
-                            }, childCount: cartState.foodDetail.addOnsTypes[i].addOns.length),
+                            },
+                                childCount: cartState
+                                    .foodDetail.addOnsTypes[i].addOns.length),
                           ));
                         }
                       }
@@ -1578,7 +2001,10 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                               height: kBottomNavigationBarHeight,
                               width: AppUtil.getScreenWidth(context),
                               decoration: BoxDecoration(
-                                  color: Colors.white, border: Border(top: BorderSide(color: Colors.yellow[600]))),
+                                  color: Colors.white,
+                                  border: Border(
+                                      top: BorderSide(
+                                          color: Colors.yellow[600]))),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -1586,7 +2012,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                     child: price == null || quantity == 0
                                         ? SizedBox()
                                         : Container(
-                                            padding: EdgeInsets.only(left: 10, right: 10),
+                                            padding: EdgeInsets.only(
+                                                left: 10, right: 10),
                                             child: Row(
                                               children: <Widget>[
                                                 Expanded(
@@ -1597,15 +2024,18 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                                               quantity--;
                                                             });
                                                           },
-                                                          child: Icon(Icons.remove))
+                                                          child: Icon(
+                                                              Icons.remove))
                                                       : SizedBox(),
                                                 ),
                                                 Expanded(
                                                   child: Center(
                                                     child: Text(
                                                       "$quantity",
-                                                      textAlign: TextAlign.center,
-                                                      style: TextStyle(fontSize: 16),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                          fontSize: 16),
                                                     ),
                                                   ),
                                                 ),
@@ -1630,28 +2060,46 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                             : () {
                                                 //do something add item here
                                                 Navigator.pop(context);
-                                                BlocProvider.of<FoodOrderBloc>(context).add(UpdateFoodDetail(cartItem,
-                                                    quantity, price, _getAddOns(cartState.foodDetail.addOnsTypes)));
+                                                BlocProvider.of<FoodOrderBloc>(
+                                                        context)
+                                                    .add(UpdateFoodDetail(
+                                                        cartItem,
+                                                        quantity,
+                                                        price,
+                                                        _getAddOns(cartState
+                                                            .foodDetail
+                                                            .addOnsTypes)));
                                               },
                                         child: SizedBox.expand(
                                           child: Stack(
                                             children: <Widget>[
                                               Container(
                                                 alignment: Alignment.center,
-                                                padding: EdgeInsets.only(left: 10, right: 10),
+                                                padding: EdgeInsets.only(
+                                                    left: 10, right: 10),
                                                 decoration: BoxDecoration(
                                                     color: Colors.yellow[600],
-                                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(18))),
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    18))),
                                                 child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
                                                   children: <Widget>[
                                                     Expanded(
                                                       child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
                                                         children: <Widget>[
                                                           SvgPicture.asset(
                                                             AppUtil.getCurrencyIcon(
-                                                                cartState.placeOrder.restaurant.currencyCode),
+                                                                cartState
+                                                                    .placeOrder
+                                                                    .restaurant
+                                                                    .currencyCode),
                                                             width: 15,
                                                             height: 15,
                                                           ),
@@ -1659,9 +2107,18 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                                             width: 10,
                                                           ),
                                                           Text(
-                                                            AppUtil.doubleRemoveZeroTrailing(_getTotalFoodDetail(
-                                                                price, quantity, cartState.foodDetail.addOnsTypes)),
-                                                            style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                                                            AppUtil.doubleRemoveZeroTrailing(
+                                                                _getTotalFoodDetail(
+                                                                    price,
+                                                                    quantity,
+                                                                    cartState
+                                                                        .foodDetail
+                                                                        .addOnsTypes)),
+                                                            style: TextStyle(
+                                                                fontSize: 19,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
                                                           ),
                                                         ],
                                                       ),
@@ -1669,18 +2126,26 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
                                                     Expanded(
                                                       child: Text(
                                                         "UPDATE",
-                                                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                                                        style: TextStyle(
+                                                            fontSize: 17,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
                                               AnimatedOpacity(
-                                                opacity: price == null || quantity == 0 ? 0.65 : 0.0,
+                                                opacity: price == null ||
+                                                        quantity == 0
+                                                    ? 0.65
+                                                    : 0.0,
                                                 child: Container(
                                                   color: Colors.white,
                                                 ),
-                                                duration: Duration(milliseconds: 300),
+                                                duration:
+                                                    Duration(milliseconds: 300),
                                               )
                                             ],
                                           ),
@@ -1702,7 +2167,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder> with SingleTick
         });
   }
 
-  double _getTotalFoodDetail(Price price, int quantity, List<AddOnsType> addOnsTypes) {
+  double _getTotalFoodDetail(
+      Price price, int quantity, List<AddOnsType> addOnsTypes) {
     double totalAmount = 0;
 
     if (price == null || quantity == 0) {
@@ -1784,7 +2250,8 @@ class FoodItemPlaceOrder extends StatelessWidget {
                         foodCartItem.food.title + " " + foodCartItem.price.size,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
                         height: 2,
@@ -1826,7 +2293,9 @@ class FoodItemPlaceOrder extends StatelessWidget {
               height: 30,
               width: 110,
               alignment: Alignment.centerRight,
-              decoration: BoxDecoration(color: Colors.yellow[600], borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(
+                  color: Colors.yellow[600],
+                  borderRadius: BorderRadius.circular(10)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
@@ -1836,19 +2305,24 @@ class FoodItemPlaceOrder extends StatelessWidget {
                     child: Container(
                         decoration: BoxDecoration(
                             color: Colors.yellow[700],
-                            borderRadius:
-                                BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5))),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                bottomLeft: Radius.circular(5))),
                         child: Icon(Icons.remove)),
                   )),
-                  Expanded(child: Container(alignment: Alignment.center, child: Text("$quantity"))),
+                  Expanded(
+                      child: Container(
+                          alignment: Alignment.center,
+                          child: Text("$quantity"))),
                   Expanded(
                     child: GestureDetector(
                       onTap: onTapAdd,
                       child: Container(
                           decoration: BoxDecoration(
                               color: Colors.yellow[700],
-                              borderRadius:
-                                  BorderRadius.only(bottomRight: Radius.circular(5), topRight: Radius.circular(5))),
+                              borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(5),
+                                  topRight: Radius.circular(5))),
                           child: Icon(Icons.add)),
                     ),
                   ),
@@ -1897,14 +2371,22 @@ class FoodListDeliveryInformation extends StatefulWidget {
   final FoodOrderBloc foodOrderBloc;
 
   const FoodListDeliveryInformation(
-      {Key key, this.address, this.token, this.addressBloc, this.foodOrderBloc, this.contact, this.deliveryEstimation})
+      {Key key,
+      this.address,
+      this.token,
+      this.addressBloc,
+      this.foodOrderBloc,
+      this.contact,
+      this.deliveryEstimation})
       : super(key: key);
 
   @override
-  _FoodListDeliveryInformationState createState() => _FoodListDeliveryInformationState();
+  _FoodListDeliveryInformationState createState() =>
+      _FoodListDeliveryInformationState();
 }
 
-class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformation> {
+class _FoodListDeliveryInformationState
+    extends State<FoodListDeliveryInformation> {
   int _countrySelected = 0;
   String _contactPredicate = "+91";
   String _number;
@@ -1921,21 +2403,28 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
         ? Container(
             height: 90,
             width: AppUtil.getScreenWidth(context),
-            padding:
-                EdgeInsets.symmetric(vertical: horizontalPaddingDraggable - 5, horizontal: horizontalPaddingDraggable),
+            padding: EdgeInsets.symmetric(
+                vertical: horizontalPaddingDraggable - 5,
+                horizontal: horizontalPaddingDraggable),
             decoration: BoxDecoration(color: Colors.white, boxShadow: [
-              BoxShadow(color: Colors.orange[100], blurRadius: 5, spreadRadius: 0, offset: Offset(0, -1)),
+              BoxShadow(
+                  color: Colors.orange[100],
+                  blurRadius: 5,
+                  spreadRadius: 0,
+                  offset: Offset(0, -1)),
             ]),
             child: GestureDetector(
               onTap: () async {
-                Address address = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Address address = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) {
                   return AddressPage(
                     forcedDefault: true,
                   );
                 }));
 
                 if (address != null) {
-                  BlocProvider.of<LoginBloc>(context).add(UpdateDefaultAddress(address));
+                  BlocProvider.of<LoginBloc>(context)
+                      .add(UpdateDefaultAddress(address));
                   widget.foodOrderBloc.add(ChangeAddress(address));
                 }
                 //widget.addressBloc.add(InitDefaultAddress());
@@ -1961,7 +2450,10 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                       ),
                       Text(
                         "ADD NEW ADDRESS",
-                        style: TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.orange,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
@@ -1972,10 +2464,15 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
         : Container(
             height: 145,
             width: AppUtil.getScreenWidth(context),
-            padding:
-                EdgeInsets.symmetric(vertical: horizontalPaddingDraggable - 5, horizontal: horizontalPaddingDraggable),
+            padding: EdgeInsets.symmetric(
+                vertical: horizontalPaddingDraggable - 5,
+                horizontal: horizontalPaddingDraggable),
             decoration: BoxDecoration(color: Colors.white, boxShadow: [
-              BoxShadow(color: Colors.orange[100], blurRadius: 5, spreadRadius: 0, offset: Offset(0, -1)),
+              BoxShadow(
+                  color: Colors.orange[100],
+                  blurRadius: 5,
+                  spreadRadius: 0,
+                  offset: Offset(0, -1)),
             ]),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1989,7 +2486,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                     Expanded(
                       child: Container(
                         padding: EdgeInsets.all(3),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(2)),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2)),
                         child: Text(
                           widget.address.title,
                           maxLines: 1,
@@ -2003,7 +2501,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                     ),
                     GestureDetector(
                       onTap: () {
-                        _showChangeAddressSheet(BlocProvider.of<LoginBloc>(context));
+                        _showChangeAddressSheet(
+                            BlocProvider.of<LoginBloc>(context));
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
@@ -2025,7 +2524,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                         widget.address.address,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Expanded(
@@ -2049,10 +2549,16 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                   children: <Widget>[
                     Expanded(
                       child: RichText(
-                        text: TextSpan(text: "Contact Number: ", style: TextStyle(color: Colors.black), children: [
-                          TextSpan(
-                              text: widget.contact, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black))
-                        ]),
+                        text: TextSpan(
+                            text: "Contact Number: ",
+                            style: TextStyle(color: Colors.black),
+                            children: [
+                              TextSpan(
+                                  text: widget.contact,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black))
+                            ]),
                       ),
                     ),
                     GestureDetector(
@@ -2082,7 +2588,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
     showModalBottomSheet(
         isScrollControlled: false,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         context: context,
         builder: (context) {
           return BlocBuilder<AddressBloc, AddressState>(
@@ -2101,13 +2608,20 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                 return Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(32),
+                          topRight: Radius.circular(32))),
                   child: Stack(
                     children: <Widget>[
                       SingleChildScrollView(
                         child: Container(
-                          padding: EdgeInsets.only(left: 20, right: 20, bottom: kBottomNavigationBarHeight, top: 20),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                          padding: EdgeInsets.only(
+                              left: 20,
+                              right: 20,
+                              bottom: kBottomNavigationBarHeight,
+                              top: 20),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(32)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
@@ -2129,13 +2643,16 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                         child: Container(
                             width: AppUtil.getScreenWidth(context),
                             decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(32),
+                                    topRight: Radius.circular(32)),
                                 color: Colors.white),
-                            padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
+                            padding:
+                                EdgeInsets.only(top: 20, left: 20, bottom: 20),
                             child: Text(
                               "SELECT ADDRESS",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             )),
                       ),
                       Positioned(
@@ -2143,7 +2660,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                           child: GestureDetector(
                             onTap: () async {
                               Navigator.pop(context);
-                              Address address = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              Address address = await Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
                                 return AddressPage(
                                   forcedDefault: true,
                                 );
@@ -2151,7 +2669,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
 
                               if (address != null) {
                                 loginBloc.add(UpdateDefaultAddress(address));
-                                widget.foodOrderBloc.add(ChangeAddress(address));
+                                widget.foodOrderBloc
+                                    .add(ChangeAddress(address));
                               }
                             },
                             child: Container(
@@ -2174,7 +2693,10 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                                   ),
                                   Text(
                                     "ADD NEW ADDRESS",
-                                    style: TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: Colors.orange,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
                                   )
                                 ],
                               ),
@@ -2201,7 +2723,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                 );
               } else if (state is ErrorLoadingListAddress) {
                 return Container(
-                    margin: EdgeInsets.symmetric(vertical: 20), child: Center(child: Text("Fail load addresses")));
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    child: Center(child: Text("Fail load addresses")));
               }
               return Container();
             },
@@ -2213,7 +2736,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
     showModalBottomSheet(
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         context: context,
         builder: (context) {
           return StatefulBuilder(
@@ -2224,8 +2748,9 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                     Container(
                         width: AppUtil.getScreenWidth(context),
                         decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(32),
+                                topRight: Radius.circular(32)),
                             color: Colors.white),
                         padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
                         child: Row(
@@ -2233,7 +2758,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                             Expanded(
                               child: Text(
                                 "ENTER NUMBER",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
                             IconButton(
@@ -2244,7 +2770,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                           ],
                         )),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: horizontalPaddingDraggable),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
@@ -2271,7 +2798,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                                         Expanded(
                                           child: Container(
                                             height: 20,
-                                            child: SvgPicture.asset("assets/india_flag.svg"),
+                                            child: SvgPicture.asset(
+                                                "assets/india_flag.svg"),
                                           ),
                                         ),
                                         SizedBox(
@@ -2280,7 +2808,9 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                                         Expanded(
                                           child: Text(
                                             "+91",
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         )
                                       ],
@@ -2297,7 +2827,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                                         Expanded(
                                           child: Container(
                                             height: 20,
-                                            child: SvgPicture.asset("assets/singapore_flag.svg"),
+                                            child: SvgPicture.asset(
+                                                "assets/singapore_flag.svg"),
                                           ),
                                         ),
                                         SizedBox(
@@ -2306,7 +2837,9 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                                         Expanded(
                                           child: Text(
                                             "+65",
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         )
                                       ],
@@ -2324,8 +2857,10 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                           ),
                           Expanded(
                             child: Container(
-                              decoration:
-                                  BoxDecoration(border: Border(left: BorderSide(color: Colors.black12, width: 2))),
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      left: BorderSide(
+                                          color: Colors.black12, width: 2))),
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: TextField(
                                 onChanged: (value) {
@@ -2336,10 +2871,12 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                                 autofocus: true,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(vertical: 15),
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 15),
                                   border: InputBorder.none,
                                   hintText: "Enter phone number",
-                                  hintStyle: TextStyle(fontSize: 16, color: Colors.black38),
+                                  hintStyle: TextStyle(
+                                      fontSize: 16, color: Colors.black38),
                                 ),
                               ),
                             ),
@@ -2348,7 +2885,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: horizontalPaddingDraggable, vertical: 10),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: horizontalPaddingDraggable, vertical: 10),
                       child: Row(
                         children: <Widget>[
                           Checkbox(
@@ -2358,17 +2896,21 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                                 _isChangePrimaryNumber = value;
                               });
                             },
-                            visualDensity: VisualDensity(vertical: 0, horizontal: 0),
+                            visualDensity:
+                                VisualDensity(vertical: 0, horizontal: 0),
                           ),
-                          Expanded(child: Text("Do you want to make this number as your primary and login number?"))
+                          Expanded(
+                              child: Text(
+                                  "Do you want to make this number as your primary and login number?"))
                         ],
                       ),
                     ),
                     GestureDetector(
                       onTap: _number != "" && _number != null
                           ? () {
-                              widget.foodOrderBloc
-                                  .add(ChangeContactPhone(_isChangePrimaryNumber, _contactPredicate + _number));
+                              widget.foodOrderBloc.add(ChangeContactPhone(
+                                  _isChangePrimaryNumber,
+                                  _contactPredicate + _number));
                               Navigator.pop(context);
                             }
                           : () {},
@@ -2376,7 +2918,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                         margin: EdgeInsets.only(
                             left: horizontalPaddingDraggable,
                             right: horizontalPaddingDraggable,
-                            bottom: MediaQuery.of(context).viewInsets.bottom + 32),
+                            bottom:
+                                MediaQuery.of(context).viewInsets.bottom + 32),
                         child: Stack(
                           children: <Widget>[
                             Container(
@@ -2392,7 +2935,8 @@ class _FoodListDeliveryInformationState extends State<FoodListDeliveryInformatio
                               ),
                             ),
                             AnimatedOpacity(
-                              opacity: _number != "" && _number != null ? 0.0 : 0.5,
+                              opacity:
+                                  _number != "" && _number != null ? 0.0 : 0.5,
                               child: Container(
                                 height: 50,
                                 color: Colors.white,
@@ -2416,7 +2960,8 @@ class AddressItemWidget extends StatelessWidget {
   final Address address;
   final FoodOrderBloc foodOrderBloc;
 
-  const AddressItemWidget({Key key, this.address, this.foodOrderBloc}) : super(key: key);
+  const AddressItemWidget({Key key, this.address, this.foodOrderBloc})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -2468,7 +3013,8 @@ class AddressItemWidget extends StatelessWidget {
                           margin: EdgeInsets.only(bottom: 10),
                           child: Text(
                             type,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Container(
@@ -2477,7 +3023,8 @@ class AddressItemWidget extends StatelessWidget {
                             address.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Text(

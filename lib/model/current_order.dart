@@ -21,6 +21,8 @@ class CurrentOrder {
   final ScratchCard scratchCard;
   final bool isShownCancel;
   final String orderType;
+  final String currencyCode;
+  final String cancelReason;
 
   CurrentOrder(
       {this.driverLatitude,
@@ -41,50 +43,9 @@ class CurrentOrder {
       this.merchantName,
       this.merchantAddress,
       this.scratchCard,
-      this.isShownCancel});
-
-  CurrentOrder copyWith({
-    StatusOrder statusOrder,
-    String orderId,
-    bool isActive,
-    bool isShowScratch,
-    bool isShowReview,
-    bool isScratchShowFirst,
-    double driverLatitude,
-    double driverLongitude,
-    String driverName,
-    String driverPhone,
-    String merchantId,
-    String merchantCity,
-    String merchantState,
-    String merchantName,
-    String merchantLogo,
-    String merchantAddress,
-    ScratchCard scratchCard,
-    bool isShownCancel,
-    String orderType,
-  }) {
-    return CurrentOrder(
-        isActive: isActive ?? this.isActive,
-        driverPhone: driverPhone ?? this.driverPhone,
-        driverName: driverName ?? this.driverName,
-        driverLongitude: driverLongitude ?? this.driverLongitude,
-        driverLatitude: driverLatitude ?? this.driverLatitude,
-        orderId: orderId ?? this.orderId,
-        statusOrder: statusOrder ?? this.statusOrder,
-        isScratchShowFirst: isScratchShowFirst ?? this.isScratchShowFirst,
-        isShowReview: isShowReview ?? this.isShowReview,
-        isShowScratch: isShowScratch ?? this.isShowScratch,
-        merchantName: merchantName ?? this.merchantName,
-        merchantAddress: merchantAddress ?? this.merchantAddress,
-        merchantLogo: merchantLogo ?? this.merchantLogo,
-        scratchCard: scratchCard ?? this.scratchCard,
-        isShownCancel: isShownCancel ?? this.isShownCancel,
-        merchantId: merchantId ?? this.merchantId,
-        merchantCity: merchantCity ?? this.merchantCity,
-        orderType: orderType ?? this.orderType,
-        merchantState: merchantState ?? this.merchantState);
-  }
+      this.isShownCancel,
+      this.currencyCode,
+      this.cancelReason});
 
   factory CurrentOrder.fromJson(Map<String, dynamic> parsedJson) {
     StatusOrder order = StatusOrder.fromJson2(parsedJson['details']);
@@ -116,10 +77,12 @@ class CurrentOrder {
         isShownCancel: parsedJson['details']['isShowCancel'],
         merchantState: parsedJson['details']['merchant_state'],
         merchantCity: parsedJson['details']['merchant_city'],
-        orderType: parsedJson['details']['trans_type']);
+        orderType: parsedJson['details']['trans_type'],
+        currencyCode: parsedJson['details']['currency_code'],
+        cancelReason: parsedJson['details']['cancelReason']);
   }
 
-  bool isPickupOrder(){
+  bool isPickupOrder() {
     return orderType == "pickup_drop";
   }
 }

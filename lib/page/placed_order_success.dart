@@ -19,7 +19,12 @@ class PlacedOrderSuccessPage extends StatefulWidget {
   final String address;
   final bool isPickupOrder;
 
-  const PlacedOrderSuccessPage({Key key, this.placeOrderId, this.token, this.address, this.isPickupOrder = false})
+  const PlacedOrderSuccessPage(
+      {Key key,
+      this.placeOrderId,
+      this.token,
+      this.address,
+      this.isPickupOrder = false})
       : super(key: key);
 
   @override
@@ -33,7 +38,8 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
   void initState() {
     super.initState();
     _bloc = PlacedOrderSuccessBloc()..add(GetAds(widget.token, widget.address));
-    BlocProvider.of<CurrentOrderBloc>(context).add(GetActiveOrder(widget.token));
+    BlocProvider.of<CurrentOrderBloc>(context)
+        .add(GetActiveOrder(widget.token));
   }
 
   @override
@@ -74,7 +80,8 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                         margin: EdgeInsets.only(top: 20, bottom: 10),
                         child: Text(
                           "ORDER PLACED",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                       ),
                       Container(
@@ -123,13 +130,15 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                             GestureDetector(
                               onTap: () {
                                 if (widget.isPickupOrder) {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
                                     return PickupOrderDetailPage(
                                       orderId: widget.placeOrderId,
                                     );
                                   }));
                                 } else {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
                                     return DetailOrderPage(
                                       orderId: widget.placeOrderId,
                                     );
@@ -143,89 +152,146 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                 ),
                                 child: Text(
                                   "View Order Summary",
-                                  style: TextStyle(color: primary3, decoration: TextDecoration.underline),
+                                  style: TextStyle(
+                                      color: primary3,
+                                      decoration: TextDecoration.underline),
                                 ),
                               ),
                             ),
-                            BlocBuilder<PlacedOrderSuccessBloc, PlacedOrderSuccessState>(
+                            BlocBuilder<PlacedOrderSuccessBloc,
+                                PlacedOrderSuccessState>(
                               builder: (context, state) {
                                 if (state is SuccessAds) {
                                   return BlocBuilder<HomeBloc, HomeState>(
                                     builder: (context, homeState) {
-                                      return homeState.homePageData.referralDiscount != ""
+                                      return homeState.homePageData
+                                                  .referralDiscount !=
+                                              ""
                                           ? InkWell(
-                                              onTap: homeState.homePageData != null
-                                                  ? () {
-                                                      AppUtil.share(
-                                                          context,
-                                                          homeState.homePageData.referralCode,
-                                                          homeState.homePageData.currencyCode +
-                                                              " " +
-                                                              homeState.homePageData.referralDiscount);
-                                                    }
-                                                  : () {},
+                                              onTap:
+                                                  homeState.homePageData != null
+                                                      ? () {
+                                                          AppUtil.share(
+                                                              context,
+                                                              homeState
+                                                                  .homePageData
+                                                                  .referralCode,
+                                                              AppUtil.getCurrencyString(
+                                                                      homeState
+                                                                          .homePageData
+                                                                          .currencyCode) +
+                                                                  " " +
+                                                                  homeState
+                                                                      .homePageData
+                                                                      .referralDiscount);
+                                                        }
+                                                      : () {},
                                               child: Container(
-                                                margin: EdgeInsets.only(top: 20, bottom: 20),
-                                                height: 0.16 * AppUtil.getScreenHeight(context),
+                                                margin: EdgeInsets.only(
+                                                    top: 20, bottom: 20),
+                                                height: 0.16 *
+                                                    AppUtil.getScreenHeight(
+                                                        context),
                                                 decoration: BoxDecoration(
                                                   color: Color(0xFFFFC94B),
                                                   boxShadow: [
-                                                    BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 5)
+                                                    BoxShadow(
+                                                        color: Colors.black12,
+                                                        blurRadius: 10,
+                                                        spreadRadius: 5)
                                                   ],
                                                 ),
                                                 child: Row(
                                                   children: <Widget>[
                                                     Container(
-                                                      width: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                                      height: 0.16 * AppUtil.getScreenHeight(context) - 20,
-                                                      margin: EdgeInsets.all(10),
-                                                      padding: EdgeInsets.all(10),
+                                                      width: 0.16 *
+                                                              AppUtil
+                                                                  .getScreenHeight(
+                                                                      context) -
+                                                          20,
+                                                      height: 0.16 *
+                                                              AppUtil
+                                                                  .getScreenHeight(
+                                                                      context) -
+                                                          20,
+                                                      margin:
+                                                          EdgeInsets.all(10),
+                                                      padding:
+                                                          EdgeInsets.all(10),
                                                       decoration: BoxDecoration(
-                                                        color: Colors.white.withOpacity(0.3),
+                                                        color: Colors.white
+                                                            .withOpacity(0.3),
                                                       ),
                                                       child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
                                                         children: <Widget>[
                                                           SvgPicture.asset(
                                                             "assets/order success icon 2.svg",
-                                                            height: 0.16 * AppUtil.getScreenHeight(context) - 60,
-                                                            width: 0.16 * AppUtil.getScreenHeight(context) - 60,
+                                                            height: 0.16 *
+                                                                    AppUtil.getScreenHeight(
+                                                                        context) -
+                                                                60,
+                                                            width: 0.16 *
+                                                                    AppUtil.getScreenHeight(
+                                                                        context) -
+                                                                60,
                                                           ),
                                                           SizedBox(
                                                             height: 5,
                                                           ),
                                                           Text(
                                                             "Refer Now",
-                                                            textAlign: TextAlign.center,
-                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 10),
                                                           )
                                                         ],
                                                       ),
                                                     ),
                                                     Expanded(
                                                         child: Container(
-                                                      padding: EdgeInsets.all(10),
+                                                      padding:
+                                                          EdgeInsets.all(10),
                                                       child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                         children: <Widget>[
                                                           Text(
                                                             "REFER A FRIEND AND EARN",
-                                                            style: TextStyle(fontWeight: FontWeight.bold),
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
                                                           ),
                                                           Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
                                                             children: <Widget>[
                                                               Text(
                                                                 "Get a coupon worth",
-                                                                style: TextStyle(fontSize: 12),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        12),
                                                               ),
                                                               SizedBox(
                                                                 width: 10,
                                                               ),
                                                               SvgPicture.asset(
                                                                 AppUtil.getCurrencyIcon(
-                                                                    homeState.homePageData.currencyCode),
+                                                                    homeState
+                                                                        .homePageData
+                                                                        .currencyCode),
                                                                 height: 12,
                                                                 width: 12,
                                                               ),
@@ -233,34 +299,62 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                                                 width: 5,
                                                               ),
                                                               Text(
-                                                                homeState.homePageData.referralDiscount ?? "",
+                                                                homeState
+                                                                        .homePageData
+                                                                        .referralDiscount ??
+                                                                    "",
                                                                 style: TextStyle(
-                                                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                                                    fontSize:
+                                                                        18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                             ],
                                                           ),
                                                           FittedBox(
                                                             fit: BoxFit.none,
                                                             child: Container(
-                                                              padding:
-                                                                  EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-                                                              decoration: BoxDecoration(
-                                                                color: Colors.white,
-                                                                borderRadius: BorderRadius.circular(4),
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          8,
+                                                                      horizontal:
+                                                                          15),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4),
                                                               ),
                                                               child: Row(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                children: <Widget>[
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: <
+                                                                    Widget>[
                                                                   Text(
                                                                     "Use Referal Code: ",
                                                                     style: TextStyle(
-                                                                        fontSize: 12, fontWeight: FontWeight.bold),
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
                                                                   ),
                                                                   Text(
-                                                                    homeState.homePageData.referralCode ?? "",
-                                                                    style: TextStyle(
-                                                                      color: primary3,
-                                                                      fontSize: 12,
+                                                                    homeState
+                                                                            .homePageData
+                                                                            .referralCode ??
+                                                                        "",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          primary3,
+                                                                      fontSize:
+                                                                          12,
                                                                     ),
                                                                   )
                                                                 ],
@@ -282,7 +376,9 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                 }
                               },
                             ),
-                            BlocBuilder<PlacedOrderSuccessBloc, PlacedOrderSuccessState>(builder: (context, state) {
+                            BlocBuilder<PlacedOrderSuccessBloc,
+                                    PlacedOrderSuccessState>(
+                                builder: (context, state) {
                               if (state is LoadingAds) {
                                 return Container(
                                   margin: EdgeInsets.symmetric(vertical: 10),
@@ -303,7 +399,8 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                               } else if (state is SuccessAds) {
                                 if (state.ads.isNotEmpty) {
                                   return Container(
-                                    height: 0.18 * AppUtil.getScreenHeight(context),
+                                    height:
+                                        0.18 * AppUtil.getScreenHeight(context),
                                     child: AdsListWidget(
                                       adsList: state.ads,
                                     ),
@@ -333,7 +430,9 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                   child: Container(
                     margin: EdgeInsets.only(top: 40, left: 15),
                     padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.5)),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.5)),
                     child: Icon(
                       Icons.clear,
                     ),

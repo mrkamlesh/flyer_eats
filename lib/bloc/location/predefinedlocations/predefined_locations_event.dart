@@ -7,7 +7,6 @@ abstract class PredefinedLocationsEvent extends Equatable {
 }
 
 class GetPredefinedLocations extends PredefinedLocationsEvent {
-
   GetPredefinedLocations();
 
   @override
@@ -30,4 +29,11 @@ class ChangeCountry extends PredefinedLocationsEvent {
 
   @override
   List<Object> get props => [this.countryId];
+}
+
+class InitGetPredefinedLocation extends PredefinedLocationsEvent {
+  InitGetPredefinedLocation();
+
+  @override
+  List<Object> get props => [];
 }

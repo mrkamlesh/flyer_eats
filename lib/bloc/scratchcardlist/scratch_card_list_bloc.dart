@@ -29,7 +29,7 @@ class ScratchCardListBloc extends Bloc<ScratchCardListEvent, ScratchCardListStat
       Map<String, dynamic> map = await repository.getScratchCardList(token);
       if (map['list'] != null) {
         yield ScratchCardListState(
-            scratchAmountTotal: double.parse(map['amount']), currency: map['currency_code'], scratchList: map['list']);
+            scratchAmountTotal: double.parse(map['amount']), currencyCode: map['currency_code'], scratchList: map['list']);
       } else {
         yield NoAvailableList();
       }
@@ -55,14 +55,14 @@ class ScratchCardListBloc extends Bloc<ScratchCardListEvent, ScratchCardListStat
 
         double newAmount = state.scratchAmountTotal + sc.amount;
 
-        yield ScratchCardListState(scratchList: list, scratchAmountTotal: newAmount, currency: state.currency);
+        yield ScratchCardListState(scratchList: list, scratchAmountTotal: newAmount, currencyCode: state.currencyCode);
       } else {
         yield ErrorScratch("Error scratch the card",
-            scratchList: state.scratchList, scratchAmountTotal: state.scratchAmountTotal, currency: state.currency);
+            scratchList: state.scratchList, scratchAmountTotal: state.scratchAmountTotal, currency: state.currencyCode);
       }
     } catch (e) {
       yield ErrorScratch(e.toString(),
-          scratchList: state.scratchList, scratchAmountTotal: state.scratchAmountTotal, currency: state.currency);
+          scratchList: state.scratchList, scratchAmountTotal: state.scratchAmountTotal, currency: state.currencyCode);
     }
   }
 }

@@ -91,9 +91,11 @@ class _MyWalletPageState extends State<MyWalletPage> {
                   ],
                 ),
                 DraggableScrollableSheet(
-                  initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  initialChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  minChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
                   maxChildSize: 1.0,
                   builder: (context, controller) {
@@ -103,8 +105,9 @@ class _MyWalletPageState extends State<MyWalletPage> {
                           return Container(
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(32),
+                                    topLeft: Radius.circular(32))),
                             child: Center(
                               child: SpinKitCircle(
                                 color: Colors.black38,
@@ -116,8 +119,9 @@ class _MyWalletPageState extends State<MyWalletPage> {
                           return Container(
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(32),
+                                    topLeft: Radius.circular(32))),
                             child: Center(
                               child: Text(state.message),
                             ),
@@ -126,8 +130,9 @@ class _MyWalletPageState extends State<MyWalletPage> {
                         return Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
                           child: Stack(
                             children: <Widget>[
                               SingleChildScrollView(
@@ -145,7 +150,8 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                           )
                                         ],
                                       ),
-                                      padding: EdgeInsets.only(left: 20, right: 20, top: 15),
+                                      padding: EdgeInsets.only(
+                                          left: 20, right: 20, top: 15),
                                       margin: EdgeInsets.only(
                                           left: horizontalPaddingDraggable,
                                           right: horizontalPaddingDraggable,
@@ -156,7 +162,8 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                           Row(
                                             children: <Widget>[
                                               Container(
-                                                margin: EdgeInsets.only(right: 15),
+                                                margin:
+                                                    EdgeInsets.only(right: 15),
                                                 child: SizedBox(
                                                   width: 25,
                                                   height: 25,
@@ -170,18 +177,25 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                               ),
                                               Expanded(
                                                 child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: <Widget>[
                                                     Text(
                                                       "Total Wallet Amount",
-                                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     ),
                                                     SizedBox(
                                                       height: 7,
                                                     ),
                                                     Text(
                                                       "Current Balance",
-                                                      style: TextStyle(fontSize: 13, color: Colors.black38),
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          color:
+                                                              Colors.black38),
                                                     )
                                                   ],
                                                 ),
@@ -189,7 +203,9 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                               Row(
                                                 children: <Widget>[
                                                   SvgPicture.asset(
-                                                    AppUtil.getCurrencyIcon(state.wallet.currency),
+                                                    AppUtil.getCurrencyIcon(
+                                                        state.wallet
+                                                            .currencyCode),
                                                     color: primary3,
                                                     width: 17,
                                                     height: 17,
@@ -198,12 +214,20 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                                     width: 5,
                                                   ),
                                                   Container(
-                                                    alignment: Alignment.bottomRight,
+                                                    alignment:
+                                                        Alignment.bottomRight,
                                                     child: Text(
-                                                      AppUtil.doubleRemoveZeroTrailing(state.wallet.walletAmount),
-                                                      textAlign: TextAlign.right,
+                                                      AppUtil
+                                                          .doubleRemoveZeroTrailing(
+                                                              state.wallet
+                                                                  .walletAmount),
+                                                      textAlign:
+                                                          TextAlign.right,
                                                       style: TextStyle(
-                                                          fontSize: 30, color: primary3, fontWeight: FontWeight.bold),
+                                                          fontSize: 30,
+                                                          color: primary3,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     ),
                                                   )
                                                 ],
@@ -221,7 +245,9 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                               Expanded(
                                                 child: Text(
                                                   "Added Money + Loyalty Reward Points + Scratch Card",
-                                                  style: TextStyle(fontSize: 12, color: Colors.black45),
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.black45),
                                                 ),
                                               )
                                             ],
@@ -235,10 +261,15 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                           ),
                                           InkWell(
                                             onTap: () {
-                                              _showAddMoneySheet(loginState.user, state.wallet);
+                                              _showAddMoneySheet(
+                                                  loginState.user,
+                                                  state.wallet);
                                             },
                                             child: Container(
-                                              padding: EdgeInsets.only(top: 15, bottom: horizontalPaddingDraggable),
+                                              padding: EdgeInsets.only(
+                                                  top: 15,
+                                                  bottom:
+                                                      horizontalPaddingDraggable),
                                               child: Text(
                                                 "ADD MONEY",
                                                 style: TextStyle(
@@ -253,16 +284,20 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                     ),
                                     GestureDetector(
                                       onTap: () async {
-                                        await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                        await Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
                                           return ScratchCardPage();
                                         }));
 
-                                        _bloc.add(GetWalletInfo(loginState.user.token));
+                                        _bloc.add(GetWalletInfo(
+                                            loginState.user.token));
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(18),
+                                          borderRadius:
+                                              BorderRadius.circular(18),
                                           boxShadow: [
                                             BoxShadow(
                                               color: shadow,
@@ -275,11 +310,13 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                             left: horizontalPaddingDraggable,
                                             right: horizontalPaddingDraggable,
                                             bottom: 20),
-                                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 15),
                                         child: Row(
                                           children: <Widget>[
                                             Container(
-                                              margin: EdgeInsets.only(right: 15),
+                                              margin:
+                                                  EdgeInsets.only(right: 15),
                                               child: SizedBox(
                                                 width: 25,
                                                 height: 25,
@@ -294,11 +331,15 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                             Expanded(
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: <Widget>[
                                                   Text(
                                                     "Scratch Card",
-                                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                                   ),
                                                   SizedBox(
                                                     height: 7,
@@ -308,11 +349,16 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                                       Expanded(
                                                         child: Text(
                                                           "Current Balance",
-                                                          style: TextStyle(fontSize: 13, color: Colors.black38),
+                                                          style: TextStyle(
+                                                              fontSize: 13,
+                                                              color: Colors
+                                                                  .black38),
                                                         ),
                                                       ),
                                                       SvgPicture.asset(
-                                                        AppUtil.getCurrencyIcon(state.wallet.currency),
+                                                        AppUtil.getCurrencyIcon(
+                                                            state.wallet
+                                                                .currencyCode),
                                                         height: 10,
                                                         width: 10,
                                                       ),
@@ -320,9 +366,16 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                                         width: 5,
                                                       ),
                                                       Text(
-                                                        AppUtil.doubleRemoveZeroTrailing(state.wallet.scratchAmount),
-                                                        textAlign: TextAlign.right,
-                                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                        AppUtil.doubleRemoveZeroTrailing(
+                                                            state.wallet
+                                                                .scratchAmount),
+                                                        textAlign:
+                                                            TextAlign.right,
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                       )
                                                     ],
                                                   ),
@@ -334,7 +387,9 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                                     style: TextStyle(
                                                         color: primary3,
                                                         fontSize: 13,
-                                                        decoration: TextDecoration.underline),
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline),
                                                   )
                                                 ],
                                               ),
@@ -351,7 +406,8 @@ class _MyWalletPageState extends State<MyWalletPage> {
                                       decoration: BoxDecoration(
                                           color: Colors.black.withOpacity(0.5),
                                           borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                              topRight: Radius.circular(32),
+                                              topLeft: Radius.circular(32))),
                                       child: Center(
                                         child: SpinKitCircle(
                                           color: Colors.white,
@@ -384,7 +440,8 @@ class _MyWalletPageState extends State<MyWalletPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: Text(
               "Error",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -409,7 +466,8 @@ class _MyWalletPageState extends State<MyWalletPage> {
 
   openRazorPayCheckOut(User user, Wallet wallet, double amount) {
     var options = {
-      "key": wallet.razorpayKey, //"rzp_test_shynWbWngI8JsA", // change to placeOrder.razorKey
+      "key": wallet.razorpayKey,
+      //"rzp_test_shynWbWngI8JsA", // change to placeOrder.razorKey
       "amount": (amount * 100.0).ceil().toString(),
       "name": "Flyer Eats",
       "description": "Payment Add Money to Wallet",
@@ -446,14 +504,17 @@ class _MyWalletPageState extends State<MyWalletPage> {
     showModalBottomSheet(
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         context: context,
         builder: (context) {
           return StatefulBuilder(
             builder: (context, state) {
               return Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(32),
+                        topRight: Radius.circular(32)),
                     color: Colors.white),
                 child: SingleChildScrollView(
                   child: Column(
@@ -466,7 +527,8 @@ class _MyWalletPageState extends State<MyWalletPage> {
                             Expanded(
                               child: Text(
                                 "ADD MONEY",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
                             IconButton(
@@ -479,12 +541,17 @@ class _MyWalletPageState extends State<MyWalletPage> {
                       ),
                       Container(
                         margin: EdgeInsets.only(
-                            left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: 20),
-                        child: Text("Enter how much money you want to add to wallet"),
+                            left: horizontalPaddingDraggable,
+                            right: horizontalPaddingDraggable,
+                            bottom: 20),
+                        child: Text(
+                            "Enter how much money you want to add to wallet"),
                       ),
                       Container(
                         margin: EdgeInsets.only(
-                            left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, bottom: 20),
+                            left: horizontalPaddingDraggable,
+                            right: horizontalPaddingDraggable,
+                            bottom: 20),
                         child: Center(
                           child: TextField(
                             autofocus: true,
@@ -497,19 +564,27 @@ class _MyWalletPageState extends State<MyWalletPage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 50),
                             decoration: InputDecoration(
-                                hintText: wallet.currency + " 0",
-                                contentPadding: EdgeInsets.symmetric(vertical: 15),
-                                hintStyle: TextStyle(fontSize: 50, color: Colors.black12),
-                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: primary2)),
-                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: primary2)),
-                                border: UnderlineInputBorder(borderSide: BorderSide(color: primary2))),
+                                hintText: AppUtil.getCurrencyString(
+                                        wallet.currencyCode) +
+                                    " 0",
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 15),
+                                hintStyle: TextStyle(
+                                    fontSize: 50, color: Colors.black12),
+                                enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: primary2)),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: primary2)),
+                                border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: primary2))),
                           ),
                         ),
                       ),
                       GestureDetector(
                         onTap: amountIsValid(_money)
                             ? () {
-                                openRazorPayCheckOut(user, wallet, double.parse(_money));
+                                openRazorPayCheckOut(
+                                    user, wallet, double.parse(_money));
                                 _bloc.add(InitAmount(double.parse(_money)));
                                 Navigator.pop(context);
                               }
@@ -518,7 +593,8 @@ class _MyWalletPageState extends State<MyWalletPage> {
                           margin: EdgeInsets.only(
                               left: horizontalPaddingDraggable,
                               right: horizontalPaddingDraggable,
-                              bottom: MediaQuery.of(context).viewInsets.bottom + 32),
+                              bottom: MediaQuery.of(context).viewInsets.bottom +
+                                  32),
                           child: Stack(
                             children: <Widget>[
                               Container(

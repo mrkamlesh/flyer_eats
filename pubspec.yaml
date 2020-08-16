@@ -163,6 +163,7 @@ flutter:
     - assets/home address.svg
     - assets/flyereatslogo2.png
     - assets/scratch card.png
+    - assets/warnings.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

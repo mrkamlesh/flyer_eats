@@ -34,6 +34,7 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
     _bloc = CouponBloc();
     _couponController.addListener(() {
       _bloc.add(UpdateCouponTyped(_couponController.text));
+      _couponController.selection = TextSelection.fromPosition(TextPosition(offset: _couponController.text.length));
     });
   }
 
@@ -145,7 +146,6 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                   Expanded(
                                     child: TextField(
                                       controller: _couponController,
-                                      autofocus: true,
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: "ENTER COUPON",

@@ -80,28 +80,36 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                   ],
                 ),
                 DraggableScrollableSheet(
-                  initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  initialChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  minChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
                   maxChildSize: 1.0,
                   builder: (context, controller) {
                     return Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(32),
+                              topLeft: Radius.circular(32))),
                       padding: EdgeInsets.only(top: 20),
-                      child: BlocConsumer<ScratchCardListBloc, ScratchCardListState>(
+                      child: BlocConsumer<ScratchCardListBloc,
+                          ScratchCardListState>(
                         listener: (context, state) {
                           if (state is ErrorScratch) {
                             showDialog(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
                                     title: Text(
                                       "Error",
-                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     content: Text(
                                       state.message,
@@ -143,12 +151,16 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                               SliverToBoxAdapter(
                                 child: Container(
                                   margin: EdgeInsets.only(
-                                      bottom: 15, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                                      bottom: 15,
+                                      left: horizontalPaddingDraggable,
+                                      right: horizontalPaddingDraggable),
                                   child: Row(
                                     children: <Widget>[
-                                      Expanded(child: Text("Total Scratch Card")),
+                                      Expanded(
+                                          child: Text("Total Scratch Card")),
                                       SvgPicture.asset(
-                                        AppUtil.getCurrencyIcon(state.currency),
+                                        AppUtil.getCurrencyIcon(
+                                            state.currencyCode),
                                         color: primary3,
                                         height: 20,
                                         width: 20,
@@ -157,9 +169,13 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                                         width: 5,
                                       ),
                                       Text(
-                                        AppUtil.doubleRemoveZeroTrailing(state.scratchAmountTotal),
+                                        AppUtil.doubleRemoveZeroTrailing(
+                                            state.scratchAmountTotal),
                                         textAlign: TextAlign.right,
-                                        style: TextStyle(fontSize: 36, color: primary3, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontSize: 36,
+                                            color: primary3,
+                                            fontWeight: FontWeight.bold),
                                       )
                                     ],
                                   ),
@@ -167,19 +183,26 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                               ),
                               SliverPadding(
                                 padding: EdgeInsets.only(
-                                    left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                                    left: horizontalPaddingDraggable,
+                                    right: horizontalPaddingDraggable),
                                 sliver: SliverGrid(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisSpacing: 20,
-                                        mainAxisSpacing: 20,
-                                        childAspectRatio: 1.2,
-                                        crossAxisCount: 2),
-                                    delegate: SliverChildBuilderDelegate((context, i) {
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisSpacing: 20,
+                                            mainAxisSpacing: 20,
+                                            childAspectRatio: 1.2,
+                                            crossAxisCount: 2),
+                                    delegate: SliverChildBuilderDelegate(
+                                        (context, i) {
                                       return ScratchCardWidget(
                                         scratchCard: state.scratchList[i],
-                                        currency: state.currency,
+                                        currencyCode: state.currencyCode,
                                         onTap: () {
-                                          _showScratchCard(loginState.user.token, state.scratchList[i], i);
+                                          _showScratchCard(
+                                              loginState.user.token,
+                                              state.scratchList[i],
+                                              i,
+                                              state.currencyCode);
                                         },
                                       );
                                     }, childCount: state.scratchList.length)),
@@ -204,13 +227,15 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
     );
   }
 
-  void _showScratchCard(String token, ScratchCard scratchCard, int pos) {
+  void _showScratchCard(
+      String token, ScratchCard scratchCard, int pos, String currencyCode) {
     double opacity = 0.0;
     showModalBottomSheet(
         isScrollControlled: true,
         enableDrag: false,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: Colors.white,
         context: context,
         builder: (context) {
@@ -218,8 +243,10 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
             builder: (context, newState) {
               return SingleChildScrollView(
                 child: Container(
-                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                  padding:
+                      EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(32)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -244,7 +271,8 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                             flex: 9,
                             child: Text(
                               "Scratch Card",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -261,7 +289,8 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                       ),
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
-                        child: Center(child: Text("You Have Won A Scratch Card!")),
+                        child:
+                            Center(child: Text("You Have Won A Scratch Card!")),
                       ),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
@@ -274,7 +303,8 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                             newState(() {
                               opacity = 1.0;
                             });
-                            _bloc.add(DoScratchCard(token, scratchCard.cardId, pos));
+                            _bloc.add(
+                                DoScratchCard(token, scratchCard.cardId, pos));
                           },
                           image: Image.asset(
                             "assets/scratch card.png",
@@ -291,8 +321,14 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                               decoration: BoxDecoration(color: Colors.white),
                               child: Center(
                                 child: Text(
-                                  "\u20b9 " + AppUtil.doubleRemoveZeroTrailing(scratchCard.amount),
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50, color: primary3),
+                                  AppUtil.getCurrencyString(currencyCode) +
+                                      " " +
+                                      AppUtil.doubleRemoveZeroTrailing(
+                                          scratchCard.amount),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 50,
+                                      color: primary3),
                                 ),
                               ),
                             ),
@@ -311,10 +347,12 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
 
 class ScratchCardWidget extends StatelessWidget {
   final ScratchCard scratchCard;
-  final String currency;
+  final String currencyCode;
   final Function onTap;
 
-  const ScratchCardWidget({Key key, this.scratchCard, this.currency, this.onTap}) : super(key: key);
+  const ScratchCardWidget(
+      {Key key, this.scratchCard, this.currencyCode, this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -323,11 +361,17 @@ class ScratchCardWidget extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: Colors.white,
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 3, spreadRadius: 2)]),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black12, blurRadius: 3, spreadRadius: 2)
+                ]),
             child: Center(
               child: Text(
-                currency + " " + AppUtil.doubleRemoveZeroTrailing(scratchCard.amount),
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: primary3),
+                AppUtil.getCurrencyString(currencyCode) +
+                    " " +
+                    AppUtil.doubleRemoveZeroTrailing(scratchCard.amount),
+                style: TextStyle(
+                    fontSize: 30, fontWeight: FontWeight.bold, color: primary3),
               ),
             ),
           )
@@ -336,7 +380,9 @@ class ScratchCardWidget extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.black),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.black),
                 child: Image.asset(
                   "assets/scratch card.png",
                   fit: BoxFit.cover,

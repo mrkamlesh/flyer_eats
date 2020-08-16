@@ -58,7 +58,9 @@ class _EditAccountPageState extends State<EditAccountPage> {
   Widget build(BuildContext context) {
     return BlocProvider<EditProfileBloc>(
       create: (context) {
-        return _bloc..add(InitProfile(Profile(name: widget.user.name, phone: widget.user.phone)));
+        return _bloc
+          ..add(InitProfile(
+              Profile(name: widget.user.name, phone: widget.user.phone)));
       },
       child: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, loginState) {
@@ -69,7 +71,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         title: Text(
                           "Success",
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -89,13 +92,15 @@ class _EditAccountPageState extends State<EditAccountPage> {
                       );
                     },
                     barrierDismissible: false);
-                BlocProvider.of<LoginBloc>(context).add(UpdateUserProfile(state.user));
+                BlocProvider.of<LoginBloc>(context)
+                    .add(UpdateUserProfile(state.user));
               } else if (state is ErrorUpdateProfile) {
                 showDialog(
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         title: Text(
                           "Error",
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -157,19 +162,24 @@ class _EditAccountPageState extends State<EditAccountPage> {
                       ],
                     ),
                     DraggableScrollableSheet(
-                      initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                      initialChildSize: (AppUtil.getScreenHeight(context) -
+                              AppUtil.getToolbarHeight(context)) /
                           AppUtil.getScreenHeight(context),
-                      minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                      minChildSize: (AppUtil.getScreenHeight(context) -
+                              AppUtil.getToolbarHeight(context)) /
                           AppUtil.getScreenHeight(context),
                       maxChildSize: 1.0,
                       builder: (context, controller) {
                         return Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
                           padding: EdgeInsets.only(
-                              top: 20, left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                              top: 20,
+                              left: horizontalPaddingDraggable,
+                              right: horizontalPaddingDraggable),
                           child: SingleChildScrollView(
                             child: Column(
                               children: <Widget>[
@@ -182,41 +192,62 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                     child: Container(
                                       margin: EdgeInsets.only(bottom: 30),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
                                         children: <Widget>[
                                           Container(
                                             decoration: BoxDecoration(
-                                                shape: BoxShape.circle, border: Border.all(color: Colors.black12)),
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                    color: Colors.black12)),
                                             width: 100,
                                             height: 100,
                                             child: state.profile.avatar != null
                                                 ? ClipOval(
                                                     child: FittedBox(
-                                                        alignment: Alignment.center,
+                                                        alignment:
+                                                            Alignment.center,
                                                         fit: BoxFit.cover,
-                                                        child: Image.file(state.profile.avatar)),
+                                                        child: Image.file(state
+                                                            .profile.avatar)),
                                                   )
                                                 : widget.user.avatar != null
                                                     ? ClipOval(
                                                         child: FittedBox(
-                                                            alignment: Alignment.center,
+                                                            alignment: Alignment
+                                                                .center,
                                                             fit: BoxFit.cover,
-                                                            child: CachedNetworkImage(
-                                                              imageUrl: widget.user.avatar,
+                                                            child:
+                                                                CachedNetworkImage(
+                                                              imageUrl: widget
+                                                                  .user.avatar,
                                                               width: 100,
                                                               height: 100,
                                                               fit: BoxFit.fill,
-                                                              alignment: Alignment.center,
-                                                              placeholder: (context, url) {
-                                                                return Shimmer.fromColors(
-                                                                    child: Container(
-                                                                      height: 100,
-                                                                      width: 100,
-                                                                      color: Colors.black,
-                                                                    ),
-                                                                    baseColor: Colors.grey[300],
-                                                                    highlightColor: Colors.grey[100]);
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              placeholder:
+                                                                  (context,
+                                                                      url) {
+                                                                return Shimmer
+                                                                    .fromColors(
+                                                                        child:
+                                                                            Container(
+                                                                          height:
+                                                                              100,
+                                                                          width:
+                                                                              100,
+                                                                          color:
+                                                                              Colors.black,
+                                                                        ),
+                                                                        baseColor:
+                                                                            Colors.grey[
+                                                                                300],
+                                                                        highlightColor:
+                                                                            Colors.grey[100]);
                                                               },
                                                             )),
                                                       )
@@ -225,9 +256,11 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                                         child: SizedBox(
                                                           width: 40,
                                                           height: 40,
-                                                          child: SvgPicture.asset(
+                                                          child:
+                                                              SvgPicture.asset(
                                                             "assets/account.svg",
-                                                            color: Colors.black38,
+                                                            color:
+                                                                Colors.black38,
                                                           ),
                                                         ),
                                                       ),
@@ -253,28 +286,41 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                   controller: _phoneController,
                                 ),
                                 CustomTextField(
-                                  controller: TextEditingController(text: widget.user.username),
+                                  controller: TextEditingController(
+                                      text: widget.user.username),
                                   hint: "Your email here",
                                   lines: 1,
                                   isEnabled: false,
                                 ),
-                                /*CustomTextField(
-                                  hint: "Change your password here",
-                                  lines: 1,
-                                  margin: EdgeInsets.only(bottom: 5),
-                                  controller: _passwordController,
-                                ),
                                 Container(
-                                  margin: EdgeInsets.only(left: horizontalPaddingDraggable),
-                                  child: Text(
-                                    "*Leave password empty if you dont want to change it",
-                                    style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(color: Colors.black12),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                ),*/
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "Select Your Location",
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              color: Colors.black38,
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                      Icon(Icons.arrow_drop_down)
+                                    ],
+                                  ),
+                                ),
                                 GestureDetector(
                                   onTap: state.profile.isValid()
                                       ? () {
-                                          _bloc.add(UpdateProfile(loginState.user.token));
+                                          _bloc.add(UpdateProfile(
+                                              loginState.user.token));
                                         }
                                       : () {},
                                   child: Stack(
@@ -283,20 +329,24 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                         height: 50,
                                         decoration: BoxDecoration(
                                           color: Color(0xFFFFB531),
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         alignment: Alignment.center,
-                                        margin: EdgeInsets.only(top: 20, bottom: 30),
+                                        margin: EdgeInsets.only(
+                                            top: 20, bottom: 30),
                                         child: Text(
                                           "UPDATE",
                                           style: TextStyle(fontSize: 20),
                                         ),
                                       ),
                                       AnimatedOpacity(
-                                        opacity: state.profile.isValid() ? 0.0 : 0.5,
+                                        opacity:
+                                            state.profile.isValid() ? 0.0 : 0.5,
                                         child: Container(
                                           height: 50,
-                                          margin: EdgeInsets.only(top: 20, bottom: 30),
+                                          margin: EdgeInsets.only(
+                                              top: 20, bottom: 30),
                                           color: Colors.white,
                                         ),
                                         duration: Duration(milliseconds: 300),
@@ -312,7 +362,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
                     ),
                     state is LoadingUpdateProfile
                         ? Container(
-                            decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                            decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5)),
                             child: Center(
                               child: SpinKitCircle(
                                 color: Colors.white,
@@ -339,13 +390,15 @@ class _EditAccountPageState extends State<EditAccountPage> {
             child: new Container(
               decoration: new BoxDecoration(
                   borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(10.0), topRight: const Radius.circular(10.0))),
+                      topLeft: const Radius.circular(10.0),
+                      topRight: const Radius.circular(10.0))),
               child: new Wrap(
                 children: <Widget>[
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      PickedFile file = await ImagePicker().getImage(source: ImageSource.camera, imageQuality: 20);
+                      PickedFile file = await ImagePicker().getImage(
+                          source: ImageSource.camera, imageQuality: 20);
                       if (file != null) {
                         _bloc.add(UpdateImage(File(file.path)));
                       }
@@ -361,7 +414,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
                   InkWell(
                     onTap: () async {
                       Navigator.pop(context);
-                      PickedFile file = await ImagePicker().getImage(source: ImageSource.gallery);
+                      PickedFile file = await ImagePicker()
+                          .getImage(source: ImageSource.gallery);
                       if (file != null) {
                         _bloc.add(UpdateImage(File(file.path)));
                       }
@@ -407,7 +461,9 @@ class CustomTextField extends StatelessWidget {
     return Container(
       margin: margin,
       padding: EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black12)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.black12)),
       child: TextField(
         controller: controller,
         maxLines: lines,

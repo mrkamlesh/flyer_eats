@@ -14,9 +14,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  //String serverUrl = "http://flyereats.in/";
+  String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {

@@ -9,6 +9,7 @@ class Order {
   final String status;
   final String total;
   final String paymentType;
+  final String currencyCode;
 
 /*  final String offer;
   final String voucher;
@@ -16,7 +17,16 @@ class Order {
   final String deliveryCharge;
   final String tax;*/
 
-  Order({this.restaurant, this.itemsString, this.date, this.status, this.id, this.title, this.total, this.paymentType});
+  Order(
+      {this.restaurant,
+      this.itemsString,
+      this.date,
+      this.status,
+      this.id,
+      this.title,
+      this.total,
+      this.paymentType,
+      this.currencyCode});
 
   String getIcon() {
     switch (this.status) {
@@ -59,7 +69,8 @@ class Order {
     listItems.forEach((item) {
       i++;
       String add = (i == listItems.length) ? " " : ", ";
-      itemsString = itemsString + item['item_name'] + " X " + item['quantity'] + add;
+      itemsString =
+          itemsString + item['item_name'] + " X " + item['quantity'] + add;
     });
 
     var listStatus = parsedJson['order_history'] as List;
@@ -82,6 +93,7 @@ class Order {
       status: listStatus.last['status'],
       total: parsedJson['total'],
       itemsString: itemsString,
+      currencyCode: parsedJson['currency_code'],
       paymentType: parsedJson['payment_type'],
     );
   }
@@ -97,6 +109,7 @@ class PickupOrder {
   final String date;
   final String amount;
   final String status;
+  final String currencyCode;
 
   PickupOrder(
       {this.id,
@@ -107,7 +120,8 @@ class PickupOrder {
       this.items,
       this.date,
       this.amount,
-      this.status});
+      this.status,
+      this.currencyCode});
 
   factory PickupOrder.fromJson(Map<String, dynamic> parsedJson) {
     var itemsJson = parsedJson['items'] as List;
@@ -124,6 +138,7 @@ class PickupOrder {
         shopName: parsedJson['pickup_details']['shop_name'],
         shopDescription: parsedJson['pickup_details']['shop_description'],
         status: parsedJson['status'],
+        currencyCode: parsedJson['currency_code'],
         items: items);
   }
 

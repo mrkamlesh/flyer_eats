@@ -10,6 +10,7 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/food_cart.dart';
 import 'package:clients/widget/app_bar.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -459,15 +460,15 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                     : SizedBox(),
                                 GestureDetector(
                                   onTap: () {
-                                    showModalBottomSheet(
-                                        isScrollControlled: true,
+                                    showMaterialModalBottomSheet(
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.only(
                                                 topLeft: Radius.circular(32),
                                                 topRight: Radius.circular(32))),
                                         backgroundColor: Colors.white,
+                                        duration: Duration(milliseconds: 200),
                                         context: context,
-                                        builder: (context) {
+                                        builder: (context, controller) {
                                           List<Widget> statusWidgets = List();
                                           for (int i = 0;
                                               i <
@@ -602,94 +603,85 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                                             );
                                           }
 
-                                          return Wrap(
+                                          return Stack(
                                             children: <Widget>[
-                                              Stack(
-                                                children: <Widget>[
-                                                  SingleChildScrollView(
-                                                    child: Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 20,
-                                                          right: 20,
-                                                          bottom:
-                                                              kBottomNavigationBarHeight,
-                                                          top: 20),
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      32)),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Container(
-                                                            margin:
-                                                                EdgeInsets.only(
-                                                                    bottom: 52),
-                                                          ),
-                                                          Column(
-                                                            children:
-                                                                statusWidgets,
-                                                          ),
-                                                        ],
+                                              SingleChildScrollView(
+                                                controller: controller,
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 20,
+                                                      right: 20,
+                                                      bottom:
+                                                          kBottomNavigationBarHeight,
+                                                      top: 20),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              32)),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 52),
                                                       ),
-                                                    ),
+                                                      Column(
+                                                        children: statusWidgets,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Positioned(
-                                                    top: 0,
-                                                    left: 0,
-                                                    child: Container(
-                                                        width: AppUtil
-                                                            .getScreenWidth(
-                                                                context),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.only(
+                                                ),
+                                              ),
+                                              Positioned(
+                                                top: 0,
+                                                left: 0,
+                                                child: Container(
+                                                    width:
+                                                        AppUtil.getScreenWidth(
+                                                            context),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.only(
                                                                 topLeft: Radius
                                                                     .circular(
                                                                         32),
                                                                 topRight: Radius
                                                                     .circular(
                                                                         32)),
-                                                            color:
-                                                                Colors.white),
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 20,
-                                                                left: 20,
-                                                                bottom: 20),
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            Expanded(
-                                                                flex: 2,
-                                                                child:
-                                                                    GestureDetector(
-                                                                  onTap: () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child: Icon(
-                                                                      Icons
-                                                                          .clear),
-                                                                )),
-                                                            Expanded(
-                                                              flex: 8,
-                                                              child: Text(
-                                                                "Track Order Timeline",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )),
-                                                  ),
-                                                ],
-                                              )
+                                                        color: Colors.white),
+                                                    padding: EdgeInsets.only(
+                                                        top: 20,
+                                                        left: 20,
+                                                        bottom: 20),
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Expanded(
+                                                            flex: 2,
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: Icon(
+                                                                  Icons.clear),
+                                                            )),
+                                                        Expanded(
+                                                          flex: 8,
+                                                          child: Text(
+                                                            "Track Order Timeline",
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )),
+                                              ),
                                             ],
                                           );
                                         });
@@ -753,7 +745,8 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
         ? AppUtil.getCurrencyString(currencyCode) +
             " " +
             AppUtil.doubleRemoveZeroTrailing(amount)
-        : "(" + AppUtil.getCurrencyString(currencyCode) +
+        : "(" +
+            AppUtil.getCurrencyString(currencyCode) +
             " " +
             AppUtil.doubleRemoveZeroTrailing(amount) +
             ")";

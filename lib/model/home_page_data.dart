@@ -15,6 +15,7 @@ class HomePageData {
   final List<Ads> ads;
   final String referralCode;
   final String referralDiscount;
+  final bool isReferralAvailable;
   final String currencyCode;
   final String dblText;
 
@@ -29,6 +30,7 @@ class HomePageData {
     this.ads,
     this.referralCode,
     this.referralDiscount,
+    this.isReferralAvailable,
     this.currencyCode,
     this.dblText,
   });
@@ -72,6 +74,7 @@ class HomePageData {
         referralCode: parsedJson['referral_code'],
         dblText: parsedJson['dinner_section_title'],
         currencyCode: parsedJson['currency_code'],
+        isReferralAvailable: parsedJson['referral_available'],
         promos: promos,
         topRestaurants: top,
         categories: foodCategories,

@@ -164,9 +164,8 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                 if (state is SuccessAds) {
                                   return BlocBuilder<HomeBloc, HomeState>(
                                     builder: (context, homeState) {
-                                      return homeState.homePageData
-                                                  .referralDiscount !=
-                                              ""
+                                      return homeState
+                                              .homePageData.isReferralAvailable
                                           ? InkWell(
                                               onTap:
                                                   homeState.homePageData != null

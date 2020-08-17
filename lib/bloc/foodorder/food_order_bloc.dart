@@ -207,24 +207,6 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       PlaceOrder result = await repository.getPaymentOptions(state.placeOrder);
 
       if (result.isValid) {
-        PlaceOrder s = state.placeOrder.copyWith(
-            isValid: true,
-            message: result.message,
-            razorKey: result.razorKey,
-            razorSecret: result.razorSecret,
-            stripePublishKey: result.stripePublishKey,
-            stripeSecretKey: result.stripeSecretKey,
-            taxCharges: result.taxCharges,
-            packagingCharges: result.packagingCharges,
-            taxPrettyString: result.taxPrettyString,
-            discountOrder: result.discountOrder,
-            discountOrderPrettyString: result.discountOrderPrettyString,
-            deliveryCharges: result.deliveryCharges,
-            walletAmount: result.walletAmount,
-            listPaymentMethod: result.listPaymentMethod,
-            applyVoucherMessage: result.applyVoucherErrorMessage,
-            voucher: result.voucher ??
-                state.placeOrder.voucher.copyWith(amount: 0, rate: 0));
         yield FoodOrderState(
             placeOrder: state.placeOrder.copyWith(
                 isValid: true,
@@ -419,9 +401,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       }
     } on PlatformException catch (e) {
       print(e);
-      yield ErrorPlaceOrder("Something went wrong",
-          placeOrder: state.placeOrder
-              .copyWith(isValid: false, message: "Something went wrong"));
+      yield CancelledPlaceOrder("Order Cancelled",
+          placeOrder: state.placeOrder);
     } catch (e) {
       yield ErrorPlaceOrder(e.toString(),
           placeOrder:

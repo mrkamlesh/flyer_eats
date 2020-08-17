@@ -688,6 +688,8 @@ class DataProvider {
       "client_token": token,
       "full_name": profile.name,
       "contact_phone": profile.phone,
+      "loc_name": profile.location,
+      "country_code": profile.countryCode,
       "password": profile.password != null && profile.password != ""
           ? profile.password
           : "",

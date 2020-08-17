@@ -84,12 +84,17 @@ class DetailOrder {
           Food(
             id: foodCartItemJson[i]['id'],
             title: foodCartItemJson[i]['item_name'],
-            category: MenuCategory(foodCartItemJson[i]['category_id'], foodCartItemJson[i]['category_name']),
+            category: MenuCategory(foodCartItemJson[i]['category_id'],
+                foodCartItemJson[i]['category_name']),
             discount: double.parse(foodCartItemJson[i]['discount'].toString()),
-            price: Price(price: double.parse(foodCartItemJson[i]['normal_price'].toString())),
+            price: Price(
+                price: double.parse(
+                    foodCartItemJson[i]['normal_price'].toString())),
           ),
           int.parse(foodCartItemJson[i]['qty'].toString()),
-          Price(price: double.parse(foodCartItemJson[i]['normal_price'].toString())),
+          Price(
+              price:
+                  double.parse(foodCartItemJson[i]['normal_price'].toString())),
           []);
     }
 
@@ -133,12 +138,19 @@ class DetailOrder {
         //deliveryTime: parsedJson['info']['Delivery Time'],
         restaurantContactNumber: parsedJson['info']['Telephone'],
         currentStatus: StatusOrder(status: "On the way"),
-        grandTotal: double.parse(parsedJson['html']['total']['total'].toString()),
-        tax: double.parse(parsedJson['html']['total']['taxable_total'].toString()),
-        deliveryCharges: double.parse(parsedJson['html']['total']['delivery_charges'].toString()),
-        packagingFee: double.parse(parsedJson['html']['total']['merchant_packaging_charge'].toString()),
-        voucherAmount: double.parse(parsedJson['html']['total']['voucher_value'].toString()),
-        discountOrder: double.parse(parsedJson['html']['total']['discounted_amount'].toString()),
+        grandTotal:
+            double.parse(parsedJson['html']['total']['total'].toString()),
+        tax: double.parse(
+            parsedJson['html']['total']['taxable_total'].toString()),
+        deliveryCharges: double.parse(
+            parsedJson['html']['total']['delivery_charges'].toString()),
+        packagingFee: double.parse(parsedJson['html']['total']
+                ['merchant_packaging_charge']
+            .toString()),
+        voucherAmount: double.parse(
+            parsedJson['html']['total']['voucher_value'].toString()),
+        discountOrder: double.parse(
+            parsedJson['html']['total']['discounted_amount'].toString()),
         discountFood: discountTotal,
         subtotal: subTotalOrder,
         total: totalOrder,
@@ -160,6 +172,7 @@ class PickupDetailOrder {
   final String shopAddress;
   final List<StatusOrder> statusHistory;
   final String deliveryInstruction;
+  final String currencyCode;
 
   PickupDetailOrder(
       {this.orderId,
@@ -173,7 +186,8 @@ class PickupDetailOrder {
       this.shopDescription,
       this.shopAddress,
       this.statusHistory,
-      this.deliveryInstruction});
+      this.deliveryInstruction,
+      this.currencyCode});
 
   StatusOrder getCurrentStatus() {
     return statusHistory.last;
@@ -205,6 +219,7 @@ class PickupDetailOrder {
         shopAddress: parsedJson['pickup_details']['pickup_address'],
         shopDescription: parsedJson['pickup_details']['shop_description'],
         deliveryInstruction: parsedJson['delivery_instruction'],
+        currencyCode: parsedJson['currency_code'],
         items: items,
         thumbnails: thumbnails,
         statusHistory: statusHistory);

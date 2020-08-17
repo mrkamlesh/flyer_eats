@@ -3,6 +3,7 @@ import 'package:clients/model/add_on.dart';
 import 'package:clients/model/add_ons_type.dart';
 import 'package:clients/model/price.dart';
 import 'package:clients/model/user.dart';
+import 'package:clients/widget/payment_method_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -631,7 +632,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                                           child:
                                                                               Text(
                                                                             state.placeOrder.applyVoucherErrorMessage,
-                                                                            textAlign: TextAlign.start,
+                                                                            textAlign:
+                                                                                TextAlign.start,
                                                                             style:
                                                                                 TextStyle(color: Colors.white, fontSize: 12),
                                                                           ),
@@ -1046,7 +1048,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                   isValid: state.placeOrder.isValid,
                                   currencyIcon: AppUtil.getCurrencyIcon(
                                       state.placeOrder.restaurant.currencyCode),
-                                  onButtonTap: state.placeOrder.isValid
+                                  onButtonTap: state.placeOrder.isValid &&
+                                          !(state is LoadingPlaceOrder)
                                       ? () {
                                           placeOrderButtonTap(state.placeOrder);
                                         }
@@ -1068,12 +1071,14 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                             ),
                           ),
                           BlocConsumer<FoodOrderBloc, FoodOrderState>(
-                            listener: (context, state) {
+                            listener: (context, state) async {
                               if (state is SuccessPlaceOrder) {
                                 if (state.placeOrder.isChangePrimaryContact) {
                                   BlocProvider.of<LoginBloc>(context).add(
                                       UpdatePrimaryContact(
                                           state.placeOrder.contact));
+                                  await _showContactConfirmationDialog(
+                                      state.placeOrder.contact);
                                 }
                                 BlocProvider.of<FoodOrderBloc>(context)
                                     .add(ClearCart());
@@ -1095,6 +1100,34 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                 BorderRadius.circular(10)),
                                         title: Text(
                                           "Place Order Error",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        content: Text(state.message),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              "OK",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              } else if (state is CancelledPlaceOrder) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        title: Text(
+                                          "Place Order Cancelled",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
@@ -1278,53 +1311,16 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
   }
 
   showPaymentMethodOptions(PlaceOrder placeOrder) {
-    showModalBottomSheet(
+    showMaterialModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
+        duration: Duration(milliseconds: 200),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-        builder: (context) {
+        builder: (context, controller) {
           return StatefulBuilder(
             builder: (context, newState) {
-              List<Widget> listWidget = List();
-              for (int i = 0; i < placeOrder.listPaymentMethod.length; i++) {
-                listWidget.add(Column(
-                  children: <Widget>[
-                    RadioListTile(
-                      value: placeOrder.listPaymentMethod[i].value,
-                      dense: true,
-                      groupValue: placeOrder.selectedPaymentMethod,
-                      onChanged: (value) {
-                        _onPaymentOptionsSelected(placeOrder, value);
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                      isThreeLine: false,
-                      title: Row(
-                        children: <Widget>[
-                          SvgPicture.asset(
-                            placeOrder.listPaymentMethod[i].getIcon(),
-                            height: 36,
-                            width: 36,
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Text(
-                            placeOrder.listPaymentMethod[i].label,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ));
-              }
-
               return Container(
                 margin: EdgeInsets.symmetric(
                     vertical: 40, horizontal: horizontalPaddingDraggable - 10),
@@ -1334,9 +1330,13 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                     topRight: Radius.circular(32),
                   ),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: listWidget,
+                child: PaymentMethodListWidget(
+                  paymentMethods: placeOrder.listPaymentMethod,
+                  onTap: (i) {
+                    Navigator.pop(context);
+                    _onPaymentOptionsSelected(
+                        placeOrder, placeOrder.listPaymentMethod[i].value);
+                  },
                 ),
               );
             },
@@ -1398,12 +1398,39 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
   void handlerExternalWallet(ExternalWalletResponse response) {}
 
   void placeOrderButtonTap(PlaceOrder placeOrder) {
-    if ((placeOrder.getTotal() - placeOrder.getWalletUsed()) > 0.0) {
-      showPaymentMethodOptions(placeOrder);
+    if (placeOrder.applyVoucherErrorMessage == null) {
+      if ((placeOrder.getTotal() - placeOrder.getWalletUsed()) > 0.0) {
+        showPaymentMethodOptions(placeOrder);
+      } else {
+        BlocProvider.of<FoodOrderBloc>(context)
+            .add(ChangePaymentMethod("wallet"));
+        BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderEvent());
+      }
     } else {
-      BlocProvider.of<FoodOrderBloc>(context)
-          .add(ChangePaymentMethod("wallet"));
-      BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderEvent());
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              title: Text(
+                "Voucher Can Not Be Applied",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: Text(placeOrder.applyVoucherErrorMessage),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "OK",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            );
+          });
     }
   }
 
@@ -1414,16 +1441,79 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
       BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderEvent());
     } else if (selectedPaymentMethod == "rzr") {
       openRazorPayCheckOut(placeOrder);
-      Navigator.pop(context);
     } else if (selectedPaymentMethod == "stp") {
       BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderStripeEvent());
-      Navigator.pop(context);
     }
   }
 
   void _onBackPressed(PlaceOrder placeOrder) {
     Navigator.pop(context,
         placeOrder == null ? FoodCart(Map(), List()) : placeOrder.foodCart);
+  }
+
+  Future<void> _showContactConfirmationDialog(String contact) {
+    return showModalBottomSheet(
+        isScrollControlled: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.all(horizontalPaddingDraggable),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text("NOTIFICATION",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Text("Your Number",
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black38)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text(contact,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 26, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        "will be used as login ID for next time and the OTP will be used as password",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 50,
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFFB531),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "GOT IT",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    )
+                  ]));
+        });
   }
 }
 
@@ -1663,11 +1753,12 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
   _showAddOnsEditSheet(FoodCartItem cartItem) {
     Price price;
     Map<int, AddOn> multipleAddOns = Map();
-    Map<int, List<TextEditingController>> textControllersMap = Map();
+    //Map<int, List<TextEditingController>> textControllersMap = Map();
     int quantity = cartItem.quantity;
 
     BlocProvider.of<FoodOrderBloc>(context).add(StartEditFoodDetail(cartItem));
     showMaterialModalBottomSheet(
+        duration: Duration(milliseconds: 200),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(32), topRight: Radius.circular(32))),
@@ -1702,7 +1793,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                         }
                       }
 
-                      for (int i = 0;
+                      /*for (int i = 0;
                           i < cartState.foodDetail.addOnsTypes.length;
                           i++) {
                         if (cartState.foodDetail.addOnsTypes[i].options ==
@@ -1721,7 +1812,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                             textControllersMap[i].add(textController);
                           }
                         }
-                      }
+                      }*/
                     }
                   },
                   builder: (context, cartState) {
@@ -1831,7 +1922,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                                     Expanded(
                                         child: Text(cartState.foodDetail
                                             .addOnsTypes[i].addOns[j].name)),
-                                    Container(
+                                    /*Container(
                                       width: 50,
                                       margin: EdgeInsets.only(right: 10),
                                       child: TextField(
@@ -1856,7 +1947,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                                           });
                                         },
                                       ),
-                                    ),
+                                    ),*/
                                     Row(
                                       children: [
                                         SvgPicture.asset(
@@ -2348,7 +2439,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
                   width: 3,
                 ),
                 Text(
-                  "${AppUtil.doubleRemoveZeroTrailing(foodCartItem.getAmount())}",
+                  "${AppUtil.doubleRemoveZeroTrailing(foodCartItem.getAmount() * foodCartItem.quantity)}",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),

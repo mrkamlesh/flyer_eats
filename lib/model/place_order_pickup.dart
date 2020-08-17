@@ -14,7 +14,10 @@ class PlaceOrderPickup {
   final double deliveryAmount;
   final String razorKey;
   final String razorSecret;
+  final String stripePublishKey;
+  final String stripeSecretKey;
   final String distance;
+  final String currencyCode;
 
   PlaceOrderPickup(
       {this.token,
@@ -29,7 +32,10 @@ class PlaceOrderPickup {
       this.contact,
       this.isChangePrimaryContact,
       this.deliveryAmount,
-      this.distance});
+      this.distance,
+      this.currencyCode,
+      this.stripePublishKey,
+      this.stripeSecretKey});
 
   PlaceOrderPickup copyWith(
       {String token,
@@ -44,7 +50,10 @@ class PlaceOrderPickup {
       String location,
       String razorKey,
       String razorSecret,
-      String distance}) {
+      String distance,
+      String stripePublishKey,
+      String stripeSecretKey,
+      String currencyCode}) {
     return PlaceOrderPickup(
         token: token ?? this.token,
         isValid: isValid ?? this.isValid,
@@ -53,11 +62,15 @@ class PlaceOrderPickup {
         pickUp: pickUp ?? this.pickUp,
         id: id ?? this.id,
         location: location ?? this.location,
-        isChangePrimaryContact: isChangePrimaryContact ?? this.isChangePrimaryContact,
+        isChangePrimaryContact:
+            isChangePrimaryContact ?? this.isChangePrimaryContact,
         contact: contact ?? this.contact,
         deliveryAmount: deliveryAmount ?? this.deliveryAmount,
         razorKey: razorKey ?? this.razorKey,
         razorSecret: razorSecret ?? this.razorSecret,
-        distance: distance ?? this.distance);
+        distance: distance ?? this.distance,
+        currencyCode: currencyCode ?? this.currencyCode,
+        stripePublishKey: stripePublishKey ?? this.stripePublishKey,
+        stripeSecretKey: stripeSecretKey ?? this.stripeSecretKey);
   }
 }

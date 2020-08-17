@@ -12,6 +12,7 @@ import 'package:clients/page/wallet_page.dart';
 import 'package:clients/page/notifications_list_page.dart';
 import 'package:clients/page/order_history_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shimmer/shimmer.dart';
 
 class EndDrawer extends StatelessWidget {
@@ -19,7 +20,8 @@ class EndDrawer extends StatelessWidget {
   final String name;
   final String number;
 
-  const EndDrawer({Key key, this.image, this.name, this.number}) : super(key: key);
+  const EndDrawer({Key key, this.image, this.name, this.number})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +50,10 @@ class EndDrawer extends StatelessWidget {
                     Container(
                       height: 40,
                       width: 40,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
-                      child: loginState.user.avatar != null && loginState.user.avatar != ""
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.grey),
+                      child: loginState.user.avatar != null &&
+                              loginState.user.avatar != ""
                           ? ClipOval(
                               child: CachedNetworkImage(
                                 imageUrl: loginState.user.avatar,
@@ -88,7 +92,8 @@ class EndDrawer extends StatelessWidget {
                             loginState.user.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
                             height: 5,
@@ -97,7 +102,8 @@ class EndDrawer extends StatelessWidget {
                             loginState.user.phone,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                            style: TextStyle(fontSize: 16, color: Colors.black45),
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black45),
                           ),
                         ],
                       ),
@@ -217,8 +223,23 @@ class EndDrawer extends StatelessWidget {
                 return InkWell(
                   onTap: homeState.homePageData != null
                       ? () {
-                          AppUtil.share(context, homeState.homePageData.referralCode,
-                              homeState.homePageData.currencyCode + " " + homeState.homePageData.referralDiscount);
+                          if (homeState.homePageData.isReferralAvailable) {
+                            AppUtil.share(
+                                context,
+                                homeState.homePageData.referralCode,
+                                homeState.homePageData.currencyCode +
+                                    " " +
+                                    homeState.homePageData.referralDiscount);
+                          } else {
+                            Fluttertoast.showToast(
+                                msg:
+                                    "Referral is not available in this location",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor: Colors.black38,
+                                timeInSecForIosWeb: 1,
+                                fontSize: 16.0);
+                          }
                         }
                       : () {},
                   child: Row(
@@ -226,7 +247,8 @@ class EndDrawer extends StatelessWidget {
                       Expanded(
                         child: Text(
                           "Refer A Friend",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       ),
                       Icon(Icons.keyboard_arrow_right),
@@ -249,7 +271,8 @@ class EndDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () async {
               Navigator.pop(context);
-              await AppUtil.launchInBrowser("https://5v6vw.app.link/MaPgS0fNP8");
+              await AppUtil.launchInBrowser(
+                  "https://5v6vw.app.link/MaPgS0fNP8");
             },
             child: Row(
               children: <Widget>[
@@ -310,7 +333,8 @@ class EndDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) {
                 return LoginNumberPage(
                   isLoggedOut: true,
                 );

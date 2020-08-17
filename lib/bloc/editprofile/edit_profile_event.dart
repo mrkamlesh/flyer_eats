@@ -54,6 +54,16 @@ class UpdateImage extends EditProfileEvent {
   List<Object> get props => [file];
 }
 
+class UpdateLocation extends EditProfileEvent {
+  final String location;
+  final String countryCode;
+
+  UpdateLocation(this.location, this.countryCode);
+
+  @override
+  List<Object> get props => [location, countryCode];
+}
+
 class UpdateProfile extends EditProfileEvent {
   final String token;
 

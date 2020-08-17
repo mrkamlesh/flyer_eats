@@ -685,7 +685,7 @@ class _HomeState extends State<Home>
                                           ],
                                         )
                                       : SizedBox(),
-                                  homeState.homePageData.referralDiscount != ""
+                                  homeState.homePageData.isReferralAvailable
                                       ? InkWell(
                                           onTap: () {
                                             AppUtil.share(

@@ -52,6 +52,12 @@ class ErrorPlaceOrder extends FoodOrderState {
   ErrorPlaceOrder(this.message, {PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
 }
 
+class CancelledPlaceOrder extends FoodOrderState {
+  final String message;
+
+  CancelledPlaceOrder(this.message, {PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+}
+
 class ConfirmCartState extends FoodOrderState {
   final Restaurant tempSelectedRestaurant;
   final String tempId;

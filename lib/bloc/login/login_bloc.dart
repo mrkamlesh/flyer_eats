@@ -34,13 +34,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  Stream<LoginState> mapVerifyOtpToState(String contactPhone, String otpCode) async* {
+  Stream<LoginState> mapVerifyOtpToState(
+      String contactPhone, String otpCode) async* {
     yield Loading(user: state.user, isValid: state.isValid);
     try {
       String firebaseToken = await PushNotificationsManager().getToken();
       String version = await _getVersion();
 
-      var result = await _repository.verifyOtp(contactPhone, otpCode, firebaseToken, _getPlatform(), version);
+      var result = await _repository.verifyOtp(
+          contactPhone, otpCode, firebaseToken, _getPlatform(), version);
       if (result is User) {
         _repository.saveToken(result.token);
         yield Success(user: result, isValid: true);
@@ -59,7 +61,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         String firebaseToken = await PushNotificationsManager().getToken();
         String version = await _getVersion();
 
-        User user = await _repository.checkTokenValid(token, firebaseToken, _getPlatform(), version);
+        User user = await _repository.checkTokenValid(
+            token, firebaseToken, _getPlatform(), version);
 
         yield LoggedIn(user: user, isValid: state.isValid);
       } else {
@@ -81,11 +84,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Stream<LoginState> mapUpdateUserProfileToState(User user) async* {
     yield LoginState(
-        isValid: state.isValid, user: state.user.copyWith(phone: user.phone, name: user.name, avatar: user.avatar));
+        isValid: state.isValid,
+        user: state.user.copyWith(
+            phone: user.phone,
+            name: user.name,
+            avatar: user.avatar,
+            location: user.location,
+            countryCode: user.countryCode));
   }
 
   Stream<LoginState> mapUpdatePrimaryContactToState(String contact) async* {
-    yield LoginState(isValid: state.isValid, user: state.user.copyWith(phone: contact));
+    yield LoginState(
+        isValid: state.isValid, user: state.user.copyWith(phone: contact));
   }
 
   String _getPlatform() {
@@ -103,6 +113,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Stream<LoginState> mapUpdateDefaultAddressToState(Address address) async* {
-    yield LoginState(isValid: state.isValid, user: state.user.copyWith(defaultAddress: address));
+    yield LoginState(
+        isValid: state.isValid,
+        user: state.user.copyWith(defaultAddress: address));
   }
 }

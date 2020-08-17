@@ -544,11 +544,12 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   _showAddOnsSheet(Food food, Restaurant selectedRestaurant) {
     Price price;
     Map<int, AddOn> multipleAddOns = Map();
-    Map<int, List<TextEditingController>> textControllersMap = Map();
+    //Map<int, List<TextEditingController>> textControllersMap = Map();
     int quantity = 1;
 
     BlocProvider.of<FoodOrderBloc>(context).add(GetFoodDetail(food.id));
     showMaterialModalBottomSheet(
+        duration: Duration(milliseconds: 200),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(32), topRight: Radius.circular(32))),
@@ -568,7 +569,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                   listener: (context, cartState) {
                     if (cartState is SuccessGetFoodDetail) {
                       price = cartState.foodDetail.prices[0];
-                      for (int i = 0;
+                      /*for (int i = 0;
                           i < cartState.foodDetail.addOnsTypes.length;
                           i++) {
                         if (cartState.foodDetail.addOnsTypes[i].options ==
@@ -584,7 +585,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                             textControllersMap[i].add(textController);
                           }
                         }
-                      }
+                      }*/
                     }
                   },
                   builder: (context, cartState) {
@@ -696,7 +697,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                     Expanded(
                                         child: Text(cartState.foodDetail
                                             .addOnsTypes[i].addOns[j].name)),
-                                    Container(
+                                    /*Container(
                                       width: 50,
                                       margin: EdgeInsets.only(right: 10),
                                       child: TextField(
@@ -721,7 +722,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                           });
                                         },
                                       ),
-                                    ),
+                                    ),*/
                                     Row(
                                       children: [
                                         SvgPicture.asset(

@@ -26,6 +26,8 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       yield* mapUpdatePhoneToState(event.phone);
     } else if (event is UpdateImage) {
       yield* mapUpdateImageToState(event.file);
+    } else if (event is UpdateLocation) {
+      yield* mapUpdateLocationToState(event.location, event.countryCode);
     } else if (event is UpdateProfile) {
       yield* mapUpdateProfileToState(event.token);
     }
@@ -51,6 +53,13 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     yield EditProfileState(profile: state.profile.copyWith(avatar: file));
   }
 
+  Stream<EditProfileState> mapUpdateLocationToState(
+      String location, String countryCode) async* {
+    String code = countryCode == "101" ? "IN" : "SG";
+    yield EditProfileState(
+        profile: state.profile.copyWith(location: location, countryCode: code));
+  }
+
   Stream<EditProfileState> mapUpdateProfileToState(String token) async* {
     yield LoadingUpdateProfile(profile: state.profile);
     try {
@@ -58,7 +67,8 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       if (result is User) {
         yield SuccessUpdateProfile(result, profile: state.profile);
       } else {
-        yield ErrorUpdateProfile("Fail to update profile", profile: state.profile);
+        yield ErrorUpdateProfile("Fail to update profile",
+            profile: state.profile);
       }
     } catch (e) {
       yield ErrorUpdateProfile(e.toString(), profile: state.profile);

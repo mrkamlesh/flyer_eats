@@ -451,6 +451,8 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                         state.placeOrderPickup);
                                   }
                                 : () {},
+                            currencyIcon: AppUtil.getCurrencyIcon(
+                                state.placeOrderPickup.currencyCode),
                             showCurrency: (state is LoadingGetDeliveryCharge)
                                 ? false
                                 : true,
@@ -467,12 +469,14 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                       ),
                     ),
                     BlocConsumer<PlaceOrderPickupBloc, PlaceOrderPickupState>(
-                      listener: (context, state) {
+                      listener: (context, state) async {
                         if (state is SuccessPlaceOrder) {
                           if (state.placeOrderPickup.isChangePrimaryContact) {
                             BlocProvider.of<LoginBloc>(context).add(
                                 UpdatePrimaryContact(
                                     state.placeOrderPickup.contact));
+                            await _showContactConfirmationDialog(
+                                state.placeOrderPickup.contact);
                           }
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
@@ -590,6 +594,71 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
   }
 
   void handlerExternalWallet(ExternalWalletResponse response) {}
+
+  Future<void> _showContactConfirmationDialog(String contact) {
+    return showModalBottomSheet(
+        isScrollControlled: false,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.all(horizontalPaddingDraggable),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text("NOTIFICATION",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Text("Your Number",
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black38)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text(contact,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 26, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        "will be used as login ID for next time and the OTP will be used as password",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 50,
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFFB531),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "GOT IT",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    )
+                  ]));
+        });
+  }
 }
 
 class PickupInformationWidget extends StatelessWidget {

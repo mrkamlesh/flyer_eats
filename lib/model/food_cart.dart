@@ -144,7 +144,7 @@ class FoodCartItem {
   String addOnsToString() {
     List<String> addOnsName = List();
     this.addOns.forEach((addOn) {
-      addOnsName.add(addOn.name + " (" + addOn.quantity.toString() + ")");
+      addOnsName.add(addOn.name /*+ " (" + addOn.quantity.toString() + ")"*/);
     });
 
     return addOnsName.join(", ");

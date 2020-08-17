@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/classes/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:clients/classes/style.dart';
@@ -125,7 +126,7 @@ class FoodOrderHistoryWidget extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
-              order.total,
+              AppUtil.getCurrencyString(order.currencyCode) + " " + order.total,
               style: TextStyle(fontSize: 13, color: Colors.black38),
             ),
           ),
@@ -261,7 +262,9 @@ class PickupOrderHistoryWidget extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(bottom: 10),
             child: Text(
-              pickupOrder.amount,
+              AppUtil.getCurrencyString(pickupOrder.currencyCode) +
+                  " " +
+                  pickupOrder.amount,
               style: TextStyle(fontSize: 13, color: Colors.black38),
             ),
           ),
@@ -292,7 +295,7 @@ class PickupOrderHistoryWidget extends StatelessWidget {
                   )
                 ],
               ),
-              Container(
+              /*Container(
                 padding: EdgeInsets.only(top: 5, bottom: 15),
                 child: Text(
                   "REORDER",
@@ -301,7 +304,7 @@ class PickupOrderHistoryWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: primary3),
                 ),
-              )
+              )*/
             ],
           )
         ],

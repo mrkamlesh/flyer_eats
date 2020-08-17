@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/model/location.dart';
+import 'package:clients/page/select_location_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -59,14 +61,17 @@ class _EditAccountPageState extends State<EditAccountPage> {
     return BlocProvider<EditProfileBloc>(
       create: (context) {
         return _bloc
-          ..add(InitProfile(
-              Profile(name: widget.user.name, phone: widget.user.phone)));
+          ..add(InitProfile(Profile(
+              name: widget.user.name,
+              phone: widget.user.phone,
+              location: widget.user.location,
+              countryCode: widget.user.countryCode)));
       },
       child: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, loginState) {
           return BlocConsumer<EditProfileBloc, EditProfileState>(
-            listener: (context, state) {
-              if (state is SuccessUpdateProfile) {
+            listener: (context, editProfileState) {
+              if (editProfileState is SuccessUpdateProfile) {
                 showDialog(
                     context: context,
                     builder: (context) {
@@ -93,8 +98,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
                     },
                     barrierDismissible: false);
                 BlocProvider.of<LoginBloc>(context)
-                    .add(UpdateUserProfile(state.user));
-              } else if (state is ErrorUpdateProfile) {
+                    .add(UpdateUserProfile(editProfileState.user));
+              } else if (editProfileState is ErrorUpdateProfile) {
                 showDialog(
                     context: context,
                     builder: (context) {
@@ -106,7 +111,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         content: Text(
-                          state.message,
+                          editProfileState.message,
                           style: TextStyle(color: Colors.black54),
                         ),
                         actions: <Widget>[
@@ -121,7 +126,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
                     barrierDismissible: true);
               }
             },
-            builder: (context, state) {
+            builder: (context, editProfileState) {
+              if (editProfileState is InitialEditProfileState) {
+                return SizedBox();
+              }
               return Scaffold(
                 body: Stack(
                   children: <Widget>[
@@ -204,16 +212,20 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                                     color: Colors.black12)),
                                             width: 100,
                                             height: 100,
-                                            child: state.profile.avatar != null
+                                            child: editProfileState
+                                                        .profile.avatar !=
+                                                    null
                                                 ? ClipOval(
                                                     child: FittedBox(
                                                         alignment:
                                                             Alignment.center,
                                                         fit: BoxFit.cover,
-                                                        child: Image.file(state
-                                                            .profile.avatar)),
+                                                        child: Image.file(
+                                                            editProfileState
+                                                                .profile
+                                                                .avatar)),
                                                   )
-                                                : widget.user.avatar != null
+                                                : loginState.user.avatar != null
                                                     ? ClipOval(
                                                         child: FittedBox(
                                                             alignment: Alignment
@@ -221,8 +233,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                                             fit: BoxFit.cover,
                                                             child:
                                                                 CachedNetworkImage(
-                                                              imageUrl: widget
-                                                                  .user.avatar,
+                                                              imageUrl:
+                                                                  loginState
+                                                                      .user
+                                                                      .avatar,
                                                               width: 100,
                                                               height: 100,
                                                               fit: BoxFit.fill,
@@ -292,32 +306,45 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                   lines: 1,
                                   isEnabled: false,
                                 ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 15),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  margin: EdgeInsets.only(bottom: 10),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Select Your Location",
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              color: Colors.black38,
-                                              fontSize: 16),
+                                InkWell(
+                                  onTap: () async {
+                                    Location location = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return SelectLocationPage(
+                                          isRedirectToHomePage: false);
+                                    }));
+
+                                    if (location != null) {
+                                      _bloc.add(UpdateLocation(
+                                          location.address, location.country));
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 15),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(color: Colors.black12),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            editProfileState.profile.location,
+                                            maxLines: 1,
+                                            style: TextStyle(fontSize: 16),
+                                          ),
                                         ),
-                                      ),
-                                      Icon(Icons.arrow_drop_down)
-                                    ],
+                                        Icon(Icons.arrow_drop_down)
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: state.profile.isValid()
+                                  onTap: editProfileState.profile.isValid()
                                       ? () {
                                           _bloc.add(UpdateProfile(
                                               loginState.user.token));
@@ -342,7 +369,9 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                       ),
                                       AnimatedOpacity(
                                         opacity:
-                                            state.profile.isValid() ? 0.0 : 0.5,
+                                            editProfileState.profile.isValid()
+                                                ? 0.0
+                                                : 0.5,
                                         child: Container(
                                           height: 50,
                                           margin: EdgeInsets.only(
@@ -360,7 +389,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                         );
                       },
                     ),
-                    state is LoadingUpdateProfile
+                    editProfileState is LoadingUpdateProfile
                         ? Container(
                             decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.5)),

@@ -112,6 +112,7 @@ class _AdsWidgetState extends State<AdsWidget> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
               context: context,
+              duration: Duration(milliseconds: 200),
               builder: (context, controller) {
                 if (videoId == null) {
                   return Container(
@@ -170,6 +171,7 @@ class _AdsWidgetState extends State<AdsWidget> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
               context: context,
+              duration: Duration(milliseconds: 200),
               builder: (context, controller) {
                 return InkWell(
                   onTap: () {

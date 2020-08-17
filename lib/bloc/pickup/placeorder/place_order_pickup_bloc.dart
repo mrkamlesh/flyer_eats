@@ -6,7 +6,8 @@ import 'package:clients/model/pickup.dart';
 import 'package:clients/model/place_order_pickup.dart';
 import './bloc.dart';
 
-class PlaceOrderPickupBloc extends Bloc<PlaceOrderPickupEvent, PlaceOrderPickupState> {
+class PlaceOrderPickupBloc
+    extends Bloc<PlaceOrderPickupEvent, PlaceOrderPickupState> {
   DataRepository repository = DataRepository();
 
   @override
@@ -17,20 +18,22 @@ class PlaceOrderPickupBloc extends Bloc<PlaceOrderPickupEvent, PlaceOrderPickupS
     PlaceOrderPickupEvent event,
   ) async* {
     if (event is InitPlaceOrder) {
-      yield* mapInitPlaceOrderToState(event.token, event.pickUp, event.address, event.contact, event.location);
+      yield* mapInitPlaceOrderToState(event.token, event.pickUp, event.address,
+          event.contact, event.location);
     } else if (event is GetDeliveryCharge) {
       yield* mapGetDeliveryChargeToState();
     } else if (event is ChangeAddress) {
       yield* mapChangeAddressToState(event.address);
     } else if (event is ChangeContact) {
-      yield* mapChangeContactToState(event.contact, event.isChangePrimaryContact);
+      yield* mapChangeContactToState(
+          event.contact, event.isChangePrimaryContact);
     } else if (event is PlaceOrderEvent) {
       yield* mapPlaceOrderEventToState();
     }
   }
 
-  Stream<PlaceOrderPickupState> mapInitPlaceOrderToState(
-      String token, PickUp pickUp, Address address, String contact, String location) async* {
+  Stream<PlaceOrderPickupState> mapInitPlaceOrderToState(String token,
+      PickUp pickUp, Address address, String contact, String location) async* {
     yield PlaceOrderPickupState(
         placeOrderPickup: PlaceOrderPickup(
             token: token,
@@ -45,7 +48,9 @@ class PlaceOrderPickupBloc extends Bloc<PlaceOrderPickupEvent, PlaceOrderPickupS
   }
 
   Stream<PlaceOrderPickupState> mapGetDeliveryChargeToState() async* {
-    yield LoadingGetDeliveryCharge(placeOrderPickup: state.placeOrderPickup.copyWith(isValid: false, message: null));
+    yield LoadingGetDeliveryCharge(
+        placeOrderPickup:
+            state.placeOrderPickup.copyWith(isValid: false, message: null));
     try {
       PlaceOrderPickup result = await repository.getDeliveryCharge(
           state.placeOrderPickup.token,
@@ -61,37 +66,48 @@ class PlaceOrderPickupBloc extends Bloc<PlaceOrderPickupEvent, PlaceOrderPickupS
                 razorKey: result.razorKey,
                 razorSecret: result.razorSecret,
                 distance: result.distance,
+                currencyCode: result.currencyCode,
                 deliveryAmount: result.deliveryAmount,
                 message: result.message));
       } else {
         yield PlaceOrderPickupState(
             placeOrderPickup: state.placeOrderPickup.copyWith(
-                isValid: false, razorKey: null, razorSecret: null, deliveryAmount: 0, message: result.message));
+                isValid: false,
+                razorKey: null,
+                razorSecret: null,
+                deliveryAmount: 0,
+                message: result.message));
       }
     } catch (e) {
       yield PlaceOrderPickupState(
-          placeOrderPickup: state.placeOrderPickup.copyWith(message: e.toString(), isValid: false, deliveryAmount: 0));
+          placeOrderPickup: state.placeOrderPickup.copyWith(
+              message: e.toString(), isValid: false, deliveryAmount: 0));
     }
   }
 
-  Stream<PlaceOrderPickupState> mapChangeAddressToState(Address address) async* {
-    yield PlaceOrderPickupState(placeOrderPickup: state.placeOrderPickup.copyWith(address: address));
+  Stream<PlaceOrderPickupState> mapChangeAddressToState(
+      Address address) async* {
+    yield PlaceOrderPickupState(
+        placeOrderPickup: state.placeOrderPickup.copyWith(address: address));
     add(GetDeliveryCharge());
   }
 
-  Stream<PlaceOrderPickupState> mapChangeContactToState(String contact, bool isChangePrimaryContact) async* {
+  Stream<PlaceOrderPickupState> mapChangeContactToState(
+      String contact, bool isChangePrimaryContact) async* {
     yield PlaceOrderPickupState(
-        placeOrderPickup:
-            state.placeOrderPickup.copyWith(contact: contact, isChangePrimaryContact: isChangePrimaryContact));
+        placeOrderPickup: state.placeOrderPickup.copyWith(
+            contact: contact, isChangePrimaryContact: isChangePrimaryContact));
   }
 
   Stream<PlaceOrderPickupState> mapPlaceOrderEventToState() async* {
     yield LoadingPlaceOrder(placeOrderPickup: state.placeOrderPickup);
     try {
       String result = await repository.placeOrderPickup(state.placeOrderPickup);
-      yield SuccessPlaceOrder(placeOrderPickup: state.placeOrderPickup.copyWith(id: result));
+      yield SuccessPlaceOrder(
+          placeOrderPickup: state.placeOrderPickup.copyWith(id: result));
     } catch (e) {
-      yield ErrorPlaceOrder(e.toString(), placeOrderPickup: state.placeOrderPickup);
+      yield ErrorPlaceOrder(e.toString(),
+          placeOrderPickup: state.placeOrderPickup);
     }
   }
 }

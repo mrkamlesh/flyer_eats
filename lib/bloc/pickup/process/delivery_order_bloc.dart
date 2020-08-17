@@ -35,46 +35,74 @@ class DeliveryOrderBloc extends Bloc<DeliveryOrderEvent, DeliveryOrderState> {
   }
 
   Stream<DeliveryOrderState> mapChooseShopToState(Shop shop) async* {
-    yield DeliveryOrderState(pickUp: state.pickUp.copyWith(shop: shop), pickUpInfo: state.pickUpInfo);
+    yield DeliveryOrderState(
+        pickUp: state.pickUp.copyWith(shop: shop),
+        pickUpInfo: state.pickUpInfo,
+        topPickUpInfo: state.topPickUpInfo);
   }
 
   Stream<DeliveryOrderState> mapUpdateItemToState(int i, String item) async* {
     PickUp pickUp = state.pickUp.copyWith();
     pickUp.items[i] = item;
-    yield DeliveryOrderState(pickUp: pickUp, pickUpInfo: state.pickUpInfo);
+    yield DeliveryOrderState(
+        pickUp: pickUp,
+        pickUpInfo: state.pickUpInfo,
+        topPickUpInfo: state.topPickUpInfo);
   }
 
   Stream<DeliveryOrderState> mapAddAttachment(File file) async* {
     PickUp pickUp = state.pickUp.copyWith();
     pickUp.attachment.add(file);
-    yield DeliveryOrderState(pickUp: pickUp, pickUpInfo: state.pickUpInfo);
+    yield DeliveryOrderState(
+        pickUp: pickUp,
+        pickUpInfo: state.pickUpInfo,
+        topPickUpInfo: state.topPickUpInfo);
   }
 
   Stream<DeliveryOrderState> mapAddTextFieldToState(int index) async* {
     PickUp pickUp = state.pickUp.copyWith();
     pickUp.items.insert(index, "");
-    yield DeliveryOrderState(pickUp: pickUp, pickUpInfo: state.pickUpInfo);
+    yield DeliveryOrderState(
+        pickUp: pickUp,
+        pickUpInfo: state.pickUpInfo,
+        topPickUpInfo: state.topPickUpInfo);
   }
 
   Stream<DeliveryOrderState> mapRemoveItemToState(int index) async* {
     PickUp pickUp = state.pickUp.copyWith();
     pickUp.items.removeAt(index);
-    yield DeliveryOrderState(pickUp: pickUp, pickUpInfo: state.pickUpInfo);
-  }
-
-  Stream<DeliveryOrderState> mapUpdateDeliveryInstructionToState(String deliveryInstruction) async* {
     yield DeliveryOrderState(
-        pickUp: state.pickUp.copyWith(deliveryInstruction: deliveryInstruction), pickUpInfo: state.pickUpInfo);
+        pickUp: pickUp,
+        pickUpInfo: state.pickUpInfo,
+        topPickUpInfo: state.topPickUpInfo);
   }
 
-  Stream<DeliveryOrderState> mapGetInfoToState(String token, String address) async* {
-    yield LoadingInfo(pickUpInfo: state.pickUpInfo, pickUp: state.pickUp);
+  Stream<DeliveryOrderState> mapUpdateDeliveryInstructionToState(
+      String deliveryInstruction) async* {
+    yield DeliveryOrderState(
+        pickUp: state.pickUp.copyWith(deliveryInstruction: deliveryInstruction),
+        pickUpInfo: state.pickUpInfo,
+        topPickUpInfo: state.topPickUpInfo);
+  }
+
+  Stream<DeliveryOrderState> mapGetInfoToState(
+      String token, String address) async* {
+    yield LoadingInfo(
+        pickUpInfo: state.pickUpInfo,
+        pickUp: state.pickUp,
+        topPickUpInfo: state.topPickUpInfo);
     try {
-      Map<String, dynamic> result = await repository.getPickupInfo(token, address);
+      Map<String, dynamic> result =
+          await repository.getPickupInfo(token, address);
       yield DeliveryOrderState(
-          pickUp: state.pickUp, pickUpInfo: result['description'], topPickUpInfo: result['top_description']);
+          pickUp: state.pickUp,
+          pickUpInfo: result['description'],
+          topPickUpInfo: result['top_description']);
     } catch (e) {
-      yield ErrorInfo(e.toString(), pickUpInfo: state.pickUpInfo, pickUp: state.pickUp);
+      yield ErrorInfo(e.toString(),
+          pickUpInfo: state.pickUpInfo,
+          pickUp: state.pickUp,
+          topPickUpInfo: state.topPickUpInfo);
     }
   }
 }

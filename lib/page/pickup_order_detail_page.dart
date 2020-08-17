@@ -40,7 +40,9 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
       builder: (context, loginState) {
         return BlocProvider<PickupDetailOrderBloc>(
           create: (context) {
-            return _bloc..add(GetDetailPickupOrder(loginState.user.token, widget.orderId));
+            return _bloc
+              ..add(
+                  GetDetailPickupOrder(loginState.user.token, widget.orderId));
           },
           child: BlocBuilder<PickupDetailOrderBloc, PickupDetailOrderState>(
             builder: (context, state) {
@@ -84,26 +86,33 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                       ],
                     ),
                     DraggableScrollableSheet(
-                      initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                      initialChildSize: (AppUtil.getScreenHeight(context) -
+                              AppUtil.getToolbarHeight(context)) /
                           AppUtil.getScreenHeight(context),
-                      minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                      minChildSize: (AppUtil.getScreenHeight(context) -
+                              AppUtil.getToolbarHeight(context)) /
                           AppUtil.getScreenHeight(context),
                       maxChildSize: 1.0,
                       builder: (context, controller) {
                         return Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
                           padding: EdgeInsets.only(
-                              left: horizontalPaddingDraggable, right: horizontalPaddingDraggable, top: 30),
-                          child: BlocBuilder<PickupDetailOrderBloc, PickupDetailOrderState>(
+                              left: horizontalPaddingDraggable,
+                              right: horizontalPaddingDraggable,
+                              top: 30),
+                          child: BlocBuilder<PickupDetailOrderBloc,
+                              PickupDetailOrderState>(
                             builder: (context, state) {
                               if (state is LoadingPickupDetailOrderState) {
                                 return Container(
                                   child: Center(
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: <Widget>[
                                         SpinKitCircle(
                                           color: Colors.black38,
@@ -123,7 +132,8 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                   decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                          topRight: Radius.circular(32),
+                                          topLeft: Radius.circular(32))),
                                   alignment: Alignment.center,
                                   child: Container(
                                     child: Center(
@@ -141,13 +151,17 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                     Container(
                                       margin: EdgeInsets.only(bottom: 10),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: <Widget>[
                                           Text(
-                                            "Shop Name: " + state.detailOrder.shopName,
+                                            "Shop Name: " +
+                                                state.detailOrder.shopName,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           SizedBox(
                                             height: 5,
@@ -156,7 +170,9 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                             state.detailOrder.shopAddress,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 12, color: Colors.black26),
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black26),
                                           ),
                                         ],
                                       ),
@@ -175,7 +191,9 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                           Expanded(
                                             child: Text(
                                               state.detailOrder.title,
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           Icon(
@@ -209,26 +227,35 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                     Text(state.detailOrder.items.join(", ")),
                                     state.detailOrder.thumbnails.length > 0
                                         ? Container(
-                                            margin: EdgeInsets.only(bottom: 10, top: 10),
+                                            margin: EdgeInsets.only(
+                                                bottom: 10, top: 10),
                                             child: Text(
                                               "Attachment",
-                                              style: TextStyle(color: Colors.black45),
+                                              style: TextStyle(
+                                                  color: Colors.black45),
                                             ),
                                           )
                                         : SizedBox(),
                                     state.detailOrder.thumbnails.length > 0
                                         ? Container(
-                                            width: AppUtil.getScreenWidth(context) - 80,
+                                            width: AppUtil.getScreenWidth(
+                                                    context) -
+                                                80,
                                             child: Wrap(
                                               direction: Axis.horizontal,
-                                              children: List.generate(state.detailOrder.thumbnails.length, (index) {
-                                                return ImageThumbnail(state.detailOrder.thumbnails[index]);
+                                              children: List.generate(
+                                                  state.detailOrder.thumbnails
+                                                      .length, (index) {
+                                                return ImageThumbnail(state
+                                                    .detailOrder
+                                                    .thumbnails[index]);
                                               }),
                                             ),
                                           )
                                         : SizedBox(),
                                     Container(
-                                      margin: EdgeInsets.only(top: 10, bottom: 10),
+                                      margin:
+                                          EdgeInsets.only(top: 10, bottom: 10),
                                       child: Divider(
                                         height: 0.5,
                                         color: Colors.black12,
@@ -240,7 +267,8 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                         Column(
                                           children: <Widget>[
                                             Container(
-                                              margin: EdgeInsets.only(bottom: 10),
+                                              margin:
+                                                  EdgeInsets.only(bottom: 10),
                                               child: Row(
                                                 children: <Widget>[
                                                   Expanded(
@@ -248,22 +276,34 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                                     child: Text(
                                                       "Total",
                                                       textAlign: TextAlign.end,
-                                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     ),
                                                   ),
                                                   Expanded(
                                                     flex: 3,
                                                     child: Text(
-                                                      state.detailOrder.total,
+                                                      AppUtil.getCurrencyString(
+                                                              state.detailOrder
+                                                                  .currencyCode) +
+                                                          " " +
+                                                          state.detailOrder
+                                                              .total,
                                                       textAlign: TextAlign.end,
-                                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     ),
                                                   )
                                                 ],
                                               ),
                                             ),
                                             Container(
-                                              margin: EdgeInsets.only(bottom: 10),
+                                              margin:
+                                                  EdgeInsets.only(bottom: 10),
                                               child: Divider(
                                                 height: 0.5,
                                                 color: Colors.black12,
@@ -271,7 +311,9 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                             ),
                                           ],
                                         ),
-                                        state.detailOrder.getCurrentStatus().isDelivered()
+                                        state.detailOrder
+                                                .getCurrentStatus()
+                                                .isDelivered()
                                             ? Positioned(
                                                 bottom: -50,
                                                 left: 50,
@@ -284,21 +326,29 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                             : SizedBox(),
                                       ],
                                     ),
-                                    state.detailOrder.deliveryInstruction != null &&
-                                            state.detailOrder.deliveryInstruction != ""
+                                    state.detailOrder.deliveryInstruction !=
+                                                null &&
+                                            state.detailOrder
+                                                    .deliveryInstruction !=
+                                                ""
                                         ? Container(
-                                            margin: EdgeInsets.only(top: 5, bottom: 15),
+                                            margin: EdgeInsets.only(
+                                                top: 5, bottom: 15),
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
                                                   "ORDER INSTRUCTION",
-                                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                Text(state.detailOrder.deliveryInstruction),
+                                                Text(state.detailOrder
+                                                    .deliveryInstruction),
                                               ],
                                             ),
                                           )
@@ -309,23 +359,41 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                             isScrollControlled: true,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                                                    topLeft:
+                                                        Radius.circular(32),
+                                                    topRight:
+                                                        Radius.circular(32))),
                                             backgroundColor: Colors.white,
                                             context: context,
                                             builder: (context) {
-                                              List<Widget> statusWidgets = List();
-                                              for (int i = 0; i < state.detailOrder.statusHistory.length; i++) {
+                                              List<Widget> statusWidgets =
+                                                  List();
+                                              for (int i = 0;
+                                                  i <
+                                                      state.detailOrder
+                                                          .statusHistory.length;
+                                                  i++) {
                                                 statusWidgets.add(
                                                   Container(
-                                                    margin: EdgeInsets.symmetric(vertical: 3),
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 3),
                                                     child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: <Widget>[
                                                         Row(
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
                                                           children: <Widget>[
                                                             SvgPicture.asset(
-                                                              state.detailOrder.statusHistory[i].getIconAssets(),
+                                                              state
+                                                                  .detailOrder
+                                                                  .statusHistory[
+                                                                      i]
+                                                                  .getIconAssets(),
                                                               width: 60,
                                                               height: 60,
                                                             ),
@@ -334,47 +402,69 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                                             ),
                                                             Expanded(
                                                               child: Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: <Widget>[
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: <
+                                                                    Widget>[
                                                                   Text(
-                                                                    state.detailOrder.statusHistory[i].status,
+                                                                    state
+                                                                        .detailOrder
+                                                                        .statusHistory[
+                                                                            i]
+                                                                        .status,
                                                                     style: TextStyle(
-                                                                        fontSize: 20, fontWeight: FontWeight.bold),
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
                                                                   ),
                                                                   SizedBox(
                                                                     height: 10,
                                                                   ),
                                                                   Row(
-                                                                    children: <Widget>[
+                                                                    children: <
+                                                                        Widget>[
                                                                       Row(
-                                                                        children: <Widget>[
+                                                                        children: <
+                                                                            Widget>[
                                                                           Icon(
                                                                             Icons.calendar_today,
-                                                                            size: 16,
+                                                                            size:
+                                                                                16,
                                                                           ),
                                                                           SizedBox(
-                                                                            width: 5,
+                                                                            width:
+                                                                                5,
                                                                           ),
                                                                           Text(state
-                                                                              .detailOrder.statusHistory[i].dateCreated)
+                                                                              .detailOrder
+                                                                              .statusHistory[i]
+                                                                              .dateCreated)
                                                                         ],
                                                                       ),
                                                                       SizedBox(
-                                                                        width: 10,
+                                                                        width:
+                                                                            10,
                                                                       ),
                                                                       Row(
-                                                                        children: <Widget>[
+                                                                        children: <
+                                                                            Widget>[
                                                                           Icon(
                                                                             Icons.access_time,
-                                                                            color: primary3,
-                                                                            size: 16,
+                                                                            color:
+                                                                                primary3,
+                                                                            size:
+                                                                                16,
                                                                           ),
                                                                           SizedBox(
-                                                                            width: 5,
+                                                                            width:
+                                                                                5,
                                                                           ),
                                                                           Text(
                                                                             state.detailOrder.statusHistory[i].time,
-                                                                            style: TextStyle(color: primary3),
+                                                                            style:
+                                                                                TextStyle(color: primary3),
                                                                           )
                                                                         ],
                                                                       )
@@ -385,10 +475,20 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                                             )
                                                           ],
                                                         ),
-                                                        i != state.detailOrder.statusHistory.length - 1
+                                                        i !=
+                                                                state
+                                                                        .detailOrder
+                                                                        .statusHistory
+                                                                        .length -
+                                                                    1
                                                             ? Container(
-                                                                margin: EdgeInsets.only(left: 25),
-                                                                child: SvgPicture.asset(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            25),
+                                                                child:
+                                                                    SvgPicture
+                                                                        .asset(
                                                                   "assets/separator icon.svg",
                                                                   height: 60,
                                                                   width: 15,
@@ -410,18 +510,28 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                                           padding: EdgeInsets.only(
                                                               left: 20,
                                                               right: 20,
-                                                              bottom: kBottomNavigationBarHeight,
+                                                              bottom:
+                                                                  kBottomNavigationBarHeight,
                                                               top: 20),
-                                                          decoration:
-                                                              BoxDecoration(borderRadius: BorderRadius.circular(32)),
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          32)),
                                                           child: Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
                                                             children: <Widget>[
                                                               Container(
-                                                                margin: EdgeInsets.only(bottom: 52),
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            52),
                                                               ),
                                                               Column(
-                                                                children: statusWidgets,
+                                                                children:
+                                                                    statusWidgets,
                                                               ),
                                                             ],
                                                           ),
@@ -431,29 +541,49 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                                         top: 0,
                                                         left: 0,
                                                         child: Container(
-                                                            width: AppUtil.getScreenWidth(context),
+                                                            width: AppUtil
+                                                                .getScreenWidth(
+                                                                    context),
                                                             decoration: BoxDecoration(
                                                                 borderRadius: BorderRadius.only(
-                                                                    topLeft: Radius.circular(32),
-                                                                    topRight: Radius.circular(32)),
-                                                                color: Colors.white),
-                                                            padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                            32),
+                                                                    topRight: Radius
+                                                                        .circular(
+                                                                            32)),
+                                                                color: Colors
+                                                                    .white),
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 20,
+                                                                    left: 20,
+                                                                    bottom: 20),
                                                             child: Row(
-                                                              children: <Widget>[
+                                                              children: <
+                                                                  Widget>[
                                                                 Expanded(
                                                                     flex: 2,
-                                                                    child: GestureDetector(
-                                                                      onTap: () {
-                                                                        Navigator.pop(context);
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
                                                                       },
-                                                                      child: Icon(Icons.clear),
+                                                                      child: Icon(
+                                                                          Icons
+                                                                              .clear),
                                                                     )),
                                                                 Expanded(
                                                                   flex: 8,
                                                                   child: Text(
                                                                     "Track Order Timeline",
                                                                     style: TextStyle(
-                                                                        fontSize: 18, fontWeight: FontWeight.bold),
+                                                                        fontSize:
+                                                                            18,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
                                                                   ),
                                                                 ),
                                                               ],
@@ -467,17 +597,25 @@ class _PickupOrderDetailPageState extends State<PickupOrderDetailPage> {
                                       },
                                       child: Container(
                                         height: 50,
-                                        margin: state.detailOrder.deliveryInstruction != null &&
-                                                state.detailOrder.deliveryInstruction != ""
-                                            ? EdgeInsets.only(top: 30, bottom: 30)
-                                            : EdgeInsets.only(top: 50, bottom: 30),
+                                        margin: state.detailOrder
+                                                        .deliveryInstruction !=
+                                                    null &&
+                                                state.detailOrder
+                                                        .deliveryInstruction !=
+                                                    ""
+                                            ? EdgeInsets.only(
+                                                top: 30, bottom: 30)
+                                            : EdgeInsets.only(
+                                                top: 50, bottom: 30),
                                         decoration: BoxDecoration(
                                           color: Color(0xFFFFB531),
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         alignment: Alignment.center,
                                         child: Text(
-                                          state.detailOrder.statusHistory.last.isDelivered()
+                                          state.detailOrder.statusHistory.last
+                                                  .isDelivered()
                                               ? "TRACK ORDER TIMELINE"
                                               : "TRACK ORDER",
                                           style: TextStyle(fontSize: 20),
@@ -514,7 +652,9 @@ class ImageThumbnail extends StatelessWidget {
       height: 60,
       width: 60,
       margin: EdgeInsets.only(right: 15, bottom: 15),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black12)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.black12)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: CachedNetworkImage(

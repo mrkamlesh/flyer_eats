@@ -133,7 +133,7 @@ class _AddressPageState extends State<AddressPage> {
                     Stack(
                       children: <Widget>[
                         Container(
-                          height: AppUtil.getScreenHeight(context) * 0.6,
+                          height: AppUtil.getScreenHeight(context) * 0.5,
                           width: AppUtil.getScreenWidth(context),
                           decoration: BoxDecoration(
                               color: Colors.white,
@@ -145,7 +145,7 @@ class _AddressPageState extends State<AddressPage> {
                               ]),
                           padding: EdgeInsets.symmetric(
                               horizontal: horizontalPaddingDraggable,
-                              vertical: distanceBetweenSection),
+                              vertical: horizontalPaddingDraggable),
                           child: BlocConsumer<AddressBloc, AddressState>(
                             listener: (oldState, state) {
                               if (state is LoadingTemporaryAddressSuccess) {
@@ -309,7 +309,7 @@ class _AddressPageState extends State<AddressPage> {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(bottom: 10),
+                                    margin: EdgeInsets.only(bottom: 5),
                                     child: Row(
                                       children: <Widget>[
                                         Checkbox(
@@ -328,7 +328,7 @@ class _AddressPageState extends State<AddressPage> {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(bottom: 20),
+                                    margin: EdgeInsets.only(bottom: 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -548,7 +548,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20),
+      margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),

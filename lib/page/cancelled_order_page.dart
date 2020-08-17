@@ -223,8 +223,7 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                               BlocBuilder<HomeBloc, HomeState>(
                                 builder: (context, homeState) {
                                   return homeState
-                                              .homePageData.referralDiscount !=
-                                          ""
+                                          .homePageData.isReferralAvailable
                                       ? InkWell(
                                           onTap: homeState.homePageData != null
                                               ? () {

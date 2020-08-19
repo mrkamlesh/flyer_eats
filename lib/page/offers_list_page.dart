@@ -12,7 +12,7 @@ import 'package:clients/model/fe_offer.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/page/home.dart';
 import 'package:clients/page/restaurant_place_order_page.dart';
-import 'package:clients/page/search_page.dart';
+import 'package:clients/page/search_restaurant_page.dart';
 import 'package:clients/widget/custom_bottom_navigation_bar.dart';
 import 'package:clients/widget/restaurant_list.dart';
 import 'package:flutter/material.dart';
@@ -165,21 +165,23 @@ class _OfferListPageState extends State<OfferListPage>
                           BottomNavyBarItem(
                               icon: "assets/3.svg",
                               title: "Order",
-                              badge: cartState.placeOrder.foodCart
-                                  .cartItemTotal())
+                              badge:
+                                  cartState.placeOrder.foodCart.cartItemTotal())
                         ],
                         onItemSelected: (index) async {
                           _currentIndex = index;
                           if (index == 0) {
-                            await Navigator.push(context, PageRouteBuilder(
-                                pageBuilder: (context, anim1, anim2) {
+                            await Navigator.pushReplacement(context,
+                                PageRouteBuilder(
+                                    pageBuilder: (context, anim1, anim2) {
                               return Home();
                             }));
                             _currentIndex = 1;
                           } else if (index == 2) {
-                            await Navigator.push(context, PageRouteBuilder(
-                                pageBuilder: (context, anim1, anim2) {
-                              return SearchPage(
+                            await Navigator.pushReplacement(context,
+                                PageRouteBuilder(
+                                    pageBuilder: (context, anim1, anim2) {
+                              return SearchRestaurantPage(
                                 address: widget.address,
                                 token: loginState.user.token,
                               );

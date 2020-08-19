@@ -1,3 +1,4 @@
+import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/data_provider.dart';
 import 'package:clients/model/ads.dart';
 import 'package:clients/model/bank.dart';
@@ -530,24 +531,20 @@ class DataRepository {
       String category,
       bool isVegOnly,
       {String cuisineType,
-      String sortBy}) async {
+      String sortBy,
+      String searchKeyword}) async {
     Map<String, dynamic> map = Map();
 
     final response = await _provider.getRestaurantList(
         token, address, merchantType, type, category, 0, isVegOnly,
-        sortBy: sortBy, cuisineType: cuisineType);
+        sortBy: sortBy, cuisineType: cuisineType, searchKeyword: searchKeyword);
     if (response['code'] == 1) {
       var listLocations = response['details']['restaurants'] as List;
       List<Restaurant> restaurants = listLocations.map((i) {
         return Restaurant.fromJson(i);
       }).toList();
 
-      restaurants.sort((a, b) {
-        if (a.isOpen) {
-          return -1;
-        }
-        return 1;
-      });
+      restaurants = AppUtil.restaurantListSort(restaurants);
 
       map['restaurants'] = restaurants;
 
@@ -578,6 +575,25 @@ class DataRepository {
       return map;
     } else {
       return Map();
+    }
+  }
+
+  Future<List<Restaurant>> searchRestaurant(
+      String token, String address, String searchKeyword) async {
+    final response = await _provider.getRestaurantList(
+        token, address, null, null, null, 0, false,
+        searchKeyword: searchKeyword);
+    if (response['code'] == 1) {
+      var listLocations = response['details']['restaurants'] as List;
+      List<Restaurant> restaurants = listLocations.map((i) {
+        return Restaurant.fromJson(i);
+      }).toList();
+
+      restaurants = AppUtil.restaurantListSort(restaurants);
+
+      return restaurants;
+    } else {
+      return List();
     }
   }
 

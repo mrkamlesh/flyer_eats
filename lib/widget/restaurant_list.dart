@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:clients/bloc/restaurantlist/restaurantlist_bloc.dart';
 import 'package:clients/bloc/restaurantlist/restaurantlist_state.dart';
-import 'package:clients/bloc/search/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/location.dart';
@@ -20,7 +19,8 @@ enum RestaurantViewType {
   detailList,
   detailGrid,
   searchResult,
-  offerPage
+  offerPage,
+  searchRestaurantResult
 }
 
 class RestaurantListWidget extends StatefulWidget {
@@ -313,7 +313,7 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
             );
           },
         );
-      case RestaurantViewType.searchResult:
+      /*case RestaurantViewType.searchResult:
         return BlocBuilder<SearchBloc, SearchState>(
           builder: (context, state) {
             return SliverPadding(
@@ -375,7 +375,7 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
               ),
             );
           },
-        );
+        );*/
       case RestaurantViewType.offerPage:
         return SliverPadding(
           padding: EdgeInsets.only(
@@ -408,6 +408,46 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
                 scale: _scaleAnimation,
               );
             }, childCount: widget.restaurants.length),
+          ),
+        );
+      case RestaurantViewType.searchRestaurantResult:
+        return SliverPadding(
+          padding: EdgeInsets.only(
+              left: horizontalPaddingDraggable,
+              right: horizontalPaddingDraggable),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate((context, i) {
+              return RestaurantDetailGridWidget(
+                restaurant: widget.restaurants[i],
+                index: i,
+                selectedIndex: _selectedTopRestaurant,
+                onTap: () {
+                  setState(() {
+                    _selectedTopRestaurant = i;
+                    if (widget.restaurants[i].isOpen) {
+                      _animationController.forward().orCancel.whenComplete(() {
+                        _animationController
+                            .reverse()
+                            .orCancel
+                            .whenComplete(() {
+                          _navigateToRestaurantDetailPage(
+                              widget.restaurants[i]);
+                        });
+                      });
+                    } else {
+                      _showAlertDialog();
+                    }
+                  });
+                },
+                scale: _scaleAnimation,
+              );
+            }, childCount: widget.restaurants.length),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+              childAspectRatio: (AppUtil.getScreenWidth(context) / 2) / 260,
+            ),
           ),
         );
       default:

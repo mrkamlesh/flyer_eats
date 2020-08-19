@@ -15,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "193643736903-ef4jc93ohjn70k2fs6vn0hohj1utogs5.apps.googleusercontent.com",
+          "client_id": "193643736903-nq2mphfsht9dm2gjipjv99tbto81kbgp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.flyereats.clients",
+            "certificate_hash": "1efeb34ccf49bc37168520eadcbaddd04d07b0ad"
+          }
+        },
+        {
+          "client_id": "193643736903-nsvhqfc0h44ndsucp6dh69gnedlasee1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "in.flyereats.clients",

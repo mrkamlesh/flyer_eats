@@ -145,7 +145,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         if (isIncrease) {
           newCart.addMultipleItemFoodToCart(food, quantity, price, addOns);
         } else {
-          newCart.removeMultipleItemFoodFromCart(food);
+          newCart.subtractMultipleItemFoodFromCart(
+              food, quantity, price, addOns);
         }
       }
 

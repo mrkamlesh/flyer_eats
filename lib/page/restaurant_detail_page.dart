@@ -942,6 +942,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
     Price price;
     Map<int, AddOn> multipleAddOns = Map();
     //Map<int, List<TextEditingController>> textControllersMap = Map();
+    Map<int, int> maxNumberMap = Map();
     int quantity = 1;
 
     BlocProvider.of<FoodOrderBloc>(context).add(GetFoodDetail(food.id));
@@ -966,11 +967,16 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                   listener: (context, cartState) {
                     if (cartState is SuccessGetFoodDetail) {
                       price = cartState.foodDetail.prices[0];
-                      /*for (int i = 0;
+                      for (int i = 0;
                           i < cartState.foodDetail.addOnsTypes.length;
                           i++) {
                         if (cartState.foodDetail.addOnsTypes[i].options ==
-                            "one") {
+                            "custom") {
+                          maxNumberMap[i] =
+                              cartState.foodDetail.addOnsTypes[i].maxNumber;
+                        }
+                        /*if (cartState.foodDetail.addOnsTypes[i].options ==
+                            "multiple") {
                           textControllersMap[i] = List<TextEditingController>();
                           for (int j = 0;
                               j <
@@ -981,8 +987,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                 TextEditingController(text: 1.toString());
                             textControllersMap[i].add(textController);
                           }
-                        }
-                      }*/
+                        }*/
+                      }
                     }
                   },
                   builder: (context, cartState) {
@@ -1072,7 +1078,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                           ),
                         ));
                         if (cartState.foodDetail.addOnsTypes[i].options ==
-                            "one") {
+                            "multiple") {
                           // one is check box with number inside
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
@@ -1141,7 +1147,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                           ));
                         } else if (cartState
                                 .foodDetail.addOnsTypes[i].options ==
-                            "multiple") {
+                            "one") {
                           // multiple is radio button
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
@@ -1194,15 +1200,58 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                               return CheckboxListTile(
                                 onChanged: (bool) {
                                   newState(() {
-                                    cartState.foodDetail.addOnsTypes[i]
-                                        .addOns[j].isSelected = bool;
                                     if (bool) {
+                                      if (cartState.foodDetail.addOnsTypes[i]
+                                              .getSelectedAddOn()
+                                              .length ==
+                                          cartState.foodDetail.addOnsTypes[i]
+                                              .maxNumber) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              title: Text(
+                                                "Can Not Select Add On",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              content: Text(
+                                                "For this type of Add On you can only select " +
+                                                    maxNumberMap[i].toString() +
+                                                    " items",
+                                                style: TextStyle(
+                                                    color: Colors.black54),
+                                              ),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text("OK")),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        cartState.foodDetail.addOnsTypes[i]
+                                            .addOns[j].isSelected = bool;
+                                      }
+                                    } else {
+                                      cartState.foodDetail.addOnsTypes[i]
+                                          .addOns[j].isSelected = bool;
+                                    }
+                                    /*if (bool) {
                                       cartState.foodDetail.addOnsTypes[i]
                                           .addOns[j].quantity = 1;
                                     } else {
                                       cartState.foodDetail.addOnsTypes[i]
                                           .addOns[j].quantity = 0;
-                                    }
+                                    }*/
                                   });
                                 },
                                 value: cartState.foodDetail.addOnsTypes[i]
@@ -1432,13 +1481,11 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
     if (price == null || quantity == 0) {
       return 0;
     } else {
-      totalAmount = totalAmount + price.discountedPrice;
+      totalAmount = price.discountedPrice * quantity;
 
       addOnsTypes.forEach((element) {
         totalAmount = totalAmount + element.getAmount();
       });
-
-      totalAmount = totalAmount * quantity;
     }
 
     return totalAmount;

@@ -1,3 +1,5 @@
+import 'package:clients/model/restaurant.dart';
+import 'package:clients/model/shop_category.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:html/parser.dart';
@@ -93,6 +95,10 @@ class AppUtil {
     }
   }
 
+  static String formattedPhoneNumber(String phoneNumber) {
+    return phoneNumber.substring(0, 3) + " " + phoneNumber.substring(4);
+  }
+
   static String getCurrencyString(String currencyCode) {
     if (currencyCode == "INR") {
       return "\u20b9";
@@ -110,5 +116,32 @@ class AppUtil {
         'Install the FLYER EATS app now http://flyereats.app.link/mOvNgVSbm7 Use Referral code in Signup page - $referralCode We will give you $referralAmount & your buddy $referralAmount in your wallet after your orders above ₹99',
         subject: 'Flyer Eats',
         sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+  }
+
+  static List<Restaurant> restaurantListSort(List<Restaurant> list) {
+    int n = list.length;
+    int i, step;
+    for (step = 0; step < n; step++) {
+      for (i = 0; i < n - step - 1; i++) {
+        if (!(list[i].isOpen) && list[i + 1].isOpen) {
+          Restaurant temp = list[i];
+          list[i] = list[i + 1];
+          list[i + 1] = temp;
+        }
+      }
+    }
+
+    return list;
+  }
+
+  static List<ShopCategory> getShopCategories() {
+    List<ShopCategory> _listShopCategory = [];
+    _listShopCategory
+        .add(ShopCategory("Restaurants", "assets/restaurants.svg"));
+    _listShopCategory.add(ShopCategory("Grocery", "assets/groceries.svg"));
+    _listShopCategory.add(ShopCategory("Veg & Fruits", "assets/vegfruits.svg"));
+    _listShopCategory.add(ShopCategory("Meat", "assets/meat.svg"));
+
+    return _listShopCategory;
   }
 }

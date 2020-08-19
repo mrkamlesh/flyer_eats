@@ -1,6 +1,5 @@
 import 'package:clients/model/food.dart';
 import 'package:clients/model/food_category.dart';
-import 'package:clients/model/shop_category.dart';
 import 'package:clients/model/address.dart';
 import 'package:clients/model/location.dart';
 
@@ -124,16 +123,7 @@ class ExampleModel {
     return _topRestaurants;
   }*/
 
-  static List<ShopCategory> getShopCategories() {
-    List<ShopCategory> _listShopCategory = [];
-    _listShopCategory
-        .add(ShopCategory("Restaurants", "assets/restaurants.svg"));
-    _listShopCategory.add(ShopCategory("Grocery", "assets/groceries.svg"));
-    _listShopCategory.add(ShopCategory("Veg & Fruits", "assets/vegfruits.svg"));
-    _listShopCategory.add(ShopCategory("Meat", "assets/meat.svg"));
 
-    return _listShopCategory;
-  }
 
   static List<FoodCategory> getFoodCategories() {
     List<FoodCategory> _listFoodCategory = [];

@@ -14,9 +14,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -809,7 +809,8 @@ class DataProvider {
       int page,
       bool isVegOnly,
       {String cuisineType,
-      String sortBy}) async {
+      String sortBy,
+      String searchKeyword}) async {
     String url =
         "${serverUrl}mobileapp/apiRest/restaurantList?json=true&api_key=flyereats";
 
@@ -852,6 +853,10 @@ class DataProvider {
 
     if (category != null) {
       formData['food_category_id'] = category;
+    }
+
+    if (searchKeyword != null) {
+      formData['restaurant_name'] = searchKeyword;
     }
 
     var responseJson;

@@ -424,8 +424,11 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                                   .placeOrder
                                                                   .restaurant,
                                                               totalOrder: state
-                                                                  .placeOrder
-                                                                  .subTotal(),
+                                                                      .placeOrder
+                                                                      .subTotal() -
+                                                                  state
+                                                                      .placeOrder
+                                                                      .discountOrder,
                                                             );
                                                           }));
 
@@ -1482,7 +1485,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                     ),
                     Container(
                       margin: EdgeInsets.only(bottom: 20),
-                      child: Text(contact,
+                      child: Text(AppUtil.formattedPhoneNumber(contact),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 26, fontWeight: FontWeight.bold)),
@@ -1754,6 +1757,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
     Price price;
     Map<int, AddOn> multipleAddOns = Map();
     //Map<int, List<TextEditingController>> textControllersMap = Map();
+    Map<int, int> maxNumberMap = Map();
     int quantity = cartItem.quantity;
 
     BlocProvider.of<FoodOrderBloc>(context).add(StartEditFoodDetail(cartItem));
@@ -1783,7 +1787,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                           i < cartState.foodDetail.addOnsTypes.length;
                           i++) {
                         if (cartState.foodDetail.addOnsTypes[i].options ==
-                            "multiple") {
+                            "one") {
                           cartState.foodDetail.addOnsTypes[i].addOns
                               .forEach((addOn) {
                             if (addOn.isSelected) {
@@ -1793,10 +1797,15 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                         }
                       }
 
-                      /*for (int i = 0;
+                      for (int i = 0;
                           i < cartState.foodDetail.addOnsTypes.length;
                           i++) {
                         if (cartState.foodDetail.addOnsTypes[i].options ==
+                            "custom") {
+                          maxNumberMap[i] =
+                              cartState.foodDetail.addOnsTypes[i].maxNumber;
+                        }
+                        /*if (cartState.foodDetail.addOnsTypes[i].options ==
                             "one") {
                           textControllersMap[i] = List<TextEditingController>();
                           for (int j = 0;
@@ -1811,8 +1820,8 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                                         .toString());
                             textControllersMap[i].add(textController);
                           }
-                        }
-                      }*/
+                        }*/
+                      }
                     }
                   },
                   builder: (context, cartState) {
@@ -1902,7 +1911,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                           ),
                         ));
                         if (cartState.foodDetail.addOnsTypes[i].options ==
-                            "one") {
+                            "multiple") {
                           // one is check box with number inside
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
@@ -1973,7 +1982,7 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                           ));
                         } else if (cartState
                                 .foodDetail.addOnsTypes[i].options ==
-                            "multiple") {
+                            "one") {
                           // multiple is radio button
                           listWidget.add(SliverList(
                             delegate: SliverChildBuilderDelegate((context, j) {
@@ -2028,14 +2037,50 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                               return CheckboxListTile(
                                 onChanged: (bool) {
                                   newState(() {
-                                    cartState.foodDetail.addOnsTypes[i]
-                                        .addOns[j].isSelected = bool;
                                     if (bool) {
-                                      cartState.foodDetail.addOnsTypes[i]
-                                          .addOns[j].quantity = 1;
+                                      if (cartState.foodDetail.addOnsTypes[i]
+                                              .getSelectedAddOn()
+                                              .length ==
+                                          cartState.foodDetail.addOnsTypes[i]
+                                              .maxNumber) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              title: Text(
+                                                "Can Not Select Add On",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              content: Text(
+                                                "For this type of Add On you can only select " +
+                                                    maxNumberMap[i].toString() +
+                                                    " items",
+                                                style: TextStyle(
+                                                    color: Colors.black54),
+                                              ),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text("OK")),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        cartState.foodDetail.addOnsTypes[i]
+                                            .addOns[j].isSelected = bool;
+                                      }
                                     } else {
                                       cartState.foodDetail.addOnsTypes[i]
-                                          .addOns[j].quantity = 0;
+                                          .addOns[j].isSelected = bool;
                                     }
                                   });
                                 },
@@ -2265,13 +2310,11 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
     if (price == null || quantity == 0) {
       return 0;
     } else {
-      totalAmount = totalAmount + price.discountedPrice;
+      totalAmount = price.discountedPrice * quantity;
 
       addOnsTypes.forEach((element) {
         totalAmount = totalAmount + element.getAmount();
       });
-
-      totalAmount = totalAmount * quantity;
     }
 
     return totalAmount;
@@ -2439,7 +2482,7 @@ class FoodItemPlaceOrder extends StatelessWidget {
                   width: 3,
                 ),
                 Text(
-                  "${AppUtil.doubleRemoveZeroTrailing(foodCartItem.getAmount() * foodCartItem.quantity)}",
+                  "${AppUtil.doubleRemoveZeroTrailing(foodCartItem.getAmount())}",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),

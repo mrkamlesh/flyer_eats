@@ -3,6 +3,7 @@ import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/page/offers_list_page.dart';
 import 'package:clients/page/restaurant_place_order_page.dart';
+import 'package:clients/page/search_restaurant_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +21,6 @@ import 'package:clients/model/scratch_card.dart';
 import 'package:clients/page/cancelled_order_page.dart';
 import 'package:clients/page/delivery_process_order_page.dart';
 import 'package:clients/page/restaurants_list_page.dart';
-import 'package:clients/page/search_page.dart';
 import 'package:clients/page/select_location_page.dart';
 import 'package:clients/page/track_order_page.dart';
 import 'package:clients/widget/app_bar.dart';
@@ -31,7 +31,6 @@ import 'package:clients/widget/food_category_list.dart';
 import 'package:clients/widget/ads_list.dart';
 import 'package:clients/widget/restaurant_list.dart';
 import 'package:clients/widget/shop_category_list.dart';
-import 'package:clients/classes/example_model.dart';
 import 'package:scratcher/scratcher.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
@@ -156,7 +155,7 @@ class _HomeState extends State<Home>
                               onItemSelected: (index) async {
                                 _currentIndex = index;
                                 if (index == 1) {
-                                  await Navigator.push(context,
+                                  await Navigator.pushReplacement(context,
                                       PageRouteBuilder(
                                           pageBuilder: (context, anim1, anim2) {
                                     return OfferListPage(
@@ -166,10 +165,10 @@ class _HomeState extends State<Home>
                                   }));
                                   _currentIndex = 0;
                                 } else if (index == 2) {
-                                  await Navigator.push(context,
+                                  await Navigator.pushReplacement(context,
                                       PageRouteBuilder(
                                           pageBuilder: (context, anim1, anim2) {
-                                    return SearchPage(
+                                    return SearchRestaurantPage(
                                       address: homeState
                                           .homePageData.location.address,
                                       token: loginState.user.token,
@@ -421,7 +420,7 @@ class _HomeState extends State<Home>
                                         }
                                       },
                                       shopCategories:
-                                          ExampleModel.getShopCategories(),
+                                          AppUtil.getShopCategories(),
                                     ),
                                   ),
                                   Container(
@@ -1694,7 +1693,8 @@ class _HomeState extends State<Home>
                     ),
                     Container(
                       margin: EdgeInsets.only(bottom: 20),
-                      child: Text(widget.contactNumber,
+                      child: Text(
+                          AppUtil.formattedPhoneNumber(widget.contactNumber),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 26, fontWeight: FontWeight.bold)),

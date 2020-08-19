@@ -5,8 +5,9 @@ class AddOnsType {
   final String name;
   final String options;
   final List<AddOn> addOns;
+  final int maxNumber;
 
-  AddOnsType({this.id, this.name, this.options, this.addOns});
+  AddOnsType({this.id, this.name, this.options, this.addOns, this.maxNumber});
 
   factory AddOnsType.fromJson(Map<String, dynamic> parsedJson) {
     var adOnsJson = parsedJson['sub_item'] as List;
@@ -18,6 +19,9 @@ class AddOnsType {
         id: parsedJson['subcat_id'],
         name: parsedJson['subcat_name'],
         options: parsedJson['multi_option'],
+        maxNumber: parsedJson['multi_option_val'] == ""
+            ? 0
+            : int.parse(parsedJson['multi_option_val']),
         addOns: list);
   }
 

@@ -149,6 +149,7 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                 margin: EdgeInsets.only(
                                   left: horizontalPaddingDraggable,
                                   right: horizontalPaddingDraggable,
+                                  bottom: 10,
                                 ),
                                 child: Text(
                                   "View Order Summary",

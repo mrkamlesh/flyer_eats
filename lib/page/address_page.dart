@@ -15,7 +15,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AddressPage extends StatefulWidget {
   final Address address;
-  final forcedDefault;
+  final bool forcedDefault;
 
   const AddressPage({Key key, this.address, this.forcedDefault = false})
       : super(key: key);
@@ -406,8 +406,8 @@ class _AddressPageState extends State<AddressPage> {
                                               alignment: Alignment.center,
                                               child: Text(
                                                 widget.address == null
-                                                    ? "DONE"
-                                                    : "UPDATE",
+                                                    ? "SAVE AND PROCEED"
+                                                    : "UPDATE AND PROCEED",
                                                 style: TextStyle(fontSize: 20),
                                               ),
                                             ),

@@ -40,7 +40,7 @@ class RestaurantListPage extends StatefulWidget {
       this.type,
       this.category,
       this.merchantType,
-      this.isFilterEnabled = true})
+      this.isFilterEnabled = false})
       : super(key: key);
 
   @override
@@ -224,8 +224,8 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                       maxChildSize: 1.0,
                       builder: (context, controller) {
                         //if (!controller.hasListeners) {
-                          controller.addListener(() {
-                            /*double maxScroll =
+                        controller.addListener(() {
+                          /*double maxScroll =
                                 controller.position.maxScrollExtent;
                             double currentScroll = controller.position.pixels;
 
@@ -233,29 +233,29 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                             _bloc.add(LoadMore(loginState.user.token, widget.location.address, widget.merchantType,
                                 widget.type, widget.category));*/
 
-                            if (controller.position.userScrollDirection ==
-                                ScrollDirection.reverse) {
-                              if (!_isScrollingDown) {
-                                _isScrollingDown = true;
-                                setState(() {
-                                  _animationController.forward().orCancel;
-                                });
-                              }
+                          if (controller.position.userScrollDirection ==
+                              ScrollDirection.reverse) {
+                            if (!_isScrollingDown) {
+                              _isScrollingDown = true;
+                              setState(() {
+                                _animationController.forward().orCancel;
+                              });
                             }
-                            if ((controller.position.userScrollDirection ==
-                                    ScrollDirection.forward) |
-                                (controller.offset >=
-                                        controller.position.maxScrollExtent -
-                                            kBottomNavigationBarHeight &&
-                                    !controller.position.outOfRange)) {
-                              if (_isScrollingDown) {
-                                _isScrollingDown = false;
-                                setState(() {
-                                  _animationController.reverse().orCancel;
-                                });
-                              }
+                          }
+                          if ((controller.position.userScrollDirection ==
+                                  ScrollDirection.forward) |
+                              (controller.offset >=
+                                      controller.position.maxScrollExtent -
+                                          kBottomNavigationBarHeight &&
+                                  !controller.position.outOfRange)) {
+                            if (_isScrollingDown) {
+                              _isScrollingDown = false;
+                              setState(() {
+                                _animationController.reverse().orCancel;
+                              });
                             }
-                          });
+                          }
+                        });
                         //}
 
                         return Container(
@@ -592,11 +592,11 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
             Expanded(
               flex: 1,
               child: Text(
-                title,
+                AppUtil.parseHtmlString(title),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-            isFilterEnabled
+            /*isFilterEnabled
                 ? Expanded(
                     flex: 1,
                     child: Row(
@@ -616,7 +616,7 @@ class ListRestaurantFilterWidget extends SliverPersistentHeaderDelegate {
                       ],
                     ),
                   )
-                : SizedBox(),
+                : SizedBox(),*/
             Container(
               height: size,
               decoration: BoxDecoration(

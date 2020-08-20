@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:clients/classes/data_repository.dart';
+import 'package:clients/model/location.dart';
 import 'package:clients/model/user.dart';
 import 'package:clients/model/user_profile.dart';
 import './bloc.dart';
@@ -54,7 +55,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
   }
 
   Stream<EditProfileState> mapUpdateLocationToState(
-      String location, String countryCode) async* {
+      Location location, String countryCode) async* {
     String code = countryCode == "101" ? "IN" : "SG";
     yield EditProfileState(
         profile: state.profile.copyWith(location: location, countryCode: code));

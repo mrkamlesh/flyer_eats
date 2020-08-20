@@ -186,7 +186,7 @@ class EndDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return NotificationSListPage();
+                return NotificationsListPage();
               }));
             },
             child: Row(

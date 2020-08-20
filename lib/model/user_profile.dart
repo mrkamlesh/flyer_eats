@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:clients/model/location.dart';
+
 class Profile {
   final String name;
   final String phone;
   final String password;
   final File avatar;
-  final String location;
+  final Location location;
   final String countryCode;
 
   Profile(
@@ -21,7 +23,7 @@ class Profile {
       String phone,
       String password,
       File avatar,
-      String location,
+      Location location,
       String countryCode}) {
     return Profile(
         name: name ?? this.name,
@@ -37,7 +39,7 @@ class Profile {
         this.name != "" &&
         this.phone != null &&
         this.phone != "" &&
-        this.location != null &&
-        this.location != "";
+        this.location.location != null &&
+        this.location.location != "";
   }
 }

@@ -7,12 +7,12 @@ import 'package:clients/classes/style.dart';
 import 'package:clients/model/notification.dart';
 import 'package:clients/widget/app_bar.dart';
 
-class NotificationSListPage extends StatefulWidget {
+class NotificationsListPage extends StatefulWidget {
   @override
-  _NotificationSListPageState createState() => _NotificationSListPageState();
+  _NotificationsListPageState createState() => _NotificationsListPageState();
 }
 
-class _NotificationSListPageState extends State<NotificationSListPage> {
+class _NotificationsListPageState extends State<NotificationsListPage> {
   NotificationsBloc _bloc;
 
   @override

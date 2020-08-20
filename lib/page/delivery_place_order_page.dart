@@ -938,7 +938,12 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                 for (int i = 0; i < list.length; i++) {
                   address.add(AddressItemWidget(
                     address: list[i],
-                    orderPickupBloc: widget.orderPickupBloc,
+                    onTap: () {
+                      widget.orderPickupBloc.add(ChangeAddress(list[i]));
+                      BlocProvider.of<LoginBloc>(context)
+                          .add(UpdateDefaultAddress(list[i]));
+                      Navigator.pop(context);
+                    },
                   ));
                 }
 
@@ -1287,9 +1292,9 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
 
 class AddressItemWidget extends StatelessWidget {
   final Address address;
-  final PlaceOrderPickupBloc orderPickupBloc;
+  final Function onTap;
 
-  const AddressItemWidget({Key key, this.address, this.orderPickupBloc})
+  const AddressItemWidget({Key key, this.address, this.onTap})
       : super(key: key);
 
   @override
@@ -1315,10 +1320,7 @@ class AddressItemWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: InkWell(
-        onTap: () {
-          orderPickupBloc.add(ChangeAddress(address));
-          Navigator.pop(context);
-        },
+        onTap: onTap,
         child: Column(
           children: <Widget>[
             Container(

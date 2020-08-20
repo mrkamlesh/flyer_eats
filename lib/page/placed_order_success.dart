@@ -188,7 +188,7 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                                       : () {},
                                               child: Container(
                                                 margin: EdgeInsets.only(
-                                                    top: 20, bottom: 20),
+                                                    top: 10, bottom: 20),
                                                 height: 0.16 *
                                                     AppUtil.getScreenHeight(
                                                         context),

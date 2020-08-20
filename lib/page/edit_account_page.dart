@@ -64,7 +64,9 @@ class _EditAccountPageState extends State<EditAccountPage> {
           ..add(InitProfile(Profile(
               name: widget.user.name,
               phone: widget.user.phone,
-              location: widget.user.location,
+              location: Location(
+                  location: widget.user.location,
+                  address: widget.user.location),
               countryCode: widget.user.countryCode)));
       },
       child: BlocBuilder<LoginBloc, LoginState>(
@@ -317,7 +319,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
 
                                     if (location != null) {
                                       _bloc.add(UpdateLocation(
-                                          location.address, location.country));
+                                          location, location.country));
                                     }
                                   },
                                   child: Container(
@@ -333,7 +335,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            editProfileState.profile.location,
+                                            editProfileState
+                                                .profile.location.address,
                                             maxLines: 1,
                                             style: TextStyle(fontSize: 16),
                                           ),

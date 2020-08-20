@@ -14,12 +14,17 @@ class Restaurant {
   final String voucherBadge;
   final bool isOpen;
   final String currencyCode;
+  final bool isNotBusy;
 
   final List<Food> searchFoodList;
 
-  Restaurant(this.id, this.name, this.deliveryEstimation, this.rating, this.image, this.cuisine, this.address,
-      this.isOpen, this.currencyCode,
-      {this.offers, this.badges, this.voucherBadge, this.searchFoodList});
+  Restaurant(this.id, this.name, this.deliveryEstimation, this.rating,
+      this.image, this.cuisine, this.address, this.isOpen, this.currencyCode,
+      {this.offers,
+      this.badges,
+      this.voucherBadge,
+      this.searchFoodList,
+      this.isNotBusy});
 
   factory Restaurant.fromJson(Map<String, dynamic> parsedJson) {
     var offers = parsedJson['offers'] as List;
@@ -41,7 +46,8 @@ class Restaurant {
         offers: offers.map((e) {
           return (e as String);
         }).toList(),
-        voucherBadge: parsedJson['voucher_badge']);
+        voucherBadge: parsedJson['voucher_badge'],
+        isNotBusy: parsedJson['payment_gateway']);
   }
 
   factory Restaurant.fromSearch(Map<String, dynamic> parsedJson) {

@@ -53,7 +53,7 @@ class DataProvider {
       "referral_code": registerPost.isUseReferral ? registerPost.referral : "",
       "full_name": registerPost.name,
       "country_code": registerPost.countryId,
-      "loc_name": registerPost.location.address,
+      "loc_name": registerPost.location.location,
       "device_id": registerPost.deviceId,
       "app_version": registerPost.appVersion,
       "device_platform": registerPost.devicePlatform,
@@ -281,6 +281,7 @@ class DataProvider {
       "contact_phone": order.contact,
       "delivery_instruction": order.deliveryInstruction,
       "street": order.address.address,
+      "address_id": order.address.id,
       "payment_list": order.selectedPaymentMethod,
       "voucher_code": order.voucher.name != null ? order.voucher.name : "",
       "voucher_amount":
@@ -688,7 +689,7 @@ class DataProvider {
       "client_token": token,
       "full_name": profile.name,
       "contact_phone": profile.phone,
-      "loc_name": profile.location,
+      "loc_name": profile.location.location,
       "country_code": profile.countryCode,
       "password": profile.password != null && profile.password != ""
           ? profile.password

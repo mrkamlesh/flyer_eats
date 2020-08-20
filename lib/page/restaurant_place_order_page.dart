@@ -894,7 +894,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                           horizontalPaddingDraggable,
                                                       bottom: state.placeOrder
                                                                   .transactionType ==
-                                                              "self-pickup"
+                                                              "pickup"
                                                           ? kBottomNavigationBarHeight +
                                                               30
                                                           : kBottomNavigationBarHeight +
@@ -1561,7 +1561,7 @@ class DeliveryOptions extends SliverPersistentHeaderDelegate {
                       visualDensity:
                           VisualDensity(vertical: -4, horizontal: -4),
                       activeColor: Colors.green,
-                      value: "self-pickup",
+                      value: "pickup",
                       groupValue: state.placeOrder.transactionType,
                       onChanged: (value) {
                         BlocProvider.of<FoodOrderBloc>(context)
@@ -2552,7 +2552,7 @@ class _FoodListDeliveryInformationState
                 Address address = await Navigator.push(context,
                     MaterialPageRoute(builder: (context) {
                   return AddressPage(
-                    forcedDefault: true,
+                    forcedDefault: false,
                   );
                 }));
 
@@ -2735,7 +2735,13 @@ class _FoodListDeliveryInformationState
                 for (int i = 0; i < list.length; i++) {
                   address.add(AddressItemWidget(
                     address: list[i],
-                    foodOrderBloc: widget.foodOrderBloc,
+                    onTap: () {
+                      widget.foodOrderBloc.add(ChangeAddress(list[i]));
+                      BlocProvider.of<LoginBloc>(context)
+                          .add(UpdateDefaultAddress(list[i]));
+
+                      Navigator.pop(context);
+                    },
                   ));
                 }
 
@@ -2797,7 +2803,7 @@ class _FoodListDeliveryInformationState
                               Address address = await Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
                                 return AddressPage(
-                                  forcedDefault: true,
+                                  forcedDefault: false,
                                 );
                               }));
 
@@ -3064,7 +3070,7 @@ class _FoodListDeliveryInformationState
                               ),
                               alignment: Alignment.center,
                               child: Text(
-                                "SELECT",
+                                "UPDATE AND PROCEED",
                                 style: TextStyle(fontSize: 20),
                               ),
                             ),
@@ -3092,9 +3098,9 @@ class _FoodListDeliveryInformationState
 
 class AddressItemWidget extends StatelessWidget {
   final Address address;
-  final FoodOrderBloc foodOrderBloc;
+  final Function onTap;
 
-  const AddressItemWidget({Key key, this.address, this.foodOrderBloc})
+  const AddressItemWidget({Key key, this.address, this.onTap})
       : super(key: key);
 
   @override
@@ -3120,10 +3126,7 @@ class AddressItemWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: InkWell(
-        onTap: () {
-          foodOrderBloc.add(ChangeAddress(address));
-          Navigator.pop(context);
-        },
+        onTap: onTap,
         child: Column(
           children: <Widget>[
             Container(

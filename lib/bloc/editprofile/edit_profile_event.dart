@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clients/model/location.dart';
 import 'package:equatable/equatable.dart';
 import 'package:clients/model/user_profile.dart';
 import 'package:meta/meta.dart';
@@ -55,7 +56,7 @@ class UpdateImage extends EditProfileEvent {
 }
 
 class UpdateLocation extends EditProfileEvent {
-  final String location;
+  final Location location;
   final String countryCode;
 
   UpdateLocation(this.location, this.countryCode);

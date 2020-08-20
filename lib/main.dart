@@ -216,7 +216,7 @@ class _MainPageState extends State<MainPage> {
   void _navigateToCampaign(String campaignId) {
     //for example
     navigatorKey.currentState.push(MaterialPageRoute(builder: (context) {
-      return NotificationSListPage();
+      return NotificationsListPage();
     }));
   }
 }

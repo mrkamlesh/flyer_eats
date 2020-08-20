@@ -2039,21 +2039,23 @@ class HomeErrorWidget extends StatelessWidget {
                   color: Colors.transparent,
                 ),
               ),
-              Container(
-                height: AppUtil.getDraggableHeight(context),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(32),
-                        topLeft: Radius.circular(32))),
-                padding: EdgeInsets.only(
-                    top: 20,
-                    left: horizontalPaddingDraggable,
-                    right: horizontalPaddingDraggable),
-                alignment: Alignment.center,
+              Expanded(
                 child: Container(
-                  child: Center(
-                    child: Text("Error Get Your Location"),
+                  height: AppUtil.getDraggableHeight(context),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(32),
+                          topLeft: Radius.circular(32))),
+                  padding: EdgeInsets.only(
+                      top: 20,
+                      left: horizontalPaddingDraggable,
+                      right: horizontalPaddingDraggable),
+                  alignment: Alignment.center,
+                  child: Container(
+                    child: Center(
+                      child: Text("Error Get Your Location"),
+                    ),
                   ),
                 ),
               )

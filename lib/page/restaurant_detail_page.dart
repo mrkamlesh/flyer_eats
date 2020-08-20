@@ -688,26 +688,59 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                 .reverse()
                                                 .orCancel;
 
-                                            if (state
-                                                .foodList[i].isSingleItem) {
-                                              BlocProvider.of<FoodOrderBloc>(
-                                                      context)
-                                                  .add(ChangeQuantityNoPayment(
-                                                      widget.restaurant,
-                                                      state.foodList[i].id,
-                                                      state.foodList[i],
-                                                      (cartState.placeOrder
-                                                              .foodCart
-                                                              .getFoodQuantity(
-                                                                  state.foodList[
-                                                                      i]) +
-                                                          1),
-                                                      state.foodList[i].price,
-                                                      [],
-                                                      true));
+                                            if (widget.restaurant.isNotBusy) {
+                                              if (state
+                                                  .foodList[i].isSingleItem) {
+                                                BlocProvider.of<FoodOrderBloc>(
+                                                        context)
+                                                    .add(ChangeQuantityNoPayment(
+                                                        widget.restaurant,
+                                                        state.foodList[i].id,
+                                                        state.foodList[i],
+                                                        (cartState.placeOrder
+                                                                .foodCart
+                                                                .getFoodQuantity(
+                                                                    state.foodList[
+                                                                        i]) +
+                                                            1),
+                                                        state.foodList[i].price,
+                                                        [],
+                                                        true));
+                                              } else {
+                                                _showAddOnsSheet(
+                                                    state.foodList[i]);
+                                              }
                                             } else {
-                                              _showAddOnsSheet(
-                                                  state.foodList[i]);
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                      title: Text(
+                                                        widget.restaurant.name +
+                                                            " is Busy",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      content: Text(
+                                                          "Sorry. All our delivery agents are busy at the moment. But still you can place order in pickup"),
+                                                      actions: <Widget>[
+                                                        FlatButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Text("OK"))
+                                                      ],
+                                                    );
+                                                  });
                                             }
                                           },
                                           onRemove: (i) {

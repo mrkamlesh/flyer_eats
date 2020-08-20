@@ -74,7 +74,7 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                   }));
                 } else if (notificationState is ReceiveCampaignNotification) {
                   await Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return NotificationSListPage();
+                    return NotificationsListPage();
                   }));
                 }
                 BlocProvider.of<NotificationBloc>(context).add(ResetMessage());

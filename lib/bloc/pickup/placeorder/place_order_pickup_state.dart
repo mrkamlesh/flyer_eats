@@ -11,19 +11,45 @@ class InitialPlaceOrderPickupState extends PlaceOrderPickupState {
 }
 
 class LoadingGetDeliveryCharge extends PlaceOrderPickupState {
-  LoadingGetDeliveryCharge({PlaceOrderPickup placeOrderPickup}) : super(placeOrderPickup: placeOrderPickup);
+  LoadingGetDeliveryCharge({PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
 }
 
 class LoadingPlaceOrder extends PlaceOrderPickupState {
-  LoadingPlaceOrder({PlaceOrderPickup placeOrderPickup}) : super(placeOrderPickup: placeOrderPickup);
+  LoadingPlaceOrder({PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
 }
 
 class SuccessPlaceOrder extends PlaceOrderPickupState {
-  SuccessPlaceOrder({PlaceOrderPickup placeOrderPickup}) : super(placeOrderPickup: placeOrderPickup);
+  SuccessPlaceOrder({PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
 }
 
 class ErrorPlaceOrder extends PlaceOrderPickupState {
   final String message;
 
-  ErrorPlaceOrder(this.message, {PlaceOrderPickup placeOrderPickup}) : super(placeOrderPickup: placeOrderPickup);
+  ErrorPlaceOrder(this.message, {PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
+}
+
+class LoadingRequestOtpChangeContact extends PlaceOrderPickupState {
+  LoadingRequestOtpChangeContact({PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
+}
+
+class SuccessRequestOtpChangeContact extends PlaceOrderPickupState {
+  final String newContact;
+  final bool isChangePrimaryContact;
+
+  SuccessRequestOtpChangeContact(this.newContact, this.isChangePrimaryContact,
+      {PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
+}
+
+class ErrorRequestOtpChangeContact extends PlaceOrderPickupState {
+  final String message;
+
+  ErrorRequestOtpChangeContact(this.message,
+      {PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
 }

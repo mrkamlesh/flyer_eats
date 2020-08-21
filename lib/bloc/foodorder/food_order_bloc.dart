@@ -14,6 +14,7 @@ import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/user.dart';
 import 'package:clients/model/voucher.dart';
 import 'package:flutter/services.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 import 'package:http/http.dart' as http;
 
@@ -75,6 +76,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapRemoveVoucherToState();
     } else if (event is PlaceOrderStripeEvent) {
       yield* mapPlaceOrderStripeEventToState();
+    } else if (event is RequestOtpChangeContact) {
+      yield* mapRequestOtpChangeContactToState(
+          event.contact, event.isChangePrimaryContact);
     }
   }
 
@@ -172,7 +176,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
             user: user,
             isValid: true,
             address: user.defaultAddress,
-            contact: user.phone,
+            contact: state.placeOrder.contact ?? user.phone,
             transactionType: 'delivery',
             deliveryInstruction: '',
             deliveryCharges: 0,
@@ -408,6 +412,26 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield ErrorPlaceOrder(e.toString(),
           placeOrder:
               state.placeOrder.copyWith(isValid: false, message: e.toString()));
+    }
+  }
+
+  Stream<FoodOrderState> mapRequestOtpChangeContactToState(
+      String contact, bool isChangePrimaryContact) async* {
+    if (contact == state.placeOrder.contact) {
+      yield ErrorRequestOtpChangeContact("You Enter the Same Contact Number",
+          placeOrder: state.placeOrder);
+    } else {
+      yield LoadingRequestOtpChangeContact(placeOrder: state.placeOrder);
+      try {
+        String otpSignature = await SmsAutoFill().getAppSignature;
+        await repository.requestOtpChangeContactPhone(
+            contact, otpSignature, state.placeOrder.user.token);
+        yield SuccessRequestOtpChangeContact(contact, isChangePrimaryContact,
+            placeOrder: state.placeOrder);
+      } catch (e) {
+        yield ErrorRequestOtpChangeContact(e.toString(),
+            placeOrder: state.placeOrder);
+      }
     }
   }
 }

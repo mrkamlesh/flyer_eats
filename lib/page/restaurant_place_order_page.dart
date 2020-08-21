@@ -3,6 +3,7 @@ import 'package:clients/model/add_on.dart';
 import 'package:clients/model/add_ons_type.dart';
 import 'package:clients/model/price.dart';
 import 'package:clients/model/user.dart';
+import 'package:clients/page/change_contact_verify_otp.dart';
 import 'package:clients/widget/payment_method_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -1076,13 +1077,6 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                           BlocConsumer<FoodOrderBloc, FoodOrderState>(
                             listener: (context, state) async {
                               if (state is SuccessPlaceOrder) {
-                                if (state.placeOrder.isChangePrimaryContact) {
-                                  BlocProvider.of<LoginBloc>(context).add(
-                                      UpdatePrimaryContact(
-                                          state.placeOrder.contact));
-                                  await _showContactConfirmationDialog(
-                                      state.placeOrder.contact);
-                                }
                                 BlocProvider.of<FoodOrderBloc>(context)
                                     .add(ClearCart());
                                 Navigator.push(context,
@@ -1149,10 +1143,64 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                         ],
                                       );
                                     });
+                              } else if (state
+                                  is ErrorRequestOtpChangeContact) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        title: Text(
+                                          "Request OTP Failed",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        content: Text(state.message),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              "OK",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              } else if (state
+                                  is SuccessRequestOtpChangeContact) {
+                                bool result = await Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return ChangeContactVerifyOtp(
+                                    isChangePrimaryContact:
+                                        state.isChangePrimaryContact,
+                                    contact: state.newContact,
+                                    token: loginState.user.token,
+                                  );
+                                }));
+
+                                if (result != null) {
+                                  BlocProvider.of<FoodOrderBloc>(context).add(
+                                      ChangeContactPhone(
+                                          state.isChangePrimaryContact,
+                                          state.newContact));
+                                  if (state.isChangePrimaryContact) {
+                                    BlocProvider.of<LoginBloc>(context).add(
+                                        UpdatePrimaryContact(state.newContact));
+                                    _showContactConfirmationDialog(
+                                        state.newContact);
+                                  }
+                                }
                               }
                             },
                             builder: (context, state) {
-                              if (state is LoadingPlaceOrder) {
+                              if (state is LoadingPlaceOrder ||
+                                  state is LoadingRequestOtpChangeContact) {
                                 return Container(
                                   decoration: BoxDecoration(
                                       color: Colors.black.withOpacity(0.5)),
@@ -1314,6 +1362,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
   }
 
   showPaymentMethodOptions(PlaceOrder placeOrder) {
+    bool isLoading = false;
     showMaterialModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -1336,9 +1385,12 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                 child: PaymentMethodListWidget(
                   paymentMethods: placeOrder.listPaymentMethod,
                   onTap: (i) {
-                    Navigator.pop(context);
-                    _onPaymentOptionsSelected(
-                        placeOrder, placeOrder.listPaymentMethod[i].value);
+                    if (!isLoading){
+                      isLoading = true;
+                      Navigator.pop(context);
+                      _onPaymentOptionsSelected(
+                          placeOrder, placeOrder.listPaymentMethod[i].value);
+                    }
                   },
                 ),
               );
@@ -3048,7 +3100,7 @@ class _FoodListDeliveryInformationState
                     GestureDetector(
                       onTap: _number != "" && _number != null
                           ? () {
-                              widget.foodOrderBloc.add(ChangeContactPhone(
+                              widget.foodOrderBloc.add(RequestOtpChangeContact(
                                   _isChangePrimaryNumber,
                                   _contactPredicate + _number));
                               Navigator.pop(context);

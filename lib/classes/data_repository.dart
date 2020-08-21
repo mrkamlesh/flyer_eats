@@ -51,6 +51,28 @@ class DataRepository {
     }
   }
 
+  Future<bool> requestOtpChangeContactPhone(
+      String contactPhone, String otpSignature, String token) async {
+    final response = await _provider.requestOtpChangeContactPhone(
+        contactPhone, otpSignature, token);
+    if (response['code'] == 1) {
+      return true;
+    } else {
+      throw Exception(response['msg']);
+    }
+  }
+
+  Future<bool> verifyOtpChangeContactPhone(
+      String contactPhone, String otpCode, bool isDefault, String token) async {
+    final response = await _provider.verifyOtpChangeContactPhone(
+        contactPhone, otpCode, isDefault, token);
+    if (response['code'] == 1) {
+      return true;
+    } else {
+      throw Exception(response['msg']);
+    }
+  }
+
   Future<LoginStatus> checkPhoneExist(
       String contactPhone, String otpSignature) async {
     final response =
@@ -539,8 +561,8 @@ class DataRepository {
         token, address, merchantType, type, category, 0, isVegOnly,
         sortBy: sortBy, cuisineType: cuisineType, searchKeyword: searchKeyword);
     if (response['code'] == 1) {
-      var listLocations = response['details']['restaurants'] as List;
-      List<Restaurant> restaurants = listLocations.map((i) {
+      var listRestaurants = response['details']['restaurants'] as List;
+      List<Restaurant> restaurants = listRestaurants.map((i) {
         return Restaurant.fromJson(i);
       }).toList();
 

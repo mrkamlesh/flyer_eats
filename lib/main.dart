@@ -63,7 +63,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   PushNotificationsManager manager = PushNotificationsManager();
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
   @override
@@ -71,7 +72,8 @@ class _MainPageState extends State<MainPage> {
     super.initState();
 
     _requestIOSPermissions();
-    manager.firebaseMessaging.requestNotificationPermissions(IosNotificationSettings());
+    manager.firebaseMessaging
+        .requestNotificationPermissions(IosNotificationSettings());
     manager.firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         if (message['data']['push_type'] == 'order') {
@@ -101,8 +103,9 @@ class _MainPageState extends State<MainPage> {
     return MaterialApp(
       title: 'Flutter Demo',
       navigatorKey: navigatorKey,
-      theme:
-          ThemeData(primarySwatch: Colors.blue, textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)),
+      theme: ThemeData(
+          primarySwatch: Colors.blue,
+          textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)),
       initialRoute: "/",
       routes: {
         "/": (context) => LoginNumberPage(),
@@ -114,7 +117,8 @@ class _MainPageState extends State<MainPage> {
 
   void _requestIOSPermissions() {
     FlutterLocalNotificationsPlugin()
-        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(
           alert: true,
           badge: true,
@@ -124,17 +128,26 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> _showOrderNotification(Map<String, dynamic> message) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'Flyer Eats Notifications Channel', 'Flyer Eats Notifications', 'Flyer Eats Description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+        'Flyer Eats Notifications Channel',
+        'Flyer Eats Notifications',
+        'Flyer Eats Description',
+        importance: Importance.Max,
+        priority: Priority.High,
+        ticker: 'ticker',
+        color: Color(0xFFD82128));
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    AndroidInitializationSettings androidSetting = AndroidInitializationSettings('flyereatslogo');
-    IOSInitializationSettings iosSetting =
-        IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveOrderNotification);
-    InitializationSettings settings = InitializationSettings(androidSetting, iosSetting);
-    flutterLocalNotificationsPlugin.initialize(settings, onSelectNotification: onSelectOrderNotification);
-    flutterLocalNotificationsPlugin.show(
-        0, message['notification']['title'], message['notification']['body'], platformChannelSpecifics);
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    AndroidInitializationSettings androidSetting =
+        AndroidInitializationSettings('notification_icon');
+    IOSInitializationSettings iosSetting = IOSInitializationSettings(
+        onDidReceiveLocalNotification: onDidReceiveOrderNotification);
+    InitializationSettings settings =
+        InitializationSettings(androidSetting, iosSetting);
+    flutterLocalNotificationsPlugin.initialize(settings,
+        onSelectNotification: onSelectOrderNotification);
+    flutterLocalNotificationsPlugin.show(0, message['notification']['title'],
+        message['notification']['body'], platformChannelSpecifics);
   }
 
   Future onSelectOrderNotification(String payload) async {
@@ -143,17 +156,25 @@ class _MainPageState extends State<MainPage> {
 
   void _showCampaignNotification(Map<String, dynamic> message) {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'Flyer Eats Campaign Channel', 'Flyer Eats Campaign', 'Flyer Eats Description Campaign',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+        'Flyer Eats Campaign Channel',
+        'Flyer Eats Campaign',
+        'Flyer Eats Description Campaign',
+        importance: Importance.Max,
+        priority: Priority.High,
+        ticker: 'ticker');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    AndroidInitializationSettings androidSetting = AndroidInitializationSettings('flyereatslogo');
-    IOSInitializationSettings iosSetting =
-        IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveCampaignNotification);
-    InitializationSettings settings = InitializationSettings(androidSetting, iosSetting);
-    flutterLocalNotificationsPlugin.initialize(settings, onSelectNotification: onSelectCampaignNotification);
-    flutterLocalNotificationsPlugin.show(
-        0, message['notification']['title'], message['notification']['body'], platformChannelSpecifics,
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    AndroidInitializationSettings androidSetting =
+        AndroidInitializationSettings('notification_icon');
+    IOSInitializationSettings iosSetting = IOSInitializationSettings(
+        onDidReceiveLocalNotification: onDidReceiveCampaignNotification);
+    InitializationSettings settings =
+        InitializationSettings(androidSetting, iosSetting);
+    flutterLocalNotificationsPlugin.initialize(settings,
+        onSelectNotification: onSelectCampaignNotification);
+    flutterLocalNotificationsPlugin.show(0, message['notification']['title'],
+        message['notification']['body'], platformChannelSpecifics,
         payload: message['data']['order_id']);
   }
 
@@ -161,12 +182,14 @@ class _MainPageState extends State<MainPage> {
     _navigateToCampaign(payload);
   }
 
-  Future onDidReceiveOrderNotification(int id, String title, String body, String payload) async {
+  Future onDidReceiveOrderNotification(
+      int id, String title, String body, String payload) async {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: Text(
               title,
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -184,12 +207,14 @@ class _MainPageState extends State<MainPage> {
         });
   }
 
-  Future onDidReceiveCampaignNotification(int id, String title, String body, String payload) async {
+  Future onDidReceiveCampaignNotification(
+      int id, String title, String body, String payload) async {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: Text(
               title,
               style: TextStyle(fontWeight: FontWeight.bold),

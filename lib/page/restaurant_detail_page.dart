@@ -688,29 +688,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                 .reverse()
                                                 .orCancel;
 
-                                            if (widget.restaurant.isNotBusy) {
-                                              if (state
-                                                  .foodList[i].isSingleItem) {
-                                                BlocProvider.of<FoodOrderBloc>(
-                                                        context)
-                                                    .add(ChangeQuantityNoPayment(
-                                                        widget.restaurant,
-                                                        state.foodList[i].id,
-                                                        state.foodList[i],
-                                                        (cartState.placeOrder
-                                                                .foodCart
-                                                                .getFoodQuantity(
-                                                                    state.foodList[
-                                                                        i]) +
-                                                            1),
-                                                        state.foodList[i].price,
-                                                        [],
-                                                        true));
-                                              } else {
-                                                _showAddOnsSheet(
-                                                    state.foodList[i]);
-                                              }
-                                            } else {
+                                            if (widget.restaurant.isBusy) {
                                               showDialog(
                                                   context: context,
                                                   builder: (context) {
@@ -741,6 +719,28 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                       ],
                                                     );
                                                   });
+                                            } else {
+                                              if (state
+                                                  .foodList[i].isSingleItem) {
+                                                BlocProvider.of<FoodOrderBloc>(
+                                                        context)
+                                                    .add(ChangeQuantityNoPayment(
+                                                        widget.restaurant,
+                                                        state.foodList[i].id,
+                                                        state.foodList[i],
+                                                        (cartState.placeOrder
+                                                                .foodCart
+                                                                .getFoodQuantity(
+                                                                    state.foodList[
+                                                                        i]) +
+                                                            1),
+                                                        state.foodList[i].price,
+                                                        [],
+                                                        true));
+                                              } else {
+                                                _showAddOnsSheet(
+                                                    state.foodList[i]);
+                                              }
                                             }
                                           },
                                           onRemove: (i) {

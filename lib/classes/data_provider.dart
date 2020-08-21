@@ -312,6 +312,56 @@ class DataProvider {
     return responseJson;
   }
 
+  Future<dynamic> requestOtpChangeContactPhone(
+      String contactPhone, String otpSignature, String token) async {
+    String url =
+        "${serverUrl}mobileapp/apiRest/sendOtp?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "contact_phone": contactPhone,
+      "otp_signature": otpSignature
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> verifyOtpChangeContactPhone(
+      String contactPhone, String otpCode, bool isDefault, String token) async {
+    String url =
+        "${serverUrl}mobileapp/apiRest/changeDefaultContact?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "contact_phone": contactPhone,
+      "otp_code": otpCode
+    };
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> getOrderDetail(String orderId, String token) async {
     String url =
         "${serverUrl}mobileapp/apiRest/getReceipt?json=true&api_key=flyereats";

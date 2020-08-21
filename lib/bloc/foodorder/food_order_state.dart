@@ -13,7 +13,8 @@ class FoodOrderState {
 }
 
 class InitialFoodOrderState extends FoodOrderState {
-  InitialFoodOrderState({PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+  InitialFoodOrderState({PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
 }
 
 class LoadingGetPayments extends FoodOrderState {
@@ -31,7 +32,9 @@ class NoItemsInCart extends FoodOrderState {
   NoItemsInCart()
       : super(
             placeOrder: PlaceOrder(
-                restaurant: Restaurant(null, null, null, null, null, null, null, false, null), foodCart: FoodCart(Map(), List())));
+                restaurant: Restaurant(
+                    null, null, null, null, null, null, null, false, null),
+                foodCart: FoodCart(Map(), List())));
 }
 
 class LoadingPlaceOrder extends FoodOrderState {
@@ -49,13 +52,15 @@ class CartChangeState extends FoodOrderState {
 class ErrorPlaceOrder extends FoodOrderState {
   final String message;
 
-  ErrorPlaceOrder(this.message, {PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+  ErrorPlaceOrder(this.message, {PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
 }
 
 class CancelledPlaceOrder extends FoodOrderState {
   final String message;
 
-  CancelledPlaceOrder(this.message, {PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+  CancelledPlaceOrder(this.message, {PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
 }
 
 class ConfirmCartState extends FoodOrderState {
@@ -66,8 +71,8 @@ class ConfirmCartState extends FoodOrderState {
   final Price tempPrice;
   final List<AddOn> tempAddOns;
 
-  ConfirmCartState(
-      this.tempSelectedRestaurant, this.tempId, this.tempFood, this.tempQuantity, this.tempPrice, this.tempAddOns,
+  ConfirmCartState(this.tempSelectedRestaurant, this.tempId, this.tempFood,
+      this.tempQuantity, this.tempPrice, this.tempAddOns,
       {PlaceOrder placeOrder})
       : super(placeOrder: placeOrder);
 }
@@ -79,11 +84,34 @@ class LoadingGetFoodDetail extends FoodOrderState {
 class SuccessGetFoodDetail extends FoodOrderState {
   final FoodDetail foodDetail;
 
-  SuccessGetFoodDetail(this.foodDetail, {PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+  SuccessGetFoodDetail(this.foodDetail, {PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
 }
 
 class ErrorGetFoodDetail extends FoodOrderState {
   final String message;
 
-  ErrorGetFoodDetail(this.message, {PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+  ErrorGetFoodDetail(this.message, {PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
+}
+
+class LoadingRequestOtpChangeContact extends FoodOrderState {
+  LoadingRequestOtpChangeContact({PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
+}
+
+class SuccessRequestOtpChangeContact extends FoodOrderState {
+  final String newContact;
+  final bool isChangePrimaryContact;
+
+  SuccessRequestOtpChangeContact(this.newContact, this.isChangePrimaryContact,
+      {PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
+}
+
+class ErrorRequestOtpChangeContact extends FoodOrderState {
+  final String message;
+
+  ErrorRequestOtpChangeContact(this.message, {PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
 }

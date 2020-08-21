@@ -47,6 +47,16 @@ class ChangeContact extends PlaceOrderPickupEvent {
   List<Object> get props => [contact, isChangePrimaryContact];
 }
 
+class RequestOtpChangeContact extends PlaceOrderPickupEvent {
+  final bool isChangePrimaryContact;
+  final String contact;
+
+  RequestOtpChangeContact(this.isChangePrimaryContact, this.contact);
+
+  @override
+  List<Object> get props => [isChangePrimaryContact, contact];
+}
+
 class PlaceOrderEvent extends PlaceOrderPickupEvent {
 
   const PlaceOrderEvent();

@@ -6,6 +6,7 @@ import 'package:clients/bloc/pickup/placeorder/bloc.dart';
 import 'package:clients/model/address.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/model/place_order_pickup.dart';
+import 'package:clients/page/change_contact_verify_otp.dart';
 import 'package:clients/page/placed_order_success.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -514,10 +515,65 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                   ],
                                 );
                               });
+                        } else if (state
+                        is ErrorRequestOtpChangeContact) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(10)),
+                                  title: Text(
+                                    "Request OTP Failed",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  content: Text(state.message),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else if (state
+                        is SuccessRequestOtpChangeContact) {
+                          bool result = await Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                                return ChangeContactVerifyOtp(
+                                  isChangePrimaryContact:
+                                  state.isChangePrimaryContact,
+                                  contact: state.newContact,
+                                  token: loginState.user.token,
+                                );
+                              }));
+
+                          if (result != null) {
+                            _orderPickupBloc.add(
+                                ChangeContact(
+                                    state.newContact,
+                                    state.isChangePrimaryContact));
+                            if (state.isChangePrimaryContact) {
+                              BlocProvider.of<LoginBloc>(context).add(
+                                  UpdatePrimaryContact(
+                                      state.newContact));
+                              _showContactConfirmationDialog(
+                                  state.newContact);
+                            }
+                          }
                         }
                       },
                       builder: (context, state) {
-                        if (state is LoadingPlaceOrder) {
+                        if (state is LoadingPlaceOrder ||
+                            state is LoadingRequestOtpChangeContact) {
                           return Container(
                             decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.5)),
@@ -1242,9 +1298,10 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                     GestureDetector(
                       onTap: _number != "" && _number != null
                           ? () {
-                              widget.orderPickupBloc.add(ChangeContact(
-                                  _contactPredicate + _number,
-                                  _isChangePrimaryNumber));
+                              widget.orderPickupBloc.add(
+                                  RequestOtpChangeContact(
+                                      _isChangePrimaryNumber,
+                                      _contactPredicate + _number));
                               Navigator.pop(context);
                             }
                           : () {},

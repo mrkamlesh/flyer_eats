@@ -96,7 +96,7 @@ class AppUtil {
   }
 
   static String formattedPhoneNumber(String phoneNumber) {
-    return phoneNumber.substring(0, 3) + " " + phoneNumber.substring(4);
+    return phoneNumber.substring(0, 3) + " " + phoneNumber.substring(3);
   }
 
   static String getCurrencyString(String currencyCode) {

@@ -4,6 +4,7 @@ import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/address.dart';
 import 'package:clients/model/pickup.dart';
 import 'package:clients/model/place_order_pickup.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 import './bloc.dart';
 
 class PlaceOrderPickupBloc
@@ -29,6 +30,9 @@ class PlaceOrderPickupBloc
           event.contact, event.isChangePrimaryContact);
     } else if (event is PlaceOrderEvent) {
       yield* mapPlaceOrderEventToState();
+    } else if (event is RequestOtpChangeContact) {
+      yield* mapRequestOtpChangeContactToState(
+          event.contact, event.isChangePrimaryContact);
     }
   }
 
@@ -108,6 +112,27 @@ class PlaceOrderPickupBloc
     } catch (e) {
       yield ErrorPlaceOrder(e.toString(),
           placeOrderPickup: state.placeOrderPickup);
+    }
+  }
+
+  Stream<PlaceOrderPickupState> mapRequestOtpChangeContactToState(
+      contact, isChangePrimaryContact) async* {
+    if (contact == state.placeOrderPickup.contact) {
+      yield ErrorRequestOtpChangeContact("You Enter the Same Contact Number",
+          placeOrderPickup: state.placeOrderPickup);
+    } else {
+      yield LoadingRequestOtpChangeContact(
+          placeOrderPickup: state.placeOrderPickup);
+      try {
+        String otpSignature = await SmsAutoFill().getAppSignature;
+        await repository.requestOtpChangeContactPhone(
+            contact, otpSignature, state.placeOrderPickup.token);
+        yield SuccessRequestOtpChangeContact(contact, isChangePrimaryContact,
+            placeOrderPickup: state.placeOrderPickup);
+      } catch (e) {
+        yield ErrorRequestOtpChangeContact(e.toString(),
+            placeOrderPickup: state.placeOrderPickup);
+      }
     }
   }
 }

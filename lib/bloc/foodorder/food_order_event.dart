@@ -41,16 +41,6 @@ class ChangeAddress extends FoodOrderEvent {
   List<Object> get props => [address];
 }
 
-class ChangeContactPhone extends FoodOrderEvent {
-  final bool isChangePrimaryContact;
-  final String contact;
-
-  const ChangeContactPhone(this.isChangePrimaryContact, this.contact);
-
-  @override
-  List<Object> get props => [isChangePrimaryContact, contact];
-}
-
 class ChangeInstruction extends FoodOrderEvent {
   final String instruction;
 
@@ -104,11 +94,12 @@ class ChangeQuantityNoPayment extends FoodOrderEvent {
   final List<AddOn> addOns;
   final bool isIncrease;
 
-  const ChangeQuantityNoPayment(
-      this.restaurant, this.id, this.food, this.quantity, this.price, this.addOns, this.isIncrease);
+  const ChangeQuantityNoPayment(this.restaurant, this.id, this.food,
+      this.quantity, this.price, this.addOns, this.isIncrease);
 
   @override
-  List<Object> get props => [restaurant, id, food, quantity, price, addOns, isIncrease];
+  List<Object> get props =>
+      [restaurant, id, food, quantity, price, addOns, isIncrease];
 }
 
 class PlaceOrderEvent extends FoodOrderEvent {
@@ -126,7 +117,6 @@ class PlaceOrderStripeEvent extends FoodOrderEvent {
 }
 
 class GetPaymentOptions extends FoodOrderEvent {
-
   GetPaymentOptions();
 
   @override
@@ -186,4 +176,24 @@ class UpdateFoodDetail extends FoodOrderEvent {
 
   @override
   List<Object> get props => [cartItem, quantity, price, addOns];
+}
+
+class ChangeContactPhone extends FoodOrderEvent {
+  final bool isChangePrimaryContact;
+  final String contact;
+
+  const ChangeContactPhone(this.isChangePrimaryContact, this.contact);
+
+  @override
+  List<Object> get props => [isChangePrimaryContact, contact];
+}
+
+class RequestOtpChangeContact extends FoodOrderEvent {
+  final bool isChangePrimaryContact;
+  final String contact;
+
+  RequestOtpChangeContact(this.isChangePrimaryContact, this.contact);
+
+  @override
+  List<Object> get props => [isChangePrimaryContact, contact];
 }

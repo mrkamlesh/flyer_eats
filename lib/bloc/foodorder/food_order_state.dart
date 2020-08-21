@@ -29,12 +29,13 @@ class LoadingGetPayments extends FoodOrderState {
 }*/
 
 class NoItemsInCart extends FoodOrderState {
-  NoItemsInCart()
+  NoItemsInCart({List<String> shownBusyDialogRestaurantIds})
       : super(
             placeOrder: PlaceOrder(
                 restaurant: Restaurant(
                     null, null, null, null, null, null, null, false, null),
-                foodCart: FoodCart(Map(), List())));
+                foodCart: FoodCart(Map(), List()),
+                shownBusyDialogRestaurantIds: shownBusyDialogRestaurantIds));
 }
 
 class LoadingPlaceOrder extends FoodOrderState {

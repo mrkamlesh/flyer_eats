@@ -37,6 +37,8 @@ class PlaceOrder {
   final String stripeSecretKey;
   final String applyVoucherErrorMessage;
 
+  final List<String> shownBusyDialogRestaurantIds;
+
   PlaceOrder({
     this.id,
     this.isValid,
@@ -67,6 +69,7 @@ class PlaceOrder {
     this.listPaymentMethod,
     this.selectedDeliveryTime,
     this.now,
+    this.shownBusyDialogRestaurantIds,
   });
 
   factory PlaceOrder.fromJson(Map<String, dynamic> parsedJson) {
@@ -158,6 +161,7 @@ class PlaceOrder {
     List<PaymentMethod> listPaymentMethod,
     DateTime selectedDeliveryTime,
     DateTime now,
+    List<String> shownBusyDialogRestaurantIds,
   }) {
     return PlaceOrder(
         id: id ?? this.id,
@@ -191,7 +195,9 @@ class PlaceOrder {
             isChangePrimaryContact ?? this.isChangePrimaryContact,
         listPaymentMethod: listPaymentMethod ?? this.listPaymentMethod,
         selectedDeliveryTime: selectedDeliveryTime ?? this.selectedDeliveryTime,
-        now: now ?? this.now);
+        now: now ?? this.now,
+        shownBusyDialogRestaurantIds:
+            shownBusyDialogRestaurantIds ?? this.shownBusyDialogRestaurantIds);
   }
 
   String getDeliveryDate() {
@@ -248,16 +254,6 @@ class PlaceOrder {
     return discountTotal;
   }
 
-/*  double getOrderTotal() {
-    double totalOrder = 0;
-
-    foodCart.cart.forEach((key, item) {
-      totalOrder = totalOrder + item.quantity * item.food.getRealPrice();
-    });
-
-    return totalOrder;
-  }*/
-
   double getTotal() {
     double total = 0;
 
@@ -285,5 +281,9 @@ class PlaceOrder {
     } else {
       return 0;
     }
+  }
+
+  bool iShownBusyDialog(String id) {
+    return this.shownBusyDialogRestaurantIds.contains(id);
   }
 }

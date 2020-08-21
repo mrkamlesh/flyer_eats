@@ -197,3 +197,12 @@ class RequestOtpChangeContact extends FoodOrderEvent {
   @override
   List<Object> get props => [isChangePrimaryContact, contact];
 }
+
+class MarkRestaurantHasShownBusyDialog extends FoodOrderEvent {
+  final String restaurantId;
+
+  MarkRestaurantHasShownBusyDialog(this.restaurantId);
+
+  @override
+  List<Object> get props => [restaurantId];
+}

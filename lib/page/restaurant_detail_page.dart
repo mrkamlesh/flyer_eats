@@ -688,7 +688,16 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                 .reverse()
                                                 .orCancel;
 
-                                            if (widget.restaurant.isBusy) {
+                                            if (widget.restaurant.isBusy &&
+                                                !(cartState.placeOrder
+                                                    .iShownBusyDialog(widget
+                                                        .restaurant.id))) {
+                                              BlocProvider.of<FoodOrderBloc>(
+                                                      context)
+                                                  .add(
+                                                      MarkRestaurantHasShownBusyDialog(
+                                                          widget
+                                                              .restaurant.id));
                                               showDialog(
                                                   context: context,
                                                   builder: (context) {
@@ -719,28 +728,27 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                       ],
                                                     );
                                                   });
+                                            }
+                                            if (state
+                                                .foodList[i].isSingleItem) {
+                                              BlocProvider.of<FoodOrderBloc>(
+                                                      context)
+                                                  .add(ChangeQuantityNoPayment(
+                                                      widget.restaurant,
+                                                      state.foodList[i].id,
+                                                      state.foodList[i],
+                                                      (cartState.placeOrder
+                                                              .foodCart
+                                                              .getFoodQuantity(
+                                                                  state.foodList[
+                                                                      i]) +
+                                                          1),
+                                                      state.foodList[i].price,
+                                                      [],
+                                                      true));
                                             } else {
-                                              if (state
-                                                  .foodList[i].isSingleItem) {
-                                                BlocProvider.of<FoodOrderBloc>(
-                                                        context)
-                                                    .add(ChangeQuantityNoPayment(
-                                                        widget.restaurant,
-                                                        state.foodList[i].id,
-                                                        state.foodList[i],
-                                                        (cartState.placeOrder
-                                                                .foodCart
-                                                                .getFoodQuantity(
-                                                                    state.foodList[
-                                                                        i]) +
-                                                            1),
-                                                        state.foodList[i].price,
-                                                        [],
-                                                        true));
-                                              } else {
-                                                _showAddOnsSheet(
-                                                    state.foodList[i]);
-                                              }
+                                              _showAddOnsSheet(
+                                                  state.foodList[i]);
                                             }
                                           },
                                           onRemove: (i) {

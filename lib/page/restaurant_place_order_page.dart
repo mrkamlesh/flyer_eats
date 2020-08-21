@@ -278,7 +278,11 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                   controller: controller,
                                   slivers: <Widget>[
                                     SliverPersistentHeader(
-                                      delegate: DeliveryOptions(),
+                                      delegate: DeliveryOptions(
+                                          showDeliveryOptions:
+                                              state.placeOrder.restaurant.isBusy
+                                                  ? false
+                                                  : true),
                                       pinned: true,
                                     ),
                                     FoodListPlaceOrder(),
@@ -1385,7 +1389,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                 child: PaymentMethodListWidget(
                   paymentMethods: placeOrder.listPaymentMethod,
                   onTap: (i) {
-                    if (!isLoading){
+                    if (!isLoading) {
                       isLoading = true;
                       Navigator.pop(context);
                       _onPaymentOptionsSelected(
@@ -1573,6 +1577,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
 }
 
 class DeliveryOptions extends SliverPersistentHeaderDelegate {
+  final bool showDeliveryOptions;
+
+  DeliveryOptions({this.showDeliveryOptions});
+
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -1590,23 +1598,25 @@ class DeliveryOptions extends SliverPersistentHeaderDelegate {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Expanded(
-                child: RadioCustom(
-                  radio: Radio(
-                      visualDensity:
-                          VisualDensity(vertical: -4, horizontal: -4),
-                      activeColor: Colors.green,
-                      value: "delivery",
-                      groupValue: state.placeOrder.transactionType,
-                      onChanged: (value) {
-                        BlocProvider.of<FoodOrderBloc>(context)
-                            .add(ChangeTransactionType(value));
-                      }),
-                  icon: "assets/delivery.svg",
-                  title: "Delivery",
-                  subtitle: "We Deliver At Your Doorstep",
-                ),
-              ),
+              showDeliveryOptions
+                  ? Expanded(
+                      child: RadioCustom(
+                        radio: Radio(
+                            visualDensity:
+                                VisualDensity(vertical: -4, horizontal: -4),
+                            activeColor: Colors.green,
+                            value: "delivery",
+                            groupValue: state.placeOrder.transactionType,
+                            onChanged: (value) {
+                              BlocProvider.of<FoodOrderBloc>(context)
+                                  .add(ChangeTransactionType(value));
+                            }),
+                        icon: "assets/delivery.svg",
+                        title: "Delivery",
+                        subtitle: "We Deliver At Your Doorstep",
+                      ),
+                    )
+                  : SizedBox(),
               Expanded(
                 child: RadioCustom(
                   radio: Radio(

@@ -22,7 +22,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   DataRepository repository = DataRepository();
 
   @override
-  FoodOrderState get initialState => NoItemsInCart();
+  FoodOrderState get initialState =>
+      NoItemsInCart(shownBusyDialogRestaurantIds: List());
 
   @override
   Stream<FoodOrderState> mapEventToState(
@@ -79,6 +80,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     } else if (event is RequestOtpChangeContact) {
       yield* mapRequestOtpChangeContactToState(
           event.contact, event.isChangePrimaryContact);
+    } else if (event is MarkRestaurantHasShownBusyDialog) {
+      yield* mapMarkRestaurantHasShownBusyDialogToState(event.restaurantId);
     }
   }
 
@@ -125,7 +128,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
           placeOrder: state.placeOrder.copyWith(foodCart: newCart));
       add(GetPaymentOptions());
     } else {
-      yield NoItemsInCart();
+      yield NoItemsInCart(
+          shownBusyDialogRestaurantIds:
+              state.placeOrder.shownBusyDialogRestaurantIds);
     }
   }
 
@@ -159,7 +164,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
             placeOrder: state.placeOrder
                 .copyWith(foodCart: newCart, restaurant: selectedRestaurant));
       } else {
-        yield NoItemsInCart();
+        yield NoItemsInCart(
+            shownBusyDialogRestaurantIds:
+                state.placeOrder.shownBusyDialogRestaurantIds);
       }
     } else {
       yield ConfirmCartState(
@@ -177,7 +184,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
             isValid: true,
             address: user.defaultAddress,
             contact: state.placeOrder.contact ?? user.phone,
-            transactionType: 'delivery',
+            transactionType: state.placeOrder.restaurant.isBusy
+                ? 'pickup'
+                : 'delivery',
             deliveryInstruction: '',
             deliveryCharges: 0,
             voucher: Voucher(amount: 0, rate: 0),
@@ -289,7 +298,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   }
 
   Stream<FoodOrderState> mapClearCartToState() async* {
-    yield NoItemsInCart();
+    yield NoItemsInCart(
+        shownBusyDialogRestaurantIds:
+            state.placeOrder.shownBusyDialogRestaurantIds);
   }
 
   Stream<FoodOrderState> mapGetFoodDetailToState(foodId) async* {
@@ -433,5 +444,15 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
             placeOrder: state.placeOrder);
       }
     }
+  }
+
+  Stream<FoodOrderState> mapMarkRestaurantHasShownBusyDialogToState(
+      String restaurantId) async* {
+    PlaceOrder placeOrder = state.placeOrder;
+    if (!(placeOrder.shownBusyDialogRestaurantIds.contains(restaurantId))) {
+      placeOrder.shownBusyDialogRestaurantIds.add(restaurantId);
+    }
+
+    yield FoodOrderState(placeOrder: placeOrder);
   }
 }

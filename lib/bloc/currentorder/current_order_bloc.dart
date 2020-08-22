@@ -37,9 +37,13 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
       if (currentOrder.isActive) {
         bool isShowStatus = state.currentOrder.statusOrder == null
             ? true
-            : state.currentOrder.statusOrder.status != currentOrder.statusOrder.status ? true : state.isShowStatus;
+            : state.currentOrder.statusOrder.status !=
+                    currentOrder.statusOrder.status
+                ? true
+                : state.isShowStatus;
 
-        yield SuccessState(currentOrder: currentOrder, isShowStatus: isShowStatus);
+        yield SuccessState(
+            currentOrder: currentOrder, isShowStatus: isShowStatus);
         Future.delayed(Duration(seconds: 3), () {
           add(GetActiveOrder(token));
         });
@@ -59,7 +63,9 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
         }
       }
     } catch (e) {
-      yield ErrorState(e.toString(), currentOrder: state.currentOrder, isShowStatus: true);
+      yield ErrorState(e.toString(),
+          currentOrder: state.currentOrder, isShowStatus: true);
+      add(Retry(token));
       /*Future.delayed(Duration(seconds: 3), () {
         add(GetActiveOrder(token));
       });*/
@@ -92,13 +98,15 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
       }
     } catch (e) {
       yield ErrorState(e.toString(), currentOrder: state.currentOrder);
+      add(Retry(token));
       /*Future.delayed(Duration(seconds: 3), () {
         add(GetActiveOrder(token));
       });*/
     }
   }
 
-  Stream<CurrentOrderState> mapAddReviewToState(String token, String orderId) async* {
+  Stream<CurrentOrderState> mapAddReviewToState(
+      String token, String orderId) async* {
     yield LoadingAddReview(
         currentOrder: state.currentOrder,
         comment: state.comment,
@@ -106,7 +114,8 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
         rating: state.rating);
 
     try {
-      bool isAdded = await repository.addReview(token, orderId, state.comment, state.rating);
+      bool isAdded = await repository.addReview(
+          token, orderId, state.comment, state.rating);
       if (isAdded) {
         yield SuccessAddReview(
             currentOrder: state.currentOrder,
@@ -129,17 +138,25 @@ class CurrentOrderBloc extends Bloc<CurrentOrderEvent, CurrentOrderState> {
     }
   }
 
-  Stream<CurrentOrderState> mapUpdateReviewCommentToState(String comment) async* {
+  Stream<CurrentOrderState> mapUpdateReviewCommentToState(
+      String comment) async* {
     yield CurrentOrderState(
-        currentOrder: state.currentOrder, comment: comment, rating: state.rating, hasGivenStar: state.hasGivenStar);
+        currentOrder: state.currentOrder,
+        comment: comment,
+        rating: state.rating,
+        hasGivenStar: state.hasGivenStar);
   }
 
   Stream<CurrentOrderState> mapUpdateReviewRatingToState(double rating) async* {
     yield CurrentOrderState(
-        currentOrder: state.currentOrder, comment: state.comment, rating: rating, hasGivenStar: true);
+        currentOrder: state.currentOrder,
+        comment: state.comment,
+        rating: rating,
+        hasGivenStar: true);
   }
 
-  Stream<CurrentOrderState> mapScratchCardEventToState(String token, String cardId) async* {
+  Stream<CurrentOrderState> mapScratchCardEventToState(
+      String token, String cardId) async* {
     await repository.scratchCard(token, cardId);
     /*yield CardScratched(
         rating: state.rating,

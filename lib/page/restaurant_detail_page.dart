@@ -1256,15 +1256,22 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                       BorderRadius.circular(
                                                           10)),
                                               title: Text(
-                                                "Can Not Select Add On",
+                                                cartState.foodDetail
+                                                    .addOnsTypes[i].name,
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
                                               content: Text(
-                                                "For this type of Add On you can only select " +
-                                                    maxNumberMap[i].toString() +
-                                                    " items",
+                                                "You are allowed to select maximum " +
+                                                    cartState
+                                                        .foodDetail
+                                                        .addOnsTypes[i]
+                                                        .maxNumber
+                                                        .toString() +
+                                                    " items in this " +
+                                                    cartState.foodDetail
+                                                        .addOnsTypes[i].name,
                                                 style: TextStyle(
                                                     color: Colors.black54),
                                               ),

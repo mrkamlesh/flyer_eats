@@ -85,16 +85,17 @@ class CustomAppBar extends StatelessWidget {
             child: InkWell(
               onTap: onTapTitle,
               child: Container(
+                margin: EdgeInsets.only(right: 5),
                 height: kToolbarHeight,
                 alignment: Alignment.centerLeft,
                 child: Text(
                   title,
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  overflow: TextOverflow.clip,
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                      fontSize: 15),
                 ),
               ),
             ),

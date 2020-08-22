@@ -1157,7 +1157,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                             borderRadius:
                                                 BorderRadius.circular(10)),
                                         title: Text(
-                                          "Request OTP Failed",
+                                          "Contact Number",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
@@ -2114,15 +2114,22 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
                                                       BorderRadius.circular(
                                                           10)),
                                               title: Text(
-                                                "Can Not Select Add On",
+                                                cartState.foodDetail
+                                                    .addOnsTypes[i].name,
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
                                               content: Text(
-                                                "For this type of Add On you can only select " +
-                                                    maxNumberMap[i].toString() +
-                                                    " items",
+                                                "You are allowed to select maximum " +
+                                                    cartState
+                                                        .foodDetail
+                                                        .addOnsTypes[i]
+                                                        .maxNumber
+                                                        .toString() +
+                                                    " items in this " +
+                                                    cartState.foodDetail
+                                                        .addOnsTypes[i].name,
                                                 style: TextStyle(
                                                     color: Colors.black54),
                                               ),

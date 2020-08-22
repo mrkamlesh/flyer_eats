@@ -54,6 +54,7 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
       child: WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
+          backgroundColor: Colors.white,
           body: Container(
             width: AppUtil.getScreenWidth(context),
             height: AppUtil.getScreenHeight(context),

@@ -333,12 +333,14 @@ class EndDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) {
-                return LoginNumberPage(
-                  isLoggedOut: true,
-                );
-              }));
+              Future.delayed(Duration(milliseconds: 300), () {
+                Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute(builder: (context) {
+                  return LoginNumberPage(
+                    isLoggedOut: true,
+                  );
+                }), (Route<dynamic> route) => false);
+              });
             },
             child: Row(
               children: <Widget>[

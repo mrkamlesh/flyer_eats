@@ -429,7 +429,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   Stream<FoodOrderState> mapRequestOtpChangeContactToState(
       String contact, bool isChangePrimaryContact) async* {
     if (contact == state.placeOrder.contact) {
-      yield ErrorRequestOtpChangeContact("You Enter the Same Contact Number",
+      yield ErrorRequestOtpChangeContact("You have entered the same contact number",
           placeOrder: state.placeOrder);
     } else {
       yield LoadingRequestOtpChangeContact(placeOrder: state.placeOrder);

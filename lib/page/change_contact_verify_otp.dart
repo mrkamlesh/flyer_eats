@@ -54,7 +54,7 @@ class _ChangeContactVerifyOtpState extends State<ChangeContactVerifyOtp>
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                     title: Text(
-                      "Error",
+                      "OTP Failed",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     content: Text(state.message),
@@ -68,28 +68,7 @@ class _ChangeContactVerifyOtpState extends State<ChangeContactVerifyOtp>
                   );
                 });
           } else if (state is SuccessChangeContact) {
-            showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    title: Text(
-                      "Success",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    content: Text("Success Change Contact Number"),
-                    actions: <Widget>[
-                      FlatButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context, true);
-                          },
-                          child: Text("OK"))
-                    ],
-                  );
-                });
+            Navigator.pop(context, true);
           }
         },
         builder: (context, state) {

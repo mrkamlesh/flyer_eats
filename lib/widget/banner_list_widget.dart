@@ -13,7 +13,8 @@ class BannerListWidget extends StatefulWidget {
   final List<BannerItem> bannerList;
   final Location location;
 
-  const BannerListWidget({Key key, this.bannerList, this.location}) : super(key: key);
+  const BannerListWidget({Key key, this.bannerList, this.location})
+      : super(key: key);
 
   @override
   _BannerListWidgetState createState() => _BannerListWidgetState();
@@ -69,13 +70,37 @@ class _BannerListWidgetState extends State<BannerListWidget> {
               itemCount: widget.bannerList.length,
               itemBuilder: (context, i) {
                 return InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context){
-                      return RestaurantDetailPage(
-                        restaurant: widget.bannerList[i].restaurant,
-                        location: widget.location,
-                      );
-                    }));
+                  onTap: () {
+                    if (widget.bannerList[i].restaurant.isOpen) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return RestaurantDetailPage(
+                          restaurant: widget.bannerList[i].restaurant,
+                          location: widget.location,
+                        );
+                      }));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              title: Text(
+                                "Closed!",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              content: Text("Restaurant is closed"),
+                              actions: <Widget>[
+                                FlatButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("OK"))
+                              ],
+                            );
+                          });
+                    }
                   },
                   child: FittedBox(
                       fit: BoxFit.cover,

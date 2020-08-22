@@ -345,7 +345,8 @@ class DataProvider {
     var formData = {
       "client_token": token,
       "contact_phone": contactPhone,
-      "otp_code": otpCode
+      "code": otpCode,
+      "is_default": isDefault,
     };
 
     var responseJson;

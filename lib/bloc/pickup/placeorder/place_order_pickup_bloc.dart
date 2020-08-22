@@ -118,7 +118,7 @@ class PlaceOrderPickupBloc
   Stream<PlaceOrderPickupState> mapRequestOtpChangeContactToState(
       contact, isChangePrimaryContact) async* {
     if (contact == state.placeOrderPickup.contact) {
-      yield ErrorRequestOtpChangeContact("You Enter the Same Contact Number",
+      yield ErrorRequestOtpChangeContact("You have entered the same contact number",
           placeOrderPickup: state.placeOrderPickup);
     } else {
       yield LoadingRequestOtpChangeContact(

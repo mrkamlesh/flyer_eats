@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/home_page_data.dart';
 import 'package:clients/model/location.dart';
@@ -154,6 +155,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           add(GetHomeDataByLocation(Location(address: address), token));
         } else {
           try {
+            await AppUtil.checkLocationServiceAndPermission();
             Position position = await Geolocator()
                 .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
                 .timeout(Duration(seconds: 10), onTimeout: () {

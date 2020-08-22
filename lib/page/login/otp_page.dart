@@ -72,14 +72,14 @@ class _OtpPageState extends State<OtpPage> with CodeAutoFill {
               .add(InitGetData(state.user.token, widget.location));
           BlocProvider.of<CurrentOrderBloc>(context)
               .add(GetActiveOrder(state.user.token));
-          Navigator.pushReplacement(context,
+          Navigator.pushAndRemoveUntil(context,
               MaterialPageRoute(builder: (context) {
             return Home(
               contactNumber: widget.phoneNumber,
               isShowContactConfirmationSheet:
                   widget.isShowContactConfirmationSheet,
             );
-          }));
+          }), (Route<dynamic> route) => false);
         } else if (state is Error) {
           showDialog(
               context: context,

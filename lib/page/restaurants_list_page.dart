@@ -284,7 +284,10 @@ class _RestaurantListPageState extends State<RestaurantListPage>
                                       },
                                       isFilterEnabled: widget.isFilterEnabled,
                                       isVegOnly: state.isVeg,
-                                      title: widget.title,
+                                      title: widget.title +
+                                          " (" +
+                                          state.restaurants.length.toString() +
+                                          ")",
                                       isListSelected: _isListMode,
                                       onListButtonTap: () {
                                         setState(

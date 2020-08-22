@@ -376,7 +376,7 @@ class FoodList extends StatelessWidget {
                                           ),
                                     Expanded(
                                       child: Text(
-                                        food.title,
+                                        AppUtil.parseHtmlString(food.title),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -587,7 +587,7 @@ class FoodList extends StatelessWidget {
                                         ),
                                         Expanded(
                                           child: Text(
-                                            food.title,
+                                            AppUtil.parseHtmlString(food.title),
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
@@ -830,7 +830,7 @@ class FoodList extends StatelessWidget {
                                           ),
                                     Expanded(
                                       child: Text(
-                                        food.title,
+                                        AppUtil.parseHtmlString(food.title),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(

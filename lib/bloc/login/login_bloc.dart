@@ -59,6 +59,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       String token = await _repository.getSavedToken();
       if (token != null) {
         String firebaseToken = await PushNotificationsManager().getToken();
+
+        print("firebase token: " + firebaseToken);
         String version = await _getVersion();
 
         User user = await _repository.checkTokenValid(

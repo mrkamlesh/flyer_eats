@@ -116,3 +116,7 @@ class ErrorRequestOtpChangeContact extends FoodOrderState {
   ErrorRequestOtpChangeContact(this.message, {PlaceOrder placeOrder})
       : super(placeOrder: placeOrder);
 }
+
+class MerchantIsClosed extends FoodOrderState {
+  MerchantIsClosed({PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+}

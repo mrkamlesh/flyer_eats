@@ -23,7 +23,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is GetHomeDataByLocation) {
       yield* mapGetHomeDataByLocationToState(event.token, event.location);
     } else if (event is InitGetData) {
-      yield* mapInitGetDataToState(event.token, event.location);
+      yield* mapInitGetDataToState(
+          event.token, event.location, event.lastSavedLocation);
     }
   }
 
@@ -49,11 +50,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             isAppBarDropDownVisible: true,
             isFlagVisible: true,
             isAppBarLoading: false);
-        try {
+        /*try {
           repository.saveAddress(data.location.address);
         } catch (e) {
           print(e);
-        }
+        }*/
       } else {
         List<Placemark> placeMark =
             await Geolocator().placemarkFromCoordinates(lat, lng);
@@ -129,11 +130,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             isFlagVisible: true,
             isAppBarLoading: false);
 
-        try {
+        /*try {
           repository.saveAddress(data.location.address);
         } catch (e) {
           print(e);
-        }
+        }*/
       } else {
         yield NoHomepageData(appBarTitle: "This Location is not Available");
       }
@@ -143,16 +144,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Stream<HomeState> mapInitGetDataToState(
-      String token, Location location) async* {
+      String token, Location location, String lastSavedLocation) async* {
     yield LoadingCurrentLocation();
 
     if (location != null) {
       add(GetHomeDataByLocation(location, token));
     } else {
       try {
-        String address = await repository.getSavedAddress();
-        if (address != null) {
-          add(GetHomeDataByLocation(Location(address: address), token));
+        //String address = await repository.getSavedAddress();
+        if (lastSavedLocation != null && lastSavedLocation != "") {
+          add(GetHomeDataByLocation(
+              Location(address: lastSavedLocation), token));
         } else {
           try {
             await AppUtil.checkLocationServiceAndPermission();

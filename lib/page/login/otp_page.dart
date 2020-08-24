@@ -68,8 +68,8 @@ class _OtpPageState extends State<OtpPage> with CodeAutoFill {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is Success) {
-          BlocProvider.of<HomeBloc>(context)
-              .add(InitGetData(state.user.token, widget.location));
+          BlocProvider.of<HomeBloc>(context).add(InitGetData(
+              state.user.token, widget.location, state.user.lastLocation));
           BlocProvider.of<CurrentOrderBloc>(context)
               .add(GetActiveOrder(state.user.token));
           Navigator.pushAndRemoveUntil(context,

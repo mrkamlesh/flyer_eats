@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 class PlaceOrder {
   final String id;
   final bool isValid;
+  final bool isMerchantOpen;
   final String message;
   final Restaurant restaurant;
   final User user;
@@ -42,6 +43,7 @@ class PlaceOrder {
   PlaceOrder({
     this.id,
     this.isValid,
+    this.isMerchantOpen,
     this.message,
     this.restaurant,
     this.user,
@@ -92,6 +94,7 @@ class PlaceOrder {
     return PlaceOrder(
       isValid: true,
       message: parsedJson['msg'],
+      isMerchantOpen: parsedJson['details']['is_merchant_open'],
       discountOrder: (parsedJson['details']['cart'] as Map)
               .containsKey('discount')
           ? double.parse(
@@ -134,6 +137,7 @@ class PlaceOrder {
   PlaceOrder copyWith({
     String id,
     bool isValid,
+    bool isMerchantOpen,
     String message,
     Restaurant restaurant,
     User user,
@@ -166,6 +170,7 @@ class PlaceOrder {
     return PlaceOrder(
         id: id ?? this.id,
         isValid: isValid ?? this.isValid,
+        isMerchantOpen: isMerchantOpen ?? this.isMerchantOpen,
         message: message ?? this.message,
         restaurant: restaurant ?? this.restaurant,
         user: user ?? this.user,

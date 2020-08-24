@@ -184,9 +184,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
             isValid: true,
             address: user.defaultAddress,
             contact: state.placeOrder.contact ?? user.phone,
-            transactionType: state.placeOrder.restaurant.isBusy
-                ? 'pickup'
-                : 'delivery',
+            transactionType:
+                state.placeOrder.restaurant.isBusy ? 'pickup' : 'delivery',
             deliveryInstruction: '',
             deliveryCharges: 0,
             voucher: Voucher(amount: 0, rate: 0),
@@ -224,6 +223,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         yield FoodOrderState(
             placeOrder: state.placeOrder.copyWith(
                 isValid: true,
+                isMerchantOpen: result.isMerchantOpen,
                 message: result.message,
                 razorKey: result.razorKey,
                 razorSecret: result.razorSecret,
@@ -241,9 +241,19 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
                 voucher: result.voucher ??
                     state.placeOrder.voucher.copyWith(amount: 0, rate: 0)));
       } else {
-        yield FoodOrderState(
-            placeOrder: state.placeOrder
-                .copyWith(isValid: false, message: result.message));
+        if (result.isMerchantOpen) {
+          yield FoodOrderState(
+              placeOrder: state.placeOrder.copyWith(
+            isValid: false,
+            message: result.message,
+          ));
+        } else {
+          yield MerchantIsClosed(
+              placeOrder: state.placeOrder.copyWith(
+                  isValid: false,
+                  message: result.message,
+                  isMerchantOpen: result.isMerchantOpen));
+        }
       }
     } catch (e) {
       yield FoodOrderState(
@@ -429,7 +439,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
   Stream<FoodOrderState> mapRequestOtpChangeContactToState(
       String contact, bool isChangePrimaryContact) async* {
     if (contact == state.placeOrder.contact) {
-      yield ErrorRequestOtpChangeContact("You have entered the same contact number",
+      yield ErrorRequestOtpChangeContact(
+          "You have entered the same contact number",
           placeOrder: state.placeOrder);
     } else {
       yield LoadingRequestOtpChangeContact(placeOrder: state.placeOrder);

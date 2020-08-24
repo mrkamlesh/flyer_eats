@@ -1,3 +1,4 @@
+import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/data_provider.dart';
 import 'package:clients/model/ads.dart';
@@ -36,7 +37,12 @@ class DataRepository {
       PlaceOrder placeOrder = PlaceOrder.fromJson(response);
       return placeOrder;
     } else {
-      return PlaceOrder(isValid: false, message: response['msg']);
+      return PlaceOrder(
+          isValid: false,
+          message: response['msg'],
+          isMerchantOpen: response['details'] == ""
+              ? true
+              : response['details']['is_merchant_open']);
     }
   }
 
@@ -69,7 +75,7 @@ class DataRepository {
     if (response['code'] == 1) {
       return true;
     } else {
-      throw Exception(response['msg']);
+      throw AppException(response['msg'], '');
     }
   }
 
@@ -107,7 +113,7 @@ class DataRepository {
     if (response['code'] == 1) {
       return LoginStatus(response['msg'], true);
     } else {
-      throw Exception(response['msg']);
+      throw AppException("", response['msg']);
     }
   }
 
@@ -354,15 +360,6 @@ class DataRepository {
 
   Future<String> getSavedToken() async {
     return await _provider.getSavedToken();
-  }
-
-  Future<bool> saveAddress(String address) async {
-    await _provider.saveAddress(address);
-    return true;
-  }
-
-  Future<String> getSavedAddress() async {
-    return await _provider.getSavedAddress();
   }
 
   Future<bool> removeData() async {
@@ -634,14 +631,7 @@ class DataRepository {
       List<Restaurant> restaurants = listLocations.map((i) {
         return Restaurant.fromJson(i);
       }).toList();
-
-      restaurants.sort((a, b) {
-        if (a.isOpen) {
-          return -1;
-        }
-        return 1;
-      });
-
+      restaurants = AppUtil.restaurantListSort(restaurants);
       return restaurants;
     } else {
       return List();

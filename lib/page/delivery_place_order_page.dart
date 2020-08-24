@@ -515,19 +515,17 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                   ],
                                 );
                               });
-                        } else if (state
-                        is ErrorRequestOtpChangeContact) {
+                        } else if (state is ErrorRequestOtpChangeContact) {
                           showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
                                   shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(10)),
+                                      borderRadius: BorderRadius.circular(10)),
                                   title: Text(
                                     "Request OTP Failed",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   content: Text(state.message),
                                   actions: <Widget>[
@@ -544,29 +542,24 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                   ],
                                 );
                               });
-                        } else if (state
-                        is SuccessRequestOtpChangeContact) {
+                        } else if (state is SuccessRequestOtpChangeContact) {
                           bool result = await Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                                return ChangeContactVerifyOtp(
-                                  isChangePrimaryContact:
+                            return ChangeContactVerifyOtp(
+                              isChangePrimaryContact:
                                   state.isChangePrimaryContact,
-                                  contact: state.newContact,
-                                  token: loginState.user.token,
-                                );
-                              }));
+                              contact: state.newContact,
+                              token: loginState.user.token,
+                            );
+                          }));
 
                           if (result != null) {
-                            _orderPickupBloc.add(
-                                ChangeContact(
-                                    state.newContact,
-                                    state.isChangePrimaryContact));
+                            _orderPickupBloc.add(ChangeContact(state.newContact,
+                                state.isChangePrimaryContact));
                             if (state.isChangePrimaryContact) {
-                              BlocProvider.of<LoginBloc>(context).add(
-                                  UpdatePrimaryContact(
-                                      state.newContact));
-                              _showContactConfirmationDialog(
-                                  state.newContact);
+                              BlocProvider.of<LoginBloc>(context)
+                                  .add(UpdatePrimaryContact(state.newContact));
+                              _showContactConfirmationDialog(state.newContact);
                             }
                           }
                         }
@@ -682,7 +675,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                     ),
                     Container(
                       margin: EdgeInsets.only(bottom: 20),
-                      child: Text(contact,
+                      child: Text(AppUtil.formattedPhoneNumber(contact),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 26, fontWeight: FontWeight.bold)),
@@ -797,6 +790,7 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
   int _countrySelected = 0;
   String _contactPredicate = "+91";
   String _number;
+  bool _isValid = false;
   bool _isChangePrimaryNumber = false;
 
   @override
@@ -1256,6 +1250,9 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                                 onChanged: (value) {
                                   state(() {
                                     _number = value;
+                                    _isValid = _contactPredicate == "+91"
+                                        ? _number.length == 10 ? true : false
+                                        : _number.length == 8 ? true : false;
                                   });
                                 },
                                 autofocus: true,
@@ -1296,7 +1293,7 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: _number != "" && _number != null
+                      onTap: _isValid
                           ? () {
                               widget.orderPickupBloc.add(
                                   RequestOtpChangeContact(
@@ -1326,8 +1323,7 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                               ),
                             ),
                             AnimatedOpacity(
-                              opacity:
-                                  _number != "" && _number != null ? 0.0 : 0.5,
+                              opacity: _isValid ? 0.0 : 0.5,
                               child: Container(
                                 height: 50,
                                 color: Colors.white,

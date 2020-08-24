@@ -3,6 +3,12 @@ class LoginPhoneState {
   final String number;
 
   LoginPhoneState({this.countryCode, this.number});
+
+  bool isNumberValid() {
+    return countryCode == "+91"
+        ? number.length == 10 ? true : false
+        : number.length == 8 ? true : false;
+  }
 }
 
 class InitialLoginPhoneState extends LoginPhoneState {
@@ -10,7 +16,8 @@ class InitialLoginPhoneState extends LoginPhoneState {
 }
 
 class LoadingLoginPhoneState extends LoginPhoneState {
-  LoadingLoginPhoneState({String countryCode, String number}) : super(countryCode: countryCode, number: number);
+  LoadingLoginPhoneState({String countryCode, String number})
+      : super(countryCode: countryCode, number: number);
 }
 
 class PhoneIsExist extends LoginPhoneState {
@@ -21,7 +28,8 @@ class PhoneIsExist extends LoginPhoneState {
 }
 
 class PhoneIsNotExist extends LoginPhoneState {
-  PhoneIsNotExist({String countryCode, String number}) : super(countryCode: countryCode, number: number);
+  PhoneIsNotExist({String countryCode, String number})
+      : super(countryCode: countryCode, number: number);
 }
 
 class ErrorCheckPhoneExist extends LoginPhoneState {
@@ -35,6 +43,7 @@ class LocationDetected extends LoginPhoneState {
   final String address;
   final String isoCountryCode;
 
-  LocationDetected(this.address, this.isoCountryCode, {String countryCode, String number})
+  LocationDetected(this.address, this.isoCountryCode,
+      {String countryCode, String number})
       : super(countryCode: countryCode, number: number);
 }

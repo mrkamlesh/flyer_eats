@@ -101,7 +101,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'FLYER EATS',
       navigatorKey: navigatorKey,
       theme: ThemeData(
           primarySwatch: Colors.blue,

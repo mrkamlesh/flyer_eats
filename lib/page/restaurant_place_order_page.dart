@@ -4,6 +4,7 @@ import 'package:clients/model/add_ons_type.dart';
 import 'package:clients/model/price.dart';
 import 'package:clients/model/user.dart';
 import 'package:clients/page/change_contact_verify_otp.dart';
+import 'package:clients/page/restaurants_list_page.dart';
 import 'package:clients/widget/payment_method_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -1200,6 +1201,54 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                         state.newContact);
                                   }
                                 }
+                              } else if (state is MerchantIsClosed) {
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        title: Text(
+                                          "Closed!",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        content: Text(state.placeOrder.message),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                BlocProvider.of<FoodOrderBloc>(
+                                                        context)
+                                                    .add(ClearCart());
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) {
+                                                    return RestaurantListPage(
+                                                      image:
+                                                          "assets/allrestaurant.png",
+                                                      merchantType: MerchantType
+                                                          .restaurant,
+                                                      isExternalImage: false,
+                                                      title: "All Restaurants",
+                                                      location: Location(
+                                                          address: widget
+                                                              .location
+                                                              .address),
+                                                      isFilterEnabled: true,
+                                                    );
+                                                  }),
+                                                  /*(Route<dynamic> route) =>
+                                                        false*/
+                                                );
+                                              },
+                                              child: Text("OK"))
+                                        ],
+                                      );
+                                    });
                               }
                             },
                             builder: (context, state) {
@@ -2593,6 +2642,7 @@ class _FoodListDeliveryInformationState
   int _countrySelected = 0;
   String _contactPredicate = "+91";
   String _number;
+  bool _isValid = false;
   bool _isChangePrimaryNumber = false;
 
   @override
@@ -3075,6 +3125,9 @@ class _FoodListDeliveryInformationState
                                 onChanged: (value) {
                                   state(() {
                                     _number = value;
+                                    _isValid = _contactPredicate == "+91"
+                                        ? _number.length == 10 ? true : false
+                                        : _number.length == 8 ? true : false;
                                   });
                                 },
                                 autofocus: true,
@@ -3115,7 +3168,7 @@ class _FoodListDeliveryInformationState
                       ),
                     ),
                     GestureDetector(
-                      onTap: _number != "" && _number != null
+                      onTap: _isValid
                           ? () {
                               widget.foodOrderBloc.add(RequestOtpChangeContact(
                                   _isChangePrimaryNumber,
@@ -3144,8 +3197,7 @@ class _FoodListDeliveryInformationState
                               ),
                             ),
                             AnimatedOpacity(
-                              opacity:
-                                  _number != "" && _number != null ? 0.0 : 0.5,
+                              opacity: _isValid ? 0.0 : 0.5,
                               child: Container(
                                 height: 50,
                                 color: Colors.white,

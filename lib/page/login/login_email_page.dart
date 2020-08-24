@@ -61,7 +61,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                   return AlertDialog(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     title: Text(
-                      "Error",
+                      "Login",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     content: Text(state.message),

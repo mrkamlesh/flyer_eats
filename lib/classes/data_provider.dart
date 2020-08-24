@@ -14,9 +14,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -171,7 +171,7 @@ class DataProvider {
 
   Future<dynamic> forgotPassword(String email) async {
     String url =
-        "${serverUrl}mobileapp/apinew/forgotPassword?json=true&api_key=flyereats&email_address=$email";
+        "${serverUrl}mobileapp/apiRest/forgotPassword?json=true&api_key=flyereats&email_address=$email";
 
     var responseJson;
     try {
@@ -289,7 +289,7 @@ class DataProvider {
       "voucher_type": order.voucher.type != null ? order.voucher.type : "",
       "voucher_rate":
           order.voucher.rate != 0 ? order.voucher.rate.toString() : "",
-      "change_primary_contact": order.isChangePrimaryContact ? "1" : "0",
+      //"change_primary_contact": order.isChangePrimaryContact ? "1" : "0",
       "delivery_date": order.getDeliveryDate(), //yyyy-mm-dd
       "delivery_time": order.getDeliveryTime(),
     };
@@ -526,8 +526,8 @@ class DataProvider {
       "contact_phone": placeOrderPickup.contact,
       "delivery_instruction": placeOrderPickup.pickUp.deliveryInstruction,
       "street": placeOrderPickup.address.address,
-      "change_primary_contact":
-          placeOrderPickup.isChangePrimaryContact ? "1" : "0",
+      /*"change_primary_contact":
+          placeOrderPickup.isChangePrimaryContact ? "1" : "0",*/
       "pickup_address": placeOrderPickup.pickUp.shop.address,
       "shop_name": placeOrderPickup.pickUp.shop.name,
       "shop_description": placeOrderPickup.pickUp.shop.description,
@@ -794,18 +794,6 @@ class DataProvider {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString("TOKEN");
     return token;
-  }
-
-  Future<bool> saveAddress(String address) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("ADDRESS", address);
-    return true;
-  }
-
-  Future<String> getSavedAddress() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String address = prefs.getString("ADDRESS");
-    return address;
   }
 
   Future<bool> removeData() async {

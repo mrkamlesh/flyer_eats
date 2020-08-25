@@ -4,6 +4,9 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/home_page_data.dart';
 import 'package:clients/model/location.dart';
+import 'package:clients/model/restaurant.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import './bloc.dart';
@@ -25,6 +28,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is InitGetData) {
       yield* mapInitGetDataToState(
           event.token, event.location, event.lastSavedLocation);
+    } else if (event is LoadMoreTopRestaurant) {
+      yield* mapLoadMoreTopRestaurantToState(event.token, event.location);
+    } else if (event is LoadMoreDblRestaurant) {
+      yield* mapLoadMoreDblRestaurantToState(event.token, event.location);
     }
   }
 
@@ -49,7 +56,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             appBarTitle: data.location.address,
             isAppBarDropDownVisible: true,
             isFlagVisible: true,
-            isAppBarLoading: false);
+            isAppBarLoading: false,
+            indicator: state.indicator);
         /*try {
           repository.saveAddress(data.location.address);
         } catch (e) {
@@ -92,16 +100,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         String leading = getLeading(placeMark[0].isoCountryCode);
 
         yield NoHomepageData(
-          leading: leading != "" ? leading : null,
-          isFlagVisible: leading != "" ? true : false,
-          appBarTitle: thoroughfare +
-              subThoroughfare +
-              subLocality +
-              locality +
-              subAdministrativeArea +
-              administrativeArea +
-              postalCode,
-        );
+            leading: leading != "" ? leading : null,
+            isFlagVisible: leading != "" ? true : false,
+            appBarTitle: thoroughfare +
+                subThoroughfare +
+                subLocality +
+                locality +
+                subAdministrativeArea +
+                administrativeArea +
+                postalCode,
+            indicator: state.indicator);
       }
     } catch (e) {
       yield ErrorHomeState(e.toString());
@@ -128,13 +136,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             appBarTitle: data.location.address,
             isAppBarDropDownVisible: true,
             isFlagVisible: true,
-            isAppBarLoading: false);
-
-        /*try {
-          repository.saveAddress(data.location.address);
-        } catch (e) {
-          print(e);
-        }*/
+            isAppBarLoading: false,
+            indicator: state.indicator);
       } else {
         yield NoHomepageData(appBarTitle: "This Location is not Available");
       }
@@ -172,6 +175,148 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
       } catch (e) {
         print(e);
+      }
+    }
+  }
+
+  Stream<HomeState> mapLoadMoreTopRestaurantToState(
+      String token, Location location) async* {
+    if (state.indicator.hasTopReachedMax) {
+      Fluttertoast.showToast(
+          msg: "All Restaurant Has Been Shown",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black38,
+          timeInSecForIosWeb: 1,
+          fontSize: 16.0);
+    } else {
+      yield HomeState(
+          appBarTitle: state.appBarTitle,
+          homePageData: state.homePageData,
+          isAppBarDropDownVisible: state.isAppBarDropDownVisible,
+          isAppBarLoading: state.isAppBarLoading,
+          isFlagVisible: state.isFlagVisible,
+          leading: state.leading,
+          indicator: state.indicator.copyWith(isTopRestaurantLoading: true));
+
+      try {
+        List<Restaurant> top = await repository.getTopRestaurantList(
+            token,
+            location.address,
+            state.indicator.topRestaurantPage + 1,
+            DateFormat('HH:mm').format(DateTime.now()));
+        if (top.isNotEmpty) {
+          HomePageData homePageData = state.homePageData;
+          homePageData.topRestaurants.addAll(top);
+          yield HomeState(
+              appBarTitle: state.appBarTitle,
+              homePageData: homePageData,
+              isAppBarDropDownVisible: state.isAppBarDropDownVisible,
+              isAppBarLoading: state.isAppBarLoading,
+              isFlagVisible: state.isFlagVisible,
+              leading: state.leading,
+              indicator: state.indicator.copyWith(
+                  isTopRestaurantLoading: false,
+                  topRestaurantPage: state.indicator.topRestaurantPage + 1,
+                  hasTopReachedMax: false));
+        } else {
+          Fluttertoast.showToast(
+              msg: "All Restaurant Has Been Shown",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.black38,
+              timeInSecForIosWeb: 1,
+              fontSize: 16.0);
+          yield HomeState(
+              appBarTitle: state.appBarTitle,
+              homePageData: state.homePageData,
+              isAppBarDropDownVisible: state.isAppBarDropDownVisible,
+              isAppBarLoading: state.isAppBarLoading,
+              isFlagVisible: state.isFlagVisible,
+              leading: state.leading,
+              indicator: state.indicator.copyWith(
+                  isTopRestaurantLoading: false, hasTopReachedMax: true));
+        }
+      } catch (e) {
+        yield ErrorLoadingTopRestaurant(e.toString(),
+            indicator: state.indicator.copyWith(isTopRestaurantLoading: false),
+            leading: state.leading,
+            isFlagVisible: state.isFlagVisible,
+            isAppBarLoading: state.isAppBarLoading,
+            isAppBarDropDownVisible: state.isAppBarDropDownVisible,
+            homePageData: state.homePageData,
+            appBarTitle: state.appBarTitle);
+      }
+    }
+  }
+
+  Stream<HomeState> mapLoadMoreDblRestaurantToState(
+      String token, Location location) async* {
+    if (state.indicator.hasDblReachedMax) {
+      Fluttertoast.showToast(
+          msg: "All Restaurant Has Been Shown",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black38,
+          timeInSecForIosWeb: 1,
+          fontSize: 16.0);
+    } else {
+      yield HomeState(
+          appBarTitle: state.appBarTitle,
+          homePageData: state.homePageData,
+          isAppBarDropDownVisible: state.isAppBarDropDownVisible,
+          isAppBarLoading: state.isAppBarLoading,
+          isFlagVisible: state.isFlagVisible,
+          leading: state.leading,
+          indicator: state.indicator.copyWith(isDblRestaurantLoading: true));
+
+      try {
+        List<Restaurant> dbl = await repository.getDblRestaurantList(
+            token,
+            location.address,
+            state.indicator.dblRestaurantPage + 1,
+            DateFormat('HH:mm').format(DateTime.now()));
+        if (dbl.isNotEmpty) {
+          HomePageData homePageData = state.homePageData;
+          homePageData.dblRestaurants.addAll(dbl);
+          yield HomeState(
+              appBarTitle: state.appBarTitle,
+              homePageData: homePageData,
+              isAppBarDropDownVisible: state.isAppBarDropDownVisible,
+              isAppBarLoading: state.isAppBarLoading,
+              isFlagVisible: state.isFlagVisible,
+              leading: state.leading,
+              indicator: state.indicator.copyWith(
+                  isDblRestaurantLoading: false,
+                  dblRestaurantPage: state.indicator.dblRestaurantPage + 1,
+                  hasDblReachedMax: false));
+        } else {
+          Fluttertoast.showToast(
+              msg: "All Restaurant Has Been Shown",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.black38,
+              timeInSecForIosWeb: 1,
+              fontSize: 16.0);
+          yield HomeState(
+              appBarTitle: state.appBarTitle,
+              homePageData: state.homePageData,
+              isAppBarDropDownVisible: state.isAppBarDropDownVisible,
+              isAppBarLoading: state.isAppBarLoading,
+              isFlagVisible: state.isFlagVisible,
+              leading: state.leading,
+              indicator: state.indicator.copyWith(
+                  isDblRestaurantLoading: false, hasDblReachedMax: true));
+        }
+      } catch (e) {
+        yield ErrorLoadingDblRestaurant(e.toString(),
+            indicator: state.indicator.copyWith(isDblRestaurantLoading: false),
+            leading: state.leading,
+            isFlagVisible: state.isFlagVisible,
+            isAppBarLoading: state.isAppBarLoading,
+            isAppBarDropDownVisible: state.isAppBarDropDownVisible,
+            homePageData: state.homePageData,
+            appBarTitle: state.appBarTitle);
       }
     }
   }

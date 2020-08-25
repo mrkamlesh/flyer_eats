@@ -37,7 +37,7 @@ class _BannerListWidgetState extends State<BannerListWidget> {
     super.initState();
     _pageController = PageController(initialPage: 0);
 
-    _timer = Timer.periodic(Duration(seconds: 4), (t) {
+    _timer = Timer.periodic(Duration(seconds: 6), (t) {
       _currentIndex++;
       _pageController.animateToPage(_currentIndex % widget.bannerList.length,
           duration: Duration(milliseconds: 700), curve: Curves.ease);

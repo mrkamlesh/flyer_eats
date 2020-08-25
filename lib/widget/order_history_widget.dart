@@ -275,37 +275,25 @@ class PickupOrderHistoryWidget extends StatelessWidget {
               color: Colors.black12,
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: FittedBox(
-                          fit: BoxFit.fill,
-                          child: SvgPicture.asset(pickupOrder.getIcon()))),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    pickupOrder.getMapStatus(),
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
-              /*Container(
-                padding: EdgeInsets.only(top: 5, bottom: 15),
-                child: Text(
-                  "REORDER",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: primary3),
+          Container(
+            margin: EdgeInsets.only(bottom: 15),
+            child: Row(
+              children: <Widget>[
+                SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: FittedBox(
+                        fit: BoxFit.fill,
+                        child: SvgPicture.asset(pickupOrder.getIcon()))),
+                SizedBox(
+                  width: 10,
                 ),
-              )*/
-            ],
+                Text(
+                  pickupOrder.getMapStatus(),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
           )
         ],
       ),

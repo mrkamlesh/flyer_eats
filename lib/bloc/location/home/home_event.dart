@@ -38,3 +38,23 @@ class InitGetData extends HomeEvent {
   @override
   List<Object> get props => [];
 }
+
+class LoadMoreTopRestaurant extends HomeEvent {
+  final String token;
+  final Location location;
+
+  LoadMoreTopRestaurant(this.token, this.location);
+
+  @override
+  List<Object> get props => [];
+}
+
+class LoadMoreDblRestaurant extends HomeEvent {
+  final String token;
+  final Location location;
+
+  LoadMoreDblRestaurant(this.token, this.location);
+
+  @override
+  List<Object> get props => [];
+}

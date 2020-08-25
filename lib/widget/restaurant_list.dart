@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +31,7 @@ class RestaurantListWidget extends StatefulWidget {
   final double scale;
   final double fade;
   final RestaurantViewType type;
+  final Function() onLoadMore;
 
   const RestaurantListWidget({
     Key key,
@@ -39,6 +41,7 @@ class RestaurantListWidget extends StatefulWidget {
     this.fade = 0.3,
     this.type,
     this.location,
+    this.onLoadMore,
   }) : super(key: key);
 
   @override
@@ -51,6 +54,8 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
   AnimationController _animationController;
   Animation<double> _scaleAnimation;
 
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +67,15 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
+
+    _scrollController.addListener(() {
+      double maxScroll = _scrollController.position.maxScrollExtent;
+      double currentScroll = _scrollController.position.pixels;
+
+      if (currentScroll == maxScroll) {
+        widget.onLoadMore();
+      }
+    });
   }
 
   @override
@@ -74,41 +88,60 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
   Widget build(BuildContext context) {
     switch (widget.type) {
       case RestaurantViewType.topRestaurant:
-        return ListView.builder(
-          itemCount: widget.restaurants.length + 1,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, i) {
-            return i == 0
-                ? SizedBox(
-                    width: horizontalPaddingDraggable,
-                  )
-                : TopRestaurantHomeWidget(
-                    index: i - 1,
-                    selectedIndex: _selectedTopRestaurant,
-                    scale: _scaleAnimation,
-                    onTap: () {
-                      setState(() {
-                        _selectedTopRestaurant = i - 1;
-                        if (widget.restaurants[i - 1].isOpen) {
-                          _animationController
-                              .forward()
-                              .orCancel
-                              .whenComplete(() {
-                            _animationController
-                                .reverse()
-                                .orCancel
-                                .whenComplete(() {
-                              _navigateToRestaurantDetailPage(
-                                  widget.restaurants[i - 1]);
-                            });
-                          });
-                        } else {
-                          _showAlertDialog();
-                        }
-                      });
-                    },
-                    restaurant: widget.restaurants[i - 1],
+        return BlocBuilder<HomeBloc, HomeState>(
+          builder: (context, state) {
+            return ListView.builder(
+              controller: _scrollController,
+              itemCount: state.indicator.isTopRestaurantLoading
+                  ? widget.restaurants.length + 2
+                  : widget.restaurants.length + 1,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, i) {
+                if (i == widget.restaurants.length + 1) {
+                  return Container(
+                    margin: EdgeInsets.only(
+                        left: 10,
+                        top: 10,
+                        bottom: 10,
+                        right: 10 + horizontalPaddingDraggable),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   );
+                }
+                return i == 0
+                    ? SizedBox(
+                        width: horizontalPaddingDraggable,
+                      )
+                    : TopRestaurantHomeWidget(
+                        index: i - 1,
+                        selectedIndex: _selectedTopRestaurant,
+                        scale: _scaleAnimation,
+                        onTap: () {
+                          setState(() {
+                            _selectedTopRestaurant = i - 1;
+                            if (widget.restaurants[i - 1].isOpen) {
+                              _animationController
+                                  .forward()
+                                  .orCancel
+                                  .whenComplete(() {
+                                _animationController
+                                    .reverse()
+                                    .orCancel
+                                    .whenComplete(() {
+                                  _navigateToRestaurantDetailPage(
+                                      widget.restaurants[i - 1]);
+                                });
+                              });
+                            } else {
+                              _showAlertDialog();
+                            }
+                          });
+                        },
+                        restaurant: widget.restaurants[i - 1],
+                      );
+              },
+            );
           },
         );
       case RestaurantViewType.orderAgainRestaurant:
@@ -138,41 +171,60 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
           itemCount: widget.restaurants.length,
         );
       case RestaurantViewType.dinnerTimeRestaurant:
-        return ListView.builder(
-          itemCount: widget.restaurants.length + 1,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, i) {
-            return i == 0
-                ? SizedBox(
-                    width: horizontalPaddingDraggable,
-                  )
-                : DinnerRestaurantHomeWidget(
-                    index: i - 1,
-                    selectedIndex: _selectedTopRestaurant,
-                    scale: _scaleAnimation,
-                    onTap: () {
-                      setState(() {
-                        _selectedTopRestaurant = i - 1;
-                        if (widget.restaurants[i - 1].isOpen) {
-                          _animationController
-                              .forward()
-                              .orCancel
-                              .whenComplete(() {
-                            _animationController
-                                .reverse()
-                                .orCancel
-                                .whenComplete(() {
-                              _navigateToRestaurantDetailPage(
-                                  widget.restaurants[i - 1]);
-                            });
-                          });
-                        } else {
-                          _showAlertDialog();
-                        }
-                      });
-                    },
-                    restaurant: widget.restaurants[i - 1],
+        return BlocBuilder<HomeBloc, HomeState>(
+          builder: (context, state) {
+            return ListView.builder(
+              controller: _scrollController,
+              itemCount: state.indicator.isDblRestaurantLoading
+                  ? widget.restaurants.length + 2
+                  : widget.restaurants.length + 1,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, i) {
+                if (i == widget.restaurants.length + 1) {
+                  return Container(
+                    margin: EdgeInsets.only(
+                        left: 10,
+                        top: 10,
+                        bottom: 10,
+                        right: 10 + horizontalPaddingDraggable),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   );
+                }
+                return i == 0
+                    ? SizedBox(
+                        width: horizontalPaddingDraggable,
+                      )
+                    : DinnerRestaurantHomeWidget(
+                        index: i - 1,
+                        selectedIndex: _selectedTopRestaurant,
+                        scale: _scaleAnimation,
+                        onTap: () {
+                          setState(() {
+                            _selectedTopRestaurant = i - 1;
+                            if (widget.restaurants[i - 1].isOpen) {
+                              _animationController
+                                  .forward()
+                                  .orCancel
+                                  .whenComplete(() {
+                                _animationController
+                                    .reverse()
+                                    .orCancel
+                                    .whenComplete(() {
+                                  _navigateToRestaurantDetailPage(
+                                      widget.restaurants[i - 1]);
+                                });
+                              });
+                            } else {
+                              _showAlertDialog();
+                            }
+                          });
+                        },
+                        restaurant: widget.restaurants[i - 1],
+                      );
+              },
+            );
           },
         );
       case RestaurantViewType.detailList:

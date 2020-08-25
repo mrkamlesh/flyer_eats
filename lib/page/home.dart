@@ -4,6 +4,7 @@ import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/page/offers_list_page.dart';
 import 'package:clients/page/restaurant_place_order_page.dart';
 import 'package:clients/page/search_restaurant_page.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -513,6 +514,19 @@ class _HomeState extends State<Home>
                                                           20),
                                               height: 170,
                                               child: RestaurantListWidget(
+                                                onLoadMore: () {
+                                                  if (!(homeState.indicator
+                                                      .isTopRestaurantLoading)) {
+                                                    BlocProvider.of<HomeBloc>(
+                                                            context)
+                                                        .add(LoadMoreTopRestaurant(
+                                                            loginState
+                                                                .user.token,
+                                                            homeState
+                                                                .homePageData
+                                                                .location));
+                                                  }
+                                                },
                                                 type: RestaurantViewType
                                                     .topRestaurant,
                                                 restaurants: homeState
@@ -987,6 +1001,19 @@ class _HomeState extends State<Home>
                                                     ]),
                                                 alignment: Alignment.center,
                                                 child: RestaurantListWidget(
+                                                  onLoadMore: () {
+                                                    if (!(homeState.indicator
+                                                        .isDblRestaurantLoading)) {
+                                                      BlocProvider.of<HomeBloc>(
+                                                              context)
+                                                          .add(LoadMoreDblRestaurant(
+                                                              loginState
+                                                                  .user.token,
+                                                              homeState
+                                                                  .homePageData
+                                                                  .location));
+                                                    }
+                                                  },
                                                   type: RestaurantViewType
                                                       .dinnerTimeRestaurant,
                                                   restaurants: homeState
@@ -1638,27 +1665,90 @@ class _HomeState extends State<Home>
                             width: AppUtil.getScreenWidth(context) - 100,
                             height: 0.7 * AppUtil.getScreenWidth(context) - 100,
                           ),
-                          child: AnimatedOpacity(
-                            duration: Duration(milliseconds: 300),
-                            opacity: opacity,
-                            child: Container(
-                              height: 0.7 * AppUtil.getScreenWidth(context),
-                              width: AppUtil.getScreenWidth(context),
-                              decoration: BoxDecoration(color: Colors.white),
-                              child: Center(
-                                child: Text(
-                                  AppUtil.getCurrencyString(currencyCode) +
-                                      " " +
-                                      AppUtil.doubleRemoveZeroTrailing(
-                                          scratchCard.amount),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 50,
-                                      color: primary3),
+                          child: Container(
+                            height: 0.7 * AppUtil.getScreenWidth(context),
+                            width: AppUtil.getScreenWidth(context),
+                            child: AnimatedOpacity(
+                              duration: Duration(milliseconds: 300),
+                              opacity: opacity,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: DottedBorder(
+                                  borderType: BorderType.RRect,
+                                  color: primary2,
+                                  strokeWidth: 2,
+                                  dashPattern: [8, 8, 8, 8],
+                                  radius: Radius.circular(8),
+                                  strokeCap: StrokeCap.round,
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                          "assets/scratch_won_icon.svg",
+                                          height: 0.16 *
+                                              0.7 *
+                                              AppUtil.getScreenWidth(context),
+                                          width: 0.16 *
+                                              0.7 *
+                                              AppUtil.getScreenWidth(context),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(top: 10),
+                                          child: Text(
+                                            "You Won",
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              AppUtil.getCurrencyIcon(
+                                                  currencyCode),
+                                              width: 30,
+                                              height: 30,
+                                              color: primary3,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              AppUtil.doubleRemoveZeroTrailing(
+                                                  scratchCard.amount),
+                                              style: TextStyle(
+                                                  fontSize: 50,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: primary3),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Center(
+                          child: AnimatedOpacity(
+                              opacity: 1.0 - opacity,
+                              duration: Duration(milliseconds: 300),
+                              child: Text("Will Expiry On: " +
+                                  scratchCard.dateExpiration)),
                         ),
                       ),
                     ],

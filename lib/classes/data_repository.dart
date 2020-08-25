@@ -638,6 +638,36 @@ class DataRepository {
     }
   }
 
+  Future<List<Restaurant>> getTopRestaurantList(
+      String token, String address, int page, String time) async {
+    final response = await _provider.getHomePageData(
+        topRestaurantPage: page, token: token, address: address);
+    if (response['code'] == 1) {
+      var listTopRestaurant = response['details']['top_restaurants'] as List;
+      List<Restaurant> top = listTopRestaurant.map((i) {
+        return Restaurant.fromJson(i);
+      }).toList();
+      return top;
+    } else {
+      throw AppException(response['msg'], "");
+    }
+  }
+
+  Future<List<Restaurant>> getDblRestaurantList(
+      String token, String address, int page, String time) async {
+    final response = await _provider.getHomePageData(
+        dblPage: page, token: token, address: address);
+    if (response['code'] == 1) {
+      var listDblRestaurant = response['details']['dblRestaurants'] as List;
+      List<Restaurant> dbl = listDblRestaurant.map((i) {
+        return Restaurant.fromJson(i);
+      }).toList();
+      return dbl;
+    } else {
+      throw AppException(response['msg'], "");
+    }
+  }
+
   Future<List<MenuCategory>> getCategories(String restaurantId) async {
     final response = await _provider.getCategory(restaurantId);
     if (response['code'] == 1) {

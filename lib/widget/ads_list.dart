@@ -33,7 +33,7 @@ class _AdsListWidgetState extends State<AdsListWidget> {
     super.initState();
     _pageController = PageController(initialPage: 0, viewportFraction: viewport);
 
-    _timer = Timer.periodic(Duration(seconds: 4), (t) {
+    _timer = Timer.periodic(Duration(seconds: 6), (t) {
       _currentIndex++;
       _pageController.animateToPage(_currentIndex % widget.adsList.length,
           duration: Duration(milliseconds: 700), curve: Curves.ease);

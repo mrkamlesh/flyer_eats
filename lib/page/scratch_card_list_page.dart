@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -309,30 +310,91 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                           image: Image.asset(
                             "assets/scratch card.png",
                             fit: BoxFit.none,
-                            width: AppUtil.getScreenWidth(context) - 100,
-                            height: 0.7 * AppUtil.getScreenWidth(context) - 100,
                           ),
-                          child: AnimatedOpacity(
-                            duration: Duration(milliseconds: 300),
-                            opacity: opacity,
-                            child: Container(
-                              height: 0.7 * AppUtil.getScreenWidth(context),
-                              width: AppUtil.getScreenWidth(context),
-                              decoration: BoxDecoration(color: Colors.white),
-                              child: Center(
-                                child: Text(
-                                  AppUtil.getCurrencyString(currencyCode) +
-                                      " " +
-                                      AppUtil.doubleRemoveZeroTrailing(
-                                          scratchCard.amount),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 50,
-                                      color: primary3),
+                          child: Container(
+                            height: 0.7 * AppUtil.getScreenWidth(context),
+                            width: AppUtil.getScreenWidth(context),
+                            child: AnimatedOpacity(
+                              duration: Duration(milliseconds: 300),
+                              opacity: opacity,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: DottedBorder(
+                                  borderType: BorderType.RRect,
+                                  color: primary2,
+                                  strokeWidth: 2,
+                                  dashPattern: [8, 8, 8, 8],
+                                  radius: Radius.circular(8),
+                                  strokeCap: StrokeCap.round,
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                          "assets/scratch_won_icon.svg",
+                                          height: 0.16 *
+                                              0.7 *
+                                              AppUtil.getScreenWidth(context),
+                                          width: 0.16 *
+                                              0.7 *
+                                              AppUtil.getScreenWidth(context),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(top: 10),
+                                          child: Text(
+                                            "You Won",
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              AppUtil.getCurrencyIcon(
+                                                  currencyCode),
+                                              width: 30,
+                                              height: 30,
+                                              color: primary3,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              AppUtil.doubleRemoveZeroTrailing(
+                                                  scratchCard.amount),
+                                              style: TextStyle(
+                                                  fontSize: 50,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: primary3),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Center(
+                          child: AnimatedOpacity(
+                              opacity: 1.0 - opacity,
+                              duration: Duration(milliseconds: 300),
+                              child: Text("Will Expiry On: " +
+                                  scratchCard.dateExpiration)),
                         ),
                       ),
                     ],
@@ -357,37 +419,110 @@ class ScratchCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return scratchCard.isScratched
-        ? Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black12, blurRadius: 3, spreadRadius: 2)
-                ]),
-            child: Center(
-              child: Text(
-                AppUtil.getCurrencyString(currencyCode) +
-                    " " +
-                    AppUtil.doubleRemoveZeroTrailing(scratchCard.amount),
-                style: TextStyle(
-                    fontSize: 30, fontWeight: FontWeight.bold, color: primary3),
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: DottedBorder(
+                  borderType: BorderType.RRect,
+                  color: primary2,
+                  strokeWidth: 2,
+                  dashPattern: [8, 8, 8, 8],
+                  radius: Radius.circular(8),
+                  strokeCap: StrokeCap.round,
+                  child: Container(
+                    padding: EdgeInsets.only(top: 5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          "assets/scratch_won_icon.svg",
+                          height:
+                              0.16 * (AppUtil.getScreenWidth(context) - 60) / 2,
+                          width:
+                              0.16 * (AppUtil.getScreenWidth(context) - 60) / 2,
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: Text(
+                            "You Won",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              AppUtil.getCurrencyIcon(currencyCode),
+                              width: 12,
+                              height: 12,
+                              color: primary3,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              AppUtil.doubleRemoveZeroTrailing(
+                                  scratchCard.amount),
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: primary3),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Container(
+                margin: EdgeInsets.only(top: 5),
+                child: Center(
+                    child: Text(
+                  "Scratched On: " + scratchCard.dateScratched,
+                  maxLines: 1,
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(fontSize: 11),
+                )),
+              ),
+            ],
           )
         : InkWell(
             onTap: onTap,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                decoration: BoxDecoration(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.black),
-                child: Image.asset(
-                  "assets/scratch card.png",
-                  fit: BoxFit.cover,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.black),
+                      child: Image.asset(
+                        "assets/scratch card.png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                Container(
+                  margin: EdgeInsets.only(top: 5),
+                  child: Center(
+                      child: Text(
+                    "Will Expire On: " + scratchCard.dateExpiration,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(fontSize: 11),
+                  )),
+                ),
+              ],
             ),
           );
   }

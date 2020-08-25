@@ -596,10 +596,12 @@ class DataProvider {
 
     Map<String, dynamic> formData = {
       "client_token": token,
-      "sponsor_page": topRestaurantPage.toString(),
-      "time_page": dblPage.toString(),
-      "category_page": foodCategoryPage.toString(),
-      "ads_page": adsPage.toString(),
+      "sponsor_page":
+          topRestaurantPage != null ? topRestaurantPage.toString() : "0",
+      "time_page": dblPage != null ? dblPage.toString() : "0",
+      "category_page":
+          foodCategoryPage != null ? foodCategoryPage.toString() : "0",
+      "ads_page": adsPage != null ? adsPage.toString() : "0",
       "time": time,
     };
 

@@ -25,7 +25,8 @@ class RestaurantMenuChange extends DetailPageEvent {
   final int menuSelected;
   final String address;
 
-  const RestaurantMenuChange(this.restaurantId, this.menuId, this.menuSelected, this.address);
+  const RestaurantMenuChange(
+      this.restaurantId, this.menuId, this.menuSelected, this.address);
 
   @override
   List<Object> get props => [restaurantId, menuId, menuSelected, address];
@@ -68,4 +69,11 @@ class UpdateCurrentCart extends DetailPageEvent {
 
   @override
   List<Object> get props => [foodCart, cartRestaurant];
+}
+
+class InitializeSearch extends DetailPageEvent {
+  InitializeSearch();
+
+  @override
+  List<Object> get props => [];
 }

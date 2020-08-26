@@ -10,7 +10,6 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/fe_offer.dart';
 import 'package:clients/model/location.dart';
-import 'package:clients/page/home.dart';
 import 'package:clients/page/restaurant_place_order_page.dart';
 import 'package:clients/page/search_restaurant_page.dart';
 import 'package:clients/widget/custom_bottom_navigation_bar.dart';
@@ -171,11 +170,12 @@ class _OfferListPageState extends State<OfferListPage>
                         onItemSelected: (index) async {
                           _currentIndex = index;
                           if (index == 0) {
-                            await Navigator.pushReplacement(context,
+                            /*await Navigator.pushReplacement(context,
                                 PageRouteBuilder(
                                     pageBuilder: (context, anim1, anim2) {
                               return Home();
-                            }));
+                            }));*/
+                            Navigator.pop(context);
                             _currentIndex = 1;
                           } else if (index == 2) {
                             await Navigator.pushReplacement(context,

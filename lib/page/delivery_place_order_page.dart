@@ -787,12 +787,6 @@ class PickUpDeliveryInformation extends StatefulWidget {
 }
 
 class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
-  int _countrySelected = 0;
-  String _contactPredicate = "+91";
-  String _number;
-  bool _isValid = false;
-  bool _isChangePrimaryNumber = false;
-
   @override
   void initState() {
     super.initState();
@@ -819,14 +813,12 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                 Address address = await Navigator.push(context,
                     MaterialPageRoute(builder: (context) {
                   return AddressPage(
-                    forcedDefault: true,
+                    forcedDefault: false,
                   );
                 }));
 
                 if (address != null) {
-                  BlocProvider.of<LoginBloc>(context)
-                      .add(UpdateDefaultAddress(address));
-                  widget.orderPickupBloc.add(ChangeAddress(address));
+                  _changeAddress(address);
                 }
                 //widget.addressBloc.add(InitDefaultAddress());
               },
@@ -989,9 +981,7 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                   address.add(AddressItemWidget(
                     address: list[i],
                     onTap: () {
-                      widget.orderPickupBloc.add(ChangeAddress(list[i]));
-                      BlocProvider.of<LoginBloc>(context)
-                          .add(UpdateDefaultAddress(list[i]));
+                      _changeAddress(list[i]);
                       Navigator.pop(context);
                     },
                   ));
@@ -1050,12 +1040,17 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                       Positioned(
                           bottom: 0,
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               Navigator.pop(context);
-                              Navigator.push(context,
+                              Address address = await Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
-                                return AddressPage();
+                                return AddressPage(
+                                  forcedDefault: false,
+                                );
                               }));
+                              if (address != null) {
+                                _changeAddress(address);
+                              }
                             },
                             child: Container(
                               width: AppUtil.getScreenWidth(context),
@@ -1117,6 +1112,12 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
   }
 
   void _showChangeContactSheet() {
+    int _countrySelected = 0;
+    String _contactPredicate = "+91";
+    String _number;
+    bool _isValid = false;
+    bool _isChangePrimaryNumber = false;
+
     showModalBottomSheet(
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
@@ -1340,6 +1341,11 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
             },
           );
         });
+  }
+
+  void _changeAddress(Address address) {
+    BlocProvider.of<LoginBloc>(context).add(UpdateDefaultAddress(address));
+    BlocProvider.of<PlaceOrderPickupBloc>(context).add(ChangeAddress(address));
   }
 }
 

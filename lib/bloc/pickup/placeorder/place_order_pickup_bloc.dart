@@ -118,15 +118,16 @@ class PlaceOrderPickupBloc
   Stream<PlaceOrderPickupState> mapRequestOtpChangeContactToState(
       contact, isChangePrimaryContact) async* {
     if (contact == state.placeOrderPickup.contact) {
-      yield ErrorRequestOtpChangeContact("You have entered the same contact number",
+      yield ErrorRequestOtpChangeContact(
+          "You have entered the same contact number",
           placeOrderPickup: state.placeOrderPickup);
     } else {
       yield LoadingRequestOtpChangeContact(
           placeOrderPickup: state.placeOrderPickup);
       try {
         String otpSignature = await SmsAutoFill().getAppSignature;
-        await repository.requestOtpChangeContactPhone(
-            contact, otpSignature, state.placeOrderPickup.token);
+        await repository.requestOtpChangeContactPhone(contact, otpSignature,
+            isChangePrimaryContact, state.placeOrderPickup.token);
         yield SuccessRequestOtpChangeContact(contact, isChangePrimaryContact,
             placeOrderPickup: state.placeOrderPickup);
       } catch (e) {

@@ -4,7 +4,6 @@ import 'package:clients/bloc/searchrestaurant/search_restaurant_bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/location.dart';
-import 'package:clients/page/home.dart';
 import 'package:clients/page/offers_list_page.dart';
 import 'package:clients/page/restaurant_place_order_page.dart';
 import 'package:clients/widget/custom_bottom_navigation_bar.dart';
@@ -121,10 +120,11 @@ class _SearchRestaurantPageState extends State<SearchRestaurantPage>
                       setState(() async {
                         _currentIndex = index;
                         if (index == 0) {
-                          await Navigator.pushReplacement(context,
+                          /*await Navigator.pushReplacement(context,
                               MaterialPageRoute(builder: (context) {
                             return Home();
-                          }));
+                          }));*/
+                          Navigator.pop(context);
                           _currentIndex = 2;
                         } else if (index == 1) {
                           await Navigator.pushReplacement(context,

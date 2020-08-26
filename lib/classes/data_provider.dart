@@ -14,9 +14,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -312,15 +312,16 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> requestOtpChangeContactPhone(
-      String contactPhone, String otpSignature, String token) async {
+  Future<dynamic> requestOtpChangeContactPhone(String contactPhone,
+      String otpSignature, bool isDefault, String token) async {
     String url =
         "${serverUrl}mobileapp/apiRest/sendOtp?json=true&api_key=flyereats";
 
     var formData = {
       "client_token": token,
       "contact_phone": contactPhone,
-      "otp_signature": otpSignature
+      "otp_signature": otpSignature,
+      "is_default": isDefault,
     };
 
     var responseJson;

@@ -4,7 +4,6 @@ import 'package:clients/model/add_ons_type.dart';
 import 'package:clients/model/price.dart';
 import 'package:clients/model/user.dart';
 import 'package:clients/page/change_contact_verify_otp.dart';
-import 'package:clients/page/restaurants_list_page.dart';
 import 'package:clients/widget/payment_method_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -287,7 +286,17 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                       pinned: true,
                                     ),
                                     FoodListPlaceOrder(),
-                                    BlocBuilder<FoodOrderBloc, FoodOrderState>(
+                                    BlocConsumer<FoodOrderBloc, FoodOrderState>(
+                                      listener: (context, state) {
+                                        if (state is InvalidPlaceOrder) {
+                                          controller.animateTo(
+                                              controller
+                                                  .position.maxScrollExtent,
+                                              duration:
+                                                  Duration(milliseconds: 300),
+                                              curve: Curves.ease);
+                                        }
+                                      },
                                       builder: (context, state) {
                                         if (state is LoadingGetPayments) {
                                           return SliverToBoxAdapter(
@@ -1223,7 +1232,10 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                 BlocProvider.of<FoodOrderBloc>(
                                                         context)
                                                     .add(ClearCart());
-                                                Navigator.pushReplacement(
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+
+                                                /*Navigator.pushReplacement(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) {
@@ -1241,9 +1253,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                       isFilterEnabled: true,
                                                     );
                                                   }),
-                                                  /*(Route<dynamic> route) =>
-                                                        false*/
-                                                );
+                                                  */ /*(Route<dynamic> route) =>
+                                                        false*/ /*
+                                                );*/
                                               },
                                               child: Text("OK"))
                                         ],
@@ -2639,12 +2651,6 @@ class FoodListDeliveryInformation extends StatefulWidget {
 
 class _FoodListDeliveryInformationState
     extends State<FoodListDeliveryInformation> {
-  int _countrySelected = 0;
-  String _contactPredicate = "+91";
-  String _number;
-  bool _isValid = false;
-  bool _isChangePrimaryNumber = false;
-
   @override
   void initState() {
     super.initState();
@@ -2676,9 +2682,7 @@ class _FoodListDeliveryInformationState
                 }));
 
                 if (address != null) {
-                  BlocProvider.of<LoginBloc>(context)
-                      .add(UpdateDefaultAddress(address));
-                  widget.foodOrderBloc.add(ChangeAddress(address));
+                  _changeAddress(address);
                 }
                 //widget.addressBloc.add(InitDefaultAddress());
               },
@@ -2754,8 +2758,7 @@ class _FoodListDeliveryInformationState
                     ),
                     GestureDetector(
                       onTap: () {
-                        _showChangeAddressSheet(
-                            BlocProvider.of<LoginBloc>(context));
+                        _showChangeAddressSheet();
                       },
                       child: Container(
                         alignment: Alignment.centerRight,
@@ -2835,7 +2838,7 @@ class _FoodListDeliveryInformationState
           );
   }
 
-  void _showChangeAddressSheet(LoginBloc loginBloc) {
+  void _showChangeAddressSheet() {
     BlocProvider.of<AddressBloc>(context).add(OpenListAddress(widget.token));
 
     showModalBottomSheet(
@@ -2855,10 +2858,7 @@ class _FoodListDeliveryInformationState
                   address.add(AddressItemWidget(
                     address: list[i],
                     onTap: () {
-                      widget.foodOrderBloc.add(ChangeAddress(list[i]));
-                      BlocProvider.of<LoginBloc>(context)
-                          .add(UpdateDefaultAddress(list[i]));
-
+                      _changeAddress(list[i]);
                       Navigator.pop(context);
                     },
                   ));
@@ -2927,9 +2927,7 @@ class _FoodListDeliveryInformationState
                               }));
 
                               if (address != null) {
-                                loginBloc.add(UpdateDefaultAddress(address));
-                                widget.foodOrderBloc
-                                    .add(ChangeAddress(address));
+                                _changeAddress(address);
                               }
                             },
                             child: Container(
@@ -2992,6 +2990,12 @@ class _FoodListDeliveryInformationState
   }
 
   void _showChangeContactSheet() {
+    int _countrySelected = 0;
+    String _contactPredicate = "+91";
+    String _number;
+    bool _isValid = false;
+    bool _isChangePrimaryNumber = false;
+
     showModalBottomSheet(
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
@@ -3214,6 +3218,11 @@ class _FoodListDeliveryInformationState
             },
           );
         });
+  }
+
+  void _changeAddress(Address address) {
+    BlocProvider.of<FoodOrderBloc>(context).add(ChangeAddress(address));
+    BlocProvider.of<LoginBloc>(context).add(UpdateDefaultAddress(address));
   }
 }
 

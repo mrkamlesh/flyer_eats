@@ -690,7 +690,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
 
                                             if (widget.restaurant.isBusy &&
                                                 !(cartState.placeOrder
-                                                    .iShownBusyDialog(widget
+                                                    .hasShownBusyDialog(widget
                                                         .restaurant.id))) {
                                               BlocProvider.of<FoodOrderBloc>(
                                                       context)
@@ -709,15 +709,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                                       .circular(
                                                                           10)),
                                                       title: Text(
-                                                        widget.restaurant.name +
-                                                            " is Busy",
+                                                        "Add Item",
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold),
                                                       ),
-                                                      content: Text(
-                                                          "Sorry. All our delivery agents are busy at the moment. But still you can place order in pickup"),
+                                                      content: Text(widget
+                                                          .restaurant
+                                                          .isBusyMessage),
                                                       actions: <Widget>[
                                                         FlatButton(
                                                             onPressed: () {
@@ -820,6 +820,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
   }
 
   _onSearchTap() {
+    _bloc.add(InitializeSearch());
     showMaterialModalBottomSheet(
         backgroundColor: Colors.transparent,
         expand: false,

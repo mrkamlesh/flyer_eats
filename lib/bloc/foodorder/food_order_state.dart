@@ -120,3 +120,7 @@ class ErrorRequestOtpChangeContact extends FoodOrderState {
 class MerchantIsClosed extends FoodOrderState {
   MerchantIsClosed({PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
 }
+
+class InvalidPlaceOrder extends FoodOrderState {
+  InvalidPlaceOrder({PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
+}

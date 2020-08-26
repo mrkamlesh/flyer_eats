@@ -288,7 +288,7 @@ class PlaceOrder {
     }
   }
 
-  bool iShownBusyDialog(String id) {
+  bool hasShownBusyDialog(String id) {
     return this.shownBusyDialogRestaurantIds.contains(id);
   }
 }

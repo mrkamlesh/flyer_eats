@@ -156,7 +156,7 @@ class _HomeState extends State<Home>
                               onItemSelected: (index) async {
                                 _currentIndex = index;
                                 if (index == 1) {
-                                  await Navigator.pushReplacement(context,
+                                  await Navigator.push(context,
                                       PageRouteBuilder(
                                           pageBuilder: (context, anim1, anim2) {
                                     return OfferListPage(
@@ -166,7 +166,7 @@ class _HomeState extends State<Home>
                                   }));
                                   _currentIndex = 0;
                                 } else if (index == 2) {
-                                  await Navigator.pushReplacement(context,
+                                  await Navigator.push(context,
                                       PageRouteBuilder(
                                           pageBuilder: (context, anim1, anim2) {
                                     return SearchRestaurantPage(

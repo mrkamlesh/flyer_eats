@@ -5,8 +5,6 @@ import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/home_page_data.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/model/restaurant.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import './bloc.dart';
@@ -181,15 +179,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<HomeState> mapLoadMoreTopRestaurantToState(
       String token, Location location) async* {
-    if (state.indicator.hasTopReachedMax) {
-      Fluttertoast.showToast(
-          msg: "All Restaurant Has Been Shown",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black38,
-          timeInSecForIosWeb: 1,
-          fontSize: 16.0);
-    } else {
+    if (!(state.indicator.hasTopReachedMax)) {
       yield HomeState(
           appBarTitle: state.appBarTitle,
           homePageData: state.homePageData,
@@ -220,13 +210,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                   topRestaurantPage: state.indicator.topRestaurantPage + 1,
                   hasTopReachedMax: false));
         } else {
-          Fluttertoast.showToast(
-              msg: "All Restaurant Has Been Shown",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: Colors.black38,
-              timeInSecForIosWeb: 1,
-              fontSize: 16.0);
           yield HomeState(
               appBarTitle: state.appBarTitle,
               homePageData: state.homePageData,
@@ -252,15 +235,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<HomeState> mapLoadMoreDblRestaurantToState(
       String token, Location location) async* {
-    if (state.indicator.hasDblReachedMax) {
-      Fluttertoast.showToast(
-          msg: "All Restaurant Has Been Shown",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black38,
-          timeInSecForIosWeb: 1,
-          fontSize: 16.0);
-    } else {
+    if (!(state.indicator.hasDblReachedMax)) {
       yield HomeState(
           appBarTitle: state.appBarTitle,
           homePageData: state.homePageData,
@@ -291,13 +266,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                   dblRestaurantPage: state.indicator.dblRestaurantPage + 1,
                   hasDblReachedMax: false));
         } else {
-          Fluttertoast.showToast(
-              msg: "All Restaurant Has Been Shown",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: Colors.black38,
-              timeInSecForIosWeb: 1,
-              fontSize: 16.0);
           yield HomeState(
               appBarTitle: state.appBarTitle,
               homePageData: state.homePageData,

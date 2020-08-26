@@ -242,7 +242,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
                     state.placeOrder.voucher.copyWith(amount: 0, rate: 0)));
       } else {
         if (result.isMerchantOpen) {
-          yield FoodOrderState(
+          yield InvalidPlaceOrder(
               placeOrder: state.placeOrder.copyWith(
             isValid: false,
             message: result.message,
@@ -446,8 +446,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield LoadingRequestOtpChangeContact(placeOrder: state.placeOrder);
       try {
         String otpSignature = await SmsAutoFill().getAppSignature;
-        await repository.requestOtpChangeContactPhone(
-            contact, otpSignature, state.placeOrder.user.token);
+        await repository.requestOtpChangeContactPhone(contact, otpSignature,
+            isChangePrimaryContact, state.placeOrder.user.token);
         yield SuccessRequestOtpChangeContact(contact, isChangePrimaryContact,
             placeOrder: state.placeOrder);
       } catch (e) {

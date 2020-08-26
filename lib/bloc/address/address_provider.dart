@@ -7,8 +7,8 @@ import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/model/address.dart';
 
 class AddressProvider {
-  String serverUrl = "https://www.pollachiarea.com/flyereats/";
-  //String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> deleteAddress(String id, String token) async {
     String url =
@@ -122,7 +122,7 @@ class AddressProvider {
         data: FormData.fromMap(formData),
       );
 
-      responseJson =   _returnResponse(response);
+      responseJson = _returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }

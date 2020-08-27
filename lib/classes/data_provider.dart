@@ -321,7 +321,7 @@ class DataProvider {
       "client_token": token,
       "contact_phone": contactPhone,
       "otp_signature": otpSignature,
-      "is_default": isDefault,
+      "is_default": isDefault ? "1" : "0",
     };
 
     var responseJson;
@@ -347,7 +347,7 @@ class DataProvider {
       "client_token": token,
       "contact_phone": contactPhone,
       "code": otpCode,
-      "is_default": isDefault,
+      "is_default": isDefault ? "1" : "0",
     };
 
     var responseJson;

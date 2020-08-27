@@ -47,7 +47,7 @@ class ChooseShopBloc extends Bloc<ChooseShopEvent, ChooseShopState> {
     if (shop.lat == null && shop.long == null) {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
-          .timeout(Duration(seconds: 10), onTimeout: () {
+          .timeout(Duration(seconds: 5), onTimeout: () {
         throw Exception();
       });
 

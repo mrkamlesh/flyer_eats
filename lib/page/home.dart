@@ -1658,6 +1658,8 @@ class _HomeState extends State<Home>
                             });
                             BlocProvider.of<CurrentOrderBloc>(context).add(
                                 ScratchCardEvent(token, scratchCard.cardId));
+                            Future.delayed(Duration(seconds: 2))
+                                .then((value) => Navigator.pop(context));
                           },
                           image: Image.asset(
                             "assets/scratch card.png",

@@ -73,3 +73,13 @@ class UpdateProfile extends EditProfileEvent {
   @override
   List<Object> get props => [token];
 }
+
+class RequestOtpEditProfile extends EditProfileEvent {
+  final String contact;
+  final String token;
+
+  RequestOtpEditProfile(this.contact, this.token);
+
+  @override
+  List<Object> get props => [contact, token];
+}

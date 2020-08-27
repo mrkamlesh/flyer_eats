@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clients/model/location.dart';
+import 'package:clients/page/change_contact_verify_otp.dart';
 import 'package:clients/page/select_location_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,8 +31,6 @@ class EditAccountPage extends StatefulWidget {
 class _EditAccountPageState extends State<EditAccountPage> {
   EditProfileBloc _bloc;
   TextEditingController _nameController;
-  TextEditingController _phoneController;
-  TextEditingController _passwordController;
 
   @override
   void initState() {
@@ -39,14 +39,6 @@ class _EditAccountPageState extends State<EditAccountPage> {
     _nameController = TextEditingController(text: widget.user.name);
     _nameController.addListener(() {
       _bloc.add(UpdateName(_nameController.text));
-    });
-    _phoneController = TextEditingController(text: widget.user.phone);
-    _phoneController.addListener(() {
-      _bloc.add(UpdatePhone(_phoneController.text));
-    });
-    _passwordController = TextEditingController();
-    _passwordController.addListener(() {
-      _bloc.add(UpdatePassword(_passwordController.text));
     });
   }
 
@@ -72,7 +64,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
       child: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, loginState) {
           return BlocConsumer<EditProfileBloc, EditProfileState>(
-            listener: (context, editProfileState) {
+            listener: (context, editProfileState) async {
               if (editProfileState is SuccessUpdateProfile) {
                 showDialog(
                     context: context,
@@ -126,6 +118,44 @@ class _EditAccountPageState extends State<EditAccountPage> {
                       );
                     },
                     barrierDismissible: true);
+              } else if (editProfileState is SuccessRequestOtpEditProfile) {
+                bool result = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) {
+                  return ChangeContactVerifyOtp(
+                    isChangePrimaryContact: false,
+                    contact: editProfileState.newContact,
+                    token: loginState.user.token,
+                  );
+                }));
+
+                if (result != null) {
+                  _bloc.add(UpdatePhone(editProfileState.newContact));
+                }
+              } else if (editProfileState is ErrorRequestOtpEditProfile) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        title: Text(
+                          "Request OTP Failed",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        content: Text(editProfileState.message),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "OK",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      );
+                    });
               }
             },
             builder: (context, editProfileState) {
@@ -192,6 +222,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                               right: horizontalPaddingDraggable),
                           child: SingleChildScrollView(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 Transform.translate(
                                   offset: Offset(12, 0),
@@ -296,10 +327,23 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                   lines: 1,
                                   controller: _nameController,
                                 ),
-                                CustomTextField(
-                                  hint: "+91 12345678910",
-                                  lines: 1,
-                                  controller: _phoneController,
+                                InkWell(
+                                  onTap: _showChangeContactSheet,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 15),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(color: Colors.black12),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    child: Text(
+                                      editProfileState.profile.phone,
+                                      maxLines: 1,
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
                                 ),
                                 CustomTextField(
                                   controller: TextEditingController(
@@ -392,7 +436,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
                         );
                       },
                     ),
-                    editProfileState is LoadingUpdateProfile
+                    editProfileState is LoadingUpdateProfile ||
+                            editProfileState is LoadingRequestOtpEditProfile
                         ? Container(
                             decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.5)),
@@ -463,6 +508,221 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 ],
               ),
             ),
+          );
+        });
+  }
+
+  void _showChangeContactSheet() {
+    int _countrySelected = 0;
+    String _contactPredicate = "+91";
+    String _number;
+    bool _isValid = false;
+
+    showModalBottomSheet(
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, state) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                        width: AppUtil.getScreenWidth(context),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(32),
+                                topRight: Radius.circular(32)),
+                            color: Colors.white),
+                        padding: EdgeInsets.only(top: 20, left: 20, bottom: 20),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                "ENTER NUMBER",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            IconButton(
+                                icon: Icon(Icons.clear),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          ],
+                        )),
+                    Container(
+                      margin: EdgeInsets.only(
+                          left: horizontalPaddingDraggable,
+                          right: horizontalPaddingDraggable,
+                          bottom: horizontalPaddingDraggable),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.black12, width: 2)),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 100,
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: DropdownButton<int>(
+                              underline: Container(),
+                              isExpanded: false,
+                              isDense: true,
+                              iconSize: 0,
+                              value: _countrySelected,
+                              items: [
+                                DropdownMenuItem(
+                                  value: 0,
+                                  child: Container(
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            height: 20,
+                                            child: SvgPicture.asset(
+                                                "assets/india_flag.svg"),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            "+91",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 1,
+                                  child: Container(
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            height: 20,
+                                            child: SvgPicture.asset(
+                                                "assets/singapore_flag.svg"),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            "+65",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              onChanged: (i) {
+                                state(() {
+                                  _countrySelected = i;
+                                  _contactPredicate = i == 0 ? "+91" : "+65";
+                                });
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      left: BorderSide(
+                                          color: Colors.black12, width: 2))),
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: TextField(
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(
+                                      _contactPredicate == "+91" ? 10 : 8),
+                                ],
+                                onChanged: (value) {
+                                  state(() {
+                                    _number = value;
+                                    _isValid = _contactPredicate == "+91"
+                                        ? _number.length == 10 ? true : false
+                                        : _number.length == 8 ? true : false;
+                                  });
+                                },
+                                autofocus: true,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 15),
+                                  border: InputBorder.none,
+                                  hintText: "Enter phone number",
+                                  hintStyle: TextStyle(
+                                      fontSize: 16, color: Colors.black38),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _isValid
+                          ? () {
+                              _bloc.add(RequestOtpEditProfile(
+                                  _contactPredicate + _number,
+                                  widget.user.token));
+                              Navigator.pop(context);
+                            }
+                          : () {},
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            left: horizontalPaddingDraggable,
+                            right: horizontalPaddingDraggable,
+                            bottom:
+                                MediaQuery.of(context).viewInsets.bottom + 32),
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFFB531),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                "SELECT",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            AnimatedOpacity(
+                              opacity: _isValid ? 0.0 : 0.5,
+                              child: Container(
+                                height: 50,
+                                color: Colors.white,
+                              ),
+                              duration: Duration(milliseconds: 300),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           );
         });
   }

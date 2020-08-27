@@ -9,6 +9,7 @@ import 'package:clients/model/place_order_pickup.dart';
 import 'package:clients/page/change_contact_verify_otp.dart';
 import 'package:clients/page/placed_order_success.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -372,8 +373,16 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                                   ),
                                 ),
                               ),
-                              BlocBuilder<PlaceOrderPickupBloc,
+                              BlocConsumer<PlaceOrderPickupBloc,
                                   PlaceOrderPickupState>(
+                                listener: (context, state) {
+                                  if (state is InvalidPlaceOrder) {
+                                    controller.animateTo(
+                                        controller.position.maxScrollExtent,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.ease);
+                                  }
+                                },
                                 builder: (context, state) {
                                   if (state is LoadingGetDeliveryCharge ||
                                       state is LoadingPlaceOrder ||
@@ -1248,6 +1257,10 @@ class _PickUpDeliveryInformationState extends State<PickUpDeliveryInformation> {
                                           color: Colors.black12, width: 2))),
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: TextField(
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(
+                                      _contactPredicate == "+91" ? 10 : 8),
+                                ],
                                 onChanged: (value) {
                                   state(() {
                                     _number = value;

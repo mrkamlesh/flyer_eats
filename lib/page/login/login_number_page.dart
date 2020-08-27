@@ -3,6 +3,7 @@ import 'package:clients/bloc/notification/bloc.dart';
 import 'package:clients/page/notifications_list_page.dart';
 import 'package:clients/page/track_order_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -341,6 +342,13 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                                                         EdgeInsets.symmetric(
                                                             horizontal: 20),
                                                     child: TextField(
+                                                      inputFormatters: [
+                                                        LengthLimitingTextInputFormatter(
+                                                            state.countryCode ==
+                                                                    "+91"
+                                                                ? 10
+                                                                : 8),
+                                                      ],
                                                       autofocus: true,
                                                       controller:
                                                           _textEditingController,

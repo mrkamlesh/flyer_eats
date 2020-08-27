@@ -26,3 +26,21 @@ class ErrorUpdateProfile extends EditProfileState {
 
   ErrorUpdateProfile(this.message, {Profile profile}) : super(profile: profile);
 }
+
+class LoadingRequestOtpEditProfile extends EditProfileState {
+  LoadingRequestOtpEditProfile({Profile profile}) : super(profile: profile);
+}
+
+class SuccessRequestOtpEditProfile extends EditProfileState {
+  final String newContact;
+
+  SuccessRequestOtpEditProfile(this.newContact, {Profile profile})
+      : super(profile: profile);
+}
+
+class ErrorRequestOtpEditProfile extends EditProfileState {
+  final String message;
+
+  ErrorRequestOtpEditProfile(this.message, {Profile profile})
+      : super(profile: profile);
+}

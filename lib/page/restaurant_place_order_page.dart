@@ -3126,6 +3126,10 @@ class _FoodListDeliveryInformationState
                                           color: Colors.black12, width: 2))),
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: TextField(
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(
+                                      _contactPredicate == "+91" ? 10 : 8),
+                                ],
                                 onChanged: (value) {
                                   state(() {
                                     _number = value;

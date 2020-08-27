@@ -74,7 +74,7 @@ class PlaceOrderPickupBloc
                 deliveryAmount: result.deliveryAmount,
                 message: result.message));
       } else {
-        yield PlaceOrderPickupState(
+        yield InvalidPlaceOrder(
             placeOrderPickup: state.placeOrderPickup.copyWith(
                 isValid: false,
                 razorKey: null,

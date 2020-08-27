@@ -5,6 +5,7 @@ import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/model/user.dart';
 import 'package:clients/model/user_profile.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 import './bloc.dart';
 
 class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
@@ -31,6 +32,8 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       yield* mapUpdateLocationToState(event.location, event.countryCode);
     } else if (event is UpdateProfile) {
       yield* mapUpdateProfileToState(event.token);
+    } else if (event is RequestOtpEditProfile) {
+      yield* mapRequestOtpEditProfileToState(event.contact, event.token);
     }
   }
 
@@ -73,6 +76,25 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       }
     } catch (e) {
       yield ErrorUpdateProfile(e.toString(), profile: state.profile);
+    }
+  }
+
+  Stream<EditProfileState> mapRequestOtpEditProfileToState(
+      String contact, String token) async* {
+    if (contact == state.profile.phone) {
+      yield ErrorRequestOtpEditProfile(
+          "You have entered the same contact number",
+          profile: state.profile);
+    } else {
+      yield LoadingRequestOtpEditProfile(profile: state.profile);
+      try {
+        String otpSignature = await SmsAutoFill().getAppSignature;
+        await repository.requestOtpChangeContactPhone(
+            contact, otpSignature, false, token);
+        yield SuccessRequestOtpEditProfile(contact, profile: state.profile);
+      } catch (e) {
+        yield ErrorRequestOtpEditProfile(e.toString(), profile: state.profile);
+      }
     }
   }
 }

@@ -15,6 +15,11 @@ class LoadingGetDeliveryCharge extends PlaceOrderPickupState {
       : super(placeOrderPickup: placeOrderPickup);
 }
 
+class InvalidPlaceOrder extends PlaceOrderPickupState {
+  InvalidPlaceOrder({PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
+}
+
 class LoadingPlaceOrder extends PlaceOrderPickupState {
   LoadingPlaceOrder({PlaceOrderPickup placeOrderPickup})
       : super(placeOrderPickup: placeOrderPickup);

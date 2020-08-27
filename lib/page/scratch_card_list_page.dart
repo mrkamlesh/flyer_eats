@@ -306,6 +306,8 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                             });
                             _bloc.add(
                                 DoScratchCard(token, scratchCard.cardId, pos));
+                            Future.delayed(Duration(seconds: 2))
+                                .then((value) => Navigator.pop(context));
                           },
                           image: Image.asset(
                             "assets/scratch card.png",

@@ -18,17 +18,6 @@ class RegisterPage extends StatefulWidget {
   final String name;
   final String imageUrl;
 
-/*  email: widget.email,
-  contactPhone: widget.phoneNumber,
-  locationName: "TEST",
-  fullName: _nameController.text,
-  referralCode: "FE010421",
-  devicePlatform: "android",
-  appVersion: "4.0",
-  countryCode: "IN",
-  deviceId: "DASDASDA",
-  avatar: _photo*/
-
   const RegisterPage(
       {Key key, this.phoneNumber, this.email, this.name, this.imageUrl})
       : super(key: key);

@@ -321,6 +321,9 @@ class DataRepository {
       List<Restaurant> list = listResponse.map((i) {
         return Restaurant.fromJson(i['merchantInfo']);
       }).toList();
+
+      list = AppUtil.restaurantListSort(list);
+
       return list;
     } else {
       throw Exception(response['msg']);

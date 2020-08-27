@@ -3,6 +3,7 @@ import 'package:clients/model/shop_category.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:location/location.dart';
+import 'package:package_info/package_info.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -146,5 +147,10 @@ class AppUtil {
     _listShopCategory.add(ShopCategory("Meat", "assets/meat.svg"));
 
     return _listShopCategory;
+  }
+
+  static Future<String> getAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
   }
 }

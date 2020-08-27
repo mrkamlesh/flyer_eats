@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:clients/bloc/login/login_event.dart';
 import 'package:clients/bloc/login/login_state.dart';
+import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/classes/push_notification_manager.dart';
 import 'package:clients/model/address.dart';
 import 'package:clients/model/user.dart';
-import 'package:package_info/package_info.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   DataRepository _repository = DataRepository();
@@ -39,7 +39,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     yield Loading(user: state.user, isValid: state.isValid);
     try {
       String firebaseToken = await PushNotificationsManager().getToken();
-      String version = await _getVersion();
+      String version = await AppUtil.getAppVersion();
 
       var result = await _repository.verifyOtp(
           contactPhone, otpCode, firebaseToken, _getPlatform(), version);
@@ -61,7 +61,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         String firebaseToken = await PushNotificationsManager().getToken();
 
         print("firebase token: " + firebaseToken);
-        String version = await _getVersion();
+        String version = await AppUtil.getAppVersion();
 
         User user = await _repository.checkTokenValid(
             token, firebaseToken, _getPlatform(), version);
@@ -107,11 +107,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       return "Ios";
     }
     return "";
-  }
-
-  Future<String> _getVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    return packageInfo.version;
   }
 
   Stream<LoginState> mapUpdateDefaultAddressToState(Address address) async* {

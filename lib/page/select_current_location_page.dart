@@ -31,7 +31,6 @@ class _SelectCurrentLocationPageState extends State<SelectCurrentLocationPage> {
   @override
   void initState() {
     super.initState();
-    AppUtil.checkLocationServiceAndPermission();
   }
 
   @override

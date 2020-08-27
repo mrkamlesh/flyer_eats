@@ -122,12 +122,16 @@ class _OfferListPageState extends State<OfferListPage>
                 ),
                 BlocProvider<MerchantOfferBloc>(
                   create: (context) {
-                    return _merchantOfferBloc;
+                    return _merchantOfferBloc
+                      ..add(GetMerchantOffer(
+                          loginState.user.token, widget.address));
                   },
                 ),
                 BlocProvider<BankOfferBloc>(
                   create: (context) {
-                    return _bankOfferBloc;
+                    return _bankOfferBloc
+                      ..add(
+                          GetBankOffer(loginState.user.token, widget.address));
                   },
                 ),
               ],
@@ -230,7 +234,7 @@ class _OfferListPageState extends State<OfferListPage>
                                     loginState.user.token, widget.address));
                               }
                             },
-                            //isScrollable: true,
+                            isScrollable: false,
                             labelColor: Colors.black,
                             unselectedLabelColor: Colors.black26,
                             indicatorColor: Colors.yellow[600],

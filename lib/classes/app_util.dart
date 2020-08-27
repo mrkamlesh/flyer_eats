@@ -1,8 +1,8 @@
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/shop_category.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
 import 'package:html/parser.dart';
+import 'package:location/location.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -49,9 +49,11 @@ class AppUtil {
   }
 
   static Future<void> checkLocationServiceAndPermission() async {
+    Location location = new Location();
+
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
-    Location location = new Location();
+
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
       _serviceEnabled = await location.requestService();
@@ -67,6 +69,8 @@ class AppUtil {
         return;
       }
     }
+
+    await location.getLocation().timeout(Duration(seconds: 5));
   }
 
   static String parseHtmlString(String htmlString) {

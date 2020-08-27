@@ -81,7 +81,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     try {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
-          .timeout(Duration(seconds: 10), onTimeout: () {
+          .timeout(Duration(seconds: 5), onTimeout: () {
         throw Exception();
       });
 

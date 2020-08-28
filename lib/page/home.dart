@@ -2103,65 +2103,70 @@ class NoHomePageWidget extends StatelessWidget {
             color: Colors.transparent,
           ),
         ),
-        Container(
-          height: AppUtil.getDraggableHeight(context),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-          padding: EdgeInsets.only(
-              top: 20,
-              left: horizontalPaddingDraggable,
-              right: horizontalPaddingDraggable,
-              bottom: 20),
-          alignment: Alignment.center,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SvgPicture.asset("assets/coming soon.svg",
-                  height: AppUtil.getDraggableHeight(context) / 2.8),
-              Text(
-                "IN YOUR LOCATION",
-                style: TextStyle(
-                    fontSize: 25, color: primary3, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "Wish to start at your town?",
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              InkWell(
-                onTap: () async {
-                  String url =
-                      'mailto:info@flyereats.in?subject=Request to Add New Location&body=Please add new location at $location';
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    throw 'Could not launch $url';
-                  }
-                },
-                child: Text("info@flyereats.in",
-                    style: TextStyle(
-                        fontSize: 20,
-                        decoration: TextDecoration.underline,
-                        color: Colors.lightBlueAccent)),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Expanded(
-                child: SvgPicture.asset(
-                  "assets/coming soon 2.svg",
-                  height: 0.23 * AppUtil.getDraggableHeight(context),
+        Expanded(
+          child: Container(
+            height: AppUtil.getDraggableHeight(context),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(32),
+                    topLeft: Radius.circular(32))),
+            padding: EdgeInsets.only(
+                top: 20,
+                left: horizontalPaddingDraggable,
+                right: horizontalPaddingDraggable,
+                bottom: 20),
+            alignment: Alignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SvgPicture.asset("assets/coming soon.svg",
+                    height: AppUtil.getDraggableHeight(context) / 2.8),
+                Text(
+                  "IN YOUR LOCATION",
+                  style: TextStyle(
+                      fontSize: 25,
+                      color: primary3,
+                      fontWeight: FontWeight.bold),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Wish to start at your town?",
+                  style: TextStyle(fontSize: 20),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                InkWell(
+                  onTap: () async {
+                    String url =
+                        'mailto:info@flyereats.in?subject=Request to Add New Location&body=Please add new location at $location';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
+                  child: Text("info@flyereats.in",
+                      style: TextStyle(
+                          fontSize: 20,
+                          decoration: TextDecoration.underline,
+                          color: Colors.lightBlueAccent)),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Expanded(
+                  child: SvgPicture.asset(
+                    "assets/coming soon 2.svg",
+                    height: 0.23 * AppUtil.getDraggableHeight(context),
+                  ),
+                ),
+              ],
+            ),
           ),
         )
       ],

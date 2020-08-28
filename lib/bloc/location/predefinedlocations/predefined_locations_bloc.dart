@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/location.dart';
-import 'package:geolocator/geolocator.dart';
 import './bloc.dart';
 
 class PredefinedLocationsBloc
@@ -102,7 +100,7 @@ class PredefinedLocationsBloc
     yield InitialPredefinedLocationsState();
 
     try {
-      await AppUtil.checkLocationServiceAndPermission();
+/*      await AppUtil.checkLocationServiceAndPermission();
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
           .timeout(Duration(seconds: 5), onTimeout: () {
@@ -122,19 +120,20 @@ class PredefinedLocationsBloc
         }
       } else {
         countryCode = "101";
-      }
+      }*/
 
-      List<Location> list = await repository.getLocations(countryCode);
+      List<Location> list =
+          await repository.getLocations(state.selectedCountry);
 
       if (list.isEmpty) {
         yield NoAvailablePredefinedLocations(
             locations: list,
-            selectedCountry: countryCode,
+            selectedCountry: state.selectedCountry,
             filteredLocations: list);
       } else {
         yield PredefinedLocationsState(
             locations: list,
-            selectedCountry: countryCode,
+            selectedCountry: state.selectedCountry,
             filteredLocations: list);
       }
     } catch (e) {

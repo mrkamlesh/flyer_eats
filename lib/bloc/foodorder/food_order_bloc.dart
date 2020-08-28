@@ -447,7 +447,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       try {
         String otpSignature = await SmsAutoFill().getAppSignature;
         await repository.requestOtpChangeContactPhone(contact, otpSignature,
-            isChangePrimaryContact, state.placeOrder.user.token);
+            isChangePrimaryContact, state.placeOrder.user.token, false);
         yield SuccessRequestOtpChangeContact(contact, isChangePrimaryContact,
             placeOrder: state.placeOrder);
       } catch (e) {

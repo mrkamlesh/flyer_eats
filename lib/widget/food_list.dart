@@ -375,13 +375,23 @@ class FoodList extends StatelessWidget {
                                             ),
                                           ),
                                     Expanded(
-                                      child: Text(
-                                        AppUtil.parseHtmlString(food.title),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
+                                      child: InkWell(
+                                        onTap: () {
+                                          final snackBar = SnackBar(
+                                            content: Text(food.title),
+                                            duration: Duration(seconds: 2),
+                                          );
+                                          Scaffold.of(context)
+                                              .showSnackBar(snackBar);
+                                        },
+                                        child: Text(
+                                          AppUtil.parseHtmlString(food.title),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -586,13 +596,24 @@ class FoodList extends StatelessWidget {
                                           ),
                                         ),
                                         Expanded(
-                                          child: Text(
-                                            AppUtil.parseHtmlString(food.title),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
+                                          child: InkWell(
+                                            onTap: () {
+                                              final snackBar = SnackBar(
+                                                content: Text(food.title),
+                                                duration: Duration(seconds: 2),
+                                              );
+                                              Scaffold.of(context)
+                                                  .showSnackBar(snackBar);
+                                            },
+                                            child: Text(
+                                              AppUtil.parseHtmlString(
+                                                  food.title),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -829,13 +850,23 @@ class FoodList extends StatelessWidget {
                                             ),
                                           ),
                                     Expanded(
-                                      child: Text(
-                                        AppUtil.parseHtmlString(food.title),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
+                                      child: InkWell(
+                                        onTap: () {
+                                          final snackBar = SnackBar(
+                                            content: Text(food.title),
+                                            duration: Duration(seconds: 2),
+                                          );
+                                          Scaffold.of(context)
+                                              .showSnackBar(snackBar);
+                                        },
+                                        child: Text(
+                                          AppUtil.parseHtmlString(food.title),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
                                   ],

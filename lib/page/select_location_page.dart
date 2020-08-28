@@ -283,7 +283,7 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
                                                       ),
                                                       Expanded(
                                                         child: Text(
-                                                          "SNG",
+                                                          "SG",
                                                           style: TextStyle(
                                                               fontSize: 14,
                                                               fontWeight:

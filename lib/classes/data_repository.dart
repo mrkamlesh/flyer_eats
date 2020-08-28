@@ -57,10 +57,14 @@ class DataRepository {
     }
   }
 
-  Future<bool> requestOtpChangeContactPhone(String contactPhone,
-      String otpSignature, bool isDefault, String token) async {
+  Future<bool> requestOtpChangeContactPhone(
+      String contactPhone,
+      String otpSignature,
+      bool isDefault,
+      String token,
+      bool isSaveProfile) async {
     final response = await _provider.requestOtpChangeContactPhone(
-        contactPhone, otpSignature, isDefault, token);
+        contactPhone, otpSignature, isDefault, token, isSaveProfile);
     if (response['code'] == 1) {
       return true;
     } else {

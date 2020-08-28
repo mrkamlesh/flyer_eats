@@ -127,7 +127,7 @@ class PlaceOrderPickupBloc
       try {
         String otpSignature = await SmsAutoFill().getAppSignature;
         await repository.requestOtpChangeContactPhone(contact, otpSignature,
-            isChangePrimaryContact, state.placeOrderPickup.token);
+            isChangePrimaryContact, state.placeOrderPickup.token, false);
         yield SuccessRequestOtpChangeContact(contact, isChangePrimaryContact,
             placeOrderPickup: state.placeOrderPickup);
       } catch (e) {

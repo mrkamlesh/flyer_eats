@@ -13,3 +13,9 @@ class InitialState extends ChooseShopState {
 class LoadingState extends ChooseShopState {
   LoadingState({Shop shop}) : super(shop: shop);
 }
+
+class ErrorState extends ChooseShopState {
+  final String message;
+
+  ErrorState(this.message, {Shop shop}) : super(shop: shop);
+}

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:geolocator/geolocator.dart';
 import './bloc.dart';
@@ -28,7 +29,9 @@ class CurrentLocationBloc
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
           .timeout(Duration(seconds: 5), onTimeout: () {
-        throw Exception();
+        throw AppException(
+            "Can not Get Current Location. Click Anywhere in the Map to Select Shop",
+            "");
       });
 
       List<Placemark> placeMark = await Geolocator()
@@ -100,7 +103,7 @@ class CurrentLocationBloc
               " " +
               placeMark[0].administrativeArea);
     } catch (e) {
-      yield ErrorCurrentLocationState("Can not get selected location",
+      yield ErrorCurrentLocationState(e.toString(),
           lng: lat, lat: lng, address: "...");
     }
   }

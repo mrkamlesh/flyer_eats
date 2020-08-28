@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:clients/bloc/pickup/chooseshop/choose_shop_state.dart';
+import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/model/shop.dart';
 import 'package:geolocator/geolocator.dart';
@@ -43,22 +44,29 @@ class ChooseShopBloc extends Bloc<ChooseShopEvent, ChooseShopState> {
 
   Stream<ChooseShopState> mapPageOpenToState(Shop shop) async* {
     yield LoadingState(shop: state.shop);
-    await AppUtil.checkLocationServiceAndPermission();
     if (shop.lat == null && shop.long == null) {
-      Position position = await Geolocator()
-          .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
-          .timeout(Duration(seconds: 5), onTimeout: () {
-        throw Exception();
-      });
+      try {
+        await AppUtil.checkLocationServiceAndPermission();
+        Position position;
+        position = await Geolocator()
+            .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
+            .timeout(Duration(seconds: 3), onTimeout: () {
+          throw AppException(
+              "Can not Get Current Location. Click Anywhere in the Map to Select Shop",
+              "");
+        });
 
-      String address = await _getGeolocationAddress(
-          LatLng(position.latitude, position.longitude));
+        String address = await _getGeolocationAddress(
+            LatLng(position.latitude, position.longitude));
 
-      yield ChooseShopState(
-          shop: Shop(
-              long: position.longitude,
-              lat: position.latitude,
-              address: address));
+        yield ChooseShopState(
+            shop: Shop(
+                long: position.longitude,
+                lat: position.latitude,
+                address: address));
+      } catch (e) {
+        yield ErrorState(e.toString(), shop: shop);
+      }
     } else {
       yield ChooseShopState(shop: shop);
     }

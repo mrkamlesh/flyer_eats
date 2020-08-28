@@ -312,8 +312,12 @@ class DataProvider {
     return responseJson;
   }
 
-  Future<dynamic> requestOtpChangeContactPhone(String contactPhone,
-      String otpSignature, bool isDefault, String token) async {
+  Future<dynamic> requestOtpChangeContactPhone(
+      String contactPhone,
+      String otpSignature,
+      bool isDefault,
+      String token,
+      bool isSaveProfile) async {
     String url =
         "${serverUrl}mobileapp/apiRest/sendOtp?json=true&api_key=flyereats";
 
@@ -322,6 +326,7 @@ class DataProvider {
       "contact_phone": contactPhone,
       "otp_signature": otpSignature,
       "is_default": isDefault ? "1" : "0",
+      "save_profile": isSaveProfile ? "1" : "0",
     };
 
     var responseJson;

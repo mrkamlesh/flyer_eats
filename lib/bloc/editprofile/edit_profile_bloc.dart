@@ -90,7 +90,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       try {
         String otpSignature = await SmsAutoFill().getAppSignature;
         await repository.requestOtpChangeContactPhone(
-            contact, otpSignature, false, token);
+            contact, otpSignature, false, token, true);
         yield SuccessRequestOtpEditProfile(contact, profile: state.profile);
       } catch (e) {
         yield ErrorRequestOtpEditProfile(e.toString(), profile: state.profile);

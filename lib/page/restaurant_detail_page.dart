@@ -172,13 +172,14 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                             child: child,
                           );
                         },
-                        child: AnimatedOpacity(
-                          opacity: widget.restaurant.id ==
+                        child: AnimatedCrossFade(
+                          crossFadeState: widget.restaurant.id ==
                                   cartState.placeOrder.restaurant.id
-                              ? 1.0
-                              : 0.0,
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
                           duration: Duration(milliseconds: 300),
-                          child: RestaurantDetailBottomNavBar(
+                          secondChild: SizedBox(),
+                          firstChild: RestaurantDetailBottomNavBar(
                             currencyIcon: AppUtil.getCurrencyIcon(
                                 widget.restaurant.currencyCode),
                             isValid:

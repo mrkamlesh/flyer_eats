@@ -34,10 +34,14 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
   void initState() {
     super.initState();
     _bloc.add(PageOpen(widget.shop));
-    nameController =
-        TextEditingController(text: widget.shop != null ? widget.shop.name != null ? widget.shop.name : "" : "");
+    nameController = TextEditingController(
+        text: widget.shop != null
+            ? widget.shop.name != null ? widget.shop.name : ""
+            : "");
     addressController = TextEditingController(
-        text: widget.shop != null ? widget.shop.description != null ? widget.shop.description : "" : "");
+        text: widget.shop != null
+            ? widget.shop.description != null ? widget.shop.description : ""
+            : "");
   }
 
   @override
@@ -64,15 +68,48 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                     Container(
                       height: AppUtil.getScreenHeight(context) * 0.55,
                       width: AppUtil.getScreenWidth(context),
-                      child: BlocBuilder<ChooseShopBloc, ChooseShopState>(
+                      child: BlocConsumer<ChooseShopBloc, ChooseShopState>(
+                        listener: (context, state) {
+                          if (state is ErrorState) {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    title: Text(
+                                      "Choose Shop",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    content: Text(
+                                      state.message,
+                                      style: TextStyle(color: Colors.black54),
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("OK")),
+                                    ],
+                                  );
+                                },
+                                barrierDismissible: true);
+                          }
+                        },
                         builder: (context, state) {
                           Marker marker;
-                          if (state.shop.long != null && state.shop.lat != null) {
+                          if (state.shop.long != null &&
+                              state.shop.lat != null) {
                             marker = Marker(
                                 markerId: MarkerId("location"),
-                                position: LatLng(state.shop.lat, state.shop.long),
+                                position:
+                                    LatLng(state.shop.lat, state.shop.long),
                                 icon: BitmapDescriptor.defaultMarker);
-                            _animateCameraToPosition(LatLng(state.shop.lat, state.shop.long));
+                            _animateCameraToPosition(
+                                LatLng(state.shop.lat, state.shop.long));
                           }
                           return GoogleMap(
                             markers: Set.of((marker != null) ? [marker] : []),
@@ -84,7 +121,8 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                             myLocationEnabled: true,
                             myLocationButtonEnabled: true,
                             zoomGesturesEnabled: true,
-                            padding: EdgeInsets.only(bottom: 15, right: 15, top: 30, left: 15),
+                            padding: EdgeInsets.only(
+                                bottom: 15, right: 15, top: 30, left: 15),
                             compassEnabled: true,
                             initialCameraPosition: CameraPosition(
                               target: LatLng(initLat, initLng),
@@ -106,9 +144,15 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                               height: AppUtil.getScreenHeight(context) * 0.45,
                               decoration: BoxDecoration(
                                   color: Colors.white,
-                                  boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5, spreadRadius: 0)]),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.grey,
+                                        blurRadius: 5,
+                                        spreadRadius: 0)
+                                  ]),
                               padding: EdgeInsets.symmetric(
-                                  horizontal: horizontalPaddingDraggable, vertical: distanceBetweenSection),
+                                  horizontal: horizontalPaddingDraggable,
+                                  vertical: distanceBetweenSection),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
@@ -131,10 +175,13 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                                   Expanded(
                                     child: Container(
                                       padding: EdgeInsets.only(
-                                          left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
+                                          left: horizontalPaddingDraggable,
+                                          right: horizontalPaddingDraggable),
                                       margin: EdgeInsets.only(bottom: 15),
                                       child: Text(
-                                        state.shop.address != null ? state.shop.address : "",
+                                        state.shop.address != null
+                                            ? state.shop.address
+                                            : "",
                                         maxLines: 3,
                                         style: TextStyle(fontSize: 16),
                                       ),
@@ -145,7 +192,8 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                                       return GestureDetector(
                                         onTap: state.shop.isValid()
                                             ? () {
-                                                Navigator.pop(context, state.shop);
+                                                Navigator.pop(
+                                                    context, state.shop);
                                               }
                                             : () {},
                                         child: Stack(
@@ -154,7 +202,8 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                                               height: 50,
                                               decoration: BoxDecoration(
                                                 color: Color(0xFFFFB531),
-                                                borderRadius: BorderRadius.circular(8),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
                                               alignment: Alignment.center,
                                               child: Text(
@@ -163,12 +212,15 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                                               ),
                                             ),
                                             AnimatedOpacity(
-                                              opacity: state.shop.isValid() ? 0.0 : 0.5,
+                                              opacity: state.shop.isValid()
+                                                  ? 0.0
+                                                  : 0.5,
                                               child: Container(
                                                 height: 50,
                                                 color: Colors.white,
                                               ),
-                                              duration: Duration(milliseconds: 300),
+                                              duration:
+                                                  Duration(milliseconds: 300),
                                             )
                                           ],
                                         ),
@@ -178,7 +230,9 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                                 ],
                               ),
                             ),
-                            state is LoadingState ? LinearProgressIndicator() : SizedBox(),
+                            state is LoadingState
+                                ? LinearProgressIndicator()
+                                : SizedBox(),
                           ],
                         );
                       },
@@ -198,7 +252,8 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                     },
                     child: Container(
                         padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black45),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.black45),
                         height: 30,
                         width: 30,
                         child: SvgPicture.asset(
@@ -229,7 +284,8 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
 
   Future<void> _animateCameraToPosition(LatLng latLng) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: latLng, zoom: 15.5)));
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: latLng, zoom: 15.5)));
   }
 }
 
@@ -239,14 +295,18 @@ class CustomTextField extends StatelessWidget {
   final int lines;
   final Function(String) onChange;
 
-  CustomTextField({Key key, this.hint, this.controller, this.lines, this.onChange}) : super(key: key);
+  CustomTextField(
+      {Key key, this.hint, this.controller, this.lines, this.onChange})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 15),
       padding: EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black12)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.black12)),
       child: TextField(
         controller: controller,
         maxLines: lines,

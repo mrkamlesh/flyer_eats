@@ -1743,16 +1743,19 @@ class _HomeState extends State<Home>
                           ),
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Center(
-                          child: AnimatedOpacity(
-                              opacity: 1.0 - opacity,
-                              duration: Duration(milliseconds: 300),
-                              child: Text("Will Expiry On: " +
-                                  scratchCard.dateExpiration)),
-                        ),
-                      ),
+                      scratchCard.dateExpiration != null &&
+                              scratchCard.dateExpiration != ""
+                          ? Container(
+                              margin: EdgeInsets.only(top: 10),
+                              child: Center(
+                                child: AnimatedOpacity(
+                                    opacity: 1.0 - opacity,
+                                    duration: Duration(milliseconds: 300),
+                                    child: Text("Will Expiry On: " +
+                                        scratchCard.dateExpiration)),
+                              ),
+                            )
+                          : SizedBox(),
                     ],
                   ),
                 ),

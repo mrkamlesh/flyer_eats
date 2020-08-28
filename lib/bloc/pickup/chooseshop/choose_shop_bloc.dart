@@ -52,7 +52,7 @@ class ChooseShopBloc extends Bloc<ChooseShopEvent, ChooseShopState> {
             .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
             .timeout(Duration(seconds: 3), onTimeout: () {
           throw AppException(
-              "Can not Get Current Location. Click Anywhere in the Map to Select Shop",
+              "Unable to fetch your Current Location, Click the MAP to select the address",
               "");
         });
 

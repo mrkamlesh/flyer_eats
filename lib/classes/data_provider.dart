@@ -530,6 +530,7 @@ class DataProvider {
       "client_token": placeOrderPickup.token,
       "items": placeOrderPickup.pickUp.items.join(","),
       "formatted_address": placeOrderPickup.address.address,
+      "address_id": placeOrderPickup.address.id,
       "google_lng": placeOrderPickup.address.longitude,
       "pickup_lat": placeOrderPickup.address.latitude,
       "location_name": placeOrderPickup.location,

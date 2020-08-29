@@ -1,5 +1,6 @@
 import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/bloc/location/home/home_state.dart';
+import 'package:clients/page/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -223,6 +224,9 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                               ),
                               BlocBuilder<HomeBloc, HomeState>(
                                 builder: (context, homeState) {
+                                  if (homeState.homePageData == null) {
+                                    return SizedBox();
+                                  }
                                   return homeState
                                           .homePageData.isReferralAvailable
                                       ? InkWell(
@@ -497,7 +501,9 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
   }
 
   Future<bool> _onBackPressed() async {
-    Navigator.pushReplacementNamed(context, "/home");
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+      return Home();
+    }), (Route<dynamic> route) => false);
     return true;
   }
 }

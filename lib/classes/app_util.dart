@@ -1,4 +1,3 @@
-import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/shop_category.dart';
 import 'package:flutter/material.dart';

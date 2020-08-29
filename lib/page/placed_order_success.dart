@@ -1,4 +1,5 @@
 import 'package:clients/bloc/location/home/bloc.dart';
+import 'package:clients/page/home.dart';
 import 'package:clients/page/pickup_order_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -447,7 +448,9 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
   }
 
   Future<bool> _onBackPressed() async {
-    Navigator.pushReplacementNamed(context, "/home");
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+      return Home();
+    }), (Route<dynamic> route) => false);
     return true;
   }
 }

@@ -4,6 +4,7 @@ import 'package:clients/model/add_ons_type.dart';
 import 'package:clients/model/price.dart';
 import 'package:clients/model/user.dart';
 import 'package:clients/page/change_contact_verify_otp.dart';
+import 'package:clients/page/home.dart';
 import 'package:clients/widget/payment_method_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -186,8 +187,13 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            Navigator.pushReplacementNamed(
-                                                context, "/home");
+                                            Navigator.pushAndRemoveUntil(
+                                                context, MaterialPageRoute(
+                                                    builder: (context) {
+                                              return Home();
+                                            }),
+                                                (Route<dynamic> route) =>
+                                                    false);
                                           },
                                           child: Container(
                                             height: 50,
@@ -244,10 +250,11 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                     return CustomAppBar(
                                       leading: "assets/back.svg",
                                       title: state.placeOrder.restaurant.name +
-                                          " " +
+                                          " (" +
                                           state.placeOrder.foodCart
                                               .cartItemTotal()
-                                              .toString(),
+                                              .toString() +
+                                          ")",
                                       onTapLeading: () {
                                         Navigator.pop(context);
                                       },

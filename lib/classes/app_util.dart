@@ -1,3 +1,4 @@
+import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/model/restaurant.dart';
 import 'package:clients/model/shop_category.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +72,9 @@ class AppUtil {
       }
     }
 
-    await location.getLocation().timeout(Duration(seconds: 5));
+    await location.getLocation().timeout(Duration(seconds: 5), onTimeout: () {
+      return null;
+    });
   }
 
   static String parseHtmlString(String htmlString) {

@@ -222,7 +222,6 @@ class _AdsWidgetState extends State<AdsWidget> {
               placeholder: (context, url) {
                 return Shimmer.fromColors(
                     child: Container(
-                      height: 60,
                       color: Colors.black,
                     ),
                     baseColor: Colors.grey[300],

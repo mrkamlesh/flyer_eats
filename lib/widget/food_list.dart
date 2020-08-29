@@ -377,6 +377,10 @@ class FoodList extends StatelessWidget {
                                     Expanded(
                                       child: InkWell(
                                         onTap: () {
+                                          Scaffold.of(context)
+                                              .hideCurrentSnackBar(
+                                                  reason: SnackBarClosedReason
+                                                      .dismiss);
                                           final snackBar = SnackBar(
                                             content: Text(food.title),
                                             duration: Duration(seconds: 2),
@@ -598,6 +602,10 @@ class FoodList extends StatelessWidget {
                                         Expanded(
                                           child: InkWell(
                                             onTap: () {
+                                              Scaffold.of(context)
+                                                  .hideCurrentSnackBar(
+                                                  reason: SnackBarClosedReason
+                                                      .dismiss);
                                               final snackBar = SnackBar(
                                                 content: Text(food.title),
                                                 duration: Duration(seconds: 2),
@@ -852,6 +860,10 @@ class FoodList extends StatelessWidget {
                                     Expanded(
                                       child: InkWell(
                                         onTap: () {
+                                          Scaffold.of(context)
+                                              .hideCurrentSnackBar(
+                                              reason: SnackBarClosedReason
+                                                  .dismiss);
                                           final snackBar = SnackBar(
                                             content: Text(food.title),
                                             duration: Duration(seconds: 2),

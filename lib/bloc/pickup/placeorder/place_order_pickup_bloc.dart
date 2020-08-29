@@ -33,6 +33,8 @@ class PlaceOrderPickupBloc
     } else if (event is RequestOtpChangeContact) {
       yield* mapRequestOtpChangeContactToState(
           event.contact, event.isChangePrimaryContact);
+    } else if (event is ChangePaymentReference) {
+      yield* mapChangePaymentReferenceToState(event.paymentReference);
     }
   }
 
@@ -101,6 +103,13 @@ class PlaceOrderPickupBloc
     yield PlaceOrderPickupState(
         placeOrderPickup: state.placeOrderPickup.copyWith(
             contact: contact, isChangePrimaryContact: isChangePrimaryContact));
+  }
+
+  Stream<PlaceOrderPickupState> mapChangePaymentReferenceToState(
+      String paymentReference) async* {
+    yield PlaceOrderPickupState(
+        placeOrderPickup: state.placeOrderPickup
+            .copyWith(paymentReference: paymentReference));
   }
 
   Stream<PlaceOrderPickupState> mapPlaceOrderEventToState() async* {

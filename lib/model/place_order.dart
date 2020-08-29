@@ -37,6 +37,7 @@ class PlaceOrder {
   final String stripePublishKey;
   final String stripeSecretKey;
   final String applyVoucherErrorMessage;
+  final String paymentReference;
 
   final List<String> shownBusyDialogRestaurantIds;
 
@@ -72,6 +73,7 @@ class PlaceOrder {
     this.selectedDeliveryTime,
     this.now,
     this.shownBusyDialogRestaurantIds,
+    this.paymentReference,
   });
 
   factory PlaceOrder.fromJson(Map<String, dynamic> parsedJson) {
@@ -166,6 +168,7 @@ class PlaceOrder {
     DateTime selectedDeliveryTime,
     DateTime now,
     List<String> shownBusyDialogRestaurantIds,
+    String paymentReference,
   }) {
     return PlaceOrder(
         id: id ?? this.id,
@@ -202,7 +205,8 @@ class PlaceOrder {
         selectedDeliveryTime: selectedDeliveryTime ?? this.selectedDeliveryTime,
         now: now ?? this.now,
         shownBusyDialogRestaurantIds:
-            shownBusyDialogRestaurantIds ?? this.shownBusyDialogRestaurantIds);
+            shownBusyDialogRestaurantIds ?? this.shownBusyDialogRestaurantIds,
+        paymentReference: paymentReference ?? paymentReference);
   }
 
   String getDeliveryDate() {

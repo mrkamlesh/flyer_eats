@@ -1492,7 +1492,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) {
-    BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderEvent());
+    BlocProvider.of<FoodOrderBloc>(context)
+      ..add(ChangePaymentReference(response.paymentId))
+      ..add(PlaceOrderEvent());
   }
 
   void handlerPaymentError(PaymentFailureResponse response) {

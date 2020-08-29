@@ -188,6 +188,15 @@ class ChangeContactPhone extends FoodOrderEvent {
   List<Object> get props => [isChangePrimaryContact, contact];
 }
 
+class ChangePaymentReference extends FoodOrderEvent {
+  final String paymentReference;
+
+  const ChangePaymentReference(this.paymentReference);
+
+  @override
+  List<Object> get props => [paymentReference];
+}
+
 class RequestOtpChangeContact extends FoodOrderEvent {
   final bool isChangePrimaryContact;
   final String contact;

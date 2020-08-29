@@ -621,7 +621,9 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
   }
 
   void handlerPaymentSuccess(PaymentSuccessResponse response) {
-    _orderPickupBloc.add(PlaceOrderEvent());
+    _orderPickupBloc
+      ..add(ChangePaymentReference(response.paymentId))
+      ..add(PlaceOrderEvent());
   }
 
   void handlerPaymentError(PaymentFailureResponse response) {

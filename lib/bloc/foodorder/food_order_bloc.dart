@@ -82,6 +82,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
           event.contact, event.isChangePrimaryContact);
     } else if (event is MarkRestaurantHasShownBusyDialog) {
       yield* mapMarkRestaurantHasShownBusyDialogToState(event.restaurantId);
+    } else if (event is ChangePaymentReference) {
+      yield* maChangePaymentReferenceToState(event.paymentReference);
     }
   }
 
@@ -211,6 +213,13 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     yield FoodOrderState(
         placeOrder:
             state.placeOrder.copyWith(deliveryInstruction: instruction));
+  }
+
+  Stream<FoodOrderState> maChangePaymentReferenceToState(
+      String paymentReference) async* {
+    yield FoodOrderState(
+        placeOrder:
+            state.placeOrder.copyWith(paymentReference: paymentReference));
   }
 
   Stream<FoodOrderState> mapGetPaymentOptionsToState() async* {
@@ -419,6 +428,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
           paymentMethodId: paymentMethod.id));
 
       if (response.status == 'succeeded') {
+        add(ChangePaymentReference(response.paymentIntentId));
         add(PlaceOrderEvent());
       } else {
         yield ErrorPlaceOrder("Payment with Stripe Fail",

@@ -15,7 +15,8 @@ class InitPlaceOrder extends PlaceOrderPickupEvent {
   final String contact;
   final String location;
 
-  const InitPlaceOrder(this.token, this.pickUp, this.address, this.contact, this.location);
+  const InitPlaceOrder(
+      this.token, this.pickUp, this.address, this.contact, this.location);
 
   @override
   List<Object> get props => [token, pickUp, address, contact];
@@ -47,6 +48,15 @@ class ChangeContact extends PlaceOrderPickupEvent {
   List<Object> get props => [contact, isChangePrimaryContact];
 }
 
+class ChangePaymentReference extends PlaceOrderPickupEvent {
+  final String paymentReference;
+
+  const ChangePaymentReference(this.paymentReference);
+
+  @override
+  List<Object> get props => [paymentReference];
+}
+
 class RequestOtpChangeContact extends PlaceOrderPickupEvent {
   final bool isChangePrimaryContact;
   final String contact;
@@ -58,7 +68,6 @@ class RequestOtpChangeContact extends PlaceOrderPickupEvent {
 }
 
 class PlaceOrderEvent extends PlaceOrderPickupEvent {
-
   const PlaceOrderEvent();
 
   @override

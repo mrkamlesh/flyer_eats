@@ -18,6 +18,7 @@ class PlaceOrderPickup {
   final String stripeSecretKey;
   final String distance;
   final String currencyCode;
+  final String paymentReference;
 
   PlaceOrderPickup(
       {this.token,
@@ -35,7 +36,8 @@ class PlaceOrderPickup {
       this.distance,
       this.currencyCode,
       this.stripePublishKey,
-      this.stripeSecretKey});
+      this.stripeSecretKey,
+      this.paymentReference});
 
   PlaceOrderPickup copyWith(
       {String token,
@@ -53,7 +55,8 @@ class PlaceOrderPickup {
       String distance,
       String stripePublishKey,
       String stripeSecretKey,
-      String currencyCode}) {
+      String currencyCode,
+      String paymentReference}) {
     return PlaceOrderPickup(
         token: token ?? this.token,
         isValid: isValid ?? this.isValid,
@@ -71,6 +74,7 @@ class PlaceOrderPickup {
         distance: distance ?? this.distance,
         currencyCode: currencyCode ?? this.currencyCode,
         stripePublishKey: stripePublishKey ?? this.stripePublishKey,
-        stripeSecretKey: stripeSecretKey ?? this.stripeSecretKey);
+        stripeSecretKey: stripeSecretKey ?? this.stripeSecretKey,
+        paymentReference: paymentReference ?? this.paymentReference);
   }
 }

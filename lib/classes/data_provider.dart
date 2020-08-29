@@ -14,9 +14,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -294,6 +294,10 @@ class DataProvider {
       "delivery_time": order.getDeliveryTime(),
     };
 
+    if (order.paymentReference != null) {
+      formData['payment_id'] = order.paymentReference;
+    }
+
     if (order.getWalletUsed() > 0) {
       formData['wallet_amount'] = order.getWalletUsed().toString();
     }
@@ -543,6 +547,10 @@ class DataProvider {
       "delivery_date": "",
       "delivery_time": "",
     };
+
+    if (placeOrderPickup.paymentReference != null) {
+      formData['payment_id'] = placeOrderPickup.paymentReference;
+    }
 
     List files = [];
 

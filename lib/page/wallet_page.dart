@@ -82,7 +82,7 @@ class _MyWalletPageState extends State<MyWalletPage> {
                       alignment: Alignment.topCenter,
                       child: CustomAppBar(
                         leading: "assets/back.svg",
-                        title: "Order History",
+                        title: "My Wallet",
                         onTapLeading: () {
                           Navigator.pop(context);
                         },

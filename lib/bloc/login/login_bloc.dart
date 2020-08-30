@@ -63,15 +63,19 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         print("firebase token: " + firebaseToken);
         String version = await AppUtil.getAppVersion();
 
-        User user = await _repository.checkTokenValid(
+        var user = await _repository.checkTokenValid(
             token, firebaseToken, _getPlatform(), version);
 
-        yield LoggedIn(user: user, isValid: state.isValid);
+        if (user is User) {
+          yield LoggedIn(user: user, isValid: state.isValid);
+        } else {
+          yield NotLoggedIn(isValid: false);
+        }
       } else {
         yield NotLoggedIn(isValid: false);
       }
     } catch (e) {
-      yield NotLoggedIn(isValid: false);
+      yield ErrorInitLogin(e.toString(), isValid: false);
     }
   }
 

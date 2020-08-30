@@ -143,6 +143,26 @@ class _LoginNumberPageState extends State<LoginNumberPage> {
                             state.message,
                             textAlign: TextAlign.center,
                           ),
+                          SizedBox(
+                            height: horizontalPaddingDraggable,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              BlocProvider.of<LoginBloc>(context)
+                                  .add(InitLoginEvent());
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: primary3,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Text(
+                                "RETRY",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),

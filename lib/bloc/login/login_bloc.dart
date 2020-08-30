@@ -55,6 +55,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Stream<LoginState> mapInitLoginEventToState() async* {
+    yield InitialState();
     try {
       String token = await _repository.getSavedToken();
       if (token != null) {

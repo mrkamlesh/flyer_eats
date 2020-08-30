@@ -447,7 +447,8 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                       ),
                                     );
                                   } else if (state is ErrorAds) {
-                                    return Container(
+                                    return SizedBox();
+                                    /*return Container(
                                       margin: EdgeInsets.only(
                                           bottom: distanceBetweenSection - 20,
                                           left: horizontalPaddingDraggable,
@@ -458,7 +459,7 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                           style: TextStyle(fontSize: 16),
                                         ),
                                       ),
-                                    );
+                                    );*/
                                   } else if (state is SuccessAds) {
                                     return Container(
                                       margin: EdgeInsets.only(

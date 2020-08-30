@@ -272,6 +272,34 @@ class EndDrawer extends StatelessWidget {
             onTap: () async {
               Navigator.pop(context);
               await AppUtil.launchInBrowser(
+                  "https://play.google.com/store/apps/details?id=in.flyereats.clients");
+            },
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "Rate Our App",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Icon(Icons.keyboard_arrow_right),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: distanceSectionContent,
+          ),
+          Divider(
+            height: 1.0,
+            color: Colors.black12,
+          ),
+          SizedBox(
+            height: distanceSectionContent,
+          ),
+          GestureDetector(
+            onTap: () async {
+              Navigator.pop(context);
+              await AppUtil.launchInBrowser(
                   "https://5v6vw.app.link/MaPgS0fNP8");
             },
             child: Row(

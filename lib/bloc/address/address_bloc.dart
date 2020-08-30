@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:clients/bloc/address/address_repository.dart';
 import 'package:clients/bloc/address/bloc.dart';
+import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/model/address.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -63,7 +65,8 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapCalculatePriceToState(Address from, Address to) async* {
+  Stream<AddressState> mapCalculatePriceToState(
+      Address from, Address to) async* {
     yield PriceCalculateLoading();
     try {
       // You should get price from repository or API Call here
@@ -81,39 +84,57 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     try {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
-          .timeout(Duration(seconds: 5), onTimeout: () {
-        throw Exception();
+          .timeout(Duration(seconds: 3), onTimeout: () {
+        throw AppException(
+            "Unable to fetch your Current Location, Click the MAP to select the address",
+            "");
       });
 
       add(UpdateAddressLocation(LatLng(position.latitude, position.longitude)));
+    } on PlatformException {
+      yield LoadingTemporaryAddressError(
+          "Unable to fetch your Current Location, Click the MAP to select the address");
     } catch (e) {
-      yield LoadingTemporaryAddressError("Can not get current location");
+      yield LoadingTemporaryAddressError(
+          "Unable to fetch your Current Location, Click the MAP to select the address");
     }
   }
 
   Stream<AddressState> mapUpdateAddressLocationToState(LatLng latLng) async* {
     yield LoadingTemporaryAddress();
     try {
-      List<Placemark> placeMark = await Geolocator().placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+      List<Placemark> placeMark = await Geolocator()
+          .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
 
       String thoroughfare =
-          (placeMark[0].thoroughfare != "" && placeMark[0].thoroughfare != null) ? placeMark[0].thoroughfare + " " : "";
-      String subThoroughfare = (placeMark[0].subThoroughfare != "" && placeMark[0].subThoroughfare != null)
+          (placeMark[0].thoroughfare != "" && placeMark[0].thoroughfare != null)
+              ? placeMark[0].thoroughfare + " "
+              : "";
+      String subThoroughfare = (placeMark[0].subThoroughfare != "" &&
+              placeMark[0].subThoroughfare != null)
           ? placeMark[0].subThoroughfare + " "
           : "";
       String subLocality =
-          (placeMark[0].subLocality != "" && placeMark[0].subLocality != null) ? placeMark[0].subLocality + " " : "";
+          (placeMark[0].subLocality != "" && placeMark[0].subLocality != null)
+              ? placeMark[0].subLocality + " "
+              : "";
       String locality =
-          (placeMark[0].locality != "" && placeMark[0].locality != null) ? placeMark[0].locality + " " : "";
+          (placeMark[0].locality != "" && placeMark[0].locality != null)
+              ? placeMark[0].locality + " "
+              : "";
       String subAdministrativeArea =
-          (placeMark[0].subAdministrativeArea != "" && placeMark[0].subAdministrativeArea != null)
+          (placeMark[0].subAdministrativeArea != "" &&
+                  placeMark[0].subAdministrativeArea != null)
               ? placeMark[0].subAdministrativeArea + " "
               : "";
-      String administrativeArea = (placeMark[0].administrativeArea != "" && placeMark[0].administrativeArea != null)
+      String administrativeArea = (placeMark[0].administrativeArea != "" &&
+              placeMark[0].administrativeArea != null)
           ? placeMark[0].administrativeArea + " "
           : "";
       String postalCode =
-          (placeMark[0].postalCode != "" && placeMark[0].postalCode != null) ? placeMark[0].postalCode + " " : "";
+          (placeMark[0].postalCode != "" && placeMark[0].postalCode != null)
+              ? placeMark[0].postalCode + " "
+              : "";
 
       Address newAddress = address.copyWith(
           address: thoroughfare +
@@ -135,14 +156,19 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapUpdateAddressInformationToState(UpdateAddressInformation event) async* {
-    Address newAddress =
-        address.copyWith(type: event.type, address: event.address, title: event.title, isDefault: event.isDefault);
+  Stream<AddressState> mapUpdateAddressInformationToState(
+      UpdateAddressInformation event) async* {
+    Address newAddress = address.copyWith(
+        type: event.type,
+        address: event.address,
+        title: event.title,
+        isDefault: event.isDefault);
     address = newAddress;
     yield LoadingTemporaryAddressSuccess(newAddress);
   }
 
-  Stream<AddressState> mapAddAddressToState(Address address, String token) async* {
+  Stream<AddressState> mapAddAddressToState(
+      Address address, String token) async* {
     yield LoadingTemporaryAddress();
     try {
       bool isAdded = await addressRepository.addAddress(address, token);
@@ -156,7 +182,8 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapUpdateAddressToState(Address address, String token) async* {
+  Stream<AddressState> mapUpdateAddressToState(
+      Address address, String token) async* {
     yield LoadingTemporaryAddress();
     try {
       bool isUpdated = await addressRepository.updateAddress(address, token);
@@ -166,7 +193,8 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapAddressUpdatePageOpenToState(Address addressEvent) async* {
+  Stream<AddressState> mapAddressUpdatePageOpenToState(
+      Address addressEvent) async* {
     address = addressEvent;
     yield LoadingTemporaryAddress();
     try {

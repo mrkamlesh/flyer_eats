@@ -100,28 +100,6 @@ class PredefinedLocationsBloc
     yield InitialPredefinedLocationsState();
 
     try {
-/*      await AppUtil.checkLocationServiceAndPermission();
-      Position position = await Geolocator()
-          .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
-          .timeout(Duration(seconds: 5), onTimeout: () {
-        return null;
-      });
-
-      String countryCode;
-
-      if (position != null) {
-        List<Placemark> placeMark = await Geolocator()
-            .placemarkFromCoordinates(position.latitude, position.longitude);
-
-        if (placeMark[0].isoCountryCode == "SG") {
-          countryCode = "196";
-        } else {
-          countryCode = "101";
-        }
-      } else {
-        countryCode = "101";
-      }*/
-
       List<Location> list =
           await repository.getLocations(state.selectedCountry);
 

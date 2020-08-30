@@ -4,6 +4,7 @@ import 'package:clients/bloc/pickup/chooseshop/choose_shop_state.dart';
 import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/model/shop.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'bloc.dart';
@@ -64,6 +65,10 @@ class ChooseShopBloc extends Bloc<ChooseShopEvent, ChooseShopState> {
                 long: position.longitude,
                 lat: position.latitude,
                 address: address));
+      } on PlatformException {
+        yield ErrorState(
+            "Unable to fetch your Current Location, Click the MAP to select the address",
+            shop: shop);
       } catch (e) {
         yield ErrorState(e.toString(), shop: shop);
       }

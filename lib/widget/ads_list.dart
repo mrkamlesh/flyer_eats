@@ -31,7 +31,8 @@ class _AdsListWidgetState extends State<AdsListWidget> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 0, viewportFraction: viewport);
+    _pageController =
+        PageController(initialPage: 0, viewportFraction: viewport);
 
     _timer = Timer.periodic(Duration(seconds: 6), (t) {
       _currentIndex++;
@@ -49,7 +50,8 @@ class _AdsListWidgetState extends State<AdsListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _adsOffset = -((1 - viewport) * MediaQuery.of(context).size.width / 2 - horizontalPaddingDraggable);
+    _adsOffset = -((1 - viewport) * MediaQuery.of(context).size.width / 2 -
+        horizontalPaddingDraggable);
     return PageView.builder(
         controller: _pageController,
         onPageChanged: (i) {
@@ -110,7 +112,9 @@ class _AdsWidgetState extends State<AdsWidget> {
           _videoPlayerBloc.add(PlayVideo(_youtubePlayerController));
           await showMaterialModalBottomSheet(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32))),
               context: context,
               duration: Duration(milliseconds: 200),
               builder: (context, controller) {
@@ -152,7 +156,9 @@ class _AdsWidgetState extends State<AdsWidget> {
                               },
                               child: Text(
                                 "CLICK HERE",
-                                style: TextStyle(color: primary3, decoration: TextDecoration.underline),
+                                style: TextStyle(
+                                    color: primary3,
+                                    decoration: TextDecoration.underline),
                               ),
                             )
                           ],
@@ -163,13 +169,16 @@ class _AdsWidgetState extends State<AdsWidget> {
                 );
               });
 
-          if (widget.ads.type == "video") if (_youtubePlayerController.value.isPlaying) {
+          if (widget.ads.type == "video") if (_youtubePlayerController
+              .value.isPlaying) {
             _youtubePlayerController.pause();
           }
         } else {
           showMaterialModalBottomSheet(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32))),
               context: context,
               duration: Duration(milliseconds: 200),
               builder: (context, controller) {
@@ -206,16 +215,24 @@ class _AdsWidgetState extends State<AdsWidget> {
           return _videoPlayerBloc;
         },
         child: Container(
-          margin: EdgeInsets.only(right: 20),
+          margin: EdgeInsets.only(right: 20, top: 5, bottom: 5),
           height: 60,
           decoration: BoxDecoration(
-            boxShadow: [BoxShadow(offset: Offset(2, 2), color: Colors.black26, spreadRadius: 0, blurRadius: 5)],
+            boxShadow: [
+              BoxShadow(
+                  offset: Offset(2, 2),
+                  color: Colors.black26,
+                  spreadRadius: 0,
+                  blurRadius: 5)
+            ],
             borderRadius: BorderRadius.circular(20),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: CachedNetworkImage(
-              imageUrl: widget.ads.type == "video" ? widget.ads.thumbnail : widget.ads.photo,
+              imageUrl: widget.ads.type == "video"
+                  ? widget.ads.thumbnail
+                  : widget.ads.photo,
               height: 60,
               fit: BoxFit.cover,
               alignment: Alignment.center,

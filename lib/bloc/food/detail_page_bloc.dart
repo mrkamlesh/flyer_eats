@@ -70,38 +70,40 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
 
   Stream<DetailPageState> mapSwitchVegOnlyToState(
       String restaurantId, bool isVegOnly, String address) async* {
-    yield OnDataLoading(
-        isVegOnly: isVegOnly,
-        menuCategories: state.menuCategories,
-        foodList: state.foodList,
-        menuSelected: state.menuSelected);
-    try {
-      List<Food> foods = await repository.getFoods(
-          restaurantId,
-          state.menuCategories[state.menuSelected].id,
-          isVegOnly,
-          null,
-          address);
-
-      if (foods.isEmpty) {
-        yield NoFoodAvailable(
-            menuCategories: state.menuCategories,
-            isVegOnly: isVegOnly,
-            foodList: List(),
-            menuSelected: state.menuSelected);
-      } else {
-        yield DetailPageState(
-            isVegOnly: isVegOnly,
-            menuCategories: state.menuCategories,
-            foodList: foods,
-            menuSelected: state.menuSelected);
-      }
-    } catch (e) {
-      yield OnDataError(e.toString(),
+    if (state.menuCategories.isNotEmpty) {
+      yield OnDataLoading(
           isVegOnly: isVegOnly,
           menuCategories: state.menuCategories,
           foodList: state.foodList,
           menuSelected: state.menuSelected);
+      try {
+        List<Food> foods = await repository.getFoods(
+            restaurantId,
+            state.menuCategories[state.menuSelected].id,
+            isVegOnly,
+            null,
+            address);
+
+        if (foods.isEmpty) {
+          yield NoFoodAvailable(
+              menuCategories: state.menuCategories,
+              isVegOnly: isVegOnly,
+              foodList: List(),
+              menuSelected: state.menuSelected);
+        } else {
+          yield DetailPageState(
+              isVegOnly: isVegOnly,
+              menuCategories: state.menuCategories,
+              foodList: foods,
+              menuSelected: state.menuSelected);
+        }
+      } catch (e) {
+        yield OnDataError(e.toString(),
+            isVegOnly: isVegOnly,
+            menuCategories: state.menuCategories,
+            foodList: state.foodList,
+            menuSelected: state.menuSelected);
+      }
     }
   }
 

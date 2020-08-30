@@ -289,7 +289,7 @@ class PickupOrderHistoryWidget extends StatelessWidget {
                   width: 10,
                 ),
                 Text(
-                  pickupOrder.getMapStatus(),
+                  pickupOrder.status,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 )
               ],

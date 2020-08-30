@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:clients/classes/app_exceptions.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/home_page_data.dart';
@@ -161,8 +162,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             await AppUtil.checkLocationServiceAndPermission();
             Position position = await Geolocator()
                 .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
-                .timeout(Duration(seconds: 10), onTimeout: () {
-              throw Exception();
+                .timeout(Duration(seconds: 3), onTimeout: () {
+              throw AppException(
+                  "Unable to fetch your Current Location, Click the MAP to select the address",
+                  "");
             });
 
             add(GetHomeDataByLatLng(

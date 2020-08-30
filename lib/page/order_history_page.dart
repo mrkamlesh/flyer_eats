@@ -19,7 +19,8 @@ class OrderHistoryPage extends StatefulWidget {
   _OrderHistoryPageState createState() => _OrderHistoryPageState();
 }
 
-class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProviderStateMixin {
+class _OrderHistoryPageState extends State<OrderHistoryPage>
+    with TickerProviderStateMixin {
   TabController tabController;
   OrderHistoryBloc foodOrderHistoryBloc;
   PickupOrderHistoryBloc pickupOrderHistoryBloc;
@@ -48,12 +49,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProvider
           providers: [
             BlocProvider<OrderHistoryBloc>(
               create: (context) {
-                return foodOrderHistoryBloc..add(GetOrderHistory(loginState.user.token));
+                return foodOrderHistoryBloc
+                  ..add(GetOrderHistory(loginState.user.token));
               },
             ),
             BlocProvider<PickupOrderHistoryBloc>(
               create: (context) {
-                return pickupOrderHistoryBloc..add(GetPickupOrderHistory(loginState.user.token));
+                return pickupOrderHistoryBloc
+                  ..add(GetPickupOrderHistory(loginState.user.token));
               },
             ),
           ],
@@ -97,11 +100,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProvider
                   ],
                 ),
                 DraggableScrollableSheet(
-                  initialChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  initialChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  minChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  minChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
-                  maxChildSize: (AppUtil.getScreenHeight(context) - AppUtil.getToolbarHeight(context)) /
+                  maxChildSize: (AppUtil.getScreenHeight(context) -
+                          AppUtil.getToolbarHeight(context)) /
                       AppUtil.getScreenHeight(context),
                   builder: (context, controller) {
                     controller.addListener(() {
@@ -109,14 +115,17 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProvider
                       double currentScroll = controller.position.pixels;
 
                       if (currentScroll == maxScroll) {
-                        pickupOrderHistoryBloc.add(OnLoadMorePickup(loginState.user.token));
+                        pickupOrderHistoryBloc
+                            .add(OnLoadMorePickup(loginState.user.token));
                       }
                     });
 
                     return Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(32),
+                              topLeft: Radius.circular(32))),
                       height: AppUtil.getScreenHeight(context),
                       width: AppUtil.getScreenWidth(context),
                       child: Column(
@@ -124,8 +133,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProvider
                           Container(
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(32),
+                                    topLeft: Radius.circular(32))),
                             padding: EdgeInsets.only(
                                 bottom: 10,
                                 top: 15,
@@ -138,9 +148,13 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProvider
                                 controller: tabController,
                                 onTap: (i) {
                                   if (i == 0) {
-                                    foodOrderHistoryBloc..add(GetOrderHistory(loginState.user.token));
+                                    foodOrderHistoryBloc
+                                      ..add(GetOrderHistory(
+                                          loginState.user.token));
                                   } else if (i == 1) {
-                                    pickupOrderHistoryBloc..add(GetPickupOrderHistory(loginState.user.token));
+                                    pickupOrderHistoryBloc
+                                      ..add(GetPickupOrderHistory(
+                                          loginState.user.token));
                                   }
                                 },
                                 isScrollable: false,
@@ -148,9 +162,13 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProvider
                                 unselectedLabelColor: Colors.black26,
                                 indicatorColor: Colors.yellow[600],
                                 indicatorSize: TabBarIndicatorSize.tab,
-                                labelStyle: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.bold)),
-                                indicatorPadding: EdgeInsets.only(left: 0, right: 15, bottom: 2, top: 0),
-                                labelPadding: EdgeInsets.only(left: 0, right: 15, bottom: 0),
+                                labelStyle: GoogleFonts.poppins(
+                                    textStyle:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                indicatorPadding: EdgeInsets.only(
+                                    left: 0, right: 15, bottom: 2, top: 0),
+                                labelPadding: EdgeInsets.only(
+                                    left: 0, right: 15, bottom: 0),
                                 tabs: [
                                   Tab(
                                     text: "Order",
@@ -164,190 +182,253 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> with TickerProvider
                             child: Container(
                               height: AppUtil.getScreenHeight(context),
                               width: AppUtil.getScreenWidth(context),
-                              child: TabBarView(controller: tabController, children: [
-                                BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
-                                  builder: (context, state) {
-                                    if (state is LoadingOrderHistoryState) {
-                                      return Container(
-                                        child: Center(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              SpinKitCircle(
-                                                color: Colors.black38,
-                                                size: 30,
+                              child: TabBarView(
+                                  controller: tabController,
+                                  children: [
+                                    BlocBuilder<OrderHistoryBloc,
+                                        OrderHistoryState>(
+                                      builder: (context, state) {
+                                        if (state is LoadingOrderHistoryState) {
+                                          return Container(
+                                            child: Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  SpinKitCircle(
+                                                    color: Colors.black38,
+                                                    size: 30,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Text(
+                                                      "Loading Order History..."),
+                                                ],
                                               ),
-                                              SizedBox(
-                                                height: 20,
+                                            ),
+                                          );
+                                        } else if (state
+                                            is ErrorOrderHistoryState) {
+                                          return Container(
+                                            height: AppUtil.getDraggableHeight(
+                                                context),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(32),
+                                                    topLeft:
+                                                        Radius.circular(32))),
+                                            padding: EdgeInsets.only(
+                                                left:
+                                                    horizontalPaddingDraggable,
+                                                right:
+                                                    horizontalPaddingDraggable),
+                                            alignment: Alignment.center,
+                                            child: Container(
+                                              child: Center(
+                                                child: Text(
+                                                  state.message,
+                                                  textAlign: TextAlign.center,
+                                                ),
                                               ),
-                                              Text("Loading Order History..."),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    } else if (state is ErrorOrderHistoryState) {
-                                      return Container(
-                                        height: AppUtil.getDraggableHeight(context),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.only(
-                                                topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                                        padding: EdgeInsets.only(
-                                            left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
-                                        alignment: Alignment.center,
-                                        child: Container(
-                                          child: Center(
-                                            child: Text("Error Get Order History"),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    if (state.listOrder.length == 0) {
-                                      return Container(
-                                        height: AppUtil.getDraggableHeight(context),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.only(
-                                                topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                                        padding: EdgeInsets.only(
-                                            top: 20,
-                                            left: horizontalPaddingDraggable,
-                                            right: horizontalPaddingDraggable),
-                                        alignment: Alignment.center,
-                                        child: Container(
-                                          child: Center(
-                                            child: Text("No order history"),
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      return Container(
-                                        alignment: Alignment.topCenter,
-                                        child: ListView.builder(
-                                          controller: controller,
-                                          shrinkWrap: true,
-                                          padding: EdgeInsets.only(top: 10),
-                                          itemBuilder: (context, i) {
-                                            if (state is LoadingMoreOrderHistoryState) {
-                                              if (i == state.listOrder.length) {
-                                                return Container(
-                                                    margin: EdgeInsets.only(top: 20),
-                                                    child: Center(child: CircularProgressIndicator()));
-                                              }
-                                            }
-                                            return GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                  return DetailOrderPage(
-                                                    orderId: state.listOrder[i].id,
-                                                  );
-                                                }));
+                                            ),
+                                          );
+                                        }
+                                        if (state.listOrder.length == 0) {
+                                          return Container(
+                                            height: AppUtil.getDraggableHeight(
+                                                context),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(32),
+                                                    topLeft:
+                                                        Radius.circular(32))),
+                                            padding: EdgeInsets.only(
+                                                top: 20,
+                                                left:
+                                                    horizontalPaddingDraggable,
+                                                right:
+                                                    horizontalPaddingDraggable),
+                                            alignment: Alignment.center,
+                                            child: Container(
+                                              child: Center(
+                                                child: Text("No order history"),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return Container(
+                                            alignment: Alignment.topCenter,
+                                            child: ListView.builder(
+                                              controller: controller,
+                                              shrinkWrap: true,
+                                              padding: EdgeInsets.only(top: 10),
+                                              itemBuilder: (context, i) {
+                                                if (state
+                                                    is LoadingMoreOrderHistoryState) {
+                                                  if (i ==
+                                                      state.listOrder.length) {
+                                                    return Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 20),
+                                                        child: Center(
+                                                            child:
+                                                                CircularProgressIndicator()));
+                                                  }
+                                                }
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) {
+                                                      return DetailOrderPage(
+                                                        orderId: state
+                                                            .listOrder[i].id,
+                                                      );
+                                                    }));
+                                                  },
+                                                  child: FoodOrderHistoryWidget(
+                                                    order: state.listOrder[i],
+                                                  ),
+                                                );
                                               },
-                                              child: FoodOrderHistoryWidget(
-                                                order: state.listOrder[i],
+                                              itemCount: state
+                                                      is LoadingMoreOrderHistoryState
+                                                  ? state.listOrder.length + 1
+                                                  : state.listOrder.length,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    BlocBuilder<PickupOrderHistoryBloc,
+                                        PickupOrderHistoryState>(
+                                      builder: (context, state) {
+                                        if (state
+                                            is LoadingPickupOrderHistoryState) {
+                                          return Container(
+                                            child: Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  SpinKitCircle(
+                                                    color: Colors.black38,
+                                                    size: 30,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Text(
+                                                      "Loading Order History..."),
+                                                ],
                                               ),
-                                            );
-                                          },
-                                          itemCount: state is LoadingMoreOrderHistoryState
-                                              ? state.listOrder.length + 1
-                                              : state.listOrder.length,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                                BlocBuilder<PickupOrderHistoryBloc, PickupOrderHistoryState>(
-                                  builder: (context, state) {
-                                    if (state is LoadingPickupOrderHistoryState) {
-                                      return Container(
-                                        child: Center(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              SpinKitCircle(
-                                                color: Colors.black38,
-                                                size: 30,
+                                            ),
+                                          );
+                                        } else if (state
+                                            is ErrorPickupOrderHistoryState) {
+                                          return Container(
+                                            height: AppUtil.getDraggableHeight(
+                                                context),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(32),
+                                                    topLeft:
+                                                        Radius.circular(32))),
+                                            padding: EdgeInsets.only(
+                                                left:
+                                                    horizontalPaddingDraggable,
+                                                right:
+                                                    horizontalPaddingDraggable),
+                                            alignment: Alignment.center,
+                                            child: Container(
+                                              child: Center(
+                                                child: Text(
+                                                  state.message,
+                                                  textAlign: TextAlign.center,
+                                                ),
                                               ),
-                                              SizedBox(
-                                                height: 20,
+                                            ),
+                                          );
+                                        }
+                                        if (state.listOrder.length == 0) {
+                                          return Container(
+                                            height: AppUtil.getDraggableHeight(
+                                                context),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(32),
+                                                    topLeft:
+                                                        Radius.circular(32))),
+                                            padding: EdgeInsets.only(
+                                                top: 20,
+                                                left:
+                                                    horizontalPaddingDraggable,
+                                                right:
+                                                    horizontalPaddingDraggable),
+                                            alignment: Alignment.center,
+                                            child: Container(
+                                              child: Center(
+                                                child: Text("No order history"),
                                               ),
-                                              Text("Loading Order History..."),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    } else if (state is ErrorPickupOrderHistoryState) {
-                                      return Container(
-                                        height: AppUtil.getDraggableHeight(context),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.only(
-                                                topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                                        padding: EdgeInsets.only(
-                                            left: horizontalPaddingDraggable, right: horizontalPaddingDraggable),
-                                        alignment: Alignment.center,
-                                        child: Container(
-                                          child: Center(
-                                            child: Text("Error Get Order History"),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    if (state.listOrder.length == 0) {
-                                      return Container(
-                                        height: AppUtil.getDraggableHeight(context),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.only(
-                                                topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                                        padding: EdgeInsets.only(
-                                            top: 20,
-                                            left: horizontalPaddingDraggable,
-                                            right: horizontalPaddingDraggable),
-                                        alignment: Alignment.center,
-                                        child: Container(
-                                          child: Center(
-                                            child: Text("No order history"),
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      return Container(
-                                        alignment: Alignment.topCenter,
-                                        child: ListView.builder(
-                                          controller: controller,
-                                          shrinkWrap: true,
-                                          padding: EdgeInsets.only(top: 10),
-                                          itemBuilder: (context, i) {
-                                            if (state is LoadingMorePickupOrderHistoryState) {
-                                              if (i == state.listOrder.length) {
-                                                return Container(
-                                                    margin: EdgeInsets.only(top: 20),
-                                                    child: Center(child: CircularProgressIndicator()));
-                                              }
-                                            }
-                                            return GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                  return PickupOrderDetailPage(
-                                                    orderId: state.listOrder[i].id,
-                                                  );
-                                                }));
+                                            ),
+                                          );
+                                        } else {
+                                          return Container(
+                                            alignment: Alignment.topCenter,
+                                            child: ListView.builder(
+                                              controller: controller,
+                                              shrinkWrap: true,
+                                              padding: EdgeInsets.only(top: 10),
+                                              itemBuilder: (context, i) {
+                                                if (state
+                                                    is LoadingMorePickupOrderHistoryState) {
+                                                  if (i ==
+                                                      state.listOrder.length) {
+                                                    return Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 20),
+                                                        child: Center(
+                                                            child:
+                                                                CircularProgressIndicator()));
+                                                  }
+                                                }
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) {
+                                                      return PickupOrderDetailPage(
+                                                        orderId: state
+                                                            .listOrder[i].id,
+                                                      );
+                                                    }));
+                                                  },
+                                                  child:
+                                                      PickupOrderHistoryWidget(
+                                                    pickupOrder:
+                                                        state.listOrder[i],
+                                                  ),
+                                                );
                                               },
-                                              child: PickupOrderHistoryWidget(
-                                                pickupOrder: state.listOrder[i],
-                                              ),
-                                            );
-                                          },
-                                          itemCount: state is LoadingMorePickupOrderHistoryState
-                                              ? state.listOrder.length + 1
-                                              : state.listOrder.length,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ]),
+                                              itemCount: state
+                                                      is LoadingMorePickupOrderHistoryState
+                                                  ? state.listOrder.length + 1
+                                                  : state.listOrder.length,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ]),
                             ),
                           ),
                         ],

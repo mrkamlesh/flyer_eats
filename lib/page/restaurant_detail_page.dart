@@ -682,6 +682,20 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
                                                   ],
                                                 )),
                                           );
+                                        } else if (state is OnDataError) {
+                                          return SliverToBoxAdapter(
+                                            child: Container(
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      horizontalPaddingDraggable),
+                                              child: Center(
+                                                child: Text(
+                                                  state.error,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ),
+                                          );
                                         }
                                         return FoodListWidget(
                                           onAdd: (i) {

@@ -230,6 +230,22 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
       case RestaurantViewType.detailList:
         return BlocBuilder<RestaurantListBloc, RestaurantListState>(
           builder: (context, state) {
+            if (state.error != null && state.error != "") {
+              return SliverToBoxAdapter(
+                child: Container(
+                  height: AppUtil.getScreenHeight(context) -
+                      AppUtil.getToolbarHeight(context),
+                  margin: EdgeInsets.symmetric(
+                      horizontal: horizontalPaddingDraggable),
+                  child: Center(
+                    child: Text(
+                      state.error,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              );
+            }
             if (state.restaurants.isEmpty && state.isLoading) {
               return SliverToBoxAdapter(
                 child: Container(
@@ -239,7 +255,8 @@ class _RestaurantListWidgetState extends State<RestaurantListWidget>
             } else if (state.restaurants.isEmpty && !state.isLoading) {
               return SliverToBoxAdapter(
                 child: Container(
-                    height: AppUtil.getScreenHeight(context),
+                    height: AppUtil.getScreenHeight(context) -
+                        AppUtil.getToolbarHeight(context),
                     child: NoRestaurantListWidget()),
               );
             }

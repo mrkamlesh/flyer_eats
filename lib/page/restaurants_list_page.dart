@@ -88,7 +88,7 @@ class _RestaurantListPageState extends State<RestaurantListPage>
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
         return BlocBuilder<FoodOrderBloc, FoodOrderState>(
-          builder: (conetxt, cartState) {
+          builder: (context, cartState) {
             return BlocProvider<RestaurantListBloc>(
               create: (context) {
                 return _bloc

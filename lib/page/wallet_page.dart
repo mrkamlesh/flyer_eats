@@ -117,13 +117,18 @@ class _MyWalletPageState extends State<MyWalletPage> {
                           );
                         } else if (state is ErrorWalletState) {
                           return Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: horizontalPaddingDraggable),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.only(
                                     topRight: Radius.circular(32),
                                     topLeft: Radius.circular(32))),
                             child: Center(
-                              child: Text(state.message),
+                              child: Text(
+                                state.message,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           );
                         }

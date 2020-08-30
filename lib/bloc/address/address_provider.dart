@@ -18,8 +18,9 @@ class AddressProvider {
     try {
       final response = await Dio().get(url);
       responseJson = _returnResponse(response);
-    } on SocketException {
-      throw FetchDataException('No Internet connection');
+    } on DioError {
+      throw AppException(
+          'Connection Lost!. Please check your internet connection', '');
     }
     return responseJson;
   }
@@ -52,8 +53,9 @@ class AddressProvider {
         data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
-    } on SocketException {
-      throw FetchDataException('No Internet connection');
+    } on DioError {
+      throw AppException(
+          'Connection Lost!. Please check your internet connection', '');
     }
 
     return responseJson;
@@ -88,8 +90,9 @@ class AddressProvider {
         data: FormData.fromMap(formData),
       );
       responseJson = _returnResponse(response);
-    } on SocketException {
-      throw FetchDataException('No Internet connection');
+    } on DioError {
+      throw AppException(
+          'Connection Lost!. Please check your internet connection', '');
     }
     return responseJson;
   }
@@ -101,8 +104,9 @@ class AddressProvider {
     try {
       final response = await Dio().get(url);
       responseJson = _returnResponse(response);
-    } on SocketException {
-      throw FetchDataException('No Internet connection');
+    } on DioError {
+      throw AppException(
+          'Connection Lost!. Please check your internet connection', '');
     }
     return responseJson;
   }
@@ -123,8 +127,9 @@ class AddressProvider {
       );
 
       responseJson = _returnResponse(response);
-    } on SocketException {
-      throw FetchDataException('No Internet connection');
+    } on DioError {
+      throw AppException(
+          'Connection Lost!. Please check your internet connection', '');
     }
 
     return responseJson;

@@ -137,7 +137,7 @@ class PredefinedLocationsBloc
             filteredLocations: list);
       }
     } catch (e) {
-      yield ErrorPredefinedLocations("Can not get current location",
+      yield ErrorPredefinedLocations(e.toString(),
           locations: state.locations,
           selectedCountry: state.selectedCountry,
           filteredLocations: []);

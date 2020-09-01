@@ -12,9 +12,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -308,6 +308,32 @@ class DataProvider {
     if (order.getWalletUsed() > 0) {
       formData['wallet_amount'] = order.getWalletUsed().toString();
     }
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on DioError {
+      throw AppException(
+          'Connection Lost!. Please check your internet connection', '');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> initCashfreePayment(
+      String token, String orderAmount, String currencyCode) async {
+    String url =
+        "${serverUrl}mobileapp/apiRest/initializeCashfreePayment?json=true&api_key=flyereats";
+
+    var formData = {
+      "client_token": token,
+      "order_amount": orderAmount,
+      //"currency": currencyCode,
+    };
 
     var responseJson;
     try {

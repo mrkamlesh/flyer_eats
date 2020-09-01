@@ -124,3 +124,10 @@ class MerchantIsClosed extends FoodOrderState {
 class InvalidPlaceOrder extends FoodOrderState {
   InvalidPlaceOrder({PlaceOrder placeOrder}) : super(placeOrder: placeOrder);
 }
+
+class CashFreePaymentFail extends FoodOrderState {
+  final String message;
+
+  CashFreePaymentFail(this.message, {PlaceOrder placeOrder})
+      : super(placeOrder: placeOrder);
+}

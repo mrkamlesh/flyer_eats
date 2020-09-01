@@ -215,3 +215,10 @@ class MarkRestaurantHasShownBusyDialog extends FoodOrderEvent {
   @override
   List<Object> get props => [restaurantId];
 }
+
+class InitCashfreePayment extends FoodOrderEvent {
+  InitCashfreePayment();
+
+  @override
+  List<Object> get props => [];
+}

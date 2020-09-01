@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="in.flyereats.clients">
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -12,7 +13,7 @@
     <application
         android:name=".Application"
         android:icon="@mipmap/launcher_icon"
-        android:label="Flyer Eats">
+        tools:node="merge">
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -35,6 +36,11 @@
             <meta-data
                 android:name="io.flutter.embedding.android.SplashScreenDrawable"
                 android:resource="@drawable/launch_background" />
+
+            <!--Only add it if you need Auto OTP reading feature is enabled Cashfree function-->
+            <meta-data
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

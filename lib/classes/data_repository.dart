@@ -284,6 +284,21 @@ class DataRepository {
     }
   }
 
+  Future<Map<String, String>> initCashfreePayment(
+      String token, String orderAmount, String currencyCode) async {
+    final response =
+        await _provider.initCashfreePayment(token, orderAmount, currencyCode);
+    if (response['code'] == 1) {
+      Map<String, String> result = Map();
+      result['app_id'] = response['details']['app_id'];
+      result['order_id'] = response['details']['order_id'];
+      result['token'] = response['details']['cashfree_token'];
+      return result;
+    } else {
+      throw AppException(response['msg'], '');
+    }
+  }
+
   Future<dynamic> saveProfile(String token, Profile profile) async {
     final response = await _provider.saveProfile(token, profile);
     if (response['code'] == 1) {

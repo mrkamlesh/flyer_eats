@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:cashfree_pg/cashfree_pg.dart';
 import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/classes/data_repository.dart';
 import 'package:clients/model/add_on.dart';
@@ -84,6 +85,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       yield* mapMarkRestaurantHasShownBusyDialogToState(event.restaurantId);
     } else if (event is ChangePaymentReference) {
       yield* maChangePaymentReferenceToState(event.paymentReference);
+    } else if (event is InitCashfreePayment) {
+      yield* mapInitCashfreePaymentToState();
     }
   }
 
@@ -475,5 +478,33 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
     }
 
     yield FoodOrderState(placeOrder: placeOrder);
+  }
+
+  Stream<FoodOrderState> mapInitCashfreePaymentToState() async* {
+    yield LoadingPlaceOrder(placeOrder: state.placeOrder);
+    try {
+      Map<String, String> result = await repository.initCashfreePayment(
+          state.placeOrder.user.token,
+          state.placeOrder.getTotal().toString(),
+          state.placeOrder.restaurant.currencyCode);
+
+      Map<String, dynamic> inputParams = {
+        "orderId": result['order_id'],
+        "orderAmount": state.placeOrder.getTotal().toString(),
+        "customerName": state.placeOrder.user.name,
+        "orderCurrency": state.placeOrder.restaurant.currencyCode,
+        "appId": result['app_id'],
+        "tokenData": result['token'],
+        "customerPhone": state.placeOrder.user.phone,
+        "customerEmail": state.placeOrder.user.username,
+        "stage": "TEST"
+      };
+
+      await CashfreePGSDK.doPayment(inputParams).then((value) {
+        print(value);
+      });
+    } catch (e) {
+      yield CashFreePaymentFail(e.toString(), placeOrder: state.placeOrder);
+    }
   }
 }

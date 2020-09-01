@@ -38,6 +38,9 @@ class PlaceOrder {
   final String stripeSecretKey;
   final String applyVoucherErrorMessage;
   final String paymentReference;
+  /*final String cashfreeAppId;
+  final String cashfreeOrderId;
+  final String cashfreeToken;*/
 
   final List<String> shownBusyDialogRestaurantIds;
 
@@ -74,6 +77,9 @@ class PlaceOrder {
     this.now,
     this.shownBusyDialogRestaurantIds,
     this.paymentReference,
+    /*this.cashfreeAppId,
+    this.cashfreeOrderId,
+    this.cashfreeToken,*/
   });
 
   factory PlaceOrder.fromJson(Map<String, dynamic> parsedJson) {
@@ -169,6 +175,9 @@ class PlaceOrder {
     DateTime now,
     List<String> shownBusyDialogRestaurantIds,
     String paymentReference,
+    /*String cashfreeAppId,
+    String cashfreeOrderId,
+    String cashfreeToken,*/
   }) {
     return PlaceOrder(
         id: id ?? this.id,
@@ -206,7 +215,10 @@ class PlaceOrder {
         now: now ?? this.now,
         shownBusyDialogRestaurantIds:
             shownBusyDialogRestaurantIds ?? this.shownBusyDialogRestaurantIds,
-        paymentReference: paymentReference ?? paymentReference);
+        paymentReference: paymentReference ?? paymentReference,
+        /*cashfreeAppId: cashfreeAppId ?? this.cashfreeAppId,
+        cashfreeOrderId: cashfreeOrderId ?? this.cashfreeOrderId,
+        cashfreeToken: cashfreeToken ?? this.cashfreeToken*/);
   }
 
   String getDeliveryDate() {

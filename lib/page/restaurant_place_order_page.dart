@@ -1572,9 +1572,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
       openRazorPayCheckOut(placeOrder);
     } else if (selectedPaymentMethod == "stp") {
       BlocProvider.of<FoodOrderBloc>(context).add(PlaceOrderStripeEvent());
-    } else if (selectedPaymentMethod == "cfr") {
+    } /*else if (selectedPaymentMethod == "cfr") {
       BlocProvider.of<FoodOrderBloc>(context).add(InitCashfreePayment());
-    }
+    }*/
   }
 
   void _onBackPressed(PlaceOrder placeOrder) {

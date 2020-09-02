@@ -699,7 +699,7 @@ class DataRepository {
       }).toList();
       return categories;
     } else {
-      return List();
+      throw AppException('Merchant has not published their menu yet', '');
     }
   }
 

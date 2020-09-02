@@ -184,7 +184,15 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
                                                                   " " +
                                                                   homeState
                                                                       .homePageData
-                                                                      .referralDiscount);
+                                                                      .referralDiscount,
+                                                              AppUtil.getCurrencyString(
+                                                                      homeState
+                                                                          .homePageData
+                                                                          .currencyCode) +
+                                                                  " " +
+                                                                  homeState
+                                                                      .homePageData
+                                                                      .referralMinOrderAmount);
                                                         }
                                                       : () {},
                                               child: Container(

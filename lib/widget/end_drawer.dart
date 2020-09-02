@@ -226,10 +226,22 @@ class EndDrawer extends StatelessWidget {
                           if (homeState.homePageData.isReferralAvailable) {
                             AppUtil.share(
                                 context,
-                                homeState.homePageData.referralCode,
-                                homeState.homePageData.currencyCode +
+                                homeState.homePageData
+                                    .referralCode,
+                                AppUtil.getCurrencyString(
+                                    homeState
+                                        .homePageData
+                                        .currencyCode) +
                                     " " +
-                                    homeState.homePageData.referralDiscount);
+                                    homeState.homePageData
+                                        .referralDiscount,
+                                AppUtil.getCurrencyString(
+                                    homeState
+                                        .homePageData
+                                        .currencyCode) +
+                                    " " +
+                                    homeState.homePageData
+                                        .referralMinOrderAmount);
                           } else {
                             Fluttertoast.showToast(
                                 msg:

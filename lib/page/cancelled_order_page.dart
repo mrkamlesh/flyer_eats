@@ -242,7 +242,14 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                                                   .currencyCode) +
                                                           " " +
                                                           homeState.homePageData
-                                                              .referralDiscount);
+                                                              .referralDiscount,
+                                                      AppUtil.getCurrencyString(
+                                                              homeState
+                                                                  .homePageData
+                                                                  .currencyCode) +
+                                                          " " +
+                                                          homeState.homePageData
+                                                              .referralMinOrderAmount);
                                                 }
                                               : () {},
                                           child: Container(

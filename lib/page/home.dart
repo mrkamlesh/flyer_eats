@@ -706,14 +706,22 @@ class _HomeState extends State<Home>
                                           onTap: () {
                                             AppUtil.share(
                                                 context,
-                                                homeState
-                                                    .homePageData.referralCode,
+                                                homeState.homePageData
+                                                    .referralCode,
                                                 AppUtil.getCurrencyString(
-                                                        homeState.homePageData
-                                                            .currencyCode) +
+                                                    homeState
+                                                        .homePageData
+                                                        .currencyCode) +
                                                     " " +
                                                     homeState.homePageData
-                                                        .referralDiscount);
+                                                        .referralDiscount,
+                                                AppUtil.getCurrencyString(
+                                                    homeState
+                                                        .homePageData
+                                                        .currencyCode) +
+                                                    " " +
+                                                    homeState.homePageData
+                                                        .referralMinOrderAmount);
                                           },
                                           child: Container(
                                             margin: EdgeInsets.only(

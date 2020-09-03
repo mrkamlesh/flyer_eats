@@ -500,9 +500,18 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         "stage": "TEST"
       };
 
-      await CashfreePGSDK.doPayment(inputParams).then((value) {
-        print(value);
-      });
+      Map<dynamic, dynamic> map = await CashfreePGSDK.doPayment(inputParams);
+
+      if (map['txStatus'] == 'SUCCESS') {
+        add(ChangePaymentReference(map['referenceId']));
+        add(PlaceOrderEvent());
+      } else if (map['txStatus'] == 'CANCELLED') {
+        yield CancelledPlaceOrder("Order Cancelled",
+            placeOrder: state.placeOrder);
+      } else {
+        yield ErrorPlaceOrder("Payment Fail. Please try another payment method",
+            placeOrder: state.placeOrder);
+      }
     } catch (e) {
       yield CashFreePaymentFail(e.toString(), placeOrder: state.placeOrder);
     }

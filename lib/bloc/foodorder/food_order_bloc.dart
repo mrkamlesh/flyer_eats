@@ -517,7 +517,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         "customerPhone": state.placeOrder.user.phone,
         "customerEmail": state.placeOrder.user.username,
         "stage": "TEST"
-      };
+        //"stage": "PROD"
+    };
 
       Map<dynamic, dynamic> map = await CashfreePGSDK.doPayment(inputParams);
 

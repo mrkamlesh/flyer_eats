@@ -1076,7 +1076,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                   onButtonTap: state.placeOrder.isValid &&
                                           !(state is LoadingPlaceOrder)
                                       ? () {
-                                          placeOrderButtonTap(state.placeOrder);
+                                          _placeOrderButtonTap(
+                                              state.placeOrder);
                                         }
                                       : () {},
                                   showCurrency: (state is LoadingGetPayments)
@@ -1098,8 +1099,6 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                           BlocConsumer<FoodOrderBloc, FoodOrderState>(
                             listener: (context, state) async {
                               if (state is SuccessPlaceOrder) {
-                                BlocProvider.of<FoodOrderBloc>(context)
-                                    .add(ClearCart());
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
                                   return PlacedOrderSuccessPage(
@@ -1108,6 +1107,8 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                     address: widget.location.address,
                                   );
                                 }));
+                                BlocProvider.of<FoodOrderBloc>(context)
+                                    .add(ClearCart());
                               } else if (state is ErrorPlaceOrder) {
                                 showDialog(
                                     context: context,
@@ -1265,6 +1266,34 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                 );*/
                                               },
                                               child: Text("OK"))
+                                        ],
+                                      );
+                                    });
+                              } else if (state is CashFreePaymentFail) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        title: Text(
+                                          "Cashfree Failure",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        content: Text(state.message),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              "OK",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
                                         ],
                                       );
                                     });
@@ -1526,7 +1555,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
 
   void handlerExternalWallet(ExternalWalletResponse response) {}
 
-  void placeOrderButtonTap(PlaceOrder placeOrder) {
+  void _placeOrderButtonTap(PlaceOrder placeOrder) {
     if (placeOrder.applyVoucherErrorMessage == null) {
       if ((placeOrder.getTotal() - placeOrder.getWalletUsed()) > 0.0) {
         showPaymentMethodOptions(placeOrder);

@@ -405,7 +405,7 @@ packages:
       name: google_map_location_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.3.4"
+    version: "3.3.5"
   google_maps_flutter:
     dependency: "direct main"
     description:
@@ -1047,7 +1047,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.4.1"
+    version: "4.5.0"
   yaml:
     dependency: transitive
     description:

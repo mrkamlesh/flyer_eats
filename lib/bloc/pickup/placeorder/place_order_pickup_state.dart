@@ -58,3 +58,17 @@ class ErrorRequestOtpChangeContact extends PlaceOrderPickupState {
       {PlaceOrderPickup placeOrderPickup})
       : super(placeOrderPickup: placeOrderPickup);
 }
+
+class CancelledPlaceOrder extends PlaceOrderPickupState {
+  final String message;
+
+  CancelledPlaceOrder(this.message, {PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
+}
+
+class CashFreePaymentFail extends PlaceOrderPickupState {
+  final String message;
+
+  CashFreePaymentFail(this.message, {PlaceOrderPickup placeOrderPickup})
+      : super(placeOrderPickup: placeOrderPickup);
+}

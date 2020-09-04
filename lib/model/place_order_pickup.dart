@@ -1,8 +1,10 @@
 import 'package:clients/model/address.dart';
+import 'package:clients/model/payment_method.dart';
 import 'package:clients/model/pickup.dart';
+import 'package:clients/model/user.dart';
 
 class PlaceOrderPickup {
-  final String token;
+  final User user;
   final bool isValid;
   final String message;
   final String id;
@@ -19,9 +21,28 @@ class PlaceOrderPickup {
   final String distance;
   final String currencyCode;
   final String paymentReference;
+  final String selectedPaymentMethod;
+  final List<PaymentMethod> listPaymentMethod;
+
+  factory PlaceOrderPickup.fromJson(Map<String, dynamic> parsedJson) {
+    var listPaymentMethod = parsedJson['payment_list'] as List;
+    List<PaymentMethod> listPayment = listPaymentMethod.map((i) {
+      return PaymentMethod.fromJson(i);
+    }).toList();
+    return PlaceOrderPickup(
+        isValid: true,
+        stripePublishKey: parsedJson['stripe_publish_key'],
+        stripeSecretKey: parsedJson['stripe_secret_key'],
+        razorSecret: parsedJson['razorpay']['razor_secret'],
+        razorKey: parsedJson['razorpay']['razor_key'],
+        distance: parsedJson['distance'].toString(),
+        currencyCode: parsedJson['currency_code'],
+        listPaymentMethod: listPayment,
+        deliveryAmount: double.parse(parsedJson['price'].toString()));
+  }
 
   PlaceOrderPickup(
-      {this.token,
+      {this.user,
       this.razorKey,
       this.razorSecret,
       this.isValid,
@@ -37,10 +58,12 @@ class PlaceOrderPickup {
       this.currencyCode,
       this.stripePublishKey,
       this.stripeSecretKey,
-      this.paymentReference});
+      this.paymentReference,
+      this.listPaymentMethod,
+      this.selectedPaymentMethod});
 
   PlaceOrderPickup copyWith(
-      {String token,
+      {User user,
       String id,
       PickUp pickUp,
       Address address,
@@ -56,9 +79,11 @@ class PlaceOrderPickup {
       String stripePublishKey,
       String stripeSecretKey,
       String currencyCode,
-      String paymentReference}) {
+      String paymentReference,
+      List<PaymentMethod> listPaymentMethod,
+      String selectedPaymentMethod}) {
     return PlaceOrderPickup(
-        token: token ?? this.token,
+        user: user ?? this.user,
         isValid: isValid ?? this.isValid,
         message: message ?? this.message,
         address: address ?? this.address,
@@ -75,6 +100,9 @@ class PlaceOrderPickup {
         currencyCode: currencyCode ?? this.currencyCode,
         stripePublishKey: stripePublishKey ?? this.stripePublishKey,
         stripeSecretKey: stripeSecretKey ?? this.stripeSecretKey,
-        paymentReference: paymentReference ?? this.paymentReference);
+        paymentReference: paymentReference ?? this.paymentReference,
+        listPaymentMethod: listPaymentMethod ?? this.listPaymentMethod,
+        selectedPaymentMethod:
+            selectedPaymentMethod ?? this.selectedPaymentMethod);
   }
 }

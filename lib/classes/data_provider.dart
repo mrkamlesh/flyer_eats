@@ -12,9 +12,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -308,7 +308,63 @@ class DataProvider {
     if (order.getWalletUsed() > 0) {
       formData['wallet_amount'] = order.getWalletUsed().toString();
     }
-    
+
+    var responseJson;
+    try {
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
+      responseJson = _returnResponse(response);
+    } on DioError {
+      throw AppException(
+          'Connection Lost!. Please check your internet connection', '');
+    }
+
+    return responseJson;
+  }
+
+  Future<dynamic> placeOrderPickup(PlaceOrderPickup placeOrderPickup) async {
+    String url =
+        "${serverUrl}mobileapp/apiRest/placePickupOrder?json=true&api_key=flyereats";
+
+    Map<String, dynamic> formData = {
+      "client_token": placeOrderPickup.user.token,
+      "items": placeOrderPickup.pickUp.items.join(","),
+      "formatted_address": placeOrderPickup.address.address,
+      "address_id": placeOrderPickup.address.id,
+      "google_lng": placeOrderPickup.address.longitude,
+      "pickup_lat": placeOrderPickup.address.latitude,
+      "location_name": placeOrderPickup.location,
+      "contact_phone": placeOrderPickup.contact,
+      "delivery_instruction": placeOrderPickup.pickUp.deliveryInstruction,
+      "street": placeOrderPickup.address.address,
+      /*"change_primary_contact":
+          placeOrderPickup.isChangePrimaryContact ? "1" : "0",*/
+      "pickup_address": placeOrderPickup.pickUp.shop.address,
+      "payment_list": placeOrderPickup.selectedPaymentMethod,
+      "shop_name": placeOrderPickup.pickUp.shop.name,
+      "shop_description": placeOrderPickup.pickUp.shop.description,
+      "pickup_latitude": placeOrderPickup.pickUp.shop.lat.toString(),
+      "pickup_longitude": placeOrderPickup.pickUp.shop.long.toString(),
+      "price": placeOrderPickup.deliveryAmount.toString(),
+      "delivery_date": "",
+      "delivery_time": "",
+    };
+
+    if (placeOrderPickup.paymentReference != null) {
+      formData['payment_id'] = placeOrderPickup.paymentReference;
+    }
+
+    List files = [];
+
+    for (int i = 0; i < placeOrderPickup.pickUp.attachment.length; i++) {
+      files.add(await MultipartFile.fromFile(
+          placeOrderPickup.pickUp.attachment[i].path));
+    }
+
+    formData['thumbnail_file'] = files;
+
     var responseJson;
     try {
       final response = await Dio().post(
@@ -548,61 +604,6 @@ class DataProvider {
       "pickup_long": pickupLng,
       "location": location,
     };
-
-    var responseJson;
-    try {
-      final response = await Dio().post(
-        url,
-        data: FormData.fromMap(formData),
-      );
-      responseJson = _returnResponse(response);
-    } on DioError {
-      throw AppException(
-          'Connection Lost!. Please check your internet connection', '');
-    }
-
-    return responseJson;
-  }
-
-  Future<dynamic> placeOrderPickup(PlaceOrderPickup placeOrderPickup) async {
-    String url =
-        "${serverUrl}mobileapp/apiRest/placePickupOrder?json=true&api_key=flyereats";
-
-    Map<String, dynamic> formData = {
-      "client_token": placeOrderPickup.token,
-      "items": placeOrderPickup.pickUp.items.join(","),
-      "formatted_address": placeOrderPickup.address.address,
-      "address_id": placeOrderPickup.address.id,
-      "google_lng": placeOrderPickup.address.longitude,
-      "pickup_lat": placeOrderPickup.address.latitude,
-      "location_name": placeOrderPickup.location,
-      "contact_phone": placeOrderPickup.contact,
-      "delivery_instruction": placeOrderPickup.pickUp.deliveryInstruction,
-      "street": placeOrderPickup.address.address,
-      /*"change_primary_contact":
-          placeOrderPickup.isChangePrimaryContact ? "1" : "0",*/
-      "pickup_address": placeOrderPickup.pickUp.shop.address,
-      "shop_name": placeOrderPickup.pickUp.shop.name,
-      "shop_description": placeOrderPickup.pickUp.shop.description,
-      "pickup_latitude": placeOrderPickup.pickUp.shop.lat.toString(),
-      "pickup_longitude": placeOrderPickup.pickUp.shop.long.toString(),
-      "price": placeOrderPickup.deliveryAmount.toString(),
-      "delivery_date": "",
-      "delivery_time": "",
-    };
-
-    if (placeOrderPickup.paymentReference != null) {
-      formData['payment_id'] = placeOrderPickup.paymentReference;
-    }
-
-    List files = [];
-
-    for (int i = 0; i < placeOrderPickup.pickUp.attachment.length; i++) {
-      files.add(await MultipartFile.fromFile(
-          placeOrderPickup.pickUp.attachment[i].path));
-    }
-
-    formData['thumbnail_file'] = files;
 
     var responseJson;
     try {

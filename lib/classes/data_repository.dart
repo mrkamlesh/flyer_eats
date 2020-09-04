@@ -431,16 +431,9 @@ class DataRepository {
     final response = await _provider.getDeliveryCharge(
         token, deliveryLat, deliveryLng, pickupLat, pickupLng, location);
     if (response['code'] == 1) {
-      return PlaceOrderPickup(
-          isValid: true,
-          stripePublishKey: response['details']['stripe_publish_key'],
-          stripeSecretKey: response['details']['stripe_secret_key'],
-          razorSecret: response['details']['razorpay']['razor_secret'],
-          razorKey: response['details']['razorpay']['razor_key'],
-          distance: response['details']['distance'].toString(),
-          currencyCode: response['details']['currency_code'],
-          deliveryAmount:
-              double.parse(response['details']['price'].toString()));
+      PlaceOrderPickup placeOrderPickup =
+          PlaceOrderPickup.fromJson(response['details']);
+      return placeOrderPickup;
     } else {
       return PlaceOrderPickup(isValid: false, message: response['msg']);
     }

@@ -8,6 +8,7 @@ import 'package:clients/model/location.dart';
 import 'package:clients/model/place_order_pickup.dart';
 import 'package:clients/page/change_contact_verify_otp.dart';
 import 'package:clients/page/placed_order_success.dart';
+import 'package:clients/widget/payment_method_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,7 @@ import 'package:clients/page/address_page.dart';
 import 'package:clients/widget/app_bar.dart';
 import 'package:clients/widget/end_drawer.dart';
 import 'package:clients/widget/place_order_bottom_navbar.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class DeliveryPlaceOderPage extends StatefulWidget {
@@ -84,7 +86,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
               create: (context) {
                 return _orderPickupBloc
                   ..add(InitPlaceOrder(
-                      loginState.user.token,
+                      loginState.user,
                       widget.pickUp,
                       loginState.user.defaultAddress,
                       loginState.user.phone,
@@ -457,7 +459,7 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                             isValid: state.placeOrderPickup.isValid,
                             onButtonTap: state.placeOrderPickup.isValid
                                 ? () {
-                                    openRazorPayCheckOut(
+                                    _placeOrderButtonTap(
                                         state.placeOrderPickup);
                                   }
                                 : () {},
@@ -571,6 +573,60 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                               _showContactConfirmationDialog(state.newContact);
                             }
                           }
+                        } else if (state is CancelledPlaceOrder) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  title: Text(
+                                    "Place Order Cancelled",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  content: Text(state.message),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else if (state is CashFreePaymentFail) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  title: Text(
+                                    "Cashfree Failure",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  content: Text(state.message),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              });
                         }
                       },
                       builder: (context, state) {
@@ -718,6 +774,60 @@ class _DeliveryPlaceOderPageState extends State<DeliveryPlaceOderPage>
                     )
                   ]));
         });
+  }
+
+  void _placeOrderButtonTap(PlaceOrderPickup placeOrder) {
+    _showPaymentMethodOptions(placeOrder);
+  }
+
+  _showPaymentMethodOptions(PlaceOrderPickup placeOrder) {
+    bool isLoading = false;
+    showMaterialModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        duration: Duration(milliseconds: 200),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
+        builder: (context, controller) {
+          return StatefulBuilder(
+            builder: (context, newState) {
+              return Container(
+                margin: EdgeInsets.symmetric(
+                    vertical: 40, horizontal: horizontalPaddingDraggable - 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
+                  ),
+                ),
+                child: PaymentMethodListWidget(
+                  paymentMethods: placeOrder.listPaymentMethod,
+                  onTap: (i) {
+                    if (!isLoading) {
+                      isLoading = true;
+                      Navigator.pop(context);
+                      _onPaymentOptionsSelected(
+                          placeOrder, placeOrder.listPaymentMethod[i].value);
+                    }
+                  },
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  void _onPaymentOptionsSelected(
+      PlaceOrderPickup placeOrder, selectedPaymentMethod) {
+    _orderPickupBloc.add(SelectPaymentMethod(selectedPaymentMethod));
+    if (selectedPaymentMethod == "rzr") {
+      openRazorPayCheckOut(placeOrder);
+    } else if (selectedPaymentMethod == "stp") {
+      _orderPickupBloc.add(PlaceOrderStripeEvent());
+    } else if (selectedPaymentMethod == "cfr") {
+      _orderPickupBloc.add(InitCashfreePayment());
+    }
   }
 }
 

@@ -8,9 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clients/bloc/currentorder/current_order_bloc.dart';
 import 'package:clients/bloc/login/bloc.dart';
-import 'package:clients/page/home.dart';
 import 'package:clients/page/login/login_number_page.dart';
-import 'package:clients/page/order_history_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -106,12 +104,7 @@ class _MainPageState extends State<MainPage> {
       theme: ThemeData(
           primarySwatch: Colors.blue,
           textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)),
-      initialRoute: "/",
-      routes: {
-        "/": (context) => LoginNumberPage(),
-        "/home": (context) => Home(),
-        "/orderHistory": (context) => OrderHistoryPage(),
-      },
+      home: LoginNumberPage(),
     );
   }
 

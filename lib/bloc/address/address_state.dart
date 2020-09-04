@@ -64,31 +64,6 @@ class NoAddressLoaded extends AddressState {
   List<Object> get props => [];
 }
 
-class PriceCalculateSuccess extends AddressState {
-  final double price;
-
-  const PriceCalculateSuccess(this.price);
-
-  @override
-  List<Object> get props => [price];
-}
-
-class PriceCalculateLoading extends AddressState {
-  const PriceCalculateLoading();
-
-  @override
-  List<Object> get props => [];
-}
-
-class PriceCalculateError extends AddressState {
-  final String message;
-
-  const PriceCalculateError(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
 class AddressUpdated extends AddressState {
   final Address address;
   final bool isUpdated;
@@ -149,4 +124,14 @@ class LoadingTemporaryAddressSuccess extends AddressState {
 
   @override
   List<Object> get props => [address];
+}
+
+class SuccessGetLocation extends AddressState {
+  final double lat;
+  final double lng;
+
+  const SuccessGetLocation(this.lat, this.lng);
+
+  @override
+  List<Object> get props => [lat, lng];
 }

@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:clients/model/shop.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -45,10 +44,11 @@ class PageOpen extends ChooseShopEvent {
 }
 
 class UpdateLatLng extends ChooseShopEvent {
-  final LatLng latLng;
+  final double lat;
+  final double lng;
 
-  UpdateLatLng(this.latLng);
+  UpdateLatLng(this.lat, this.lng);
 
   @override
-  List<Object> get props => [latLng];
+  List<Object> get props => [lat, lng];
 }

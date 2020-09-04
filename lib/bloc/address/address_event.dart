@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:clients/model/address.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -32,16 +31,6 @@ class OpenAddress extends AddressEvent {
 
   @override
   List<Object> get props => [id, token];
-}
-
-class CalculatePrice extends AddressEvent {
-  final Address from;
-  final Address to;
-
-  const CalculatePrice(this.from, this.to);
-
-  @override
-  List<Object> get props => [from, to];
 }
 
 class AddAddress extends AddressEvent {
@@ -86,7 +75,6 @@ class ValidatingAddress extends AddressEvent {
 }
 
 class AddressAddPageOpen extends AddressEvent {
-
   const AddressAddPageOpen();
 
   @override
@@ -94,12 +82,13 @@ class AddressAddPageOpen extends AddressEvent {
 }
 
 class UpdateAddressLocation extends AddressEvent {
-  final LatLng latLng;
+  final double lat;
+  final double lng;
 
-  const UpdateAddressLocation(this.latLng);
+  const UpdateAddressLocation(this.lat, this.lng);
 
   @override
-  List<Object> get props => [latLng];
+  List<Object> get props => [lat, lng];
 }
 
 class UpdateAddressInformation extends AddressEvent {

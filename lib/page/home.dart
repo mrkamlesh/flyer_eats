@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:clients/model/location.dart';
 import 'package:clients/model/scratch_card.dart';
 import 'package:clients/page/cancelled_order_page.dart';
-import 'package:clients/page/delivery_process_order_page.dart';
+import 'package:clients/page/pickup_process_order_page.dart';
 import 'package:clients/page/restaurants_list_page.dart';
 import 'package:clients/page/select_location_page.dart';
 import 'package:clients/page/track_order_page.dart';

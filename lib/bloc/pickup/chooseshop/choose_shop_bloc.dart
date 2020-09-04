@@ -6,7 +6,6 @@ import 'package:clients/classes/app_util.dart';
 import 'package:clients/model/shop.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'bloc.dart';
 
 class ChooseShopBloc extends Bloc<ChooseShopEvent, ChooseShopState> {
@@ -26,7 +25,7 @@ class ChooseShopBloc extends Bloc<ChooseShopEvent, ChooseShopState> {
     } else if (event is PageOpen) {
       yield* mapPageOpenToState(event.shop);
     } else if (event is UpdateLatLng) {
-      yield* mapUpdateLatLngToState(event.latLng);
+      yield* mapUpdateLatLngToState(event.lat, event.lng);
     }
   }
 
@@ -57,11 +56,18 @@ class ChooseShopBloc extends Bloc<ChooseShopEvent, ChooseShopState> {
               "");
         });
 
-        String address = await _getGeolocationAddress(
-            LatLng(position.latitude, position.longitude));
+        if (position != null) {
+          yield SuccessGetCurrentLocation(position.latitude, position.longitude,
+              shop: state.shop);
+        }
+
+        String address =
+            await _getGeolocationAddress(position.latitude, position.longitude);
 
         yield ChooseShopState(
             shop: Shop(
+                name: state.shop.name,
+                description: state.shop.description,
                 long: position.longitude,
                 lat: position.latitude,
                 address: address));
@@ -73,23 +79,26 @@ class ChooseShopBloc extends Bloc<ChooseShopEvent, ChooseShopState> {
         yield ErrorState(e.toString(), shop: shop);
       }
     } else {
+      yield LoadingState(shop: shop);
+      await Future.delayed(Duration(milliseconds: 500));
+      yield SuccessGetCurrentLocation(shop.lat, shop.long, shop: shop);
       yield ChooseShopState(shop: shop);
     }
   }
 
-  Stream<ChooseShopState> mapUpdateLatLngToState(LatLng latLng) async* {
+  Stream<ChooseShopState> mapUpdateLatLngToState(
+      double lat, double lng) async* {
     yield LoadingState(shop: state.shop);
 
-    String address = await _getGeolocationAddress(latLng);
+    String address = await _getGeolocationAddress(lat, lng);
 
     yield ChooseShopState(
-        shop: state.shop.copyWith(
-            lat: latLng.latitude, long: latLng.longitude, address: address));
+        shop: state.shop.copyWith(lat: lat, long: lng, address: address));
   }
 
-  Future<String> _getGeolocationAddress(LatLng latLng) async {
-    List<Placemark> placeMark = await Geolocator()
-        .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+  Future<String> _getGeolocationAddress(double lat, double lng) async {
+    List<Placemark> placeMark =
+        await Geolocator().placemarkFromCoordinates(lat, lng);
 
     String thoroughfare =
         (placeMark[0].thoroughfare != "" && placeMark[0].thoroughfare != null)

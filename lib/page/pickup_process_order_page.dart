@@ -12,12 +12,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
-import 'package:clients/page/delivery_pickup_location.dart';
+import 'package:clients/page/pickup_choose_shop_location.dart';
 import 'package:clients/widget/app_bar.dart';
 import 'package:clients/widget/end_drawer.dart';
 import 'package:clients/widget/place_order_bottom_navbar.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:clients/page/delivery_place_order_page.dart';
+import 'package:clients/page/pickup_place_order_page.dart';
 
 class DeliveryProcessOrderPage extends StatefulWidget {
   final Location location;

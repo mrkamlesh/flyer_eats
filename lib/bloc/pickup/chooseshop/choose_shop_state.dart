@@ -19,3 +19,11 @@ class ErrorState extends ChooseShopState {
 
   ErrorState(this.message, {Shop shop}) : super(shop: shop);
 }
+
+class SuccessGetCurrentLocation extends ChooseShopState {
+  final double lat;
+  final double lng;
+
+  SuccessGetCurrentLocation(this.lat, this.lng, {Shop shop})
+      : super(shop: shop);
+}

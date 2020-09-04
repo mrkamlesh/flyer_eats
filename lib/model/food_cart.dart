@@ -62,7 +62,7 @@ class FoodCart {
     if (quantity == 0) {
       multipleItemCart.removeAt(index);
     } else {
-      multipleItemCart[index].quantity = quantity;
+      multipleItemCart[index].quantity = multipleItemCart[index].quantity - 1;
     }
   }
 
@@ -113,9 +113,8 @@ class FoodCart {
       Map<String, dynamic> cartItem = Map();
       cartItem['item_id'] = foodCartItem.food.id;
       cartItem['qty'] = foodCartItem.quantity;
-      cartItem['price'] = foodCartItem.price.price.toString() +
-          "|" +
-          foodCartItem.food.price.size;
+      cartItem['price'] =
+          foodCartItem.price.price.toString() + "|" + foodCartItem.price.size;
       //cartItem['sub_item'] = List<Map<String, dynamic>>();
       List<Map<String, dynamic>> addOnList = List();
       foodCartItem.addOns.forEach((addOn) {

@@ -34,6 +34,13 @@ class CurrentLocationBloc
             "");
       });
 
+      if (position != null) {
+        yield SuccessCurrentLocationState(
+            address: state.address,
+            lat: position.latitude,
+            lng: position.longitude);
+      }
+
       List<Placemark> placeMark = await Geolocator()
           .placemarkFromCoordinates(position.latitude, position.longitude);
 

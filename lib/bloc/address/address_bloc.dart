@@ -3,10 +3,10 @@ import 'package:bloc/bloc.dart';
 import 'package:clients/bloc/address/address_repository.dart';
 import 'package:clients/bloc/address/bloc.dart';
 import 'package:clients/classes/app_exceptions.dart';
+import 'package:clients/classes/app_util.dart';
 import 'package:clients/model/address.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AddressBloc extends Bloc<AddressEvent, AddressState> {
   final AddressRepository addressRepository;
@@ -26,12 +26,10 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       yield* mapOpenListAddressToState(event.token);
     } else if (event is OpenAddress) {
       yield* mapOpenAddressToState(event.id, event.token);
-    } else if (event is CalculatePrice) {
-      yield* mapCalculatePriceToState(event.from, event.to);
     } else if (event is AddressAddPageOpen) {
-      yield* mapAddressPageOpenToState();
+      yield* mapAddressAddPageOpenToState();
     } else if (event is UpdateAddressLocation) {
-      yield* mapUpdateAddressLocationToState(event.latLng);
+      yield* mapUpdateAddressLocationToState(event.lat, event.lng);
     } else if (event is UpdateAddressInformation) {
       yield* mapUpdateAddressInformationToState(event);
     } else if (event is AddAddress) {
@@ -65,22 +63,10 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapCalculatePriceToState(
-      Address from, Address to) async* {
-    yield PriceCalculateLoading();
-    try {
-      // You should get price from repository or API Call here
-
-      //
-      yield PriceCalculateSuccess(20.0);
-    } catch (e) {
-      yield PriceCalculateError(e.toString());
-    }
-  }
-
-  Stream<AddressState> mapAddressPageOpenToState() async* {
+  Stream<AddressState> mapAddressAddPageOpenToState() async* {
     address = Address(null, null, null, AddressType.home, isDefault: false);
     yield LoadingTemporaryAddress();
+    await AppUtil.checkLocationServiceAndPermission();
     try {
       Position position = await Geolocator()
           .getCurrentPosition(desiredAccuracy: LocationAccuracy.medium)
@@ -90,7 +76,11 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
             "");
       });
 
-      add(UpdateAddressLocation(LatLng(position.latitude, position.longitude)));
+      if (position != null) {
+        yield SuccessGetLocation(position.latitude, position.longitude);
+      }
+
+      add(UpdateAddressLocation(position.latitude, position.longitude));
     } on PlatformException {
       yield LoadingTemporaryAddressError(
           "Unable to fetch your Current Location, Click the MAP to select the address");
@@ -100,11 +90,12 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
   }
 
-  Stream<AddressState> mapUpdateAddressLocationToState(LatLng latLng) async* {
+  Stream<AddressState> mapUpdateAddressLocationToState(
+      double lat, double lng) async* {
     yield LoadingTemporaryAddress();
     try {
-      List<Placemark> placeMark = await Geolocator()
-          .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+      List<Placemark> placeMark =
+          await Geolocator().placemarkFromCoordinates(lat, lng);
 
       String thoroughfare =
           (placeMark[0].thoroughfare != "" && placeMark[0].thoroughfare != null)
@@ -147,8 +138,8 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
           state: placeMark[0].administrativeArea,
           city: placeMark[0].locality,
           zipCode: placeMark[0].postalCode,
-          latitude: latLng.latitude.toString(),
-          longitude: latLng.longitude.toString());
+          latitude: lat.toString(),
+          longitude: lng.toString());
       address = newAddress;
       yield LoadingTemporaryAddressSuccess(newAddress, isFromMap: true);
     } catch (e) {
@@ -198,6 +189,9 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     address = addressEvent;
     yield LoadingTemporaryAddress();
     try {
+      await Future.delayed(Duration(milliseconds: 500));
+      yield SuccessGetLocation(
+          double.parse(address.latitude), double.parse(address.longitude));
       yield LoadingTemporaryAddressSuccess(addressEvent, isFromMap: true);
     } catch (e) {
       yield LoadingTemporaryAddressError("Can not get current location");

@@ -1,5 +1,6 @@
 import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/bloc/location/predefinedlocations/bloc.dart';
+import 'package:clients/page/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -480,7 +481,12 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
   void _onTapRedirectToHomePage(i, String token, Location location) {
     BlocProvider.of<HomeBloc>(context)
         .add(GetHomeDataByLocation(location, token));
-    Navigator.pushReplacementNamed(context, "/home");
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return Home();
+      }),
+    );
   }
 
   Future<bool> _onBackPressed() async {

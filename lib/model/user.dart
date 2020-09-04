@@ -11,6 +11,7 @@ class User {
   final String location;
   final String countryCode;
   final String lastLocation;
+  final String mapBoxToken;
 
   User(
       {this.avatar,
@@ -22,7 +23,8 @@ class User {
       this.username,
       this.location,
       this.countryCode,
-      this.lastLocation});
+      this.lastLocation,
+      this.mapBoxToken});
 
   factory User.fromJson(Map<String, dynamic> parsedJson) {
     Address defaultAddress = parsedJson['default_address'] == false
@@ -50,6 +52,7 @@ class User {
         location: parsedJson['location_name'],
         countryCode: parsedJson['country_code'],
         lastLocation: parsedJson['last_location'],
+        mapBoxToken: parsedJson['map_key'],
         defaultAddress: defaultAddress);
   }
 

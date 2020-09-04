@@ -156,12 +156,31 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       if (food.isSingleItem) {
         newCart.changeSingleItemFoodQuantity(id, food, quantity, price, addOns);
       } else {
+
         if (isIncrease) {
+          newCart.multipleItemCart
+              .add(FoodCartItem("", food, quantity, price, addOns));
+        } else {
+          int index = newCart.multipleItemCart.lastIndexWhere((element) {
+            if (element.food.id == food.id) {
+              return true;
+            }
+            return false;
+          });
+
+          newCart.multipleItemCart[index].quantity =
+              newCart.multipleItemCart[index].quantity - 1;
+          if (newCart.multipleItemCart[index].quantity == 0) {
+            newCart.multipleItemCart.removeAt(index);
+          }
+        }
+
+        /*if (isIncrease) {
           newCart.addMultipleItemFoodToCart(food, quantity, price, addOns);
         } else {
           newCart.subtractMultipleItemFoodFromCart(
               food, quantity, price, addOns);
-        }
+        }*/
       }
 
       if (newCart.cartItemTotal() > 0) {

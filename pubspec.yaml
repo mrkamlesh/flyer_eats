@@ -171,6 +171,7 @@ flutter:
     - assets/warnings.svg
     - assets/notification_icon.png
     - assets/scratch_won_icon.svg
+    - assets/driver icon.png
     - assets/no connection icon.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see

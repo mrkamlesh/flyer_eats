@@ -8,7 +8,7 @@ import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/status_order.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 
 class TrackOrderPage extends StatefulWidget {
   const TrackOrderPage({Key key}) : super(key: key);
@@ -21,6 +21,8 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
   final double initLat = 28.620446;
   final double initLng = 77.227515;
 
+  MapboxMapController mapController;
+
   @override
   void initState() {
     super.initState();
@@ -28,158 +30,225 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CurrentOrderBloc, CurrentOrderState>(
-      builder: (context, state) {
-        return Scaffold(
-          body: Stack(
-            children: <Widget>[
-              Positioned(
-                top: 0,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    width: AppUtil.getScreenWidth(context),
-                    height: AppUtil.getBannerHeight(context),
-                    child: GoogleMap(
-                      mapType: MapType.normal,
-                      zoomControlsEnabled: true,
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: true,
-                      zoomGesturesEnabled: true,
-                      padding: EdgeInsets.all(32),
-                      compassEnabled: true,
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(initLat, initLng),
-                        zoom: 15.5,
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, loginState) {
+        return BlocConsumer<CurrentOrderBloc, CurrentOrderState>(
+          listener: (context, state) {
+            if (state is SuccessState) {
+              if (state.currentOrder.driverLatitude != null &&
+                  state.currentOrder.driverLongitude != null) {
+                _animateCameraToPosition(LatLng(
+                    state.currentOrder.driverLatitude,
+                    state.currentOrder.driverLongitude));
+              }
+            }
+          },
+          builder: (context, state) {
+            return Scaffold(
+              body: Stack(
+                children: <Widget>[
+                  Positioned(
+                    top: 0,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        width: AppUtil.getScreenWidth(context),
+                        height: AppUtil.getBannerHeight(context),
+                        child: MapboxMap(
+                          accessToken: loginState.user.mapBoxToken,
+                          onMapCreated: _onMapCreated,
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(initLat, initLng),
+                            zoom: 13.0,
+                          ),
+                          trackCameraPosition: true,
+                          compassEnabled: false,
+                          cameraTargetBounds: CameraTargetBounds.unbounded,
+                          minMaxZoomPreference: MinMaxZoomPreference.unbounded,
+                          styleString: MapboxStyles.MAPBOX_STREETS,
+                          rotateGesturesEnabled: true,
+                          scrollGesturesEnabled: true,
+                          tiltGesturesEnabled: true,
+                          zoomGesturesEnabled: true,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              DraggableScrollableSheet(
-                initialChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
-                minChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
-                maxChildSize: AppUtil.getDraggableHeight(context) / AppUtil.getScreenHeight(context),
-                builder: (context, controller) {
-                  if (state is ErrorState) {
-                    return Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                      padding: EdgeInsets.only(top: 10, bottom: 32),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Connection Error",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          BlocBuilder<LoginBloc, LoginState>(
-                            builder: (context, loginState) {
-                              return GestureDetector(
-                                onTap: () {
-                                  BlocProvider.of<CurrentOrderBloc>(context).add(Retry(loginState.user.token));
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                                  decoration: BoxDecoration(color: primary3, borderRadius: BorderRadius.circular(10)),
-                                  child: Text(
-                                    "RETRY",
-                                    style: TextStyle(color: Colors.white, fontSize: 20),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  } else if (state is LoadingState) {
-                    return Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                      padding: EdgeInsets.only(top: 10, bottom: 32),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Retrying...",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          SpinKitCircle(
-                            color: Colors.black38,
-                            size: 30,
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  if (state.currentOrder.statusOrder == null) {
-                    return Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                      padding: EdgeInsets.only(top: 10, bottom: 32),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  return Container(
-                    height: AppUtil.getDraggableHeight(context),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(topRight: Radius.circular(32), topLeft: Radius.circular(32))),
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(
-                          child: StatusItemWidget(
-                            status: StatusOrder(status: "Order Placed"),
-                            isActive: state.currentOrder.statusOrder.status == "Order Placed",
-                          ),
-                        ),
-                        state.currentOrder.isPickupOrder()
-                            ? Expanded(
-                                child: StatusItemWidget(
-                                  status: StatusOrder(status: "Accepted"),
-                                  isActive: state.currentOrder.statusOrder.status == "Accepted",
-                                ),
-                              )
-                            : Expanded(
-                                child: StatusItemWidget(
-                                  status: StatusOrder(status: "Food Preparing"),
-                                  isActive: state.currentOrder.statusOrder.status == "Food Preparing",
-                                ),
+                  DraggableScrollableSheet(
+                    initialChildSize: AppUtil.getDraggableHeight(context) /
+                        AppUtil.getScreenHeight(context),
+                    minChildSize: AppUtil.getDraggableHeight(context) /
+                        AppUtil.getScreenHeight(context),
+                    maxChildSize: AppUtil.getDraggableHeight(context) /
+                        AppUtil.getScreenHeight(context),
+                    builder: (context, controller) {
+                      if (state is ErrorState) {
+                        return Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
+                          padding: EdgeInsets.only(top: 10, bottom: 32),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Connection Error",
+                                style: TextStyle(fontSize: 16),
                               ),
-                        Expanded(
-                          child: StatusItemWidget(
-                            status: StatusOrder(status: "On the way"),
-                            isActive: state.currentOrder.statusOrder.status == "On the way",
+                              SizedBox(
+                                height: 20,
+                              ),
+                              BlocBuilder<LoginBloc, LoginState>(
+                                builder: (context, loginState) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      BlocProvider.of<CurrentOrderBloc>(context)
+                                          .add(Retry(loginState.user.token));
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 20),
+                                      decoration: BoxDecoration(
+                                          color: primary3,
+                                          borderRadius:
+                                          BorderRadius.circular(10)),
+                                      child: Text(
+                                        "RETRY",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ),
-                        Expanded(
-                          child: StatusItemWidget(
-                            status: StatusOrder(status: "Delivered"),
-                            isActive: state.currentOrder.statusOrder.status == "Delivered",
+                        );
+                      } else if (state is LoadingState) {
+                        return Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
+                          padding: EdgeInsets.only(top: 10, bottom: 32),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Retrying...",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              SpinKitCircle(
+                                color: Colors.black38,
+                                size: 30,
+                              ),
+                            ],
                           ),
+                        );
+                      }
+                      if (state.currentOrder.statusOrder == null) {
+                        return Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(32),
+                                  topLeft: Radius.circular(32))),
+                          padding: EdgeInsets.only(top: 10, bottom: 32),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                      return Container(
+                        height: AppUtil.getDraggableHeight(context),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(32),
+                                topLeft: Radius.circular(32))),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: StatusItemWidget(
+                                status: StatusOrder(status: "Order Placed"),
+                                isActive:
+                                state.currentOrder.statusOrder.status ==
+                                    "Order Placed",
+                              ),
+                            ),
+                            state.currentOrder.isPickupOrder()
+                                ? Expanded(
+                              child: StatusItemWidget(
+                                status: StatusOrder(status: "Accepted"),
+                                isActive: state.currentOrder.statusOrder
+                                    .status ==
+                                    "Accepted",
+                              ),
+                            )
+                                : Expanded(
+                              child: StatusItemWidget(
+                                status:
+                                StatusOrder(status: "Food Preparing"),
+                                isActive: state.currentOrder.statusOrder
+                                    .status ==
+                                    "Food Preparing",
+                              ),
+                            ),
+                            Expanded(
+                              child: StatusItemWidget(
+                                status: StatusOrder(status: "On the way"),
+                                isActive:
+                                state.currentOrder.statusOrder.status ==
+                                    "On the way",
+                              ),
+                            ),
+                            Expanded(
+                              child: StatusItemWidget(
+                                status: StatusOrder(status: "Delivered"),
+                                isActive:
+                                state.currentOrder.statusOrder.status ==
+                                    "Delivered",
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                },
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
+  }
+
+  _onMapCreated(MapboxMapController controller) {
+    mapController = controller;
+  }
+
+  _animateCameraToPosition(LatLng latLng) async {
+    if (mapController != null) {
+      mapController.removeSymbols(mapController.symbols);
+      mapController.addSymbol(SymbolOptions(
+        geometry: latLng,
+        iconSize: 0.6,
+        iconImage: "assets/location.png",
+      ));
+      mapController.moveCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: latLng,
+          zoom: 13.0,
+        ),
+      ));
+    }
   }
 }
 
@@ -187,7 +256,8 @@ class StatusItemWidget extends StatelessWidget {
   final StatusOrder status;
   final bool isActive;
 
-  const StatusItemWidget({Key key, this.status, this.isActive}) : super(key: key);
+  const StatusItemWidget({Key key, this.status, this.isActive})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -196,18 +266,19 @@ class StatusItemWidget extends StatelessWidget {
         bottom: 10,
       ),
       duration: Duration(milliseconds: 300),
-      padding: EdgeInsets.symmetric(vertical: 15, horizontal: horizontalPaddingDraggable),
+      padding: EdgeInsets.symmetric(
+          vertical: 15, horizontal: horizontalPaddingDraggable),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(32),
           boxShadow: isActive
               ? [
-                  BoxShadow(
-                    color: primary3,
-                    blurRadius: 10,
-                    spreadRadius: -3,
-                  )
-                ]
+            BoxShadow(
+              color: primary3,
+              blurRadius: 10,
+              spreadRadius: -3,
+            )
+          ]
               : []),
       child: AnimatedOpacity(
         opacity: isActive ? 1.0 : 0.3,
@@ -233,7 +304,8 @@ class StatusItemWidget extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         status.status,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
                         height: 10,

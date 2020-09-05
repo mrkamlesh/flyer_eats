@@ -510,11 +510,6 @@ class _AddressPageState extends State<AddressPage> {
 
   _onMapCreated(MapboxMapController controller) {
     mapController = controller;
-    mapController.addSymbol(SymbolOptions(
-      geometry: LatLng(-33.86711, 151.1947171),
-      draggable: false,
-      iconImage: "assets/location.png",
-    ));
   }
 
   _animateCameraToPosition(LatLng latLng) async {

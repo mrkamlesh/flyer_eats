@@ -12,9 +12,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  //String serverUrl = "http://flyereats.in/";
+  String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -989,10 +989,18 @@ class DataProvider {
 
   Future<dynamic> getCategory(String restaurantId) async {
     String url =
-        "${serverUrl}mobileapp/apinew/MenuCategory?json=true&merchant_id=$restaurantId&api_key=flyereats";
+        "${serverUrl}mobileapp/apiRest/menuCategory?json=true&api_key=flyereats";
+
+    Map<String, dynamic> formData = {
+      "merchant_id": restaurantId,
+    };
+
     var responseJson;
     try {
-      final response = await Dio().get(url);
+      final response = await Dio().post(
+        url,
+        data: FormData.fromMap(formData),
+      );
       responseJson = _returnResponse(response);
     } on DioError {
       throw AppException(

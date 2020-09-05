@@ -38,49 +38,45 @@ class PlaceOrder {
   final String stripeSecretKey;
   final String applyVoucherErrorMessage;
   final String paymentReference;
-  /*final String cashfreeAppId;
-  final String cashfreeOrderId;
-  final String cashfreeToken;*/
+  final bool isBusy;
 
   final List<String> shownBusyDialogRestaurantIds;
 
-  PlaceOrder({
-    this.id,
-    this.isValid,
-    this.isMerchantOpen,
-    this.message,
-    this.restaurant,
-    this.user,
-    this.transactionType,
-    this.foodCart,
-    this.address,
-    this.voucher,
-    this.applyVoucherErrorMessage,
-    this.selectedPaymentMethod,
-    this.razorKey,
-    this.razorSecret,
-    this.stripePublishKey,
-    this.stripeSecretKey,
-    this.deliveryInstruction,
-    this.contact,
-    this.deliveryCharges,
-    this.packagingCharges,
-    this.taxCharges,
-    this.taxPrettyString,
-    this.discountOrder,
-    this.discountOrderPrettyString,
-    this.walletAmount,
-    this.isUseWallet,
-    this.isChangePrimaryContact,
-    this.listPaymentMethod,
-    this.selectedDeliveryTime,
-    this.now,
-    this.shownBusyDialogRestaurantIds,
-    this.paymentReference,
-    /*this.cashfreeAppId,
-    this.cashfreeOrderId,
-    this.cashfreeToken,*/
-  });
+  PlaceOrder(
+      {this.id,
+      this.isValid,
+      this.isMerchantOpen,
+      this.message,
+      this.restaurant,
+      this.user,
+      this.transactionType,
+      this.foodCart,
+      this.address,
+      this.voucher,
+      this.applyVoucherErrorMessage,
+      this.selectedPaymentMethod,
+      this.razorKey,
+      this.razorSecret,
+      this.stripePublishKey,
+      this.stripeSecretKey,
+      this.deliveryInstruction,
+      this.contact,
+      this.deliveryCharges,
+      this.packagingCharges,
+      this.taxCharges,
+      this.taxPrettyString,
+      this.discountOrder,
+      this.discountOrderPrettyString,
+      this.walletAmount,
+      this.isUseWallet,
+      this.isChangePrimaryContact,
+      this.listPaymentMethod,
+      this.selectedDeliveryTime,
+      this.now,
+      this.shownBusyDialogRestaurantIds,
+      this.paymentReference,
+      this.isBusy
+      });
 
   factory PlaceOrder.fromJson(Map<String, dynamic> parsedJson) {
     var listPaymentMethod = parsedJson['details']['payment_list'] as List;
@@ -136,6 +132,7 @@ class PlaceOrder {
       walletAmount: double.parse(
         parsedJson['details']['wallet_amount'].toString(),
       ),
+      isBusy: parsedJson['details']['is_busy'],
       listPaymentMethod: listPayment,
       applyVoucherErrorMessage: applyVoucherMessage,
       voucher: voucher,
@@ -175,9 +172,7 @@ class PlaceOrder {
     DateTime now,
     List<String> shownBusyDialogRestaurantIds,
     String paymentReference,
-    /*String cashfreeAppId,
-    String cashfreeOrderId,
-    String cashfreeToken,*/
+    bool isBusy,
   }) {
     return PlaceOrder(
         id: id ?? this.id,
@@ -216,9 +211,8 @@ class PlaceOrder {
         shownBusyDialogRestaurantIds:
             shownBusyDialogRestaurantIds ?? this.shownBusyDialogRestaurantIds,
         paymentReference: paymentReference ?? paymentReference,
-        /*cashfreeAppId: cashfreeAppId ?? this.cashfreeAppId,
-        cashfreeOrderId: cashfreeOrderId ?? this.cashfreeOrderId,
-        cashfreeToken: cashfreeToken ?? this.cashfreeToken*/);
+        isBusy: isBusy ?? this.isBusy
+        );
   }
 
   String getDeliveryDate() {
@@ -236,7 +230,7 @@ class PlaceOrder {
   List<DateTime> getDeliveryTimeOptions() {
     List<DateTime> list = List();
 
-    DateTime tresshold = DateTime(
+    DateTime tressHold = DateTime(
       this.now.year,
       this.now.month,
       this.now.day,
@@ -257,7 +251,7 @@ class PlaceOrder {
     do {
       list.add(i);
       i = i.add(Duration(minutes: 15));
-    } while (i.isBefore(tresshold));
+    } while (i.isBefore(tressHold));
     return list;
   }
 

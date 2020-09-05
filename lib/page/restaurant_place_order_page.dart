@@ -287,7 +287,7 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                     SliverPersistentHeader(
                                       delegate: DeliveryOptions(
                                           showDeliveryOptions:
-                                              state.placeOrder.restaurant.isBusy
+                                              state.placeOrder.isBusy
                                                   ? false
                                                   : true),
                                       pinned: true,

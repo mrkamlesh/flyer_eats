@@ -156,7 +156,6 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       if (food.isSingleItem) {
         newCart.changeSingleItemFoodQuantity(id, food, quantity, price, addOns);
       } else {
-
         if (isIncrease) {
           newCart.multipleItemCart
               .add(FoodCartItem("", food, quantity, price, addOns));
@@ -208,6 +207,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
             isValid: true,
             address: user.defaultAddress,
             contact: state.placeOrder.contact ?? user.phone,
+            isBusy: state.placeOrder.restaurant.isBusy,
             transactionType:
                 state.placeOrder.restaurant.isBusy ? 'pickup' : 'delivery',
             deliveryInstruction: '',
@@ -269,6 +269,9 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
                 walletAmount: result.walletAmount,
                 listPaymentMethod: result.listPaymentMethod,
                 applyVoucherMessage: result.applyVoucherErrorMessage,
+                isBusy: result.isBusy,
+                transactionType:
+                    result.isBusy ? "pickup" : state.placeOrder.transactionType,
                 voucher: result.voucher ??
                     state.placeOrder.voucher.copyWith(amount: 0, rate: 0)));
       } else {
@@ -518,7 +521,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
         "customerEmail": state.placeOrder.user.username,
         "stage": "TEST"
         //"stage": "PROD"
-    };
+      };
 
       Map<dynamic, dynamic> map = await CashfreePGSDK.doPayment(inputParams);
 

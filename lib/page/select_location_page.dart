@@ -481,12 +481,9 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
   void _onTapRedirectToHomePage(i, String token, Location location) {
     BlocProvider.of<HomeBloc>(context)
         .add(GetHomeDataByLocation(location, token));
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) {
-        return Home();
-      }),
-    );
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+      return Home();
+    }), (Route<dynamic> route) => false);
   }
 
   Future<bool> _onBackPressed() async {

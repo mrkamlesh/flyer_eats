@@ -12,9 +12,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  //String serverUrl = "http://flyereats.in/";
+  String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -256,6 +256,8 @@ class DataProvider {
       "is_updated_app": "1",
       //this is additional param to detect new release app
     };
+
+    print(formData);
 
     var responseJson;
     try {

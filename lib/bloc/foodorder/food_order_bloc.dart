@@ -270,8 +270,11 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
                 listPaymentMethod: result.listPaymentMethod,
                 applyVoucherMessage: result.applyVoucherErrorMessage,
                 isBusy: result.isBusy,
-                transactionType:
-                    result.isBusy ? "pickup" : state.placeOrder.transactionType,
+                transactionType: result.isBusy
+                    ? "pickup"
+                    : (!result.isBusy && state.placeOrder.isBusy)
+                        ? "delivery"
+                        : state.placeOrder.transactionType,
                 voucher: result.voucher ??
                     state.placeOrder.voucher.copyWith(amount: 0, rate: 0)));
       } else {

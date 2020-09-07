@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -8,7 +10,8 @@ import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/status_order.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:mapbox_gl/mapbox_gl.dart' as mapBox;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TrackOrderPage extends StatefulWidget {
   const TrackOrderPage({Key key}) : super(key: key);
@@ -21,7 +24,9 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
   final double initLat = 28.620446;
   final double initLng = 77.227515;
 
-  MapboxMapController mapController;
+  mapBox.MapboxMapController mapController;
+  Completer<GoogleMapController> _controller = Completer();
+  Marker marker;
 
   @override
   void initState() {
@@ -37,13 +42,28 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
             if (state is SuccessState) {
               if (state.currentOrder.driverLatitude != null &&
                   state.currentOrder.driverLongitude != null) {
-                _animateCameraToPosition(LatLng(
-                    state.currentOrder.driverLatitude,
-                    state.currentOrder.driverLongitude));
+                if (!(loginState.user.isGoogleMapsUsed())) {
+                  _animateMapBoxCameraToPosition(mapBox.LatLng(
+                      state.currentOrder.driverLatitude,
+                      state.currentOrder.driverLongitude));
+                }
               }
             }
           },
           builder: (context, state) {
+            if (loginState.user.isGoogleMapsUsed()) {
+              if (state.currentOrder.driverLatitude != null &&
+                  state.currentOrder.driverLongitude != null) {
+                marker = Marker(
+                    markerId: MarkerId("location"),
+                    position: LatLng(state.currentOrder.driverLatitude,
+                        state.currentOrder.driverLongitude),
+                    icon: BitmapDescriptor.defaultMarker);
+                _animateGoogleMapCameraToPosition(LatLng(
+                    state.currentOrder.driverLatitude,
+                    state.currentOrder.driverLongitude));
+              }
+            }
             return Scaffold(
               body: Stack(
                 children: <Widget>[
@@ -54,23 +74,49 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                       child: Container(
                         width: AppUtil.getScreenWidth(context),
                         height: AppUtil.getBannerHeight(context),
-                        child: MapboxMap(
-                          accessToken: loginState.user.mapBoxToken,
-                          onMapCreated: _onMapCreated,
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(initLat, initLng),
-                            zoom: 13.0,
-                          ),
-                          trackCameraPosition: true,
-                          compassEnabled: false,
-                          cameraTargetBounds: CameraTargetBounds.unbounded,
-                          minMaxZoomPreference: MinMaxZoomPreference.unbounded,
-                          styleString: MapboxStyles.MAPBOX_STREETS,
-                          rotateGesturesEnabled: true,
-                          scrollGesturesEnabled: true,
-                          tiltGesturesEnabled: true,
-                          zoomGesturesEnabled: true,
-                        ),
+                        child: loginState.user.isGoogleMapsUsed()
+                            ? GoogleMap(
+                                markers:
+                                    Set.of((marker != null) ? [marker] : []),
+                                mapType: MapType.normal,
+                                zoomControlsEnabled: true,
+                                myLocationEnabled: true,
+                                myLocationButtonEnabled: true,
+                                zoomGesturesEnabled: true,
+                                padding: EdgeInsets.all(32),
+                                compassEnabled: true,
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(
+                                      state.currentOrder.driverLatitude ??
+                                          initLat,
+                                      state.currentOrder.driverLongitude ??
+                                          initLng),
+                                  zoom: 15.5,
+                                ),
+                              )
+                            : mapBox.MapboxMap(
+                                accessToken: loginState.user.mapToken,
+                                onMapCreated: _onMapCreated,
+                                initialCameraPosition: mapBox.CameraPosition(
+                                  target: mapBox.LatLng(
+                                      state.currentOrder.driverLatitude ??
+                                          initLat,
+                                      state.currentOrder.driverLongitude ??
+                                          initLng),
+                                  zoom: 13.0,
+                                ),
+                                trackCameraPosition: true,
+                                compassEnabled: false,
+                                cameraTargetBounds:
+                                    mapBox.CameraTargetBounds.unbounded,
+                                minMaxZoomPreference:
+                                    mapBox.MinMaxZoomPreference.unbounded,
+                                styleString: mapBox.MapboxStyles.MAPBOX_STREETS,
+                                rotateGesturesEnabled: true,
+                                scrollGesturesEnabled: true,
+                                tiltGesturesEnabled: true,
+                                zoomGesturesEnabled: true,
+                              ),
                       ),
                     ),
                   ),
@@ -113,7 +159,7 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                                       decoration: BoxDecoration(
                                           color: primary3,
                                           borderRadius:
-                                          BorderRadius.circular(10)),
+                                              BorderRadius.circular(10)),
                                       child: Text(
                                         "RETRY",
                                         style: TextStyle(
@@ -178,42 +224,42 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                               child: StatusItemWidget(
                                 status: StatusOrder(status: "Order Placed"),
                                 isActive:
-                                state.currentOrder.statusOrder.status ==
-                                    "Order Placed",
+                                    state.currentOrder.statusOrder.status ==
+                                        "Order Placed",
                               ),
                             ),
                             state.currentOrder.isPickupOrder()
                                 ? Expanded(
-                              child: StatusItemWidget(
-                                status: StatusOrder(status: "Accepted"),
-                                isActive: state.currentOrder.statusOrder
-                                    .status ==
-                                    "Accepted",
-                              ),
-                            )
+                                    child: StatusItemWidget(
+                                      status: StatusOrder(status: "Accepted"),
+                                      isActive: state.currentOrder.statusOrder
+                                              .status ==
+                                          "Accepted",
+                                    ),
+                                  )
                                 : Expanded(
-                              child: StatusItemWidget(
-                                status:
-                                StatusOrder(status: "Food Preparing"),
-                                isActive: state.currentOrder.statusOrder
-                                    .status ==
-                                    "Food Preparing",
-                              ),
-                            ),
+                                    child: StatusItemWidget(
+                                      status:
+                                          StatusOrder(status: "Food Preparing"),
+                                      isActive: state.currentOrder.statusOrder
+                                              .status ==
+                                          "Food Preparing",
+                                    ),
+                                  ),
                             Expanded(
                               child: StatusItemWidget(
                                 status: StatusOrder(status: "On the way"),
                                 isActive:
-                                state.currentOrder.statusOrder.status ==
-                                    "On the way",
+                                    state.currentOrder.statusOrder.status ==
+                                        "On the way",
                               ),
                             ),
                             Expanded(
                               child: StatusItemWidget(
                                 status: StatusOrder(status: "Delivered"),
                                 isActive:
-                                state.currentOrder.statusOrder.status ==
-                                    "Delivered",
+                                    state.currentOrder.statusOrder.status ==
+                                        "Delivered",
                               ),
                             ),
                           ],
@@ -230,25 +276,31 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
     );
   }
 
-  _onMapCreated(MapboxMapController controller) {
+  _onMapCreated(mapBox.MapboxMapController controller) {
     mapController = controller;
   }
 
-  _animateCameraToPosition(LatLng latLng) async {
+  _animateMapBoxCameraToPosition(mapBox.LatLng latLng) async {
     if (mapController != null) {
       mapController.removeSymbols(mapController.symbols);
-      mapController.addSymbol(SymbolOptions(
+      mapController.addSymbol(mapBox.SymbolOptions(
         geometry: latLng,
         iconSize: 0.6,
         iconImage: "assets/location.png",
       ));
-      mapController.moveCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
+      mapController.moveCamera(mapBox.CameraUpdate.newCameraPosition(
+        mapBox.CameraPosition(
           target: latLng,
           zoom: 13.0,
         ),
       ));
     }
+  }
+
+  Future<void> _animateGoogleMapCameraToPosition(LatLng latLng) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: latLng, zoom: 15.5)));
   }
 }
 
@@ -273,12 +325,12 @@ class StatusItemWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(32),
           boxShadow: isActive
               ? [
-            BoxShadow(
-              color: primary3,
-              blurRadius: 10,
-              spreadRadius: -3,
-            )
-          ]
+                  BoxShadow(
+                    color: primary3,
+                    blurRadius: 10,
+                    spreadRadius: -3,
+                  )
+                ]
               : []),
       child: AnimatedOpacity(
         opacity: isActive ? 1.0 : 0.3,

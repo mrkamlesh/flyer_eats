@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/bloc/pickup/chooseshop/choose_shop_bloc.dart';
 import 'package:clients/bloc/pickup/chooseshop/choose_shop_event.dart';
@@ -9,7 +11,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/shop.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:mapbox_gl/mapbox_gl.dart' as mapBox;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PickShopLocationPage extends StatefulWidget {
   final Shop shop;
@@ -21,14 +24,18 @@ class PickShopLocationPage extends StatefulWidget {
 }
 
 class _PickShopLocationPageState extends State<PickShopLocationPage> {
+  final double initLat = 28.620446;
+  final double initLng = 77.227515;
+
   ChooseShopBloc _bloc = ChooseShopBloc();
   TextEditingController nameController;
   TextEditingController addressController;
 
-  MapboxMapController mapController;
+  mapBox.MapboxMapController mapController;
 
-  final double initLat = 28.620446;
-  final double initLng = 77.227515;
+  Completer<GoogleMapController> _controller = Completer();
+
+  Marker marker;
 
   @override
   void initState() {
@@ -57,138 +64,183 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
         create: (context) {
           return _bloc;
         },
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
-            child: Container(
-              height: AppUtil.getScreenHeight(context),
-              width: AppUtil.getScreenWidth(context),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    height: AppUtil.getScreenHeight(context) * 0.55,
-                    width: AppUtil.getScreenWidth(context),
-                    child: Stack(
-                      children: [
-                        MapboxMap(
-                          accessToken: loginState.user.mapBoxToken,
-                          onMapCreated: _onMapCreated,
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(initLat, initLng),
-                            zoom: 13.0,
-                          ),
-                          trackCameraPosition: true,
-                          compassEnabled: false,
-                          cameraTargetBounds: CameraTargetBounds.unbounded,
-                          minMaxZoomPreference: MinMaxZoomPreference.unbounded,
-                          styleString: MapboxStyles.MAPBOX_STREETS,
-                          rotateGesturesEnabled: true,
-                          scrollGesturesEnabled: true,
-                          tiltGesturesEnabled: true,
-                          zoomGesturesEnabled: true,
-                          //myLocationEnabled: true,
-                          /*myLocationTrackingMode:
-                          mapBox.MyLocationTrackingMode.None,
-                      myLocationRenderMode: mapBox.MyLocationRenderMode.GPS,*/
-                          onMapClick: (point, latLng) async {
-                            _bloc.add(UpdateLatLng(
-                                latLng.latitude, latLng.longitude));
-                            mapController.removeSymbols(mapController.symbols);
-                            mapController.addSymbol(SymbolOptions(
-                              geometry: latLng,
-                              iconSize: 0.6,
-                              iconImage: "assets/location.png",
-                            ));
-                          },
-                        ),
-                        Positioned(
-                          bottom: horizontalPaddingDraggable,
-                          right: horizontalPaddingDraggable,
-                          child: Material(
-                            elevation: 5,
-                            child: IconButton(
-                                icon: Icon(Icons.my_location_sharp),
-                                onPressed: () {
-                                  _bloc..add(PageOpen(Shop()));
-                                }),
-                          ),
-                        ),
-                        Positioned(
-                          top: AppUtil.getToolbarHeight(context) / 2,
-                          left: 0,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: Row(
-                              children: <Widget>[
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                      padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.black45),
-                                      height: 30,
-                                      width: 30,
-                                      child: SvgPicture.asset(
-                                        "assets/back.svg",
-                                        color: Colors.white,
-                                      )),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration:
-                                      BoxDecoration(color: Colors.black45),
-                                  height: 30,
-                                  child: Text(
-                                    "Select Shop Location On the Map",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
+        child: BlocConsumer<ChooseShopBloc, ChooseShopState>(
+          listener: (context, state) {
+            if (state is ErrorState) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      title: Text(
+                        "Choose Shop",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      content: Text(
+                        state.message,
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("OK")),
                       ],
-                    ),
-                  ),
-                  BlocConsumer<ChooseShopBloc, ChooseShopState>(
-                    listener: (context, state) {
-                      if (state is ErrorState) {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                title: Text(
-                                  "Choose Shop",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                content: Text(
-                                  state.message,
-                                  style: TextStyle(color: Colors.black54),
-                                ),
-                                actions: <Widget>[
-                                  FlatButton(
-                                      onPressed: () {
+                    );
+                  },
+                  barrierDismissible: true);
+            } else if (state is SuccessGetCurrentLocation) {
+              if (!(loginState.user.isGoogleMapsUsed())) {
+                _animateMapBoxCameraToPosition(
+                    mapBox.LatLng(state.lat, state.lng));
+              }
+            }
+          },
+          builder: (context, state) {
+            if (state.shop.lat != null && state.shop.long != null) {
+              marker = Marker(
+                  markerId: MarkerId("location"),
+                  position: LatLng(state.shop.lat, state.shop.long),
+                  icon: BitmapDescriptor.defaultMarker);
+              _animateGoogleMapCameraToPosition(
+                  LatLng(state.shop.lat, state.shop.long));
+            }
+
+            return Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SingleChildScrollView(
+                child: Container(
+                  height: AppUtil.getScreenHeight(context),
+                  width: AppUtil.getScreenWidth(context),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        height: AppUtil.getScreenHeight(context) * 0.55,
+                        width: AppUtil.getScreenWidth(context),
+                        child: Stack(
+                          children: [
+                            loginState.user.isGoogleMapsUsed()
+                                ? GoogleMap(
+                                    onCameraMove: (position) {
+                                      // _bloc.add(UpdateLocation(position.target));
+                                    },
+                                    markers: Set.of(
+                                        (marker != null) ? [marker] : []),
+                                    mapType: MapType.normal,
+                                    onTap: (latLng) {
+                                      _bloc.add(UpdateLatLng(
+                                          latLng.latitude, latLng.longitude));
+                                    },
+                                    zoomGesturesEnabled: true,
+                                    zoomControlsEnabled: false,
+                                    padding: EdgeInsets.all(32),
+                                    compassEnabled: true,
+                                    initialCameraPosition: CameraPosition(
+                                      target: LatLng(state.shop.lat ?? initLat,
+                                          state.shop.long ?? initLng),
+                                      zoom: 15.5,
+                                    ),
+                                    onMapCreated:
+                                        (GoogleMapController controller) {
+                                      _controller.complete(controller);
+                                    },
+                                  )
+                                : mapBox.MapboxMap(
+                                    accessToken: loginState.user.mapToken,
+                                    onMapCreated: _onMapBoxCreated,
+                                    initialCameraPosition:
+                                        mapBox.CameraPosition(
+                                      target: mapBox.LatLng(initLat ?? initLat,
+                                          initLng ?? initLng),
+                                      zoom: 13.0,
+                                    ),
+                                    trackCameraPosition: true,
+                                    compassEnabled: false,
+                                    cameraTargetBounds:
+                                        mapBox.CameraTargetBounds.unbounded,
+                                    minMaxZoomPreference:
+                                        mapBox.MinMaxZoomPreference.unbounded,
+                                    styleString:
+                                        mapBox.MapboxStyles.MAPBOX_STREETS,
+                                    rotateGesturesEnabled: true,
+                                    scrollGesturesEnabled: true,
+                                    tiltGesturesEnabled: true,
+                                    zoomGesturesEnabled: true,
+                                    //myLocationEnabled: true,
+                                    /*myLocationTrackingMode:
+                            mapBox.MyLocationTrackingMode.None,
+                        myLocationRenderMode: mapBox.MyLocationRenderMode.GPS,*/
+                                    onMapClick: (point, latLng) async {
+                                      _bloc.add(UpdateLatLng(
+                                          latLng.latitude, latLng.longitude));
+                                      mapController
+                                          .removeSymbols(mapController.symbols);
+                                      mapController
+                                          .addSymbol(mapBox.SymbolOptions(
+                                        geometry: latLng,
+                                        iconSize: 0.6,
+                                        iconImage: "assets/location.png",
+                                      ));
+                                    },
+                                  ),
+                            Positioned(
+                              bottom: horizontalPaddingDraggable,
+                              right: horizontalPaddingDraggable,
+                              child: Material(
+                                elevation: 5,
+                                child: IconButton(
+                                    icon: Icon(Icons.my_location_sharp),
+                                    onPressed: () {
+                                      _bloc..add(PageOpen(Shop()));
+                                    }),
+                              ),
+                            ),
+                            Positioned(
+                              top: AppUtil.getToolbarHeight(context) / 2,
+                              left: 0,
+                              child: Material(
+                                color: Colors.transparent,
+                                child: Row(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                      onTap: () {
                                         Navigator.pop(context);
                                       },
-                                      child: Text("OK")),
-                                ],
-                              );
-                            },
-                            barrierDismissible: true);
-                      } else if (state is SuccessGetCurrentLocation) {
-                        _animateCameraToPosition(LatLng(state.lat, state.lng));
-                      }
-                    },
-                    builder: (context, state) {
-                      return Stack(
+                                      child: Container(
+                                          padding: EdgeInsets.all(5),
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.black45),
+                                          height: 30,
+                                          width: 30,
+                                          child: SvgPicture.asset(
+                                            "assets/back.svg",
+                                            color: Colors.white,
+                                          )),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(5),
+                                      decoration:
+                                          BoxDecoration(color: Colors.black45),
+                                      height: 30,
+                                      child: Text(
+                                        "Select Shop Location On the Map",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Stack(
                         children: <Widget>[
                           Container(
                             width: AppUtil.getScreenWidth(context),
@@ -285,37 +337,43 @@ class _PickShopLocationPageState extends State<PickShopLocationPage> {
                               ? LinearProgressIndicator()
                               : SizedBox(),
                         ],
-                      );
-                    },
-                  )
-                ],
+                      )
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       );
     });
   }
 
-  _onMapCreated(MapboxMapController controller) {
+  _onMapBoxCreated(mapBox.MapboxMapController controller) {
     mapController = controller;
   }
 
-  _animateCameraToPosition(LatLng latLng) async {
+  _animateMapBoxCameraToPosition(mapBox.LatLng latLng) async {
     if (mapController != null) {
       mapController.removeSymbols(mapController.symbols);
-      mapController.addSymbol(SymbolOptions(
+      mapController.addSymbol(mapBox.SymbolOptions(
         geometry: latLng,
         iconSize: 0.6,
         iconImage: "assets/location.png",
       ));
-      mapController.moveCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
+      mapController.moveCamera(mapBox.CameraUpdate.newCameraPosition(
+        mapBox.CameraPosition(
           target: latLng,
           zoom: 13.0,
         ),
       ));
     }
+  }
+
+  Future<void> _animateGoogleMapCameraToPosition(LatLng latLng) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: latLng, zoom: 15.5)));
   }
 }
 

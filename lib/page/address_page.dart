@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,7 +11,8 @@ import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/classes/app_util.dart';
 import 'package:clients/classes/style.dart';
 import 'package:clients/model/address.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:mapbox_gl/mapbox_gl.dart' as mapBox;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AddressPage extends StatefulWidget {
   final Address address;
@@ -29,7 +32,9 @@ class _AddressPageState extends State<AddressPage> {
   final double initLng = 77.227515;
 
   TextEditingController _titleController = TextEditingController();
-  MapboxMapController mapController;
+  mapBox.MapboxMapController mapController;
+
+  Completer<GoogleMapController> _controller = Completer();
 
   /*TextEditingController _addressController = TextEditingController();*/
   String _addressString = "";
@@ -79,8 +84,10 @@ class _AddressPageState extends State<AddressPage> {
                         child: BlocConsumer<AddressBloc, AddressState>(
                           listener: (context, state) {
                             if (state is SuccessGetLocation) {
-                              _animateCameraToPosition(
-                                  LatLng(state.lat, state.lng));
+                              if (!(loginState.user.isGoogleMapsUsed())) {
+                                _animateMapBoxCameraToPosition(
+                                    mapBox.LatLng(state.lat, state.lng));
+                              }
                             }
                           },
                           buildWhen: (oldState, state) {
@@ -91,43 +98,89 @@ class _AddressPageState extends State<AddressPage> {
                             }
                           },
                           builder: (context, state) {
+                            Marker marker;
+                            if (state is LoadingTemporaryAddressSuccess) {
+                              if (state.address.latitude != null &&
+                                  state.address.longitude != null) {
+                                marker = Marker(
+                                    markerId: MarkerId("location"),
+                                    position: LatLng(
+                                        double.parse(state.address.latitude),
+                                        double.parse(state.address.longitude)),
+                                    icon: BitmapDescriptor.defaultMarker);
+                                _animateGoogleMapCameraToPosition(LatLng(
+                                    double.parse(state.address.latitude),
+                                    double.parse(state.address.longitude)));
+                              }
+                            }
+
                             return Stack(
                               children: [
-                                MapboxMap(
-                                  accessToken: loginState.user.mapBoxToken,
-                                  onMapCreated: _onMapCreated,
-                                  initialCameraPosition: CameraPosition(
-                                    target: LatLng(initLat, initLng),
-                                    zoom: 13.0,
-                                  ),
-                                  trackCameraPosition: true,
-                                  compassEnabled: false,
-                                  cameraTargetBounds:
-                                      CameraTargetBounds.unbounded,
-                                  minMaxZoomPreference:
-                                      MinMaxZoomPreference.unbounded,
-                                  styleString: MapboxStyles.MAPBOX_STREETS,
-                                  rotateGesturesEnabled: true,
-                                  scrollGesturesEnabled: true,
-                                  tiltGesturesEnabled: true,
-                                  zoomGesturesEnabled: true,
-                                  //myLocationEnabled: true,
-                                  /*myLocationTrackingMode:
+                                loginState.user.isGoogleMapsUsed()
+                                    ? GoogleMap(
+                                        markers: Set.of(
+                                            (marker != null) ? [marker] : []),
+                                        mapType: MapType.normal,
+                                        onTap: (latLng) {
+                                          BlocProvider.of<AddressBloc>(context)
+                                              .add(UpdateAddressLocation(
+                                                  latLng.latitude,
+                                                  latLng.longitude));
+                                        },
+                                        zoomControlsEnabled: true,
+                                        myLocationEnabled: true,
+                                        myLocationButtonEnabled: true,
+                                        zoomGesturesEnabled: true,
+                                        padding: EdgeInsets.all(32),
+                                        compassEnabled: true,
+                                        initialCameraPosition: CameraPosition(
+                                          target: LatLng(initLat, initLng),
+                                          zoom: 15.5,
+                                        ),
+                                        onMapCreated:
+                                            (GoogleMapController controller) {
+                                          _controller.complete(controller);
+                                        })
+                                    : mapBox.MapboxMap(
+                                        accessToken: loginState.user.mapToken,
+                                        onMapCreated: _onMapBoxCreated,
+                                        initialCameraPosition:
+                                            mapBox.CameraPosition(
+                                          target:
+                                              mapBox.LatLng(initLat, initLng),
+                                          zoom: 13.0,
+                                        ),
+                                        trackCameraPosition: true,
+                                        compassEnabled: false,
+                                        cameraTargetBounds:
+                                            mapBox.CameraTargetBounds.unbounded,
+                                        minMaxZoomPreference: mapBox
+                                            .MinMaxZoomPreference.unbounded,
+                                        styleString:
+                                            mapBox.MapboxStyles.MAPBOX_STREETS,
+                                        rotateGesturesEnabled: true,
+                                        scrollGesturesEnabled: true,
+                                        tiltGesturesEnabled: true,
+                                        zoomGesturesEnabled: true,
+                                        //myLocationEnabled: true,
+                                        /*myLocationTrackingMode:
                               mapBox.MyLocationTrackingMode.None,
                       myLocationRenderMode: mapBox.MyLocationRenderMode.GPS,*/
-                                  onMapClick: (point, latLng) async {
-                                    BlocProvider.of<AddressBloc>(context).add(
-                                        UpdateAddressLocation(
-                                            latLng.latitude, latLng.longitude));
-                                    mapController
-                                        .removeSymbols(mapController.symbols);
-                                    mapController.addSymbol(SymbolOptions(
-                                      geometry: latLng,
-                                      iconSize: 0.6,
-                                      iconImage: "assets/location.png",
-                                    ));
-                                  },
-                                ),
+                                        onMapClick: (point, latLng) async {
+                                          BlocProvider.of<AddressBloc>(context)
+                                              .add(UpdateAddressLocation(
+                                                  latLng.latitude,
+                                                  latLng.longitude));
+                                          mapController.removeSymbols(
+                                              mapController.symbols);
+                                          mapController
+                                              .addSymbol(mapBox.SymbolOptions(
+                                            geometry: latLng,
+                                            iconSize: 0.6,
+                                            iconImage: "assets/location.png",
+                                          ));
+                                        },
+                                      ),
                                 /*Positioned(
                                 bottom: horizontalPaddingDraggable,
                                 right: horizontalPaddingDraggable,
@@ -508,25 +561,31 @@ class _AddressPageState extends State<AddressPage> {
     });
   }
 
-  _onMapCreated(MapboxMapController controller) {
+  _onMapBoxCreated(mapBox.MapboxMapController controller) {
     mapController = controller;
   }
 
-  _animateCameraToPosition(LatLng latLng) async {
+  _animateMapBoxCameraToPosition(mapBox.LatLng latLng) async {
     if (mapController != null) {
       mapController.removeSymbols(mapController.symbols);
-      mapController.addSymbol(SymbolOptions(
+      mapController.addSymbol(mapBox.SymbolOptions(
         geometry: latLng,
         iconSize: 0.6,
         iconImage: "assets/location.png",
       ));
-      mapController.moveCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
+      mapController.moveCamera(mapBox.CameraUpdate.newCameraPosition(
+        mapBox.CameraPosition(
           target: latLng,
           zoom: 13.0,
         ),
       ));
     }
+  }
+
+  Future<void> _animateGoogleMapCameraToPosition(LatLng latLng) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: latLng, zoom: 15.5)));
   }
 }
 

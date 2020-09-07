@@ -11,7 +11,8 @@ class User {
   final String location;
   final String countryCode;
   final String lastLocation;
-  final String mapBoxToken;
+  final String mapToken;
+  final String mapUsed;
 
   User(
       {this.avatar,
@@ -24,7 +25,8 @@ class User {
       this.location,
       this.countryCode,
       this.lastLocation,
-      this.mapBoxToken});
+      this.mapToken,
+      this.mapUsed});
 
   factory User.fromJson(Map<String, dynamic> parsedJson) {
     Address defaultAddress = parsedJson['default_address'] == false
@@ -52,8 +54,13 @@ class User {
         location: parsedJson['location_name'],
         countryCode: parsedJson['country_code'],
         lastLocation: parsedJson['last_location'],
-        mapBoxToken: parsedJson['map_key'],
+        mapToken: parsedJson['map_key'],
+        mapUsed: parsedJson['map_api'],
         defaultAddress: defaultAddress);
+  }
+
+  bool isGoogleMapsUsed() {
+    return this.mapUsed == "google.maps";
   }
 
   User copyWith(

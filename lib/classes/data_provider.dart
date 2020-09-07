@@ -12,9 +12,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -252,7 +252,9 @@ class DataProvider {
       "client_token": order.user.token,
       "transaction_type": order.transactionType,
       "cart": order.foodCart.cartToString(),
-      "voucher_code": order.voucher.name ?? ""
+      "voucher_code": order.voucher.name ?? "",
+      "is_updated_app": "1",
+      //this is additional param to detect new release app
     };
 
     var responseJson;

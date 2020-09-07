@@ -8,7 +8,7 @@ class CurrentLocationState {
 
 class InitialCurrentLocationState extends CurrentLocationState {
   InitialCurrentLocationState()
-      : super(lat: 28.620446, lng: 77.227515, address: "...");
+      : super(/*lat: 28.620446, lng: 77.227515, */address: "...");
 }
 
 class LoadingCurrentLocationState extends CurrentLocationState {

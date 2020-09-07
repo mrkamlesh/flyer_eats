@@ -67,6 +67,8 @@ class CurrentOrder {
         driverLongitude: parsedJson['details']['driver_longitude'] != ""
             ? double.parse(parsedJson['details']['driver_longitude'].toString())
             : null,
+        /*driverLatitude: -6.200000,
+        driverLongitude: 106.816666,*/
         driverName: parsedJson['details']['driver_name'],
         driverPhone: parsedJson['details']['driver_phone'],
         merchantId: parsedJson['details']['merchant_id'],

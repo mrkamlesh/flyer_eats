@@ -63,18 +63,22 @@ class User {
     return this.mapUsed == "google.maps";
   }
 
-  User copyWith(
-      {String name,
-      String phone,
-      bool hasAddress,
-      String token,
-      String avatar,
-      Address defaultAddress,
-      String username,
-      String referralCode,
-      String referralDiscount,
-      String location,
-      String countryCode}) {
+  User copyWith({
+    String name,
+    String phone,
+    bool hasAddress,
+    String token,
+    String avatar,
+    Address defaultAddress,
+    String username,
+    String referralCode,
+    String referralDiscount,
+    String location,
+    String countryCode,
+    String lastLocation,
+    String mapToken,
+    String mapUsed,
+  }) {
     return User(
         name: name ?? this.name,
         phone: phone ?? this.phone,
@@ -84,6 +88,9 @@ class User {
         hasAddress: hasAddress ?? this.hasAddress,
         defaultAddress: defaultAddress ?? this.defaultAddress,
         countryCode: countryCode ?? this.countryCode,
-        location: location ?? this.location);
+        location: location ?? this.location,
+        lastLocation: lastLocation ?? this.lastLocation,
+        mapToken: mapToken ?? this.mapToken,
+        mapUsed: mapUsed ?? this.mapUsed);
   }
 }

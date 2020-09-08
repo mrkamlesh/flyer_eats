@@ -1,3 +1,4 @@
+import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/page/home.dart';
 import 'package:clients/page/pickup_order_detail_page.dart';
@@ -38,6 +39,8 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
   @override
   void initState() {
     super.initState();
+
+    BlocProvider.of<FoodOrderBloc>(context).add(ClearCart());
     _bloc = PlacedOrderSuccessBloc()..add(GetAds(widget.token, widget.address));
     BlocProvider.of<CurrentOrderBloc>(context)
         .add(GetActiveOrder(widget.token));

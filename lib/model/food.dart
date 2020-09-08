@@ -30,6 +30,8 @@ class Food {
 
   factory Food.fromJson(Map<String, dynamic> parsedJson) {
     bool isSingleItem = parsedJson['single_item'] == 2 ? true : false;
+    var pricesParsedJson =
+        !(parsedJson['prices'] is List) ? [] : parsedJson['prices'] as List;
 
     return Food(
         id: parsedJson['item_id'],
@@ -37,11 +39,16 @@ class Food {
         description: parsedJson['item_description'],
         image: parsedJson['photo'],
         isVeg: parsedJson['is_veg'],
-        price: Price.fromJson(parsedJson['prices'][0]),
+        price: pricesParsedJson.isNotEmpty
+            ? Price.fromJson(pricesParsedJson[0])
+            : null,
         badge: parsedJson['badge'],
         isSingleItem: isSingleItem,
-        discount: parsedJson['discount'] != "" ? double.parse(parsedJson['discount']) : 0,
-        category: MenuCategory(parsedJson['cat_id'], parsedJson['category_name']));
+        discount: parsedJson['discount'] != ""
+            ? double.parse(parsedJson['discount'])
+            : 0,
+        category:
+            MenuCategory(parsedJson['cat_id'], parsedJson['category_name']));
   }
 
   double getRealPrice() {

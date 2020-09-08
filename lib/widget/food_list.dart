@@ -424,61 +424,74 @@ class FoodList extends StatelessWidget {
                           children: <Widget>[
                             Expanded(
                               flex: 5,
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      food.discount > 0
-                                          ? Text(
-                                              AppUtil.getCurrencyString(
-                                                      currencyCode) +
-                                                  " " +
-                                                  AppUtil
-                                                      .doubleRemoveZeroTrailing(
-                                                          food.price.price),
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  decoration: TextDecoration
-                                                      .lineThrough),
-                                            )
-                                          : SizedBox(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          SvgPicture.asset(
-                                            AppUtil.getCurrencyIcon(
-                                                currencyCode),
-                                            height: 8,
-                                            width: 8,
-                                            color: Colors.black,
-                                          ),
-                                          SizedBox(
-                                            width: 3,
-                                          ),
-                                          Text(
-                                            "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
+                              child: food.price != null
+                                  ? Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            food.discount > 0
+                                                ? Text(
+                                                    AppUtil.getCurrencyString(
+                                                            currencyCode) +
+                                                        " " +
+                                                        AppUtil
+                                                            .doubleRemoveZeroTrailing(
+                                                                food.price
+                                                                    .price),
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough),
+                                                  )
+                                                : SizedBox(),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                SvgPicture.asset(
+                                                  AppUtil.getCurrencyIcon(
+                                                      currencyCode),
+                                                  height: 8,
+                                                  width: 8,
+                                                  color: Colors.black,
+                                                ),
+                                                SizedBox(
+                                                  width: 3,
+                                                ),
+                                                Text(
+                                                  "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                    )
+                                  : SizedBox(),
                             ),
-                            quantity == 0
-                                ? Expanded(flex: 5, child: addButton)
+                            food.price != null
+                                ? quantity == 0
+                                    ? Expanded(flex: 5, child: addButton)
+                                    : Expanded(
+                                        flex: 5, child: changeQuantityButton)
                                 : Expanded(
-                                    flex: 5, child: changeQuantityButton),
+                                    child: SizedBox(),
+                                    flex: 5,
+                                  ),
                           ],
                         ),
                       ),
@@ -604,8 +617,9 @@ class FoodList extends StatelessWidget {
                                             onTap: () {
                                               Scaffold.of(context)
                                                   .hideCurrentSnackBar(
-                                                  reason: SnackBarClosedReason
-                                                      .dismiss);
+                                                      reason:
+                                                          SnackBarClosedReason
+                                                              .dismiss);
                                               final snackBar = SnackBar(
                                                 content: Text(food.title),
                                                 duration: Duration(seconds: 2),
@@ -659,66 +673,74 @@ class FoodList extends StatelessWidget {
                                 children: <Widget>[
                                   Expanded(
                                     flex: 9,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: FittedBox(
-                                        fit: BoxFit.none,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            food.discount > 0
-                                                ? Text(
-                                                    AppUtil.getCurrencyString(
-                                                            currencyCode) +
-                                                        " " +
-                                                        AppUtil
-                                                            .doubleRemoveZeroTrailing(
-                                                                food.price
-                                                                    .price),
-                                                    style: TextStyle(
-                                                        fontSize: 10,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .lineThrough),
-                                                  )
-                                                : SizedBox(),
-                                            Row(
-                                              children: <Widget>[
-                                                SvgPicture.asset(
-                                                  AppUtil.getCurrencyIcon(
-                                                      currencyCode),
-                                                  height: 11,
-                                                  width: 11,
-                                                  color: Colors.black,
-                                                ),
-                                                SizedBox(
-                                                  width: 3,
-                                                ),
-                                                Text(
-                                                  "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ],
+                                    child: food.price != null
+                                        ? Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: FittedBox(
+                                              fit: BoxFit.none,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  food.discount > 0
+                                                      ? Text(
+                                                          AppUtil.getCurrencyString(
+                                                                  currencyCode) +
+                                                              " " +
+                                                              AppUtil
+                                                                  .doubleRemoveZeroTrailing(
+                                                                      food.price
+                                                                          .price),
+                                                          style: TextStyle(
+                                                              fontSize: 10,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .lineThrough),
+                                                        )
+                                                      : SizedBox(),
+                                                  Row(
+                                                    children: <Widget>[
+                                                      SvgPicture.asset(
+                                                        AppUtil.getCurrencyIcon(
+                                                            currencyCode),
+                                                        height: 11,
+                                                        width: 11,
+                                                        color: Colors.black,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 3,
+                                                      ),
+                                                      Text(
+                                                        "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                          )
+                                        : SizedBox(),
                                   ),
-                                  quantity == 0
-                                      ? Expanded(flex: 11, child: addButton)
+                                  food.price != null
+                                      ? quantity == 0
+                                          ? Expanded(flex: 11, child: addButton)
+                                          : Expanded(
+                                              flex: 11,
+                                              child: changeQuantityButton)
                                       : Expanded(
+                                          child: SizedBox(),
                                           flex: 11,
-                                          child: changeQuantityButton),
+                                        ),
                                 ],
                               ),
                             ),
@@ -862,8 +884,8 @@ class FoodList extends StatelessWidget {
                                         onTap: () {
                                           Scaffold.of(context)
                                               .hideCurrentSnackBar(
-                                              reason: SnackBarClosedReason
-                                                  .dismiss);
+                                                  reason: SnackBarClosedReason
+                                                      .dismiss);
                                           final snackBar = SnackBar(
                                             content: Text(food.title),
                                             duration: Duration(seconds: 2),
@@ -907,61 +929,74 @@ class FoodList extends StatelessWidget {
                           children: <Widget>[
                             Expanded(
                               flex: 5,
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      food.discount > 0
-                                          ? Text(
-                                              AppUtil.getCurrencyString(
-                                                      currencyCode) +
-                                                  " " +
-                                                  AppUtil
-                                                      .doubleRemoveZeroTrailing(
-                                                          food.price.price),
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  decoration: TextDecoration
-                                                      .lineThrough),
-                                            )
-                                          : SizedBox(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          SvgPicture.asset(
-                                            AppUtil.getCurrencyIcon(
-                                                currencyCode),
-                                            height: 8,
-                                            width: 8,
-                                            color: Colors.black,
-                                          ),
-                                          SizedBox(
-                                            width: 3,
-                                          ),
-                                          Text(
-                                            "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
+                              child: food.price != null
+                                  ? Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            food.discount > 0
+                                                ? Text(
+                                                    AppUtil.getCurrencyString(
+                                                            currencyCode) +
+                                                        " " +
+                                                        AppUtil
+                                                            .doubleRemoveZeroTrailing(
+                                                                food.price
+                                                                    .price),
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough),
+                                                  )
+                                                : SizedBox(),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                SvgPicture.asset(
+                                                  AppUtil.getCurrencyIcon(
+                                                      currencyCode),
+                                                  height: 8,
+                                                  width: 8,
+                                                  color: Colors.black,
+                                                ),
+                                                SizedBox(
+                                                  width: 3,
+                                                ),
+                                                Text(
+                                                  "${AppUtil.doubleRemoveZeroTrailing(food.getRealPrice())}",
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                    )
+                                  : SizedBox(),
                             ),
-                            quantity == 0
-                                ? Expanded(flex: 5, child: addButton)
+                            food.price != null
+                                ? quantity == 0
+                                    ? Expanded(flex: 5, child: addButton)
+                                    : Expanded(
+                                        flex: 5, child: changeQuantityButton)
                                 : Expanded(
-                                    flex: 5, child: changeQuantityButton),
+                                    child: SizedBox(),
+                                    flex: 5,
+                                  ),
                           ],
                         ),
                       ),

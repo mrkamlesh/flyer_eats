@@ -1107,8 +1107,6 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                     address: widget.location.address,
                                   );
                                 }));
-                                BlocProvider.of<FoodOrderBloc>(context)
-                                    .add(ClearCart());
                               } else if (state is ErrorPlaceOrder) {
                                 showDialog(
                                     context: context,

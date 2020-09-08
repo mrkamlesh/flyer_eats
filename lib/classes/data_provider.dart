@@ -257,8 +257,6 @@ class DataProvider {
       //this is additional param to detect new release app
     };
 
-    print(formData);
-
     var responseJson;
     try {
       final response = await Dio().post(
@@ -287,12 +285,12 @@ class DataProvider {
       "google_lat": order.address.latitude,
       "google_lng": order.address.longitude,
       "next_step": "payment_option",
-      "id": order.address.id,
       "location_name": order.address.title,
       "contact_phone": order.contact,
       "delivery_instruction": order.deliveryInstruction,
       "street": order.address.address,
       "address_id": order.address.id,
+      /*"id": order.address.id,*/
       "payment_list": order.selectedPaymentMethod,
       "voucher_code": order.voucher.name != null ? order.voucher.name : "",
       "voucher_amount":

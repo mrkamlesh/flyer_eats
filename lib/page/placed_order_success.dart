@@ -39,8 +39,6 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
   @override
   void initState() {
     super.initState();
-
-    BlocProvider.of<FoodOrderBloc>(context).add(ClearCart());
     _bloc = PlacedOrderSuccessBloc()..add(GetAds(widget.token, widget.address));
     BlocProvider.of<CurrentOrderBloc>(context)
         .add(GetActiveOrder(widget.token));
@@ -459,6 +457,7 @@ class _PlacedOrderSuccessPageState extends State<PlacedOrderSuccessPage> {
   }
 
   Future<bool> _onBackPressed() async {
+    BlocProvider.of<FoodOrderBloc>(context).add(ClearCart());
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
       return Home();
     }), (Route<dynamic> route) => false);

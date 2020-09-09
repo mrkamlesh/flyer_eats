@@ -288,10 +288,10 @@ class CustomTextField extends StatelessWidget {
               ),
             ),
           ),
-          Icon(
+          /*Icon(
             Icons.search,
             color: Colors.black38,
-          ),
+          ),*/
         ],
       ),
     );

@@ -1545,11 +1545,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage>
     if (price == null || quantity == 0) {
       return 0;
     } else {
-      totalAmount = price.discountedPrice * quantity;
+      totalAmount = price.discountedPrice;
 
       addOnsTypes.forEach((element) {
         totalAmount = totalAmount + element.getAmount();
       });
+
+      totalAmount = totalAmount * quantity;
     }
 
     return totalAmount;

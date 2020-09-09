@@ -2478,11 +2478,13 @@ class _FoodListPlaceOrderState extends State<FoodListPlaceOrder>
     if (price == null || quantity == 0) {
       return 0;
     } else {
-      totalAmount = price.discountedPrice * quantity;
+      totalAmount = price.discountedPrice;
 
       addOnsTypes.forEach((element) {
         totalAmount = totalAmount + element.getAmount();
       });
+
+      totalAmount = totalAmount * quantity;
     }
 
     return totalAmount;
@@ -2549,7 +2551,9 @@ class FoodItemPlaceOrder extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        foodCartItem.food.title + " " + foodCartItem.price.size,
+                        AppUtil.parseHtmlString(foodCartItem.food.title) +
+                            " " +
+                            foodCartItem.price.size,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

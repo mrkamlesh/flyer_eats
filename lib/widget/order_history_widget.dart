@@ -113,7 +113,7 @@ class FoodOrderHistoryWidget extends StatelessWidget {
             child: Text(
               order.itemsString,
               style:
-                  TextStyle(fontSize: 16, color: Colors.black45, height: 1.3),
+                  TextStyle(fontSize: 15, color: Colors.black45, height: 1.3),
             ),
           ),
           Container(

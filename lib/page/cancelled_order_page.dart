@@ -1,3 +1,4 @@
+import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/bloc/location/home/bloc.dart';
 import 'package:clients/bloc/location/home/home_state.dart';
 import 'package:clients/page/home.dart';
@@ -509,6 +510,7 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
   }
 
   Future<bool> _onBackPressed() async {
+    BlocProvider.of<FoodOrderBloc>(context).add(ClearCart());
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
       return Home();
     }), (Route<dynamic> route) => false);

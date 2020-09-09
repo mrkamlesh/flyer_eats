@@ -1,3 +1,4 @@
+import 'package:clients/model/add_on.dart';
 import 'package:clients/model/food.dart';
 import 'package:clients/model/food_cart.dart';
 import 'package:clients/model/menu_category.dart';
@@ -30,9 +31,7 @@ class DetailOrder {
   final double packagingFee;
   final double tax;
   final double discountOrder;
-  final double discountFood;
   final double voucherAmount;
-  final double total;
 
   //this is status field
   final List<StatusOrder> statusHistory;
@@ -43,7 +42,6 @@ class DetailOrder {
 
   DetailOrder({
     this.id,
-    this.total,
     this.currentStatus,
     this.foodCart,
     this.username,
@@ -65,7 +63,6 @@ class DetailOrder {
     this.packagingFee,
     this.tax,
     this.discountOrder,
-    this.discountFood,
     this.voucherAmount,
     this.statusHistory,
     this.isReviewAdded,
@@ -78,12 +75,24 @@ class DetailOrder {
   factory DetailOrder.fromJson(Map<String, dynamic> parsedJson) {
     FoodCart foodCart = new FoodCart(Map<String, FoodCartItem>(), List());
     var foodCartItemJson = parsedJson['html']['item'] as List;
+
     for (int i = 0; i < foodCartItemJson.length; i++) {
+      List<AddOn> addOns = [];
+
+      if (foodCartItemJson[i]['sub_item'] is List) {
+        var addOnJson = foodCartItemJson[i]['sub_item'] as List;
+        addOns = addOnJson.map((i) {
+          return AddOn.fromOrderDetailJson(i);
+        }).toList();
+      }
+
       foodCart.addSingleItemFoodToCart(
           foodCartItemJson[i]['item_id'] + i.toString(),
           Food(
             id: foodCartItemJson[i]['id'],
-            title: foodCartItemJson[i]['item_name'],
+            title: foodCartItemJson[i]['item_name'] +
+                " " +
+                foodCartItemJson[i]['size_words'],
             category: MenuCategory(foodCartItemJson[i]['category_id'],
                 foodCartItemJson[i]['category_name']),
             discount: double.parse(foodCartItemJson[i]['discount'].toString()),
@@ -95,16 +104,8 @@ class DetailOrder {
           Price(
               price:
                   double.parse(foodCartItemJson[i]['normal_price'].toString())),
-          []);
+          addOns);
     }
-
-    double discountTotal = 0;
-    double totalOrder = 0;
-    foodCart.singleItemCart.forEach((key, item) {
-      discountTotal = discountTotal + item.quantity * item.food.discount;
-      totalOrder = totalOrder + item.quantity * item.food.price.price;
-    });
-    double subTotalOrder = totalOrder - discountTotal;
 
     var statusHistoryJson = parsedJson['order_history'] as List;
     List<StatusOrder> statusHistory = statusHistoryJson.map((e) {
@@ -151,9 +152,7 @@ class DetailOrder {
             parsedJson['html']['total']['voucher_value'].toString()),
         discountOrder: double.parse(
             parsedJson['html']['total']['discounted_amount'].toString()),
-        discountFood: discountTotal,
-        subtotal: subTotalOrder,
-        total: totalOrder,
+        subtotal: foodCart.getCartTotalAmount(),
         statusHistory: statusHistory,
         isReviewAdded: parsedJson['is_rating_added']);
   }

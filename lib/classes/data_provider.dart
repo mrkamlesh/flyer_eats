@@ -12,9 +12,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -239,7 +239,7 @@ class DataProvider {
 
     var formData = {
       "next_step": "payment_option",
-      "id": order.address.id,
+      //"id": order.address.id,
       "formatted_address": order.address.address,
       "google_lat": order.address.latitude,
       "google_lng": order.address.longitude,
@@ -310,6 +310,8 @@ class DataProvider {
     if (order.getWalletUsed() > 0) {
       formData['wallet_amount'] = order.getWalletUsed().toString();
     }
+
+    print(formData);
 
     var responseJson;
     try {

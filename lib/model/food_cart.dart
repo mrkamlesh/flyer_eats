@@ -166,13 +166,13 @@ class FoodCartItem {
   }
 
   double getAmount() {
-    double amount = (this.price.price - this.food.discount) * quantity;
+    double amount = (this.price.price - this.food.discount);
 
     this.addOns.forEach((addOn) {
       amount = amount + (addOn.price * addOn.quantity);
     });
 
-    //amount = amount * this.quantity;
+    amount = amount * this.quantity;
 
     return amount;
   }

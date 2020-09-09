@@ -30,8 +30,15 @@ class Food {
 
   factory Food.fromJson(Map<String, dynamic> parsedJson) {
     bool isSingleItem = parsedJson['single_item'] == 2 ? true : false;
-    var pricesParsedJson =
-        !(parsedJson['prices'] is List) ? [] : parsedJson['prices'] as List;
+
+    List<Price> prices = [];
+
+    if ((parsedJson['prices'] is List)) {
+      var pricesJson = parsedJson['prices'] as List;
+      prices = pricesJson.map((i) {
+        return Price.fromJson(i);
+      }).toList();
+    }
 
     return Food(
         id: parsedJson['item_id'],
@@ -39,9 +46,7 @@ class Food {
         description: parsedJson['item_description'],
         image: parsedJson['photo'],
         isVeg: parsedJson['is_veg'],
-        price: pricesParsedJson.isNotEmpty
-            ? Price.fromJson(pricesParsedJson[0])
-            : null,
+        price: prices.isNotEmpty ? prices[0] : null,
         badge: parsedJson['badge'],
         isSingleItem: isSingleItem,
         discount: parsedJson['discount'] != ""

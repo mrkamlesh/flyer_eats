@@ -1020,7 +1020,8 @@ class FoodCartItemWidget extends StatelessWidget {
                     " X " +
                     AppUtil.getCurrencyString(currencyCode) +
                     " " +
-                    AppUtil.doubleRemoveZeroTrailing(item.food.getRealPrice()) +
+                    AppUtil.doubleRemoveZeroTrailing(
+                        item.getAmount() / item.quantity) +
                     " )",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
@@ -1030,13 +1031,26 @@ class FoodCartItemWidget extends StatelessWidget {
                 child: Text(
                   AppUtil.getCurrencyString(currencyCode) +
                       " " +
-                      AppUtil.doubleRemoveZeroTrailing(
-                          (item.quantity * item.food.getRealPrice())),
+                      AppUtil.doubleRemoveZeroTrailing((item.getAmount())),
                   textAlign: TextAlign.end,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ))
           ],
         ),
+        item.hasAddOns()
+            ? Row(
+                children: [
+                  Expanded(
+                    flex: 7,
+                    child: Text(
+                      item.addOnsToString(),
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ),
+                  Expanded(flex: 3, child: SizedBox())
+                ],
+              )
+            : SizedBox(),
         SizedBox(
           height: 10,
         ),

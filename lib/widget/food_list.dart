@@ -382,7 +382,9 @@ class FoodList extends StatelessWidget {
                                                   reason: SnackBarClosedReason
                                                       .dismiss);
                                           final snackBar = SnackBar(
-                                            content: Text(food.title),
+                                            content: Text(
+                                                AppUtil.parseHtmlString(
+                                                    food.title)),
                                             duration: Duration(seconds: 2),
                                           );
                                           Scaffold.of(context)
@@ -621,7 +623,9 @@ class FoodList extends StatelessWidget {
                                                           SnackBarClosedReason
                                                               .dismiss);
                                               final snackBar = SnackBar(
-                                                content: Text(food.title),
+                                                content: Text(
+                                                    AppUtil.parseHtmlString(
+                                                        food.title)),
                                                 duration: Duration(seconds: 2),
                                               );
                                               Scaffold.of(context)
@@ -887,7 +891,9 @@ class FoodList extends StatelessWidget {
                                                   reason: SnackBarClosedReason
                                                       .dismiss);
                                           final snackBar = SnackBar(
-                                            content: Text(food.title),
+                                            content: Text(
+                                                AppUtil.parseHtmlString(
+                                                    food.title)),
                                             duration: Duration(seconds: 2),
                                           );
                                           Scaffold.of(context)

@@ -395,8 +395,8 @@ class _ScratchCardPageState extends State<ScratchCardPage> {
                           child: AnimatedOpacity(
                               opacity: 1.0 - opacity,
                               duration: Duration(milliseconds: 300),
-                              child: Text("Will Expiry On: " +
-                                  scratchCard.dateExpiration)),
+                              child: Text(
+                                  "Expired On: " + scratchCard.dateExpiration)),
                         ),
                       ),
                     ],
@@ -518,7 +518,7 @@ class ScratchCardWidget extends StatelessWidget {
                   margin: EdgeInsets.only(top: 5),
                   child: Center(
                       child: Text(
-                    "Will Expire On: " + scratchCard.dateExpiration,
+                    "Expired On: " + scratchCard.dateExpiration,
                     maxLines: 1,
                     overflow: TextOverflow.clip,
                     style: TextStyle(fontSize: 11),

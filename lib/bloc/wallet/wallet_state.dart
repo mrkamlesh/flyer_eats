@@ -18,11 +18,34 @@ class ErrorWalletState extends WalletState {
 }
 
 class LoadingAddWallet extends WalletState {
-  LoadingAddWallet({double amount, Wallet wallet}) : super(amount: amount, wallet: wallet);
+  LoadingAddWallet({double amount, Wallet wallet})
+      : super(amount: amount, wallet: wallet);
 }
 
 class ErrorAddWallet extends WalletState {
   final String message;
 
-  ErrorAddWallet(this.message, {double amount, Wallet wallet}) : super(amount: amount, wallet: wallet);
+  ErrorAddWallet(this.message, {double amount, Wallet wallet})
+      : super(amount: amount, wallet: wallet);
+}
+
+class SuccessAddWallet extends WalletState {
+  final double amountAdded;
+
+  SuccessAddWallet(this.amountAdded, {double amount, Wallet wallet})
+      : super(amount: amount, wallet: wallet);
+}
+
+class CancelledAddWallet extends WalletState {
+  final String message;
+
+  CancelledAddWallet(this.message, {double amount, Wallet wallet})
+      : super(amount: amount, wallet: wallet);
+}
+
+class FailedAddWalletViaCashfree extends WalletState {
+  final String message;
+
+  FailedAddWalletViaCashfree(this.message, {double amount, Wallet wallet})
+      : super(amount: amount, wallet: wallet);
 }

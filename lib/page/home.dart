@@ -1759,7 +1759,7 @@ class _HomeState extends State<Home>
                                 child: AnimatedOpacity(
                                     opacity: 1.0 - opacity,
                                     duration: Duration(milliseconds: 300),
-                                    child: Text("Will Expiry On: " +
+                                    child: Text("Expired On: " +
                                         scratchCard.dateExpiration)),
                               ),
                             )

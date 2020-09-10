@@ -3,6 +3,7 @@ import 'package:clients/model/restaurant.dart';
 class Order {
   final String id;
   final String title;
+  final String sizeName;
   final Restaurant restaurant;
   final String itemsString;
   final String date;
@@ -24,6 +25,7 @@ class Order {
       this.status,
       this.id,
       this.title,
+      this.sizeName,
       this.total,
       this.paymentType,
       this.currencyCode});
@@ -69,8 +71,14 @@ class Order {
     listItems.forEach((item) {
       i++;
       String add = (i == listItems.length) ? " " : ", ";
-      itemsString =
-          itemsString + item['item_name'] + " X " + item['quantity'] + add;
+      String sizeName =
+          item['size_name'] != null ? (" " + item['size_name']) : "";
+      itemsString = itemsString +
+          item['item_name'] +
+          sizeName +
+          " X " +
+          item['quantity'] +
+          add;
     });
 
     var listStatus = parsedJson['order_history'] as List;

@@ -287,9 +287,16 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                     SliverPersistentHeader(
                                       delegate: DeliveryOptions(
                                           showDeliveryOptions:
-                                              state.placeOrder.isBusy
+                                              state.placeOrder.isBusy ||
+                                                      !(state.placeOrder
+                                                          .isDeliveryEnabled)
                                                   ? false
-                                                  : true),
+                                                  : true,
+                                          showSelfPickupOptions: state
+                                                  .placeOrder
+                                                  .isSelfPickupEnabled
+                                              ? true
+                                              : false),
                                       pinned: true,
                                     ),
                                     FoodListPlaceOrder(),
@@ -1295,6 +1302,36 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                         ],
                                       );
                                     });
+                              } else if (state is NoAvailableService) {
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        title: Text(
+                                          "No Available Service",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        content: Text(
+                                            "Restaurant being busy and no self-pickup service right now"),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                BlocProvider.of<FoodOrderBloc>(
+                                                        context)
+                                                    .add(ClearCart());
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("OK"))
+                                        ],
+                                      );
+                                    });
                               }
                             },
                             builder: (context, state) {
@@ -1677,8 +1714,9 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
 
 class DeliveryOptions extends SliverPersistentHeaderDelegate {
   final bool showDeliveryOptions;
+  final bool showSelfPickupOptions;
 
-  DeliveryOptions({this.showDeliveryOptions});
+  DeliveryOptions({this.showDeliveryOptions, this.showSelfPickupOptions});
 
   @override
   Widget build(
@@ -1716,23 +1754,25 @@ class DeliveryOptions extends SliverPersistentHeaderDelegate {
                       ),
                     )
                   : SizedBox(),
-              Expanded(
-                child: RadioCustom(
-                  radio: Radio(
-                      visualDensity:
-                          VisualDensity(vertical: -4, horizontal: -4),
-                      activeColor: Colors.green,
-                      value: "pickup",
-                      groupValue: state.placeOrder.transactionType,
-                      onChanged: (value) {
-                        BlocProvider.of<FoodOrderBloc>(context)
-                            .add(ChangeTransactionType(value));
-                      }),
-                  icon: "assets/selfpickup.svg",
-                  title: "Self Pickup",
-                  subtitle: "Go & Pickup The Order On Time",
-                ),
-              ),
+              showSelfPickupOptions
+                  ? Expanded(
+                      child: RadioCustom(
+                        radio: Radio(
+                            visualDensity:
+                                VisualDensity(vertical: -4, horizontal: -4),
+                            activeColor: Colors.green,
+                            value: "pickup",
+                            groupValue: state.placeOrder.transactionType,
+                            onChanged: (value) {
+                              BlocProvider.of<FoodOrderBloc>(context)
+                                  .add(ChangeTransactionType(value));
+                            }),
+                        icon: "assets/selfpickup.svg",
+                        title: "Self Pickup",
+                        subtitle: "Go & Pickup The Order On Time",
+                      ),
+                    )
+                  : SizedBox(),
             ],
           ),
         );

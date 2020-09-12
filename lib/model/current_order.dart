@@ -62,8 +62,8 @@ class CurrentOrder {
         isShowReview: parsedJson['details']['is_show_add_review'],
         isScratchShowFirst: parsedJson['details']['is_scratch_card_show_first'],
         driverLatitude: parsedJson['details']['driver_latitudee'] != ""
-            ? double.parse(parsedJson['details']['driver_latitudee'].toString())
-            : null,
+        ? double.parse(parsedJson['details']['driver_latitudee'].toString())
+        : null,
         driverLongitude: parsedJson['details']['driver_longitude'] != ""
             ? double.parse(parsedJson['details']['driver_longitude'].toString())
             : null,

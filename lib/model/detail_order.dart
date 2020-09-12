@@ -102,6 +102,8 @@ class DetailOrder {
           ),
           int.parse(foodCartItemJson[i]['qty'].toString()),
           Price(
+              discountedPrice: double.parse(
+                  foodCartItemJson[i]['discounted_price'].toString()),
               price:
                   double.parse(foodCartItemJson[i]['normal_price'].toString())),
           addOns);

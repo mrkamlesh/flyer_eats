@@ -222,6 +222,8 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
             isUseWallet: false,
             walletAmount: 0,
             isChangePrimaryContact: false,
+            isDeliveryEnabled: true,
+            isSelfPickupEnabled: true,
             now: now,
             selectedDeliveryTime: now.add(Duration(minutes: 45))),
       );
@@ -251,32 +253,85 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
       PlaceOrder result = await repository.getPaymentOptions(state.placeOrder);
 
       if (result.isValid) {
-        yield FoodOrderState(
-            placeOrder: state.placeOrder.copyWith(
-                isValid: true,
-                isMerchantOpen: result.isMerchantOpen,
-                message: result.message,
-                razorKey: result.razorKey,
-                razorSecret: result.razorSecret,
-                stripePublishKey: result.stripePublishKey,
-                stripeSecretKey: result.stripeSecretKey,
-                taxCharges: result.taxCharges,
-                packagingCharges: result.packagingCharges,
-                taxPrettyString: result.taxPrettyString,
-                discountOrder: result.discountOrder,
-                discountOrderPrettyString: result.discountOrderPrettyString,
-                deliveryCharges: result.deliveryCharges,
-                walletAmount: result.walletAmount,
-                listPaymentMethod: result.listPaymentMethod,
-                applyVoucherMessage: result.applyVoucherErrorMessage,
-                isBusy: result.isBusy,
-                transactionType: result.isBusy
-                    ? "pickup"
-                    : (!result.isBusy && state.placeOrder.isBusy)
-                        ? "delivery"
-                        : state.placeOrder.transactionType,
-                voucher: result.voucher ??
-                    state.placeOrder.voucher.copyWith(amount: 0, rate: 0)));
+        PlaceOrder currentStatePlaceOrder = state.placeOrder.copyWith(
+            isValid: true,
+            isMerchantOpen: result.isMerchantOpen,
+            message: result.message,
+            razorKey: result.razorKey,
+            razorSecret: result.razorSecret,
+            stripePublishKey: result.stripePublishKey,
+            stripeSecretKey: result.stripeSecretKey,
+            taxCharges: result.taxCharges,
+            packagingCharges: result.packagingCharges,
+            taxPrettyString: result.taxPrettyString,
+            discountOrder: result.discountOrder,
+            discountOrderPrettyString: result.discountOrderPrettyString,
+            deliveryCharges: result.deliveryCharges,
+            walletAmount: result.walletAmount,
+            listPaymentMethod: result.listPaymentMethod,
+            applyVoucherMessage: result.applyVoucherErrorMessage,
+            isBusy: result.isBusy,
+            isSelfPickupEnabled: result.isSelfPickupEnabled,
+            isDeliveryEnabled: result.isDeliveryEnabled,
+            voucher: result.voucher ??
+                state.placeOrder.voucher.copyWith(amount: 0, rate: 0));
+
+        String transactionType = "";
+
+        //Kalau dua delivery dan pickup is true, maka transaction type mengikuti nilai dari state sebelumnya
+        //kecuali jika state sebelumnya payment OFF dan sekarang ON maka paksa ke delivery
+
+        //Kalau hanya salah satu delivery atau pickup yang true, maka paksa ke salah satu nilai yang true
+
+        //Kalau hanya tidak ada yang true, lempar state no service available
+        //kondisi di atas (if !placeorder.isBusy) berlaku kalau payment ON
+
+        //kondisi di bawah (else) berlaku kalau payment OFF, kalau ada self pickup maka paksa ke nilai itu
+        //kalau gak ada maka lemapr no service available
+
+        //POTENSI BUG
+        //jika payment method di OFF kan dari admin panel dan user sedang memilih delivery maka order jadi invalid,
+        //padahal seharusnya order valid tetapi di paksa ke self-pickup
+        //solusi ubah api jadikan order valid jika payment OFF dan transaction type delivery
+
+        if (!(result.isBusy)) {
+          if (result.isDeliveryEnabled && result.isSelfPickupEnabled) {
+            if (state.placeOrder.isBusy) {
+              transactionType = "delivery";
+            } else {
+              transactionType = state.placeOrder.transactionType;
+            }
+            yield FoodOrderState(
+                placeOrder: currentStatePlaceOrder.copyWith(
+                    transactionType: transactionType));
+          } else if (!(result.isDeliveryEnabled) &&
+              result.isSelfPickupEnabled) {
+            transactionType = "pickup";
+            yield FoodOrderState(
+                placeOrder: currentStatePlaceOrder.copyWith(
+                    transactionType: transactionType));
+          } else if (result.isDeliveryEnabled &&
+              !(result.isSelfPickupEnabled)) {
+            transactionType = "delivery";
+            yield FoodOrderState(
+                placeOrder: currentStatePlaceOrder.copyWith(
+                    transactionType: transactionType));
+          } else {
+            yield NoAvailableService(placeOrder: state.placeOrder);
+          }
+        } else {
+          if (result.isSelfPickupEnabled) {
+            transactionType = "pickup";
+            yield FoodOrderState(
+                placeOrder: currentStatePlaceOrder.copyWith(
+                    transactionType: transactionType));
+          } else {
+            yield NoAvailableService(placeOrder: state.placeOrder);
+          }
+        }
+        if (transactionType != state.placeOrder.transactionType) {
+          add(GetPaymentOptions());
+        }
       } else {
         if (result.isMerchantOpen) {
           yield InvalidPlaceOrder(

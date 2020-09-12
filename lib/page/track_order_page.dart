@@ -1,6 +1,7 @@
-import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,6 +13,7 @@ import 'package:clients/classes/style.dart';
 import 'package:clients/model/status_order.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapBox;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:ui' as ui;
 
 class TrackOrderPage extends StatefulWidget {
   const TrackOrderPage({Key key}) : super(key: key);
@@ -25,16 +27,20 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
   final double initLng = 77.227515;
 
   mapBox.MapboxMapController mapController;
-  Completer<GoogleMapController> _controller = Completer();
+
+  //Completer<GoogleMapController> _controller = Completer();
   Marker marker;
+  BitmapDescriptor driverLocationIcon;
 
   @override
   void initState() {
     super.initState();
+    setDriverPinIcon();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
         return BlocConsumer<CurrentOrderBloc, CurrentOrderState>(
@@ -58,10 +64,10 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                     markerId: MarkerId("location"),
                     position: LatLng(state.currentOrder.driverLatitude,
                         state.currentOrder.driverLongitude),
-                    icon: BitmapDescriptor.defaultMarker);
-                _animateGoogleMapCameraToPosition(LatLng(
+                    icon: driverLocationIcon);
+                /*_animateGoogleMapCameraToPosition(LatLng(
                     state.currentOrder.driverLatitude,
-                    state.currentOrder.driverLongitude));
+                    state.currentOrder.driverLongitude));*/
               }
             }
             return Scaffold(
@@ -286,21 +292,42 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
       mapController.addSymbol(mapBox.SymbolOptions(
         geometry: latLng,
         iconSize: 0.6,
-        iconImage: "assets/location.png",
+        iconImage: "assets/drivericon.png",
       ));
-      mapController.moveCamera(mapBox.CameraUpdate.newCameraPosition(
+      /*mapController.moveCamera(mapBox.CameraUpdate.newCameraPosition(
         mapBox.CameraPosition(
           target: latLng,
           zoom: 13.0,
         ),
-      ));
+      ));*/
     }
   }
 
-  Future<void> _animateGoogleMapCameraToPosition(LatLng latLng) async {
+/*  Future<void> _animateGoogleMapCameraToPosition(LatLng latLng) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(target: latLng, zoom: 15.5)));
+  }*/
+
+  void setDriverPinIcon() async {
+    driverLocationIcon =
+        await getBitmapDescriptorFromAssetBytes("assets/drivericon.png", 120);
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+        .buffer
+        .asUint8List();
+  }
+
+  Future<BitmapDescriptor> getBitmapDescriptorFromAssetBytes(
+      String path, int width) async {
+    final Uint8List imageData = await getBytesFromAsset(path, width);
+    return BitmapDescriptor.fromBytes(imageData);
   }
 }
 

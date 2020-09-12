@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:clients/bloc/foodorder/bloc.dart';
 import 'package:clients/classes/push_notification_manager.dart';
 import 'package:clients/page/notifications_list_page.dart';
@@ -11,7 +13,8 @@ import 'package:clients/bloc/login/bloc.dart';
 import 'package:clients/page/login/login_number_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'bloc/location/home/home_bloc.dart';
 import 'bloc/notification/bloc.dart';
 
@@ -127,6 +130,7 @@ class _MainPageState extends State<MainPage> {
         importance: Importance.Max,
         priority: Priority.High,
         ticker: 'ticker',
+        sound: RawResourceAndroidNotificationSound('new_sound'),
         color: Color(0xFFD82128));
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
@@ -147,14 +151,24 @@ class _MainPageState extends State<MainPage> {
     _navigateToActiveOrderPage();
   }
 
-  void _showCampaignNotification(Map<String, dynamic> message) {
+  Future<void> _showCampaignNotification(Map<String, dynamic> message) async {
+    var bigPicturePath =
+        await _downloadAndSaveFile(message['data']['image'], 'bigPicture');
+    var bigPictureStyleInformation = BigPictureStyleInformation(
+        FilePathAndroidBitmap(bigPicturePath),
+        contentTitle: message['notification']['title'],
+        summaryText: message['notification']['body'],
+        htmlFormatSummaryText: true);
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'Flyer Eats Campaign Channel',
         'Flyer Eats Campaign',
         'Flyer Eats Description Campaign',
         importance: Importance.Max,
         priority: Priority.High,
-        ticker: 'ticker');
+        ticker: 'ticker',
+        sound: RawResourceAndroidNotificationSound('new_sound'),
+        color: Color(0xFFD82128),
+        styleInformation: bigPictureStyleInformation);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
@@ -236,5 +250,14 @@ class _MainPageState extends State<MainPage> {
     navigatorKey.currentState.push(MaterialPageRoute(builder: (context) {
       return NotificationsListPage();
     }));
+  }
+
+  Future<String> _downloadAndSaveFile(String url, String fileName) async {
+    var directory = await getApplicationDocumentsDirectory();
+    var filePath = '${directory.path}/$fileName';
+    var response = await http.get(url);
+    var file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+    return filePath;
   }
 }

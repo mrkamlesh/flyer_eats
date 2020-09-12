@@ -1021,7 +1021,7 @@ class FoodCartItemWidget extends StatelessWidget {
                     AppUtil.getCurrencyString(currencyCode) +
                     " " +
                     AppUtil.doubleRemoveZeroTrailing(
-                        item.getAmount() / item.quantity) +
+                        item.price.discountedPrice) +
                     " )",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
@@ -1031,24 +1031,50 @@ class FoodCartItemWidget extends StatelessWidget {
                 child: Text(
                   AppUtil.getCurrencyString(currencyCode) +
                       " " +
-                      AppUtil.doubleRemoveZeroTrailing((item.getAmount())),
+                      AppUtil.doubleRemoveZeroTrailing(
+                          (item.price.discountedPrice * item.quantity)),
                   textAlign: TextAlign.end,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ))
           ],
         ),
         item.hasAddOns()
-            ? Row(
-                children: [
-                  Expanded(
-                    flex: 7,
-                    child: Text(
-                      item.addOnsToString(),
-                      style: TextStyle(fontSize: 13),
-                    ),
-                  ),
-                  Expanded(flex: 3, child: SizedBox())
-                ],
+            ? Column(
+                children: item.addOns
+                    .map(
+                      (addOn) => Row(
+                        children: [
+                          Expanded(
+                            flex: 7,
+                            child: Text(
+                              addOn.name +
+                                  " ( " +
+                                  item.quantity.toString() +
+                                  " X " +
+                                  AppUtil.getCurrencyString(currencyCode) +
+                                  " " +
+                                  AppUtil.doubleRemoveZeroTrailing(
+                                      addOn.price) +
+                                  " )",
+                              style: TextStyle(fontSize: 13),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              AppUtil.getCurrencyString(currencyCode) +
+                                  " " +
+                                  AppUtil.doubleRemoveZeroTrailing(
+                                      (addOn.price * item.quantity)),
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                    .toList(),
               )
             : SizedBox(),
         SizedBox(

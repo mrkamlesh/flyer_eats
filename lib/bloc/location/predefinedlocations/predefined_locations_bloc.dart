@@ -10,7 +10,7 @@ class PredefinedLocationsBloc
 
   @override
   PredefinedLocationsState get initialState =>
-      InitialPredefinedLocationsState();
+      InitialPredefinedLocationsState("101");
 
   @override
   Stream<PredefinedLocationsState> mapEventToState(
@@ -23,7 +23,7 @@ class PredefinedLocationsBloc
     } else if (event is ChangeCountry) {
       yield* mapChangeCountryToState(event.countryId);
     } else if (event is InitGetPredefinedLocation) {
-      yield* mapInitGetPredefinedLocationToState();
+      yield* mapInitGetPredefinedLocationToState(event.initialCountryToLoad);
     }
   }
 
@@ -95,13 +95,20 @@ class PredefinedLocationsBloc
     add(GetPredefinedLocations());
   }
 
-  Stream<PredefinedLocationsState>
-      mapInitGetPredefinedLocationToState() async* {
-    yield InitialPredefinedLocationsState();
+  Stream<PredefinedLocationsState> mapInitGetPredefinedLocationToState(
+      String initialCountryToLoad) async* {
+    String initialCountryCode;
+    if (initialCountryToLoad == "IN") {
+      initialCountryCode = "101";
+    } else if (initialCountryToLoad == "SG") {
+      initialCountryCode = "196";
+    }
+
+    yield InitialPredefinedLocationsState(initialCountryCode ?? "101");
 
     try {
-      List<Location> list =
-          await repository.getLocations(state.selectedCountry);
+      List<Location> list = await repository
+          .getLocations(initialCountryCode ?? state.selectedCountry);
 
       if (list.isEmpty) {
         yield NoAvailablePredefinedLocations(

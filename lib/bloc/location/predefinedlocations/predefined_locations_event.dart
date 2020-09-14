@@ -32,7 +32,9 @@ class ChangeCountry extends PredefinedLocationsEvent {
 }
 
 class InitGetPredefinedLocation extends PredefinedLocationsEvent {
-  InitGetPredefinedLocation();
+  final String initialCountryToLoad;
+
+  InitGetPredefinedLocation(this.initialCountryToLoad);
 
   @override
   List<Object> get props => [];

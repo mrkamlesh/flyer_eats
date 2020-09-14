@@ -251,27 +251,36 @@ class _HomeState extends State<Home>
                           Scaffold.of(context).showSnackBar(snackBar);
                         }
                       },
-                      builder: (context, state) {
+                      builder: (context, homeState) {
                         return Builder(
                           builder: (context) {
                             return CustomAppBar(
                               isDropDownButtonVisible:
-                                  state.isAppBarDropDownVisible,
+                                  homeState.isAppBarDropDownVisible,
                               drawer: "assets/drawer.svg",
-                              title: state.appBarTitle,
-                              isLoading: state.isAppBarLoading,
-                              leading: state.leading,
-                              isFlag: state.isFlagVisible,
+                              title: homeState.appBarTitle,
+                              isLoading: homeState.isAppBarLoading,
+                              leading: homeState.leading,
+                              isFlag: homeState.isFlagVisible,
                               onTapTitle: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return SelectLocationPage();
+                                  return SelectLocationPage(
+                                    initialCountryToLoad:
+                                        homeState.homePageData != null
+                                            ? homeState.homePageData.countryId
+                                            : null,
+                                  );
                                 }));
                               },
                               onTapLeading: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return SelectLocationPage();
+                                  return SelectLocationPage(
+                                      initialCountryToLoad:
+                                          homeState.homePageData != null
+                                              ? homeState.homePageData.countryId
+                                              : null);
                                 }));
                               },
                               onTapDrawer: () {
@@ -706,19 +715,17 @@ class _HomeState extends State<Home>
                                           onTap: () {
                                             AppUtil.share(
                                                 context,
-                                                homeState.homePageData
-                                                    .referralCode,
+                                                homeState
+                                                    .homePageData.referralCode,
                                                 AppUtil.getCurrencyString(
-                                                    homeState
-                                                        .homePageData
-                                                        .currencyCode) +
+                                                        homeState.homePageData
+                                                            .currencyCode) +
                                                     " " +
                                                     homeState.homePageData
                                                         .referralDiscount,
                                                 AppUtil.getCurrencyString(
-                                                    homeState
-                                                        .homePageData
-                                                        .currencyCode) +
+                                                        homeState.homePageData
+                                                            .currencyCode) +
                                                     " " +
                                                     homeState.homePageData
                                                         .referralMinOrderAmount);

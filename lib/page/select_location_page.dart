@@ -14,8 +14,10 @@ import 'package:clients/page/select_current_location_page.dart';
 
 class SelectLocationPage extends StatefulWidget {
   final bool isRedirectToHomePage;
+  final String initialCountryToLoad;
 
-  const SelectLocationPage({Key key, this.isRedirectToHomePage = true})
+  const SelectLocationPage(
+      {Key key, this.isRedirectToHomePage = true, this.initialCountryToLoad})
       : super(key: key);
 
   @override
@@ -54,7 +56,8 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
       builder: (context, loginState) {
         return BlocProvider<PredefinedLocationsBloc>(
           create: (context) {
-            return _bloc..add(InitGetPredefinedLocation());
+            return _bloc
+              ..add(InitGetPredefinedLocation(widget.initialCountryToLoad));
           },
           child: WillPopScope(
             onWillPop: _onBackPressed,

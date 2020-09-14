@@ -254,114 +254,128 @@ class _ApplyCouponPageState extends State<ApplyCouponPage> {
                                     right: horizontalPaddingDraggable),
                                 child: Text(state.message));
                           }
-
-                          return Expanded(
-                            child: SingleChildScrollView(
-                              child: Container(
-                                height: state is ErrorApplyCoupon
-                                    ? AppUtil.getScreenHeight(context) -
-                                        AppUtil.getToolbarHeight(context) -
-                                        170
-                                    : AppUtil.getScreenHeight(context) -
-                                        AppUtil.getToolbarHeight(context) -
-                                        100,
-                                child: ScrollablePositionedList.builder(
-                                  itemScrollController: itemScrollController,
-                                  itemPositionsListener: itemPositionsListener,
-                                  padding: EdgeInsets.symmetric(vertical: 0),
-                                  itemBuilder: (context, i) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        _couponController.text =
-                                            state.couponList[i].code;
-                                        itemScrollController.scrollTo(
-                                            index: i,
-                                            duration:
-                                                Duration(milliseconds: 200));
-                                      },
-                                      child: Container(
-                                        margin: EdgeInsets.only(
-                                            bottom: horizontalPaddingDraggable,
-                                            left: horizontalPaddingDraggable,
-                                            right: horizontalPaddingDraggable),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: shadow,
-                                              blurRadius: 7,
-                                              spreadRadius: -3,
-                                            )
-                                          ],
+                          if (state.couponList.isEmpty) {
+                            return Container(
+                                margin: EdgeInsets.only(
+                                    bottom: horizontalPaddingDraggable,
+                                    left: horizontalPaddingDraggable,
+                                    right: horizontalPaddingDraggable),
+                                child: Text(
+                                    "No available promos for this merchant"));
+                          } else {
+                            return Expanded(
+                              child: SingleChildScrollView(
+                                child: Container(
+                                  height: state is ErrorApplyCoupon
+                                      ? AppUtil.getScreenHeight(context) -
+                                          AppUtil.getToolbarHeight(context) -
+                                          170
+                                      : AppUtil.getScreenHeight(context) -
+                                          AppUtil.getToolbarHeight(context) -
+                                          100,
+                                  child: ScrollablePositionedList.builder(
+                                    itemScrollController: itemScrollController,
+                                    itemPositionsListener:
+                                        itemPositionsListener,
+                                    padding: EdgeInsets.symmetric(vertical: 0),
+                                    itemBuilder: (context, i) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          _couponController.text =
+                                              state.couponList[i].code;
+                                          itemScrollController.scrollTo(
+                                              index: i,
+                                              duration:
+                                                  Duration(milliseconds: 200));
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              bottom:
+                                                  horizontalPaddingDraggable,
+                                              left: horizontalPaddingDraggable,
+                                              right:
+                                                  horizontalPaddingDraggable),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: shadow,
+                                                blurRadius: 7,
+                                                spreadRadius: -3,
+                                              )
+                                            ],
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: <Widget>[
+                                              ClipRRect(
+                                                borderRadius: BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(10),
+                                                    topLeft:
+                                                        Radius.circular(10)),
+                                                child: CachedNetworkImage(
+                                                  imageUrl:
+                                                      state.couponList[i].image,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                  alignment: Alignment.center,
+                                                  placeholder: (context, url) {
+                                                    return Shimmer.fromColors(
+                                                        child: Container(
+                                                          height: 100,
+                                                          color: Colors.black,
+                                                        ),
+                                                        baseColor:
+                                                            Colors.grey[300],
+                                                        highlightColor:
+                                                            Colors.grey[100]);
+                                                  },
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.only(
+                                                    bottom: 10,
+                                                    left: 10,
+                                                    right: 10),
+                                                child: Text(
+                                                  AppUtil.parseHtmlString(
+                                                      state.couponList[i].name),
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.only(
+                                                    left: 10,
+                                                    right: 10,
+                                                    bottom: 10),
+                                                child: Text(
+                                                  AppUtil.parseHtmlString(
+                                                      state.couponList[i].text),
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.black38),
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: <Widget>[
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.only(
-                                                  topRight: Radius.circular(10),
-                                                  topLeft: Radius.circular(10)),
-                                              child: CachedNetworkImage(
-                                                imageUrl:
-                                                    state.couponList[i].image,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                                alignment: Alignment.center,
-                                                placeholder: (context, url) {
-                                                  return Shimmer.fromColors(
-                                                      child: Container(
-                                                        height: 100,
-                                                        color: Colors.black,
-                                                      ),
-                                                      baseColor:
-                                                          Colors.grey[300],
-                                                      highlightColor:
-                                                          Colors.grey[100]);
-                                                },
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  bottom: 10,
-                                                  left: 10,
-                                                  right: 10),
-                                              child: Text(
-                                                AppUtil.parseHtmlString(
-                                                    state.couponList[i].name),
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  left: 10,
-                                                  right: 10,
-                                                  bottom: 10),
-                                              child: Text(
-                                                AppUtil.parseHtmlString(
-                                                    state.couponList[i].text),
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.black38),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  itemCount: state.couponList.length,
+                                      );
+                                    },
+                                    itemCount: state.couponList.length,
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
+                            );
+                          }
                         },
                       )
                     ],

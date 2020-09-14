@@ -417,7 +417,7 @@ class DataRepository {
       //list.add(response['details']['free_delivery']);
       return list;
     } else {
-      return null;
+      return [];
     }
   }
 

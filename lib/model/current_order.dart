@@ -10,6 +10,8 @@ class CurrentOrder {
   final bool isScratchShowFirst;
   final double driverLatitude;
   final double driverLongitude;
+  final double deliveryLatitude;
+  final double deliveryLongitude;
   final String driverName;
   final String driverPhone;
   final String merchantId;
@@ -27,6 +29,8 @@ class CurrentOrder {
   CurrentOrder(
       {this.driverLatitude,
       this.driverLongitude,
+      this.deliveryLatitude,
+      this.deliveryLongitude,
       this.driverName,
       this.driverPhone,
       this.statusOrder,
@@ -61,14 +65,25 @@ class CurrentOrder {
         isShowScratch: parsedJson['details']['is_show_scratch'],
         isShowReview: parsedJson['details']['is_show_add_review'],
         isScratchShowFirst: parsedJson['details']['is_scratch_card_show_first'],
+        /*driverLatitude: -10.18,
+        driverLongitude: 123.62,
+        deliveryLatitude: -10.157562,
+        deliveryLongitude: 123.608706,*/
+
         driverLatitude: parsedJson['details']['driver_latitudee'] != ""
-        ? double.parse(parsedJson['details']['driver_latitudee'].toString())
-        : null,
+            ? double.parse(parsedJson['details']['driver_latitudee'].toString())
+            : null,
         driverLongitude: parsedJson['details']['driver_longitude'] != ""
             ? double.parse(parsedJson['details']['driver_longitude'].toString())
             : null,
-        /*driverLatitude: -6.200000,
-        driverLongitude: 106.816666,*/
+        deliveryLatitude: parsedJson['details']['delivery_latitude'] != ""
+            ? double.parse(
+                parsedJson['details']['delivery_latitude'].toString())
+            : null,
+        deliveryLongitude: parsedJson['details']['delivery_longitude'] != ""
+            ? double.parse(
+                parsedJson['details']['delivery_longitude'].toString())
+            : null,
         driverName: parsedJson['details']['driver_name'],
         driverPhone: parsedJson['details']['driver_phone'],
         merchantId: parsedJson['details']['merchant_id'],

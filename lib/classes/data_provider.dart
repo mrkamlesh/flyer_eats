@@ -12,9 +12,9 @@ class DataProvider {
   static String emailKey = "EMAIL";
   static String passwordKey = "PASSWORD";
 
-  //String serverUrl = "https://www.pollachiarea.com/flyereats/";
+  String serverUrl = "https://www.pollachiarea.com/flyereats/";
 
-  String serverUrl = "http://flyereats.in/";
+  //String serverUrl = "http://flyereats.in/";
 
   Future<dynamic> checkPhoneExist(
       String contactPhone, String otpSignature) async {
@@ -336,7 +336,7 @@ class DataProvider {
       "formatted_address": placeOrderPickup.address.address,
       "address_id": placeOrderPickup.address.id,
       "google_lng": placeOrderPickup.address.longitude,
-      "pickup_lat": placeOrderPickup.address.latitude,
+      "google_lat": placeOrderPickup.address.latitude,
       "location_name": placeOrderPickup.location,
       "contact_phone": placeOrderPickup.contact,
       "delivery_instruction": placeOrderPickup.pickUp.deliveryInstruction,

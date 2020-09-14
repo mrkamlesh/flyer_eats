@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -26,21 +27,21 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
   final double initLat = 28.620446;
   final double initLng = 77.227515;
 
-  mapBox.MapboxMapController mapController;
-
-  //Completer<GoogleMapController> _controller = Completer();
-  Marker marker;
+  mapBox.MapboxMapController mapBoxController;
+  Completer<GoogleMapController> googleMapsController = Completer();
+  Marker driverMarker;
+  Marker userMarker;
   BitmapDescriptor driverLocationIcon;
+  BitmapDescriptor userLocationIcon;
 
   @override
   void initState() {
     super.initState();
-    setDriverPinIcon();
+    setPinIcon();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, loginState) {
         return BlocConsumer<CurrentOrderBloc, CurrentOrderState>(
@@ -49,27 +50,36 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
               if (state.currentOrder.driverLatitude != null &&
                   state.currentOrder.driverLongitude != null) {
                 if (!(loginState.user.isGoogleMapsUsed())) {
-                  _animateMapBoxCameraToPosition(mapBox.LatLng(
-                      state.currentOrder.driverLatitude,
-                      state.currentOrder.driverLongitude));
+                  _animateMapBoxCameraToBounds(
+                      mapBox.LatLng(state.currentOrder.driverLatitude,
+                          state.currentOrder.driverLongitude),
+                      mapBox.LatLng(state.currentOrder.deliveryLatitude,
+                          state.currentOrder.deliveryLongitude));
+                } else {
+                  if (state.currentOrder.driverLatitude != null &&
+                      state.currentOrder.driverLongitude != null) {
+                    driverMarker = Marker(
+                        markerId: MarkerId("driver"),
+                        position: LatLng(state.currentOrder.driverLatitude,
+                            state.currentOrder.driverLongitude),
+                        icon: driverLocationIcon);
+                    userMarker = Marker(
+                        markerId: MarkerId("delivery"),
+                        position: LatLng(state.currentOrder.deliveryLatitude,
+                            state.currentOrder.deliveryLongitude),
+                        icon: userLocationIcon);
+
+                    _animateGoogleMapCameraToBounds(getGoogleMapsCameraBounds(
+                        state.currentOrder.driverLatitude,
+                        state.currentOrder.driverLongitude,
+                        state.currentOrder.deliveryLatitude,
+                        state.currentOrder.deliveryLongitude));
+                  }
                 }
               }
             }
           },
           builder: (context, state) {
-            if (loginState.user.isGoogleMapsUsed()) {
-              if (state.currentOrder.driverLatitude != null &&
-                  state.currentOrder.driverLongitude != null) {
-                marker = Marker(
-                    markerId: MarkerId("location"),
-                    position: LatLng(state.currentOrder.driverLatitude,
-                        state.currentOrder.driverLongitude),
-                    icon: driverLocationIcon);
-                /*_animateGoogleMapCameraToPosition(LatLng(
-                    state.currentOrder.driverLatitude,
-                    state.currentOrder.driverLongitude));*/
-              }
-            }
             return Scaffold(
               body: Stack(
                 children: <Widget>[
@@ -82,21 +92,23 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                         height: AppUtil.getBannerHeight(context),
                         child: loginState.user.isGoogleMapsUsed()
                             ? GoogleMap(
-                                markers:
-                                    Set.of((marker != null) ? [marker] : []),
+                                markers: Set.of(
+                                    (driverMarker != null && userMarker != null)
+                                        ? [driverMarker, userMarker]
+                                        : []),
                                 mapType: MapType.normal,
                                 zoomControlsEnabled: true,
-                                myLocationEnabled: true,
-                                myLocationButtonEnabled: true,
                                 zoomGesturesEnabled: true,
-                                padding: EdgeInsets.all(32),
                                 compassEnabled: true,
+                                onMapCreated: (GoogleMapController controller) {
+                                  googleMapsController.complete(controller);
+                                },
                                 initialCameraPosition: CameraPosition(
-                                  target: LatLng(
-                                      state.currentOrder.driverLatitude ??
-                                          initLat,
-                                      state.currentOrder.driverLongitude ??
-                                          initLng),
+                                  target: getInitialGoogleMapCameraPosition(
+                                      state.currentOrder.driverLatitude,
+                                      state.currentOrder.driverLongitude,
+                                      state.currentOrder.deliveryLatitude,
+                                      state.currentOrder.deliveryLongitude),
                                   zoom: 15.5,
                                 ),
                               )
@@ -104,13 +116,12 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                                 accessToken: loginState.user.mapToken,
                                 onMapCreated: _onMapCreated,
                                 initialCameraPosition: mapBox.CameraPosition(
-                                  target: mapBox.LatLng(
-                                      state.currentOrder.driverLatitude ??
-                                          initLat,
-                                      state.currentOrder.driverLongitude ??
-                                          initLng),
-                                  zoom: 13.0,
-                                ),
+                                    target: getInitialMapBoxCameraPosition(
+                                        state.currentOrder.driverLatitude,
+                                        state.currentOrder.driverLongitude,
+                                        state.currentOrder.deliveryLatitude,
+                                        state.currentOrder.deliveryLongitude),
+                                    zoom: 13.0),
                                 trackCameraPosition: true,
                                 compassEnabled: false,
                                 cameraTargetBounds:
@@ -283,16 +294,22 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
   }
 
   _onMapCreated(mapBox.MapboxMapController controller) {
-    mapController = controller;
+    mapBoxController = controller;
   }
 
-  _animateMapBoxCameraToPosition(mapBox.LatLng latLng) async {
-    if (mapController != null) {
-      mapController.removeSymbols(mapController.symbols);
-      mapController.addSymbol(mapBox.SymbolOptions(
-        geometry: latLng,
+  _animateMapBoxCameraToBounds(
+      mapBox.LatLng driverLatLng, mapBox.LatLng deliveryLatLng) async {
+    if (mapBoxController != null) {
+      mapBoxController.removeSymbols(mapBoxController.symbols);
+      mapBoxController.addSymbol(mapBox.SymbolOptions(
+        geometry: driverLatLng,
         iconSize: 0.6,
         iconImage: "assets/drivericon.png",
+      ));
+      mapBoxController.addSymbol(mapBox.SymbolOptions(
+        geometry: deliveryLatLng,
+        iconSize: 0.5,
+        iconImage: "assets/location.png",
       ));
       /*mapController.moveCamera(mapBox.CameraUpdate.newCameraPosition(
         mapBox.CameraPosition(
@@ -300,18 +317,38 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
           zoom: 13.0,
         ),
       ));*/
+      mapBoxController.animateCamera(mapBox.CameraUpdate.newLatLngBounds(
+          getMapBoxCameraBounds(driverLatLng.latitude, driverLatLng.longitude,
+              deliveryLatLng.latitude, deliveryLatLng.longitude),
+          70));
     }
   }
 
-/*  Future<void> _animateGoogleMapCameraToPosition(LatLng latLng) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: latLng, zoom: 15.5)));
-  }*/
+  Future<void> _animateGoogleMapCameraToBounds(
+      LatLngBounds latLngBounds) async {
+    final GoogleMapController controller = await googleMapsController.future;
 
-  void setDriverPinIcon() async {
+    controller.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 70));
+  }
+
+  void setPinIcon() async {
     driverLocationIcon =
         await getBitmapDescriptorFromAssetBytes("assets/drivericon.png", 120);
+    userLocationIcon =
+        await getBitmapDescriptorFromAssetBytes("assets/location.png", 90);
+  }
+
+  LatLng getInitialGoogleMapCameraPosition(double driverLat, double driverLng,
+      double deliveryLat, double deliveryLng) {
+    if (driverLat != null &&
+        driverLng != null &&
+        deliveryLat != null &&
+        deliveryLng != null) {
+      return LatLng(
+          (driverLat + deliveryLat) / 2, (driverLng + deliveryLng) / 2);
+    } else {
+      return LatLng(initLat, initLng);
+    }
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -328,6 +365,76 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
       String path, int width) async {
     final Uint8List imageData = await getBytesFromAsset(path, width);
     return BitmapDescriptor.fromBytes(imageData);
+  }
+
+  LatLngBounds getGoogleMapsCameraBounds(
+      double driverLatitude,
+      double driverLongitude,
+      double deliveryLatitude,
+      double deliveryLongitude) {
+    if (driverLatitude <= deliveryLatitude &&
+        driverLongitude <= deliveryLongitude) {
+      return LatLngBounds(
+          southwest: LatLng(driverLatitude, driverLongitude),
+          northeast: LatLng(deliveryLatitude, deliveryLongitude));
+    } else if (driverLatitude <= deliveryLatitude &&
+        driverLongitude > deliveryLongitude) {
+      return LatLngBounds(
+          southwest: LatLng(driverLatitude, deliveryLongitude),
+          northeast: LatLng(deliveryLatitude, driverLongitude));
+    } else if (driverLatitude > deliveryLatitude &&
+        driverLongitude <= deliveryLongitude) {
+      return LatLngBounds(
+          southwest: LatLng(deliveryLatitude, driverLongitude),
+          northeast: LatLng(driverLatitude, deliveryLongitude));
+    } else {
+      return LatLngBounds(
+          southwest: LatLng(deliveryLatitude, deliveryLongitude),
+          northeast: LatLng(driverLatitude, driverLongitude));
+    }
+  }
+
+  mapBox.LatLngBounds getMapBoxCameraBounds(
+      double driverLatitude,
+      double driverLongitude,
+      double deliveryLatitude,
+      double deliveryLongitude) {
+    if (driverLatitude <= deliveryLatitude &&
+        driverLongitude <= deliveryLongitude) {
+      return mapBox.LatLngBounds(
+          southwest: mapBox.LatLng(driverLatitude, driverLongitude),
+          northeast: mapBox.LatLng(deliveryLatitude, deliveryLongitude));
+    } else if (driverLatitude <= deliveryLatitude &&
+        driverLongitude > deliveryLongitude) {
+      return mapBox.LatLngBounds(
+          southwest: mapBox.LatLng(driverLatitude, deliveryLongitude),
+          northeast: mapBox.LatLng(deliveryLatitude, driverLongitude));
+    } else if (driverLatitude > deliveryLatitude &&
+        driverLongitude <= deliveryLongitude) {
+      return mapBox.LatLngBounds(
+          southwest: mapBox.LatLng(deliveryLatitude, driverLongitude),
+          northeast: mapBox.LatLng(driverLatitude, deliveryLongitude));
+    } else {
+      return mapBox.LatLngBounds(
+          southwest: mapBox.LatLng(deliveryLatitude, deliveryLongitude),
+          northeast: mapBox.LatLng(driverLatitude, driverLongitude));
+    }
+  }
+
+  mapBox.LatLng getInitialMapBoxCameraPosition(
+      double driverLatitude,
+      double driverLongitude,
+      double deliveryLatitude,
+      double deliveryLongitude) {
+    if (driverLatitude != null &&
+        driverLongitude != null &&
+        deliveryLatitude != null &&
+        deliveryLongitude != null) {
+      return mapBox.LatLng((driverLatitude + deliveryLatitude) / 2,
+          (driverLongitude + deliveryLongitude) / 2);
+    } else {
+      return mapBox.LatLng(initLat, initLng);
+    }
   }
 }
 

@@ -438,249 +438,259 @@ class _RestaurantPlaceOrderPageState extends State<RestaurantPlaceOrderPage>
                                                     ],
                                                   ),
                                                 ),
-                                                state.placeOrder.voucher.id ==
-                                                        null
-                                                    ? GestureDetector(
-                                                        onTap: () async {
-                                                          Voucher result =
-                                                              await Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) {
-                                                            return ApplyCouponPage(
-                                                              restaurant: state
-                                                                  .placeOrder
-                                                                  .restaurant,
-                                                              totalOrder: state
+                                                state.placeOrder
+                                                        .isVoucherEnabled
+                                                    ? state.placeOrder.voucher
+                                                                .id ==
+                                                            null
+                                                        ? GestureDetector(
+                                                            onTap: () async {
+                                                              Voucher result =
+                                                                  await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder:
+                                                                              (context) {
+                                                                return ApplyCouponPage(
+                                                                  restaurant: state
                                                                       .placeOrder
-                                                                      .subTotal() -
-                                                                  state
-                                                                      .placeOrder
-                                                                      .discountOrder,
-                                                            );
-                                                          }));
+                                                                      .restaurant,
+                                                                  totalOrder: state
+                                                                          .placeOrder
+                                                                          .subTotal() -
+                                                                      state
+                                                                          .placeOrder
+                                                                          .discountOrder,
+                                                                );
+                                                              }));
 
-                                                          if (result != null) {
-                                                            BlocProvider.of<
-                                                                        FoodOrderBloc>(
-                                                                    context)
-                                                                .add(ApplyVoucher(
-                                                                    result));
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          height: 55,
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical: 17,
-                                                                  horizontal:
+                                                              if (result !=
+                                                                  null) {
+                                                                BlocProvider.of<
+                                                                            FoodOrderBloc>(
+                                                                        context)
+                                                                    .add(ApplyVoucher(
+                                                                        result));
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              height: 55,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          17,
+                                                                      horizontal:
+                                                                          horizontalPaddingDraggable),
+                                                              margin: EdgeInsets.only(
+                                                                  right:
+                                                                      horizontalPaddingDraggable,
+                                                                  bottom: 20,
+                                                                  left:
                                                                       horizontalPaddingDraggable),
-                                                          margin: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      horizontalPaddingDraggable),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                color: shadow,
-                                                                blurRadius: 7,
-                                                                spreadRadius:
-                                                                    -3,
-                                                              )
-                                                            ],
-                                                          ),
-                                                          child: Row(
-                                                            children: <Widget>[
-                                                              SvgPicture.asset(
-                                                                "assets/discount.svg",
-                                                                height: 24,
-                                                                width: 24,
+                                                              decoration:
+                                                                  BoxDecoration(
                                                                 color: Colors
-                                                                    .black,
+                                                                    .white,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color:
+                                                                        shadow,
+                                                                    blurRadius:
+                                                                        7,
+                                                                    spreadRadius:
+                                                                        -3,
+                                                                  )
+                                                                ],
                                                               ),
-                                                              SizedBox(
-                                                                width: 17,
-                                                              ),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  "APPLY COUPON",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          16),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : Container(
-                                                        height: state.placeOrder
-                                                                    .applyVoucherErrorMessage ==
-                                                                null
-                                                            ? 55
-                                                            : 115,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 15,
-                                                                horizontal:
-                                                                    horizontalPaddingDraggable),
-                                                        margin: EdgeInsets.only(
-                                                            right:
-                                                                horizontalPaddingDraggable,
-                                                            left:
-                                                                horizontalPaddingDraggable),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: shadow,
-                                                              blurRadius: 7,
-                                                              spreadRadius: -3,
-                                                            )
-                                                          ],
-                                                        ),
-                                                        child: Center(
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .stretch,
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              Row(
+                                                              child: Row(
                                                                 children: <
                                                                     Widget>[
                                                                   SvgPicture
                                                                       .asset(
-                                                                    state.placeOrder.applyVoucherErrorMessage ==
-                                                                            null
-                                                                        ? "assets/check.svg"
-                                                                        : "assets/warnings.svg",
+                                                                    "assets/discount.svg",
                                                                     height: 24,
                                                                     width: 24,
+                                                                    color: Colors
+                                                                        .black,
                                                                   ),
                                                                   SizedBox(
                                                                     width: 17,
                                                                   ),
                                                                   Expanded(
                                                                     child: Text(
-                                                                      state
-                                                                          .placeOrder
-                                                                          .voucher
-                                                                          .name,
+                                                                      "APPLY COUPON",
                                                                       style: TextStyle(
                                                                           fontSize:
                                                                               16),
                                                                     ),
-                                                                  ),
-                                                                  InkWell(
-                                                                    onTap:
-                                                                        () async {
-                                                                      Voucher result = await Navigator.push(
-                                                                          context,
-                                                                          MaterialPageRoute(builder:
-                                                                              (context) {
-                                                                        return ApplyCouponPage(
-                                                                          restaurant: state
-                                                                              .placeOrder
-                                                                              .restaurant,
-                                                                          totalOrder: state
-                                                                              .placeOrder
-                                                                              .getTotal(),
-                                                                        );
-                                                                      }));
-
-                                                                      if (result !=
-                                                                          null) {
-                                                                        BlocProvider.of<FoodOrderBloc>(context)
-                                                                            .add(ApplyVoucher(result));
-                                                                      }
-                                                                    },
-                                                                    child: SvgPicture
-                                                                        .asset(
-                                                                      "assets/add review icon.svg",
-                                                                      height:
-                                                                          24,
-                                                                      width: 24,
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  InkWell(
-                                                                    onTap: () {
-                                                                      BlocProvider.of<FoodOrderBloc>(
-                                                                              context)
-                                                                          .add(
-                                                                              RemoveVoucher());
-                                                                    },
-                                                                    child: SvgPicture
-                                                                        .asset(
-                                                                      "assets/remove.svg",
-                                                                      height:
-                                                                          24,
-                                                                      width: 24,
-                                                                    ),
-                                                                  ),
+                                                                  )
                                                                 ],
                                                               ),
-                                                              state.placeOrder
-                                                                          .applyVoucherErrorMessage !=
-                                                                      null
-                                                                  ? Expanded(
-                                                                      child:
-                                                                          Container(
-                                                                        margin: EdgeInsets.only(
-                                                                            top:
-                                                                                10),
-                                                                        padding:
-                                                                            EdgeInsets.all(7),
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          color:
-                                                                              Colors.red,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(4),
-                                                                        ),
+                                                            ),
+                                                          )
+                                                        : Container(
+                                                            height: state
+                                                                        .placeOrder
+                                                                        .applyVoucherErrorMessage ==
+                                                                    null
+                                                                ? 55
+                                                                : 115,
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        15,
+                                                                    horizontal:
+                                                                        horizontalPaddingDraggable),
+                                                            margin: EdgeInsets.only(
+                                                                right:
+                                                                    horizontalPaddingDraggable,
+                                                                left:
+                                                                    horizontalPaddingDraggable,
+                                                                bottom: 20),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: shadow,
+                                                                  blurRadius: 7,
+                                                                  spreadRadius:
+                                                                      -3,
+                                                                )
+                                                              ],
+                                                            ),
+                                                            child: Center(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .stretch,
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Row(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                        state.placeOrder.applyVoucherErrorMessage ==
+                                                                                null
+                                                                            ? "assets/check.svg"
+                                                                            : "assets/warnings.svg",
+                                                                        height:
+                                                                            24,
+                                                                        width:
+                                                                            24,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            17,
+                                                                      ),
+                                                                      Expanded(
                                                                         child:
-                                                                            Align(
-                                                                          alignment:
-                                                                              Alignment.centerLeft,
-                                                                          child:
-                                                                              Text(
-                                                                            state.placeOrder.applyVoucherErrorMessage,
-                                                                            textAlign:
-                                                                                TextAlign.start,
-                                                                            style:
-                                                                                TextStyle(color: Colors.white, fontSize: 12),
-                                                                          ),
+                                                                            Text(
+                                                                          state
+                                                                              .placeOrder
+                                                                              .voucher
+                                                                              .name,
+                                                                          style:
+                                                                              TextStyle(fontSize: 16),
                                                                         ),
                                                                       ),
-                                                                    )
-                                                                  : SizedBox(),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () async {
+                                                                          Voucher
+                                                                              result =
+                                                                              await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                                            return ApplyCouponPage(
+                                                                              restaurant: state.placeOrder.restaurant,
+                                                                              totalOrder: state.placeOrder.getTotal(),
+                                                                            );
+                                                                          }));
+
+                                                                          if (result !=
+                                                                              null) {
+                                                                            BlocProvider.of<FoodOrderBloc>(context).add(ApplyVoucher(result));
+                                                                          }
+                                                                        },
+                                                                        child: SvgPicture
+                                                                            .asset(
+                                                                          "assets/add review icon.svg",
+                                                                          height:
+                                                                              24,
+                                                                          width:
+                                                                              24,
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          BlocProvider.of<FoodOrderBloc>(context)
+                                                                              .add(RemoveVoucher());
+                                                                        },
+                                                                        child: SvgPicture
+                                                                            .asset(
+                                                                          "assets/remove.svg",
+                                                                          height:
+                                                                              24,
+                                                                          width:
+                                                                              24,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  state.placeOrder
+                                                                              .applyVoucherErrorMessage !=
+                                                                          null
+                                                                      ? Expanded(
+                                                                          child:
+                                                                              Container(
+                                                                            margin:
+                                                                                EdgeInsets.only(top: 10),
+                                                                            padding:
+                                                                                EdgeInsets.all(7),
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              color: Colors.red,
+                                                                              borderRadius: BorderRadius.circular(4),
+                                                                            ),
+                                                                            child:
+                                                                                Align(
+                                                                              alignment: Alignment.centerLeft,
+                                                                              child: Text(
+                                                                                state.placeOrder.applyVoucherErrorMessage,
+                                                                                textAlign: TextAlign.start,
+                                                                                style: TextStyle(color: Colors.white, fontSize: 12),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        )
+                                                                      : SizedBox(),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          )
+                                                    : SizedBox(),
                                                 Container(
                                                   height: 55,
                                                   margin: EdgeInsets.only(
-                                                      top: 20,
                                                       left:
                                                           horizontalPaddingDraggable,
                                                       right:

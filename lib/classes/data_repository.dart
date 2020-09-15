@@ -410,12 +410,16 @@ class DataRepository {
   Future<List<Voucher>> getCoupons(String restaurantId, String token) async {
     final response = await _provider.getCoupons(restaurantId, token);
     if (response['code'] == 1) {
-      var listResponse = response['details']['promos'] as List;
-      List<Voucher> list = listResponse.map((e) {
-        return Voucher.fromJson2(e);
-      }).toList();
-      //list.add(response['details']['free_delivery']);
-      return list;
+      if (response['details']['promos'] != null) {
+        var listResponse = response['details']['promos'] as List;
+        List<Voucher> list = listResponse.map((e) {
+          return Voucher.fromJson2(e);
+        }).toList();
+        //list.add(response['details']['free_delivery']);
+        return list;
+      } else {
+        return [];
+      }
     } else {
       return [];
     }

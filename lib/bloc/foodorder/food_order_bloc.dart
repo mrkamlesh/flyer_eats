@@ -271,6 +271,7 @@ class FoodOrderBloc extends Bloc<FoodOrderEvent, FoodOrderState> {
             listPaymentMethod: result.listPaymentMethod,
             applyVoucherMessage: result.applyVoucherErrorMessage,
             isBusy: result.isBusy,
+            isVoucherEnabled: result.isVoucherEnabled,
             isSelfPickupEnabled: result.isSelfPickupEnabled,
             isDeliveryEnabled: result.isDeliveryEnabled,
             voucher: result.voucher ??

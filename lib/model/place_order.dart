@@ -41,6 +41,7 @@ class PlaceOrder {
   final bool isBusy;
   final bool isDeliveryEnabled;
   final bool isSelfPickupEnabled;
+  final bool isVoucherEnabled;
 
   final List<String> shownBusyDialogRestaurantIds;
 
@@ -79,7 +80,8 @@ class PlaceOrder {
       this.paymentReference,
       this.isBusy,
       this.isDeliveryEnabled,
-      this.isSelfPickupEnabled});
+      this.isSelfPickupEnabled,
+      this.isVoucherEnabled});
 
   factory PlaceOrder.fromJson(Map<String, dynamic> parsedJson) {
     var listPaymentMethod = parsedJson['details']['payment_list'] as List;
@@ -138,6 +140,7 @@ class PlaceOrder {
       isBusy: parsedJson['details']['is_busy'],
       isDeliveryEnabled: parsedJson['details']['services']['delivery'],
       isSelfPickupEnabled: parsedJson['details']['services']['pickup'],
+      isVoucherEnabled: parsedJson['details']['enableVoucher'],
       listPaymentMethod: listPayment,
       applyVoucherErrorMessage: applyVoucherMessage,
       voucher: voucher,
@@ -177,6 +180,7 @@ class PlaceOrder {
     DateTime now,
     List<String> shownBusyDialogRestaurantIds,
     String paymentReference,
+    bool isVoucherEnabled,
     bool isBusy,
     bool isDeliveryEnabled,
     bool isSelfPickupEnabled,
@@ -220,6 +224,7 @@ class PlaceOrder {
         paymentReference: paymentReference ?? paymentReference,
         isSelfPickupEnabled: isSelfPickupEnabled ?? this.isSelfPickupEnabled,
         isDeliveryEnabled: isDeliveryEnabled ?? this.isDeliveryEnabled,
+        isVoucherEnabled: isVoucherEnabled ?? this.isVoucherEnabled,
         isBusy: isBusy ?? this.isBusy);
   }
 

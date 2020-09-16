@@ -250,10 +250,10 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                                       isActive: state.currentOrder.statusOrder
                                               .status ==
                                           "Accepted",
-                                      hasDriver: true,
+                                      /*hasDriver: true,
                                       driverName: state.currentOrder.driverName,
                                       driverPhone:
-                                          state.currentOrder.driverPhone,
+                                          state.currentOrder.driverPhone,*/
                                     )
                                   : StatusItemWidget(
                                       status:
@@ -261,10 +261,10 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                                       isActive: state.currentOrder.statusOrder
                                               .status ==
                                           "Food Preparing",
-                                      hasDriver: true,
+                                      /*hasDriver: true,
                                       driverName: state.currentOrder.driverName,
                                       driverPhone:
-                                          state.currentOrder.driverPhone,
+                                          state.currentOrder.driverPhone,*/
                                     ),
                               StatusItemWidget(
                                 status: StatusOrder(status: "On the way"),
@@ -537,7 +537,8 @@ class StatusItemWidget extends StatelessWidget {
                                   ),
                                   InkWell(
                                     onTap: () {
-                                      AppUtil.launchInBrowser(driverPhone);
+                                      AppUtil.launchInBrowser(
+                                          "tel:" + driverPhone);
                                     },
                                     child: Row(
                                       children: [

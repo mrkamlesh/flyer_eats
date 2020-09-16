@@ -605,6 +605,7 @@ class DataProvider {
       "pickup_lat": pickupLat,
       "pickup_long": pickupLng,
       "location": location,
+      "is_updated_app": "1",
     };
 
     var responseJson;
@@ -1091,6 +1092,7 @@ class DataProvider {
 
     var formData = {
       "client_token": token,
+      "is_updated_app": "1",
     };
 
     var responseJson;

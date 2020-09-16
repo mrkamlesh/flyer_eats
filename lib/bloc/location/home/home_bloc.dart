@@ -293,7 +293,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   String getLeading(String countryId) {
-    switch (countryId) {
+    switch (countryId.toUpperCase()) {
       case "IN":
         return "assets/india_flag.svg";
       case "SG":

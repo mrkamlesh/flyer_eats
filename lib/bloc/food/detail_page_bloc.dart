@@ -60,7 +60,7 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
             menuSelected: state.menuSelected);
       }
     } catch (e) {
-      yield OnDataError(e.toString(),
+      yield OnDataError("This restaurant not published their menu yet",
           isVegOnly: state.isVegOnly,
           menuCategories: state.menuCategories,
           foodList: state.foodList,

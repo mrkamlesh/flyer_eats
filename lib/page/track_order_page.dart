@@ -235,51 +235,54 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
                             borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(32),
                                 topLeft: Radius.circular(32))),
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              child: StatusItemWidget(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: <Widget>[
+                              StatusItemWidget(
                                 status: StatusOrder(status: "Order Placed"),
                                 isActive:
                                     state.currentOrder.statusOrder.status ==
                                         "Order Placed",
                               ),
-                            ),
-                            state.currentOrder.isPickupOrder()
-                                ? Expanded(
-                                    child: StatusItemWidget(
+                              state.currentOrder.isPickupOrder()
+                                  ? StatusItemWidget(
                                       status: StatusOrder(status: "Accepted"),
                                       isActive: state.currentOrder.statusOrder
                                               .status ==
                                           "Accepted",
-                                    ),
-                                  )
-                                : Expanded(
-                                    child: StatusItemWidget(
+                                      hasDriver: true,
+                                      driverName: state.currentOrder.driverName,
+                                      driverPhone:
+                                          state.currentOrder.driverPhone,
+                                    )
+                                  : StatusItemWidget(
                                       status:
                                           StatusOrder(status: "Food Preparing"),
                                       isActive: state.currentOrder.statusOrder
                                               .status ==
                                           "Food Preparing",
+                                      hasDriver: true,
+                                      driverName: state.currentOrder.driverName,
+                                      driverPhone:
+                                          state.currentOrder.driverPhone,
                                     ),
-                                  ),
-                            Expanded(
-                              child: StatusItemWidget(
+                              StatusItemWidget(
                                 status: StatusOrder(status: "On the way"),
                                 isActive:
                                     state.currentOrder.statusOrder.status ==
                                         "On the way",
+                                hasDriver: true,
+                                driverName: state.currentOrder.driverName,
+                                driverPhone: state.currentOrder.driverPhone,
                               ),
-                            ),
-                            Expanded(
-                              child: StatusItemWidget(
+                              StatusItemWidget(
                                 status: StatusOrder(status: "Delivered"),
                                 isActive:
                                     state.currentOrder.statusOrder.status ==
                                         "Delivered",
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -441,8 +444,17 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
 class StatusItemWidget extends StatelessWidget {
   final StatusOrder status;
   final bool isActive;
+  final bool hasDriver;
+  final String driverName;
+  final String driverPhone;
 
-  const StatusItemWidget({Key key, this.status, this.isActive})
+  const StatusItemWidget(
+      {Key key,
+      this.status,
+      this.isActive,
+      this.hasDriver = false,
+      this.driverName,
+      this.driverPhone})
       : super(key: key);
 
   @override
@@ -501,7 +513,50 @@ class StatusItemWidget extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 13),
-                      )
+                      ),
+                      hasDriver && isActive
+                          ? Container(
+                              margin: EdgeInsets.only(top: 10),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/driver_name_icon.svg",
+                                        width: 25,
+                                        height: 25,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(driverName ?? "")
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      AppUtil.launchInBrowser(driverPhone);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          "assets/phone_driver_icon.svg",
+                                          width: 25,
+                                          height: 25,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(driverPhone ?? "")
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SizedBox(),
                     ],
                   ),
                 )

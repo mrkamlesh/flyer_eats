@@ -98,10 +98,14 @@ class PredefinedLocationsBloc
   Stream<PredefinedLocationsState> mapInitGetPredefinedLocationToState(
       String initialCountryToLoad) async* {
     String initialCountryCode;
-    if (initialCountryToLoad == "IN") {
-      initialCountryCode = "101";
-    } else if (initialCountryToLoad == "SG") {
-      initialCountryCode = "196";
+
+    switch (initialCountryToLoad.toUpperCase()) {
+      case "IN":
+        initialCountryCode = "101";
+        break;
+      case "SG":
+        initialCountryCode = "196";
+        break;
     }
 
     yield InitialPredefinedLocationsState(initialCountryCode ?? "101");

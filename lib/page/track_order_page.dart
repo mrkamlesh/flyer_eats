@@ -320,7 +320,7 @@ class _TrackOrderPageState extends State<TrackOrderPage> {
           zoom: 13.0,
         ),
       ));*/
-      mapBoxController.animateCamera(mapBox.CameraUpdate.newLatLngBounds(
+      mapBoxController.moveCamera(mapBox.CameraUpdate.newLatLngBounds(
           getMapBoxCameraBounds(driverLatLng.latitude, driverLatLng.longitude,
               deliveryLatLng.latitude, deliveryLatLng.longitude),
           70));
@@ -510,8 +510,8 @@ class StatusItemWidget extends StatelessWidget {
                       ),
                       Text(
                         status.getSubStatus(),
-                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                         style: TextStyle(fontSize: 13),
                       ),
                       hasDriver && isActive

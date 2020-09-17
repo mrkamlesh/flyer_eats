@@ -246,7 +246,7 @@ class DataProvider {
       "location_name": order.address.title,
       "contact_phone": order.contact,
       "delivery_instruction": order.deliveryInstruction,
-      "address_id": order.address.id,
+      //"address_id": order.address.id,
       "cart_subtotal": order.subTotal().toString(),
       "merchant_id": order.restaurant.id,
       "client_token": order.user.token,

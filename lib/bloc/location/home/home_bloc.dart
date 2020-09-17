@@ -296,6 +296,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     switch (countryId.toUpperCase()) {
       case "IN":
         return "assets/india_flag.svg";
+        break;
       case "SG":
         return "assets/singapore_flag.svg";
         break;

@@ -358,7 +358,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                         context,
                                         MaterialPageRoute(builder: (context) {
                                       return SelectLocationPage(
-                                          isRedirectToHomePage: false);
+                                        isRedirectToHomePage: false,
+                                        initialCountryToLoad:
+                                            loginState.user.countryCode,
+                                      );
                                     }));
 
                                     if (location != null) {

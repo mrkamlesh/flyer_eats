@@ -99,13 +99,17 @@ class PredefinedLocationsBloc
       String initialCountryToLoad) async* {
     String initialCountryCode;
 
-    switch (initialCountryToLoad.toUpperCase()) {
-      case "IN":
-        initialCountryCode = "101";
-        break;
-      case "SG":
-        initialCountryCode = "196";
-        break;
+    if (initialCountryToLoad != null) {
+      switch (initialCountryToLoad.toUpperCase()) {
+        case "IN":
+          initialCountryCode = "101";
+          break;
+        case "SG":
+          initialCountryCode = "196";
+          break;
+      }
+    } else {
+      initialCountryCode = "101";
     }
 
     yield InitialPredefinedLocationsState(initialCountryCode ?? "101");

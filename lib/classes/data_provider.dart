@@ -1231,7 +1231,12 @@ class DataProvider {
     switch (response.statusCode) {
       case 200:
         var responseJson;
-        responseJson = json.decode(response.data);
+        try {
+          responseJson = json.decode(response.data);
+        } catch (e) {
+          throw AppException(
+              "Something went wrong. Please try again later", "");
+        }
         return responseJson;
       case 400:
         throw BadRequestException(response.body.toString());

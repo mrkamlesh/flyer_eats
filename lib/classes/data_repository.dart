@@ -181,7 +181,7 @@ class DataRepository {
 
   Future<List<Order>> getOrderHistory(
       String token, String typeOrder, int page) async {
-    final response = await _provider.getOrderHistory(token, typeOrder, 0);
+    final response = await _provider.getOrderHistory(token, typeOrder, page);
     if (response['code'] == 1) {
       var orderHistory = response['details'] as List;
       List<Order> list = orderHistory.map((i) {

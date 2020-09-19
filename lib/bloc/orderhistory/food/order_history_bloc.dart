@@ -25,9 +25,11 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
     if (state.listOrder == null) {
       yield LoadingOrderHistoryState();
       try {
-        List<Order> list = await repository.getOrderHistory(token, "delivery", 0);
+        List<Order> list =
+            await repository.getOrderHistory(token, "delivery", 0);
 
-        yield OrderHistoryState(page: 1, listOrder: list, hasReachedMax: list.isEmpty);
+        yield OrderHistoryState(
+            page: 1, listOrder: list, hasReachedMax: list.isEmpty);
       } catch (e) {
         yield ErrorOrderHistoryState(e.toString());
       }
@@ -35,19 +37,26 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
   }
 
   Stream<OrderHistoryState> mapOnLoadMoreToState(String token) async* {
-    yield LoadingMoreOrderHistoryState(
-        page: state.page, hasReachedMax: state.hasReachedMax, listOrder: state.listOrder);
+    if (!state.hasReachedMax) {
+      yield LoadingMoreOrderHistoryState(
+          page: state.page,
+          hasReachedMax: state.hasReachedMax,
+          listOrder: state.listOrder);
 
-    try {
-      List<Order> list = await repository.getOrderHistory(token, "pickup_drop", state.page);
-      yield OrderHistoryState(
-        page: state.page + 1,
-        hasReachedMax: list.isEmpty,
-        listOrder: state.listOrder + list,
-      );
-    } catch (e) {
-      yield ErrorMoreOrderHistoryState(e.toString(),
-          page: state.page, hasReachedMax: state.hasReachedMax, listOrder: state.listOrder);
+      try {
+        List<Order> list =
+            await repository.getOrderHistory(token, "delivery", state.page);
+        yield OrderHistoryState(
+          page: state.page + 1,
+          hasReachedMax: list.isEmpty,
+          listOrder: state.listOrder + list,
+        );
+      } catch (e) {
+        yield ErrorMoreOrderHistoryState(e.toString(),
+            page: state.page,
+            hasReachedMax: state.hasReachedMax,
+            listOrder: state.listOrder);
+      }
     }
   }
 }

@@ -117,6 +117,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage>
                       if (currentScroll == maxScroll) {
                         pickupOrderHistoryBloc
                             .add(OnLoadMorePickup(loginState.user.token));
+                        foodOrderHistoryBloc
+                            .add(OnLoadMore(loginState.user.token));
                       }
                     });
 
@@ -273,8 +275,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage>
                                                   if (i ==
                                                       state.listOrder.length) {
                                                     return Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: 20),
+                                                        margin: EdgeInsets.symmetric(vertical: horizontalPaddingDraggable),
                                                         child: Center(
                                                             child:
                                                                 CircularProgressIndicator()));
@@ -394,8 +395,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage>
                                                   if (i ==
                                                       state.listOrder.length) {
                                                     return Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: 20),
+                                                        margin: EdgeInsets
+                                                            .symmetric(
+                                                                vertical:
+                                                                    horizontalPaddingDraggable),
                                                         child: Center(
                                                             child:
                                                                 CircularProgressIndicator()));

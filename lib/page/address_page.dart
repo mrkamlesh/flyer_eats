@@ -381,7 +381,7 @@ class _AddressPageState extends State<AddressPage> {
                                         ),
                                       ),
                                     ),
-                                    Container(
+                                    /*Container(
                                       margin: EdgeInsets.only(bottom: 5),
                                       child: Row(
                                         children: <Widget>[
@@ -399,7 +399,7 @@ class _AddressPageState extends State<AddressPage> {
                                           Text("Set as default address"),
                                         ],
                                       ),
-                                    ),
+                                    ),*/
                                     Container(
                                       margin: EdgeInsets.only(bottom: 10),
                                       child: Row(

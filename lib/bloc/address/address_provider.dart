@@ -38,7 +38,8 @@ class AddressProvider {
       "state": address.state,
       "zipcode": address.zipCode,
       "location_name": address.title,
-      "as_default": address.isDefault ? "2" : "1", //1 not default, 2 default
+      //"as_default": address.isDefault ? "2" : "1", //1 not default, 2 default
+      "as_default": "1",
       "action": "add",
       "latitude": address.latitude,
       "longitude": address.longitude,
@@ -74,7 +75,8 @@ class AddressProvider {
       "state": address.state,
       "zipcode": address.zipCode,
       "location_name": address.title,
-      "as_default": address.isDefault ? "2" : "1", //1 not default, 2 default
+      //"as_default": address.isDefault ? "2" : "1", //1 not default, 2 default
+      "as_default": "1",
       "action": "update",
       "id": address.id,
       "latitude": address.latitude,
